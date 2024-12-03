@@ -1,12 +1,11 @@
-# Declarando nombre de la aplicación e inicializando, crear la aplicación Flask
-from app import app
+from flask import Flask, render_template
 
-# Importando todos mis Routers (Rutas)
-from routers.router_login import *
-from routers.router_home import *
-from routers.router_page_not_found import *
+app = Flask(__name__)
 
+# Ruta para la página de inicio
+@app.route('/')
+def home():
+    return render_template('public/index.html')  # Se busca en templates/public/index.html
 
-# Ejecutando el objeto Flask
 if __name__ == '__main__':
-    app.run(debug=True, port=5600)
+    app.run(debug=True)
