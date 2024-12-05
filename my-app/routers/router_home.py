@@ -90,6 +90,7 @@ def actualizarEmpleado():
         return redirect(url_for('lista_empleados'))
 
 
+
 @app.route("/lista-de-usuarios", methods=['GET'])
 def usuarios():
     if 'conectado' in session:
@@ -122,3 +123,4 @@ def reporteBD():
     else:
         flash('primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
+

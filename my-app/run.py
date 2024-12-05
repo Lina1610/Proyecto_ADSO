@@ -5,7 +5,7 @@ from app import app
 from routers.router_login import *
 from routers.router_home import *
 from routers.router_page_not_found import *
-
+from routers.router_product import *
 
 # Ejecutando el objeto Flask
 if __name__ == '__main__':

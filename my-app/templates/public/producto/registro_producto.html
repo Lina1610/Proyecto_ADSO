@@ -1,0 +1,86 @@
+{% extends 'public/base_cpanel.html' %}
+<!--Cambiando el title-->
+{% block title %}Crud con Python 🐍 | Registrar Producto{% endblock %}
+<!---->
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/file.css') }}" />
+{% endblock %}
+
+<!--Inicio del block-->
+{% block body %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">REGISTRAR NUEVO PRODUCTO</h3>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="/form-registrar-producto"
+        autocomplete="off"
+        enctype="multipart/form-data">
+        <div class="card-body">
+          <div class="row">
+            <!-- Columna 1 -->
+            <div class="col-md-6">
+              <label for="nombre_producto" class="form-label">Nombre del producto</label>
+              <input type="text" name="nombre_producto" class="form-control" required />
+
+              <label for="descripcion_producto" class="form-label">Descripción del producto</label>
+              <input class="form-control" type="text" name="descripcion_producto" required />
+
+              <label for="precio_producto" class="form-label">Precio del producto</label>
+              <input class="form-control" type="text" name="precio_producto" required />
+
+              <label for="estado_producto" class="form-label">Estado del producto</label>
+              <select class="form-select" name="estado_producto" aria-label="Default select example">
+                <option selected>Seleccione</option>
+                <option value="Disponible">Disponible</option>
+                <option value="No disponible">No disponible</option>
+              </select>
+
+              <label for="unidad_medida_producto" class="form-label">Unidad de medida</label>
+              <input class="form-control" type="text" name="unidad_medida_producto" required />
+            </div>
+
+            <!-- Columna 2 -->
+            <div class="col-md-6">
+              <label for="cantidad_producto" class="form-label">Cantidad del producto</label>
+              <input class="form-control" type="number" name="cantidad_producto" required min="1" />
+
+              <label for="marca_producto" class="form-label">Marca del producto</label>
+              <input class="form-control" type="text" name="marca_producto" required />
+
+              <label for="tipo_producto" class="form-label">Tipo de producto</label>
+              <select class="form-select" name="tipo_producto" aria-label="Default select example">
+                <option selected>Seleccione</option>
+                <option value="Insumo">Insumo</option>
+                <option value="Producto terminado">Producto terminado</option>
+              </select>
+
+              <label for="total_producto" class="form-label">Total del producto</label>
+              <input class="form-control" type="text" name="total_producto" required />
+            </div>
+          </div>
+
+          <div class="mb-3 mt-4 text-center">
+            <button type="submit" class="btn rounded-pill btn-primary">
+              Guardar registro ahora
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block customJS %}
+<script src="{{ url_for('static', filename ='assets/customJS/file.js') }}"></script>
+{% endblock %}

@@ -351,6 +351,7 @@ def lista_usuariosBD():
         return []
 
 
+
 # Eliminar uEmpleado
 def eliminarEmpleado(id_empleado, foto_empleado):
     try:
@@ -390,3 +391,8 @@ def eliminarUsuario(id):
     except Exception as e:
         print(f"Error en eliminarUsuario : {e}")
         return []
+    
+    
+    
+    
+    

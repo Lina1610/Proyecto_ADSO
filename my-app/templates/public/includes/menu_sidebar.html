@@ -46,6 +46,13 @@
       </a>
     </li>
     <li
+      class="menu-item {% if request.path == '/registrar-producto' %} active {% endif %}">
+      <a href="{{ url_for('viewFormProducto') }}" class="menu-link">
+        <i class="menu-icon bi bi-box"></i>
+        <div data-i18n="Basic">Registrar Producto</div>
+      </a> <!-- Aquí va el cierre de la etiqueta 'a' después de 'div' -->
+    </li>
+    <li
       class="menu-item {% if request.path == '/mi-perfil' %} active {% endif %}">
       <a href="/mi-perfil" class="menu-link">
         <i class="menu-icon bi bi-person-fill-gear"></i>
