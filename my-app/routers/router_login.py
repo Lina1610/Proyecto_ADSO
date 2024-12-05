@@ -1,4 +1,3 @@
-
 from app import app
 from flask import render_template, request, flash, redirect, url_for, session
 
@@ -13,7 +12,7 @@ from controllers.funciones_login import *
 PATH_URL_LOGIN = "public/login"
 
 
-@app.route('/', methods=['GET'])
+@app.route('/login', methods=['GET'])
 def inicio():
     if 'conectado' in session:
         return render_template('public/base_cpanel.html', dataLogin=dataLoginSesion())

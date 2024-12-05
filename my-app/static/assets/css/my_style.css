@@ -134,6 +134,10 @@ tbody tr:hover {
 .pagination {
   justify-content: center;
 }
+.logo{
+  height: 400px;
+  width: 400px;
+}
 
 /*Loader para precarga en botn cargar mas consignaciones*/
 .loader {

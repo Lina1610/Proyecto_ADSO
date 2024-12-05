@@ -1,11 +1,22 @@
-from flask import Flask, render_template
+from app import app
+from flask import Flask, render_template, redirect, url_for, session
 
-app = Flask(__name__)
+# Importando los Routers (Rutas)
+from routers.router_login import *
+from routers.router_home import *
+from routers.router_page_not_found import *
 
-# Ruta para la página de inicio
+# Definir la ruta principal
 @app.route('/')
 def home():
-    return render_template('public/index.html')  # Se busca en templates/public/index.html
+    # Verificar si el usuario está conectado (es decir, si existe una clave 'conectado' en la sesión)
+    if 'conectado' in session:
+        # Si está conectado, redirigir al panel o dashboard
+        return redirect(url_for('dashboard'))  # O tu ruta de panel, por ejemplo 'dashboard'
+    else:
+        # Si no está conectado, mostrar la página de inicio (index.html)
+        return render_template('public/index.html')
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# Ejecutando el objeto Flask
+if __name__ == '__main__':  # Correcta forma de escribir esta condición
+    app.run(debug=True, port=5600)  # Puedes cambiar el puerto si es necesario
