@@ -6,6 +6,10 @@ from routers.router_login import *
 from routers.router_home import *
 from routers.router_page_not_found import *
 from routers.router_product import *
+from routers.router_supplier import *
+from routers.router_invoice import *
+from routers.router_order import *
+
 
 # Ejecutando el objeto Flask
 if __name__ == '__main__':
