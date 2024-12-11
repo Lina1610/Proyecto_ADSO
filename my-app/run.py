@@ -5,6 +5,11 @@ from flask import Flask, render_template, redirect, url_for, session, flash
 from routers.router_login import *
 from routers.router_home import *
 from routers.router_page_not_found import *
+from routers.router_product import *
+from routers.router_supplier import *
+from routers.router_invoice import *
+from routers.router_order import *
+from routers.router_pass import *
 
 # Definir la ruta principal
 @app.route('/')

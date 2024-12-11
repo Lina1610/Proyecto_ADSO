@@ -101,8 +101,9 @@ def sql_lista_empleadosBD():
         print(
             f"Errro en la función sql_lista_empleadosBD: {e}")
         return None
-
-
+    
+    
+    
 # Detalles del Empleado
 def sql_detalles_empleadosBD(idEmpleado):
     try:
@@ -351,6 +352,7 @@ def lista_usuariosBD():
         return []
 
 
+
 # Eliminar uEmpleado
 def eliminarEmpleado(id_empleado, foto_empleado):
     try:
@@ -390,3 +392,8 @@ def eliminarUsuario(id):
     except Exception as e:
         print(f"Error en eliminarUsuario : {e}")
         return []
+    
+    
+    
+    
+    

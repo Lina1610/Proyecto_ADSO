@@ -48,7 +48,45 @@
         <div>Lista de Usuarios</div>
       </a>
     </li>
+
     <li class="menu-item {% if request.path == '/mi-perfil' %} active {% endif %}">
+
+    <li
+      class="menu-item {% if request.path == '/registrar-producto' %} active {% endif %}">
+      <a href="{{ url_for('viewFormProducto') }}" class="menu-link">
+        <i class="menu-icon bi bi-box"></i>
+        <div data-i18n="Basic">Registrar Producto</div>
+      </a> <!-- Aquí va el cierre de la etiqueta 'a' después de 'div' -->
+    </li>
+  
+    <li class="menu-item {% if request.path == '/registrar-pedido' %} active {% endif %}">
+      <a href="{{ url_for('viewFormPedido') }}" class="menu-link">
+        <i class="menu-icon bi bi-cart"></i>
+        <div data-i18n="Basic">Registrar Pedido</div>
+      </a> <!-- Aquí va el cierre de la etiqueta 'a' después de 'div' -->
+    </li>    
+    <li class="menu-item {% if request.path == '/registrar-empleado' %} active {% endif %}">
+      <a href="{{ url_for('viewFormProveedor') }}" class="menu-link">
+        <i class="menu-icon bi bi-archive"></i> <!-- Cambio de ícono aquí -->
+        <div data-i18n="Basic">Registrar Proveedor</div>
+      </a>
+    </li>
+    <li class="menu-item {% if request.path == '/registrar-factura' %} active {% endif %}">
+      <a href="{{ url_for('viewFormFactura') }}" class="menu-link">
+        <i class="menu-icon bi bi-file-earmark-text"></i>
+        <div data-i18n="Basic">Registrar Factura</div>
+      </a>
+    </li>
+    <li class="menu-item {% if request.path == '/registrar-abon' %} active {% endif %}">
+      <a href="{{ url_for('viewFormAbono') }}" class="menu-link">
+        <i class="menu-icon bi bi-cash"></i>
+        <div data-i18n="Basic">Registrar Abono</div>
+      </a>
+    </li>
+    
+    <li
+      class="menu-item {% if request.path == '/mi-perfil' %} active {% endif %}">
+
       <a href="/mi-perfil" class="menu-link">
         <i class="menu-icon bi bi-person-fill-gear"></i>
         <div>Mi Perfil</div>

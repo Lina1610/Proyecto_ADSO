@@ -135,8 +135,13 @@ tbody tr:hover {
   justify-content: center;
 }
 .logo{
+<<<<<<< HEAD
   height: 4000px;
   width: 400px;
+=======
+  width: 400px;
+  height: 400px;
+>>>>>>> 36830dc2cb493114ed80227b97328681b712e4c3
 }
 
 /*Loader para precarga en botn cargar mas consignaciones*/

@@ -1,0 +1,81 @@
+{% extends 'public/base_cpanel.html' %}
+<!--Cambiando el title-->
+{% block title %}Crud con Python 🐍 | Registrar Factura{% endblock %}
+<!---->
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/file.css') }}" />
+{% endblock %}
+
+{% block body %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">REGISTRAR NUEVA FACTURA</h3>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="/form-registrar-factura"
+        autocomplete="off"
+        enctype="multipart/form-data">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <label for="estado_factura" class="form-label">
+                Estado de la Factura
+              </label>
+              <select
+                class="form-select"
+                name="estado_factura"
+                aria-label="Estado de la Factura">
+                <option selected>Seleccione</option>
+                <option value="1">Pendiente</option>
+                <option value="2">Facturado</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="fecha" class="form-label">
+                Fecha
+              </label>
+              <input
+                class="form-control"
+                type="date"
+                name="fecha"
+                required />
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <label for="valor_total" class="form-label">
+                Valor Total
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                name="valor_total"
+                id="valor_total"
+                required />
+            </div>
+            <div class="mb-3 mt-4 text-center">
+              <button type="submit" class="btn rounded-pill btn-primary">
+                Guardar registro ahora
+                <i class="bi bi-arrow-clockwise"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block customJS %}
+<script src="{{ url_for('static', filename ='assets/customJS/file.js') }}"></script>
+{% endblock %}
