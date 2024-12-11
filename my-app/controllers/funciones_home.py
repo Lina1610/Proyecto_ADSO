@@ -101,8 +101,9 @@ def sql_lista_empleadosBD():
         print(
             f"Errro en la función sql_lista_empleadosBD: {e}")
         return None
-
-
+    
+    
+    
 # Detalles del Empleado
 def sql_detalles_empleadosBD(idEmpleado):
     try:

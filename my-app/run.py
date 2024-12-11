@@ -9,6 +9,7 @@ from routers.router_product import *
 from routers.router_supplier import *
 from routers.router_invoice import *
 from routers.router_order import *
+from routers.router_pass import *
 
 
 # Ejecutando el objeto Flask
