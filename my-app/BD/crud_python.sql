@@ -81,7 +81,6 @@ CREATE TABLE IF NOT EXISTS tbl_empleados (
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 -- Volcando datos para la tabla crud_python.tbl_empleados: ~3 rows (aproximadamente)
-<<<<<<< HEAD
 INSERT INTO `tbl_empleados` VALUES (4,'Urian','Viera',1,'54544454','programadorphp2017@gmail.com','Ingeniero de Sistemas','fda30f83ebbc4fb1a2ce2609b2b1e34c6614c1dff6e44460b9ba27ed5bb8e927.png',3500000,'2023-08-23 17:04:49'),(5,'Brenda','Viera',2,'323543543','brenda@gmail.com','Dev','22c055aeec314572a0046ec50b84f21719270dac6ea34c91b8380ac289fff9e5.png',1200000,'2023-08-23 17:05:34'),(6,'Alejandro','Torres',1,'324242342','alejandro@gmail.com','Tecnico','7b84aceb56534d27aa2e8b727a245dca9f60156a070a47c491ff2d21da1742e5.png',2100,'2023-08-23 17:06:13'),(7,'Karla','Ramos',2,'345678','karla@gmail.com','Ingeniera','248cc9c38cfb494bb2300d7cbf4a3b317522f295338b4639a8e025e6b203291c.png',2300,'2023-08-23 17:07:28'),(8,'hojas','Ramos',2,'345678','karla@gmail.com','Ingeniera','248cc9c38cfb494bb2300d7cbf4a3b317522f295338b4639a8e025e6b203291c.png',2300,'2023-08-23 17:07:28');
 
 
@@ -305,6 +304,13 @@ CREATE TABLE IF NOT EXISTS `producto` (
     ON UPDATE NO ACTION
 ) ENGINE = InnoDB;
 
+INSERT INTO `producto` 
+  (`nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `tipo`, `promocion_id`, `total`) 
+VALUES
+  ('Tamal clásico', 'Delicioso tamal clásico de pollo con arroz y vegetales', 5000.00, 'Disponible', 1.00, 100, 'Marca A', 'Producto', 1, 5000.00),
+  ('Tamal clásico', 'Tamal clásico con carne de cerdo, arroz y especias', 5500.00, 'Disponible', 1.00, 50, 'Marca B', 'Producto', 2, 5500.00),
+  ('Tamal clásico', 'Tamal clásico con pollo y salsa picante', 6000.00, 'No disponible', 1.00, 0, 'Marca C', 'Producto', 3, 0.00);
+
 -- Volcando estructura para tabla crud_python.producto
 CREATE TABLE IF NOT EXISTS `calificacion` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -313,7 +319,7 @@ CREATE TABLE IF NOT EXISTS `calificacion` (
   `fecha` DATE NOT NULL,
   `pedido_id` BIGINT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_reseña_pedido1_idx` (`pedido_id` ASC) VISIBLE,
+  INDEX `fk_reseña_pedido1_idx` (`pedido_id` ASC) VISIBLE
   CONSTRAINT `fk_reseña_pedido1`
     FOREIGN KEY (`pedido_id`)
     REFERENCES `pedido` (`id`)
