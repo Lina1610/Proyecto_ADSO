@@ -9,7 +9,7 @@ from controllers.funciones_home import *
 PATH_URL = "public/pedido"
 
 
-@app.route('/registrar-pedido', methods=['GET'])
+@app.route('/registrar-pedido', methods=['GET', 'POST'])
 def viewFormPedido():
     if 'conectado' in session:
         return render_template(f'{PATH_URL}/registro_pedido.html')
