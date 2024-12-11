@@ -23,3 +23,5 @@ def home():
 # Ejecutando el objeto Flask
 if __name__ == '__main__':  # Correcta forma de escribir esta condición
     app.run(debug=True, port=5600)  # Puedes cambiar el puerto si es necesario
+
+
