@@ -33,6 +33,11 @@
             <div>Lista de Empleados</div>
           </a>
         </li>
+          <li class="menu-item {% if request.path == '/lista-de-empleados' %} active {% endif %}">
+          <a href="/lista-de-empleados" class="menu-link">
+            <div>Lista de Empleados</div>
+          </a>
+        </li>
         <li class="menu-item {% if request.path == '/descargar-informe-empleados' %} active {% endif %}">
           <a href="/descargar-informe-empleados" class="menu-link">
             <div>Reportes</div>
@@ -58,7 +63,11 @@
         <div data-i18n="Basic">Registrar Producto</div>
       </a> <!-- Aquí va el cierre de la etiqueta 'a' después de 'div' -->
     </li>
-  
+    <li class="menu-item {% if request.path == '/lista-de-producto' %} active {% endif %}">
+      <a href="/lista-de-producto" class="menu-link">
+        <div>Lista de Poducto</div>
+      </a>
+    </li>
     <li class="menu-item {% if request.path == '/registrar-pedido' %} active {% endif %}">
       <a href="{{ url_for('viewFormPedido') }}" class="menu-link">
         <i class="menu-icon bi bi-cart"></i>

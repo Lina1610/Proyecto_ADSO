@@ -14,3 +14,4 @@ def viewFormProducto():
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
+    
