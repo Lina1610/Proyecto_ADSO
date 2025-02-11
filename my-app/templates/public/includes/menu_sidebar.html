@@ -41,6 +41,131 @@
       </ul>
     </li>
 
+    <!-- Sección de Productos (Menú desplegable) -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-producto', '/lista-de-productos', '/descargar-informe-productos'] %} active open {% endif %}" data-menu="menu-productos">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon bi bi-box"></i>
+        <div>Productos</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if request.path == '/registrar-producto' %} active {% endif %}">
+          <a href="{{ url_for('viewFormProducto') }}" class="menu-link">
+            <div>Registrar Producto</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/lista-de-productos' %} active {% endif %}">
+          <a href="/lista-de-productos" class="menu-link">
+            <div>Lista de Productos</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/descargar-informe-productos' %} active {% endif %}">
+          <a href="/descargar-informe-productos" class="menu-link">
+            <div>Reportes</div>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- Sección de Pedidos (Menú desplegable) -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-pedido', '/lista-de-pedidos', '/descargar-informe-pedidos'] %} active open {% endif %}" data-menu="menu-pedidos">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon bi bi-cart"></i>
+        <div>Pedidos</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if request.path == '/registrar-pedido' %} active {% endif %}">
+          <a href="{{ url_for('viewFormPedido') }}" class="menu-link">
+            <div>Registrar Pedido</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/lista-de-pedidos' %} active {% endif %}">
+          <a href="/lista-de-pedidos" class="menu-link">
+            <div>Lista de Pedidos</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/descargar-informe-pedidos' %} active {% endif %}">
+          <a href="/descargar-informe-pedidos" class="menu-link">
+            <div>Reportes</div>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- Sección de Proveedores (Menú desplegable) -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-proveedor', '/lista-de-proveedores', '/descargar-informe-proveedores'] %} active open {% endif %}" data-menu="menu-proveedores">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon bi bi-archive"></i>
+        <div>Proveedores</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if request.path == '/registrar-proveedor' %} active {% endif %}">
+          <a href="{{ url_for('viewFormProveedor') }}" class="menu-link">
+            <div>Registrar Proveedor</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/lista-de-proveedores' %} active {% endif %}">
+          <a href="/lista-de-proveedores" class="menu-link">
+            <div>Lista de Proveedores</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/descargar-informe-proveedores' %} active {% endif %}">
+          <a href="/descargar-informe-proveedores" class="menu-link">
+            <div>Reportes</div>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- Sección de Facturas (Menú desplegable) -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-factura', '/lista-de-facturas', '/descargar-informe-facturas'] %} active open {% endif %}" data-menu="menu-facturas">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon bi bi-file-earmark-text"></i>
+        <div>Facturas</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if request.path == '/registrar-factura' %} active {% endif %}">
+          <a href="{{ url_for('viewFormFactura') }}" class="menu-link">
+            <div>Registrar Factura</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/lista-de-facturas' %} active {% endif %}">
+          <a href="/lista-de-facturas" class="menu-link">
+            <div>Lista de Facturas</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/descargar-informe-facturas' %} active {% endif %}">
+          <a href="/descargar-informe-facturas" class="menu-link">
+            <div>Reportes</div>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- Sección de Abonos (Menú desplegable) -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-abono', '/lista-de-abonos', '/descargar-informe-abonos'] %} active open {% endif %}" data-menu="menu-abonos">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon bi bi-cash"></i>
+        <div>Abonos</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if request.path == '/registrar-abono' %} active {% endif %}">
+          <a href="{{ url_for('viewFormAbono') }}" class="menu-link">
+            <div>Registrar Abono</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/lista-de-abonos' %} active {% endif %}">
+          <a href="/lista-de-abonos" class="menu-link">
+            <div>Lista de Abonos</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/descargar-informe-abonos' %} active {% endif %}">
+          <a href="/descargar-informe-abonos" class="menu-link">
+            <div>Reportes</div>
+          </a>
+        </li>
+      </ul>
+    </li>
+
     <!-- Otras opciones del menú -->
     <li class="menu-item {% if request.path == '/lista-de-usuarios' %} active {% endif %}">
       <a href="/lista-de-usuarios" class="menu-link">
@@ -50,52 +175,16 @@
     </li>
 
     <li class="menu-item {% if request.path == '/mi-perfil' %} active {% endif %}">
-
-    <li
-      class="menu-item {% if request.path == '/registrar-producto' %} active {% endif %}">
-      <a href="{{ url_for('viewFormProducto') }}" class="menu-link">
-        <i class="menu-icon bi bi-box"></i>
-        <div data-i18n="Basic">Registrar Producto</div>
-      </a> <!-- Aquí va el cierre de la etiqueta 'a' después de 'div' -->
-    </li>
-  
-    <li class="menu-item {% if request.path == '/registrar-pedido' %} active {% endif %}">
-      <a href="{{ url_for('viewFormPedido') }}" class="menu-link">
-        <i class="menu-icon bi bi-cart"></i>
-        <div data-i18n="Basic">Registrar Pedido</div>
-      </a> <!-- Aquí va el cierre de la etiqueta 'a' después de 'div' -->
-    </li>    
-    <li class="menu-item {% if request.path == '/registrar-empleado' %} active {% endif %}">
-      <a href="{{ url_for('viewFormProveedor') }}" class="menu-link">
-        <i class="menu-icon bi bi-archive"></i> <!-- Cambio de ícono aquí -->
-        <div data-i18n="Basic">Registrar Proveedor</div>
-      </a>
-    </li>
-    <li class="menu-item {% if request.path == '/registrar-factura' %} active {% endif %}">
-      <a href="{{ url_for('viewFormFactura') }}" class="menu-link">
-        <i class="menu-icon bi bi-file-earmark-text"></i>
-        <div data-i18n="Basic">Registrar Factura</div>
-      </a>
-    </li>
-    <li class="menu-item {% if request.path == '/registrar-abon' %} active {% endif %}">
-      <a href="{{ url_for('viewFormAbono') }}" class="menu-link">
-        <i class="menu-icon bi bi-cash"></i>
-        <div data-i18n="Basic">Registrar Abono</div>
-      </a>
-    </li>
-    
-    <li
-      class="menu-item {% if request.path == '/mi-perfil' %} active {% endif %}">
-
       <a href="/mi-perfil" class="menu-link">
         <i class="menu-icon bi bi-person-fill-gear"></i>
         <div>Mi Perfil</div>
       </a>
     </li>
+
     <li class="menu-item">
       <a href="{{ url_for('cerraSesion') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-        <div>Salir</div>
+        <div>Cerra sesion</div>
       </a>
     </li>
   </ul>

@@ -11,7 +11,7 @@
 <div class="card" style="border-radius: 0px !important">
   <div class="row justify-content-center mb-2">
     <div class="col-md-12">
-      <h3 class="text-center mt-5 mb-3">REGISTRAR NUEVO PRODUCTO</h3>
+      <h3 class="text-center mt-5 mb-3">REGISTRAR PRODUCTO NUEVO</h3>
       <hr />
     </div>
   </div>
@@ -35,7 +35,7 @@
               <input class="form-control" type="text" name="descripcion" required />
 
               <label for="precio_producto" class="form-label">Precio del producto</label>
-              <input class="form-control" type="text" name="precio" required />
+              <input class="form-control" type="text" name="precio" id="precio" required />
 
               <label for="estado_producto" class="form-label">Estado del producto</label>
               <select class="form-select" name="estado" aria-label="Default select example">
@@ -51,7 +51,7 @@
             <!-- Columna 2 -->
             <div class="col-md-6">
               <label for="cantidad_producto" class="form-label">Cantidad del producto</label>
-              <input class="form-control" type="number" name="cantidad" required min="1" />
+              <input class="form-control" type="number" name="cantidad" id="cantidad" required min="1" />
 
               <label for="marca_producto" class="form-label">Marca del producto</label>
               <input class="form-control" type="text" name="marca" required />
@@ -64,7 +64,7 @@
               </select>
 
               <label for="total_producto" class="form-label">Total del producto</label>
-              <input class="form-control" type="text" name="total" required />
+              <input class="form-control" type="text" name="total" id="total" readonly required />
             </div>
           </div>
 
@@ -82,5 +82,22 @@
 {% endblock %}
 
 {% block customJS %}
-<script src="{{ url_for('static', filename ='assets/customJS/file.js') }}"></script>
+<script>
+  // Función para calcular el total
+  function calcularTotal() {
+    const cantidad = parseFloat(document.getElementById('cantidad').value);
+    const precio = parseFloat(document.getElementById('precio').value);
+
+    if (!isNaN(cantidad) && !isNaN(precio)) {
+      const total = cantidad * precio;
+      document.getElementById('total').value = total.toFixed(2);
+    } else {
+      document.getElementById('total').value = '';
+    }
+  }
+
+  // Escuchar cambios en los campos de cantidad y precio
+  document.getElementById('cantidad').addEventListener('input', calcularTotal);
+  document.getElementById('precio').addEventListener('input', calcularTotal);
+</script>
 {% endblock %}
