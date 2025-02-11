@@ -16,31 +16,32 @@ import openpyxl  # Para generar el excel
 from flask import send_file
 
 
-
 def procesar_producto(dataForm):
-    # Asegúrate de procesar el precio y convertirlo a un valor numérico decimal
-    precio_sin_puntos = re.sub('[^0-9,\.]', '', dataForm['precio'])  # Limpiar cualquier carácter no numérico
-    precio_decimal = float(precio_sin_puntos.replace(',', '.'))  # Reemplazar coma por punto para el decimal
-
-    # Convertir unidad de medida a float si es necesario
     try:
-        unidad_medida_float = float(dataForm['unidad_medida'])  # Convertir unidad de medida a float
-    except ValueError:
-        return 'La unidad de medida debe ser un número válido.'
+        # Procesar el precio y convertirlo a un valor numérico decimal
+        precio_sin_puntos = re.sub('[^0-9,\.]', '', dataForm['precio'])  # Limpiar cualquier carácter no numérico
+        precio_decimal = float(precio_sin_puntos.replace(',', '.'))  # Reemplazar coma por punto para el decimal
 
-    # Convertir el total a decimal (float) para asegurar su formato adecuado
-    try:
-        total_decimal = float(dataForm['total'])  # Convertir total a float (decimal)
-    except ValueError:
-        return 'El total debe ser un número válido.'
+        # Convertir unidad de medida a float si es necesario
+        try:
+            unidad_medida_float = float(dataForm['unidad_medida'])  # Convertir unidad de medida a float
+        except ValueError:
+            return 'La unidad de medida debe ser un número válido.'
 
-    try:
+        # Convertir el total a decimal (float) para asegurar su formato adecuado
+        try:
+            total_decimal = float(dataForm['total'])  # Convertir total a float (decimal)
+        except ValueError:
+            return 'El total debe ser un número válido.'
+
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                
                 # SQL para insertar el producto
-          
-                sql = "INSERT INTO producto (nombre, descripcion, precio, estado, unidad_medida, cantidad, marca, tipo, total) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                sql = """
+                    INSERT INTO producto (
+                        nombre, descripcion, precio, estado, unidad_medida, cantidad, marca, total
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """
 
                 # Creando una tupla con los valores del INSERT
                 valores = (
@@ -51,17 +52,18 @@ def procesar_producto(dataForm):
                     unidad_medida_float,  # Usar la unidad de medida como float
                     dataForm['cantidad'], 
                     dataForm['marca'], 
-                    dataForm['tipo'],
-                    total_decimal) # Usar el total como decimal
+                    total_decimal  # Usar el total como decimal
+                )
                 
                 cursor.execute(sql, valores)
-
                 conexion_MySQLdb.commit()
                 resultado_insert = cursor.rowcount
                 return resultado_insert
 
     except Exception as e:
         return f'Se produjo un error en procesar_producto: {str(e)}'
+
+
 def obtener_productos():
     try:
         with connectionBD() as conexion_MySQLdb:
@@ -82,7 +84,7 @@ def obtener_productos():
         print(f"Error en obtener_productos: {e}")
         return []
     
-# buscar
+# buscar 
 def obtener_producto_por_id(id):
     try:
         with connectionBD() as conexion_MySQLdb:
@@ -99,7 +101,7 @@ def obtener_producto_por_id(id):
         print(f"Error en obtener_producto_por_id: {e}")
         return None
 
-# actualizar
+# actualizar producto
 def actualizar_producto(id, data_form):
     try:
         with connectionBD() as conexion_MySQLdb:
@@ -112,13 +114,13 @@ def actualizar_producto(id, data_form):
                 sql = """
                     UPDATE producto 
                     SET nombre = %s, descripcion = %s, precio = %s, 
-                        estado = %s, cantidad = %s, marca = %s, tipo = %s, total = %s
+                        estado = %s, cantidad = %s, marca = %s, total = %s
                     WHERE id = %s
                 """
                 valores = (
                     data_form['nombre'], data_form['descripcion'], precio_decimal,
                     data_form['estado'], data_form['cantidad'], data_form['marca'],
-                    data_form['tipo'], total_decimal, id
+                    total_decimal, id
                 )
                 cursor.execute(sql, valores)
                 conexion_MySQLdb.commit()
@@ -126,3 +128,35 @@ def actualizar_producto(id, data_form):
     except Exception as e:
         print(f"Error en actualizar_producto: {e}")
         return False
+
+
+    
+# funcion para poder optener los productos por su id    
+def obtener_producto_por_id(id):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                querySQL = "SELECT * FROM producto WHERE id = %s"
+                cursor.execute(querySQL, (id,))
+                producto = cursor.fetchone()
+                if producto:
+                    # Convertir decimales a float
+                    producto['precio'] = float(producto['precio']) if producto['precio'] is not None else 0.0
+                    producto['total'] = float(producto['total']) if producto['total'] is not None else 0.0
+                return producto
+    except Exception as e:
+        print(f"Error en obtener_producto_por_id: {e}")
+        return None
+
+# funcion para poder eliminar los productos
+def eliminar_producto(id):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                querySQL = "DELETE FROM producto WHERE id = %s"
+                cursor.execute(querySQL, (id,))
+                conexion_MySQLdb.commit()
+                return cursor.rowcount
+    except Exception as e:
+        print(f"Error en eliminar_producto: {e}")
+        return None
