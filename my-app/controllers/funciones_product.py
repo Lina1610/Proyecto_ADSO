@@ -63,3 +63,13 @@ def procesar_producto(dataForm):
     except Exception as e:
         return f'Se produjo un error en procesar_producto: {str(e)}'
 
+def obtener_productos():
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                sql = "SELECT * FROM producto"
+                cursor.execute(sql)
+                productos = cursor.fetchall()
+                return productos
+    except Exception as e:
+        return f'Se produjo un error en obtener_productos: {str(e)}'

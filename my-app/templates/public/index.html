@@ -23,6 +23,7 @@
 
         <!-- Core theme CSS (includes Bootstrap)-->
         <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/styles_bos.css') }}"  />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 
     <body id="page-top">
@@ -36,8 +37,8 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
-                        <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#portfolio">Portfolio</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#services">Servicios</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#sobre_nosotros">Sobre Nosotros</a></li>
                         <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
                         <li class="nav-item"><a class="nav-link" href="#team">Team</a></li>
                         <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
@@ -110,7 +111,7 @@
   <!-- Espaciador entre Parallax y Historia -->
 <div class="espaciador"></div>
 
-<section class="historia-del-tamal">
+<section class="historia-del-tamal" id="sobre_nosotros">
     <!-- Título de la sección -->
     <div class="contenedor-titulo" data-aos="zoom-in">
       <h2 class="titulo-principal">
@@ -163,7 +164,7 @@
 </section>
   
   
-        <!-- Team-->
+        <!-- Team ICONO DE WhatsApp-->
 
        
 
@@ -173,14 +174,82 @@
 
         
        
-
-
-
         
         <!-- Contact-->
+           <!-- Botón o imagen que activa el Lightbox -->
+    <div class="gallery">
+        <img src="/static/assets/img/preparacion.jpeg" alt="Video Thumbnail" class="thumbnail" onclick="openLightbox()">
+    </div>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <div class="lightbox-content">
+            <span class="close-btn" onclick="closeLightbox()">&times;</span>
+            <video controls autoplay>
+                <source src="/static/assets/img/Videos/Video_Tamal.mp4" type="video/mp4">
+                Tu navegador no soporta el elemento de video.
+            </video>
+        </div>
+    </div>
          
        
         <!-- Footer-->
+        <footer class="footer">
+            <div class="footer-container">
+              
+              <!-- Sección de Información de la Empresa -->
+              <div class="footer-section">
+                <h3 class="footer-title">Nombre de la Empresa</h3>
+                <p class="footer-text">
+                  Somos una empresa comprometida con la innovación y la excelencia. Ofrecemos soluciones a medida para nuestros clientes.
+                </p>
+                <div class="footer-links">
+                  <a href="#" class="footer-link">Política de Privacidad</a>
+                  <a href="#" class="footer-link">Términos y Condiciones</a>
+                </div>
+              </div>
+          
+              <!-- Enlaces Rápidos -->
+              <div class="footer-section">
+                <h3 class="footer-title">Enlaces Rápidos</h3>
+                <ul class="footer-list">
+                  <li><a href="#" class="footer-link">Inicio</a></li>
+                  <li><a href="#" class="footer-link">Servicios</a></li>
+                  <li><a href="#" class="footer-link">Nosotros</a></li>
+                  <li><a href="#" class="footer-link">Contacto</a></li>
+                </ul>
+              </div>
+          
+              <!-- Contacto -->
+              <div class="footer-section">
+                <h3 class="footer-title">Contacto</h3>
+                <p class="footer-text">
+                  <strong>Email:</strong> info@empresa.com<br>
+                  <strong>Teléfono:</strong> +123 456 789<br>
+                  <strong>Dirección:</strong> Calle Falsa 123, Ciudad, País
+                </p>
+              </div>
+          
+              <!-- Redes Sociales -->
+              <div class="footer-section">
+                <h3 class="footer-title">Síguenos</h3>
+                <div class="social-icons">
+                  <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                  <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                  <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+                  <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                </div>
+              </div>
+          
+            </div>
+          
+            <!-- Derechos de Autor -->
+            <div class="footer-bottom">
+              <p class="footer-copy">
+                &copy; 2023 Nombre de la Empresa. Todos los derechos reservados.
+              </p>
+            </div>
+          </footer>
 
         
         
@@ -256,145 +325,13 @@
             </div>
         </div>
         <!-- Portfolio item 3 modal popup-->
-        <div class="portfolio-modal modal fade" id="portfolioModal3" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="close-modal" data-bs-dismiss="modal"><img src="{{ url_for('static', filename ='assets/img/close-icon.svg') }}" alt="Close modal" /></div>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-8">
-                                <div class="modal-body">
-                                    <!-- Project details-->
-                                    <h2 class="text-uppercase">Project Name</h2>
-                                    <p class="item-intro text-muted">Lorem ipsum dolor sit amet consectetur.</p>
-                                    <img class="img-fluid d-block mx-auto" src="{{ url_for('static', filename ='assets/img/portfolio/3.jpg') }}" alt="..." />
-                                    <p>Use this area to describe your project. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!</p>
-                                    <ul class="list-inline">
-                                        <li>
-                                            <strong>Client:</strong>
-                                            Finish
-                                        </li>
-                                        <li>
-                                            <strong>Category:</strong>
-                                            Identity
-                                        </li>
-                                    </ul>
-                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
-                                        <i class="fas fa-xmark me-1"></i>
-                                        Close Project
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
         <!-- Portfolio item 4 modal popup-->
-        <div class="portfolio-modal modal fade" id="portfolioModal4" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="close-modal" data-bs-dismiss="modal"><img src="{{ url_for('static', filename ='assets/img/close-icon.svg') }}" alt="Close modal" /></div>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-8">
-                                <div class="modal-body">
-                                    <!-- Project details-->
-                                    <h2 class="text-uppercase">Project Name</h2>
-                                    <p class="item-intro text-muted">Lorem ipsum dolor sit amet consectetur.</p>
-                                    <img class="img-fluid d-block mx-auto" src="{{ url_for('static', filename ='assets/img/portfolio/4.jpg') }}" alt="..." />
-                                    <p>Use this area to describe your project. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!</p>
-                                    <ul class="list-inline">
-                                        <li>
-                                            <strong>Client:</strong>
-                                            Lines
-                                        </li>
-                                        <li>
-                                            <strong>Category:</strong>
-                                            Branding
-                                        </li>
-                                    </ul>
-                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
-                                        <i class="fas fa-xmark me-1"></i>
-                                        Close Project
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+       
         <!-- Portfolio item 5 modal popup-->
-        <div class="portfolio-modal modal fade" id="portfolioModal5" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="close-modal" data-bs-dismiss="modal"><img src="{{ url_for('static', filename ='assets/img/close-icon.svg') }}" alt="Close modal" /></div>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-8">
-                                <div class="modal-body">
-                                    <!-- Project details-->
-                                    <h2 class="text-uppercase">Project Name</h2>
-                                    <p class="item-intro text-muted">Lorem ipsum dolor sit amet consectetur.</p>
-                                    <img class="img-fluid d-block mx-auto" src="{{ url_for('static', filename ='assets/img/portfolio/5.jpg') }}" alt="..." />
-                                    <p>Use this area to describe your project. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!</p>
-                                    <ul class="list-inline">
-                                        <li>
-                                            <strong>Client:</strong>
-                                            Southwest
-                                        </li>
-                                        <li>
-                                            <strong>Category:</strong>
-                                            Website Design
-                                        </li>
-                                    </ul>
-                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
-                                        <i class="fas fa-xmark me-1"></i>
-                                        Close Project
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
         <!-- Portfolio item 6 modal popup-->
-        <div class="portfolio-modal modal fade" id="portfolioModal6" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="close-modal" data-bs-dismiss="modal"><img src="{{ url_for('static', filename ='assets/img/close-icon.svg') }}" alt="Close modal" /></div>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-8">
-                                <div class="modal-body">
-                                    <!-- Project details-->
-                                    <h2 class="text-uppercase">Project Name</h2>
-                                    <p class="item-intro text-muted">Lorem ipsum dolor sit amet consectetur.</p>
-                                    <img class="img-fluid d-block mx-auto" src="{{ url_for('static', filename ='assets/img/portfolio/6.jpg') }}" alt="..." />
-                                    <p>Use this area to describe your project. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est blanditiis dolorem culpa incidunt minus dignissimos deserunt repellat aperiam quasi sunt officia expedita beatae cupiditate, maiores repudiandae, nostrum, reiciendis facere nemo!</p>
-                                    <ul class="list-inline">
-                                        <li>
-                                            <strong>Client:</strong>
-                                            Window
-                                        </li>
-                                        <li>
-                                            <strong>Category:</strong>
-                                            Photography
-                                        </li>
-                                    </ul>
-                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
-                                        <i class="fas fa-xmark me-1"></i>
-                                        Close Project
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+       
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->
