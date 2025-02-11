@@ -1,0 +1,53 @@
+<pre>
+    {{ productos | tojson }}
+</pre>
+
+{% extends 'public/base_cpanel.html' %}
+
+{% block title %}Listado de Productos{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h3 class="text-center">LISTA DE PRODUCTOS</h3>
+    <hr>
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Estado</th>
+                <th>Cantidad</th>
+                <th>Marca</th>
+                <th>Tipo</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto.id }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.descripcion }}</td>
+                <td>${{ producto.precio }}</td>
+                <td>{{ producto.estado }}</td>
+                <td>{{ producto.cantidad }}</td>
+                <td>{{ producto.marca }}</td>
+                <td>{{ producto.tipo }}</td>
+                <td>${{ producto.total }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -22,3 +22,22 @@ def viewFormProducto():
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))  # Redirige a la página de inicio si no está conectado
+
+@app.route('/listar-productos')
+def listar_productos():
+    if 'conectado' in session:
+        try:
+            with connectionBD() as conexion_MySQLdb:
+                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                    cursor.execute("SELECT * FROM producto")
+                    productos = cursor.fetchall()
+                    
+                    print("📌 Productos obtenidos:", productos)  # 🔥 Agregado para depurar
+
+            return render_template('public/producto/lista_productos.html', productos=productos)
+        except Exception as e:
+            flash(f'Error al obtener los productos: {str(e)}', 'error')
+            return redirect(url_for('viewFormProducto'))
+    else:
+        flash('Debes iniciar sesión primero.', 'error')
+        return redirect(url_for('inicio'))
