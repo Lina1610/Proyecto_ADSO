@@ -1,7 +1,5 @@
 {% extends 'public/base_cpanel.html' %}
-<!--Cambiando el title-->
 {% block title %}Crud con Python 🐍 | Lista de Productos{% endblock %}
-<!--Inicio del block-->
 {% block body %}
 
 <div class="card" style="border-radius: 0px !important">
@@ -11,21 +9,22 @@
       <hr />
     </div>
 
+    <!-- Campo de búsqueda -->
     <div class="row justify-content-end">
       <div class="col-md-6 mt-4 py-2">
         <input
           type="search"
-          id="search"
+          id="search_producto"
           class="form-control border-0 shadow-none"
           placeholder="Buscar producto..."
-          onkeyup="buscadorTable('tbl_productos')" />
+          onkeyup="buscarProductoAjax()" />
       </div>
     </div>
 
+    <!-- Tabla de productos -->
     <div class="row justify-content-center mb-2">
       <div class="table-responsive text-nowrap table-hover">
         <table
-          table-hover
           id="tbl_productos"
           class="table table-striped table-bordered"
           cellspacing="0"
@@ -40,7 +39,7 @@
               <th>Acción</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="tabla_productos_body">
             {% for producto in productos %}
             <tr id="producto_{{ producto.id }}">
               <td>{{ loop.index }}</td>
@@ -81,27 +80,37 @@
   </div>
 </div>
 
-<!-- Script para eliminar producto -->
 <script>
-  function eliminarProducto(id) {
-    if (confirm('¿Estás seguro de eliminar este producto?')) {
-      fetch(`/eliminar-producto/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          document.getElementById(`producto_${id}`).remove();
-          alert(data.message);
-        } else {
-          alert(data.message);
-        }
-      })
-      .catch(error => console.error('Error:', error));
+  // Función AJAX para buscar productos
+  function buscarProductoAjax() {
+    const query = document.getElementById("search_producto").value; // Obtiene el valor del campo de búsqueda
+
+    // Validar si la búsqueda está vacía
+    if (query.trim() === "") {
+      // Si está vacía, recargar la tabla con todos los productos
+      fetch('/lista-de-productos')
+        .then(response => response.text())
+        .then(data => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(data, 'text/html');
+          const newTableBody = doc.getElementById('tabla_productos_body').innerHTML;
+          document.getElementById('tabla_productos_body').innerHTML = newTableBody;
+        })
+        .catch(error => console.error('Error al recargar la tabla:', error));
+      return;
     }
+
+    // Configurar la solicitud AJAX
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/buscando-producto', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        // Actualizar el cuerpo de la tabla con los resultados de la búsqueda
+        document.getElementById('tabla_productos_body').innerHTML = xhr.responseText;
+      }
+    };
+    xhr.send(JSON.stringify({ busqueda: query }));
   }
 </script>
 

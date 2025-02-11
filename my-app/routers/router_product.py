@@ -5,6 +5,8 @@ from controllers.funciones_product import obtener_productos
 from controllers.funciones_product import obtener_producto_por_id
 from controllers.funciones_product import actualizar_producto 
 from controllers.funciones_product import eliminar_producto
+from controllers.funciones_product import buscarProductoBD
+from flask import jsonify
 
 PATH_URL = "public/producto"
 
@@ -88,4 +90,21 @@ def eliminar_producto_route(id):
             return {'success': True, 'message': 'Producto eliminado correctamente'}
         return {'success': False, 'message': 'Error al eliminar producto'}
     return {'success': False, 'message': 'Usuario no autenticado'}, 401
-    
+
+@app.route("/buscando-producto", methods=['POST'])
+def viewBuscarProductoBD():
+    try:
+        search_query = request.json.get('busqueda')  # Obtener el término de búsqueda desde el JSON
+        if not search_query:
+            return jsonify({'error': 'No search query provided'}), 400
+
+        resultadoBusqueda = buscarProductoBD(search_query)  # Buscar productos en la base de datos
+
+        if resultadoBusqueda:
+            return render_template('public/producto/busqueda_producto.html', dataBusqueda=resultadoBusqueda)
+        else:
+            return jsonify({'fin': 0})  # No se encontraron resultados
+
+    except Exception as e:
+        print(f"Error en viewBuscarProductoBD: {e}")  # Log de depuración
+        return jsonify({'error': str(e)}), 500  # Manejo de errores

@@ -85,21 +85,26 @@ def obtener_productos():
         return []
     
 # buscar 
-def obtener_producto_por_id(id):
+# Función para buscar productos en la base de datos
+def buscarProductoBD(search):
     try:
         with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                querySQL = "SELECT * FROM producto WHERE id = %s"
-                cursor.execute(querySQL, (id,))
-                producto = cursor.fetchone()
-                if producto:
-                    # Convertir decimales a float
-                    producto['precio'] = float(producto['precio']) if producto['precio'] is not None else 0.0
-                    producto['total'] = float(producto['total']) if producto['total'] is not None else 0.0
-                return producto
+            with conexion_MySQLdb.cursor(dictionary=True) as mycursor:
+                querySQL = ("""
+                    SELECT 
+                        id, nombre, descripcion, precio, cantidad, marca, estado, total
+                    FROM producto
+                    WHERE nombre LIKE %s 
+                    ORDER BY id DESC
+                """)
+                search_pattern = f"%{search}%"  # Agregar "%" alrededor del término de búsqueda
+                mycursor.execute(querySQL, (search_pattern,))
+                resultado_busqueda = mycursor.fetchall()
+                return resultado_busqueda
+
     except Exception as e:
-        print(f"Error en obtener_producto_por_id: {e}")
-        return None
+        print(f"Ocurrió un error en la función buscarProductoBD: {e}")
+        return []
 
 # actualizar producto
 def actualizar_producto(id, data_form):
