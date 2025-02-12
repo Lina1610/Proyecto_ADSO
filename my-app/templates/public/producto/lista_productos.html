@@ -13,7 +13,7 @@
     <div class="row justify-content-end">
       <div class="col-md-6 mt-4 py-2">
         <input
-          type="search"
+          type="searchp"
           id="search_producto"
           class="form-control border-0 shadow-none"
           placeholder="Buscar producto..."
@@ -80,38 +80,7 @@
   </div>
 </div>
 
-<script>
-  // Función AJAX para buscar productos
-  function buscarProductoAjax() {
-    const query = document.getElementById("search_producto").value; // Obtiene el valor del campo de búsqueda
-
-    // Validar si la búsqueda está vacía
-    if (query.trim() === "") {
-      // Si está vacía, recargar la tabla con todos los productos
-      fetch('/lista-de-productos')
-        .then(response => response.text())
-        .then(data => {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(data, 'text/html');
-          const newTableBody = doc.getElementById('tabla_productos_body').innerHTML;
-          document.getElementById('tabla_productos_body').innerHTML = newTableBody;
-        })
-        .catch(error => console.error('Error al recargar la tabla:', error));
-      return;
-    }
-
-    // Configurar la solicitud AJAX
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/buscando-producto', true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        // Actualizar el cuerpo de la tabla con los resultados de la búsqueda
-        document.getElementById('tabla_productos_body').innerHTML = xhr.responseText;
-      }
-    };
-    xhr.send(JSON.stringify({ busqueda: query }));
-  }
-</script>
+<!-- Vincular el archivo JavaScript -->
+<script src="{{ url_for('static', filename='assets/customJS/buscar_producto.js') }}"></script>
 
 {% endblock %}

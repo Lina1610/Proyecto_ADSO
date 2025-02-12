@@ -1,3 +1,163 @@
+/* Estilos específicos para el campo de contraseña */
+.card.custom-card .form-password-toggle .form-control {
+  font-size: 1.25rem !important; /* Tamaño de la fuente */
+  padding: 0.75rem 1rem !important; /* Padding interno */
+  margin-bottom: 1.5rem !important; /* Margen inferior */
+  width: 100% !important; /* Ancho del campo */
+  border: 1px solid #ced4da !important; /* Borde sutil */
+  border-radius: 0.375rem !important; /* Bordes redondeados */
+}
+
+/* Estilos para el botón de visibilidad */
+.card.custom-card .form-password-toggle .input-group-text {
+  font-size: 1.25rem !important; /* Tamaño del ícono */
+  padding: 0.75rem 1rem !important; /* Padding interno */
+  background-color: #f8f9fa !important; /* Fondo claro */
+  border: 1px solid #ced4da !important; /* Borde sutil */
+  border-left: none !important; /* Elimina el borde izquierdo */
+  border-radius: 0 0.375rem 0.375rem 0 !important; /* Bordes redondeados solo a la derecha */
+  cursor: pointer; /* Cambia el cursor al pasar el mouse */
+}
+
+/* Estilos para el grupo de entrada (input + botón) */
+.card.custom-card .form-password-toggle .input-group {
+  display: flex !important; /* Asegura que el input y el botón estén alineados */
+  align-items: center !important; /* Centra verticalmente el botón */
+}
+/* Estilos para el contenedor principal */
+.container-fluid {
+  padding: 2rem; /* Añade padding alrededor del contenido */
+}
+
+/* Estilos para la tarjeta */
+/* Estilos base para la tarjeta */
+.card.custom-card {
+  max-width: 800px; /* Reduce el ancho máximo */
+  
+  width: 80%; /* Reduce el ancho en pantallas grandes */
+  margin: 0 auto; /* Centra la tarjeta */
+  padding: 1.5rem; /* Reduce el padding interno */
+  background-color: white; /* Fondo blanco */
+  border: 1px solid #e0e0e0; /* Borde sutil */
+  margin-top: 120px; /* Reduce el margen superior */
+  border-radius: 0.5rem; /* Bordes redondeados */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
+}
+
+/* Estilos para la letra en pantallas grandes */
+.card.custom-card .form-label,
+.card.custom-card .form-control {
+  font-size: 1rem; /* Reduce el tamaño de la fuente */
+}
+/* Estilos para el cuerpo de la tarjeta */
+.card.custom-card .card-body {
+  padding: 2rem; /* Añade padding interno */
+}
+
+/* Estilos para los campos del formulario */
+.card.custom-card .form-control {
+  font-size: 1.25rem; /* Tamaño de la fuente */
+  padding: 0.75rem 1rem; /* Padding interno */
+  margin-bottom: 2.5rem; /* Aumenta el espacio entre los campos */
+  width: 100%; /* Ancho del campo */
+}
+/* Estilos para las etiquetas */
+.card.custom-card .form-label {
+  font-size: 1.25rem; /* Aumenta el tamaño de la fuente */
+  margin-bottom: 0.5rem; /* Espacio entre la etiqueta y el campo */
+  /* Evita que el texto se divida en dos líneas */
+}
+
+/* Estilos para el botón */
+.card.custom-card .btn {
+  font-size: 1.25rem; /* Aumenta el tamaño de la fuente */
+  padding: 0.75rem 1rem; /* Aumenta el padding */
+  width: 100%; /* Ocupa el 100% del ancho disponible */
+  margin-top: 1.5rem; /* Espacio superior */
+}
+
+/**/
+/* Estilos para el formulario de login */
+.authentication-wrapper .authentication-inner .card {
+  max-width: 500px; /* Ancho máximo de la tarjeta */
+  width: 130%; /* Ocupa el 100% del ancho disponible */
+  margin: 0 auto; /* Centra la tarjeta */
+  padding: 2rem; /* Padding interno */
+  border-radius: 0.5rem; /* Bordes redondeados */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+}
+
+/* Estilos para las etiquetas */
+.authentication-wrapper .authentication-inner .card .form-label {
+  font-size: 1.25rem; /* Tamaño de la fuente */
+  margin-bottom: 0.75rem; /* Espacio entre la etiqueta y el campo */
+}
+
+/* Estilos para los campos de entrada */
+.authentication-wrapper .authentication-inner .card .form-control {
+  font-size: 1.25rem; /* Tamaño de la fuente */
+  padding: 0.75rem 1rem; /* Padding interno */
+  margin-bottom: 1.5rem; /* Espacio entre los campos */
+  border: 1px solid #ced4da; /* Borde sutil */
+  border-radius: 0.375rem; /* Bordes redondeados */
+}
+
+/* Estilos para el botón */
+.authentication-wrapper .authentication-inner .card .btn {
+  font-size: 1.25rem; /* Tamaño de la fuente */
+  padding: 0.75rem 1rem; /* Padding interno */
+  width: 100%; /* Ocupa el 100% del ancho */
+  margin-top: 1rem; /* Espacio superior */
+}
+
+/* Estilos para el enlace "Olvidó su Clave?" */
+.authentication-wrapper .authentication-inner .card a {
+  font-size: 1rem; /* Tamaño de la fuente */
+}
+
+/* Estilos para el texto "Crear mi cuenta" */
+.authentication-wrapper .authentication-inner .card .text-center a {
+  font-size: 1.1rem; /* Tamaño de la fuente */
+  font-weight: 500; /* Grosor de la fuente */
+}
+
+/* Estilos para el logo */
+.authentication-wrapper .authentication-inner .card .app-brand-logo img {
+  width: 100; /* Aumenta el tamaño del logo */
+  
+  margin-bottom: 1.5rem; /* Espacio inferior para separar el logo del formulario */
+}
+
+/* Estilos para dispositivos móviles */
+@media (max-width: 767.98px) {
+  .authentication-wrapper .authentication-inner .card {
+    padding: 1.5rem; /* Reduce el padding en móviles */
+  }
+
+  .authentication-wrapper .authentication-inner .card .form-label,
+  .authentication-wrapper .authentication-inner .card .form-control {
+    font-size: 1rem; /* Reduce el tamaño de la fuente en móviles */
+  }
+
+  .authentication-wrapper .authentication-inner .card .btn {
+    font-size: 1rem; /* Reduce el tamaño del botón en móviles */
+    padding: 0.5rem 0.75rem; /* Ajusta el padding */
+  }
+
+  .authentication-wrapper .authentication-inner .card a {
+    font-size: 0.9rem; /* Reduce el tamaño del enlace en móviles */
+  }
+
+  .authentication-wrapper .authentication-inner .card .text-center a {
+    font-size: 1rem; /* Reduce el tamaño del texto en móviles */
+  }
+
+  .authentication-wrapper .authentication-inner .card .app-brand-logo img {
+    width: 150px; /* Ajusta el tamaño del logo en móviles */
+  }
+}
+/**/
+
 body {
   font-family: "Open Sans", sans-serif;
 }
@@ -135,13 +295,13 @@ tbody tr:hover {
   justify-content: center;
 }
 .logo{
-<<<<<<< HEAD
+
   height: 4000px;
   width: 400px;
-=======
+
   width: 400px;
   height: 400px;
->>>>>>> 36830dc2cb493114ed80227b97328681b712e4c3
+
 }
 
 /*Loader para precarga en botn cargar mas consignaciones*/
@@ -196,6 +356,8 @@ tbody tr:hover {
   }
 }
 
+
+
 .menu-vertical .menu-item.active:not(.open) > .menu-link {
   font-size: 14px !important;
 }
@@ -240,6 +402,11 @@ tbody tr:hover {
 }
 
 #search {
+  min-width: 44% !important;
+  background-color: #f3efef !important;
+}
+
+#search_producto {
   min-width: 44% !important;
   background-color: #f3efef !important;
 }

@@ -101,9 +101,40 @@ def viewBuscarProductoBD():
         resultadoBusqueda = buscarProductoBD(search_query)  # Buscar productos en la base de datos
 
         if resultadoBusqueda:
-            return render_template('public/producto/busqueda_producto.html', dataBusqueda=resultadoBusqueda)
+            # Si hay resultados, generar el HTML de la tabla
+            html_resultados = ""
+            for producto in resultadoBusqueda:
+                html_resultados += f"""
+                <tr id="producto_{producto['id']}">
+                    <td>{producto['id']}</td>
+                    <td>{producto['nombre']}</td>
+                    <td>{producto['descripcion']}</td>
+                    <td>$ {producto['precio']:,.2f}</td>
+                    <td>{producto['cantidad']}</td>
+                    <td width="10px">
+                        <a href="/detalles-producto/{producto['id']}" class="btn btn-info btn-sm" title="Ver detalles">
+                            <i class="bi bi-eye"></i> Ver detalles
+                        </a>
+                        <a href="/editar-producto/{producto['id']}" class="btn btn-success btn-sm" title="Actualizar">
+                            <i class="bi bi-arrow-clockwise"></i> Actualizar
+                        </a>
+                        <a href="#" onclick="eliminarProducto('{producto['id']}');" class="btn btn-danger btn-sm" title="Eliminar">
+                            <i class="bi bi-trash3"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+                """
+            return jsonify({'success': True, 'html': html_resultados})
         else:
-            return jsonify({'fin': 0})  # No se encontraron resultados
+            # Si no hay resultados, devolver un mensaje en HTML
+            mensaje_html = f"""
+            <tr>
+                <td colspan="6" style="text-align:center;color: red;font-weight: bold;">
+                    No resultados para la búsqueda: <strong style="color: #222;">{search_query}</strong>
+                </td>
+            </tr>
+            """
+            return jsonify({'success': False, 'html': mensaje_html})
 
     except Exception as e:
         print(f"Error en viewBuscarProductoBD: {e}")  # Log de depuración
