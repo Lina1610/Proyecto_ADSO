@@ -10,7 +10,7 @@ import re
 # Para encriptar contraseña generate_password_hash
 from werkzeug.security import generate_password_hash
 
-
+# probandoS
 def recibeInsertRegisterUser(name_surname, email_user, pass_user):
     respuestaValidar = validarDataRegisterLogin(
         name_surname, email_user, pass_user)

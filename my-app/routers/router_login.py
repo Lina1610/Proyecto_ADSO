@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash
 from controllers.funciones_login import *
 PATH_URL_LOGIN = "public/login"
 
-
+#probando
 @app.route('/login', methods=['GET'])
 def inicio():
     if 'conectado' in session:

@@ -3,6 +3,10 @@
 {% block title %}Crud con Python 🐍 | Crear cuenta{% endblock %}
 
 {% block body %}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"
+/>
 <div class="container-fluid">
   <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
@@ -19,88 +23,127 @@
           <form
             class="mb-3"
             action="{{ url_for('cpanelResgisterUserBD') }}"
-            method="POST">
-            <!-- Fila para organizar los campos en dos columnas -->
+            method="POST"
+            id="register-form">
             <div class="row">
-              <!-- Columna izquierda -->
-              <div class="col-md-6">
-                <div class="mb-4">
-                  <label for="name_surname" class="form-label">
-                    Nombre y apellido
-                  </label>
+              <!-- Columna para los campos -->
+              <div class="col-12 col-md-6 mb-4">
+                <!-- Campo de tipo de documento -->
+                <label for="tipo_documento" class="form-label">Tipo de documento</label>
+                <select class="form-control" id="tipo_documento" name="tipo_documento" required>
+                  <option value="">Seleccione...</option>
+                  <option value="cc">Cédula de Ciudadanía</option>
+                  <option value="ti">Tarjeta de Identidad</option>
+                  <option value="ce">Cédula de Extranjería</option>
+                  <option value="nit">NIT</option>
+                </select>
+              </div>
+
+              <div class="col-12 col-md-6 mb-4">
+                <!-- Campo de documento -->
+                <label for="documento" class="form-label">Documento</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="documento"
+                  name="documento"
+                  required />
+              </div>
+
+              <div class="col-12 col-md-6 mb-4">
+                <!-- Campo de nombre -->
+                <label for="nombre" class="form-label">Nombre</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nombre"
+                  name="nombre"
+                  required />
+              </div>
+
+              <div class="col-12 col-md-6 mb-4">
+                <!-- Campo de apellido -->
+                <label for="apellido" class="form-label">Apellido</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="apellido"
+                  name="apellido"
+                  required />
+              </div>
+
+              <!-- Campo de teléfono con código de país -->
+              <div class="col-12 col-md-6 mb-4">
+                <label for="telefono" class="form-label">Teléfono</label>
+                <input
+                  type="tel"
+                  class="form-control"
+                  id="telefono"
+                  name="telefono"
+                  placeholder="Número de teléfono"
+                  required />
+                <!-- Campo oculto para almacenar el código de país -->
+                <input type="hidden" id="codigo_pais" name="codigo_pais" />
+              </div>
+
+              <div class="col-12 col-md-6 mb-4">
+                <!-- Campo de correo electrónico -->
+                <label for="email_user" class="form-label">Correo electrónico</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email_user"
+                  name="email_user"
+                  required />
+              </div>
+
+              <div class="col-12 col-md-6 mb-4">
+                <!-- Campo de contraseña -->
+                <label class="form-label" for="pass_user">Contraseña</label>
+                <div class="input-group input-group-merge">
                   <input
-                    type="text"
+                    type="password"
                     class="form-control"
-                    name="name_surname"
-                    required
-                    autofocus />
+                    id="pass_user"
+                    name="pass_user"
+                    placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                    aria-describedby="password"
+                    required />                
                 </div>
-                <div class="mb-4">
-                  <label for="email_user" class="form-label">Email</label>
+                <div id="password-strength" class="mt-2"></div>
+              </div>
+
+              <!-- Campo de confirmación de contraseña -->
+              <div class="col-12 col-md-6 mb-4">
+                <label class="form-label" for="confirm_pass_user">Confirmar contraseña</label>
+                <div class="input-group input-group-merge">
                   <input
-                    type="email"
+                    type="password"
                     class="form-control"
-                    name="email_user"
-                    required />
-                </div>
-                <div class="mb-4 form-password-toggle">
-                  <label class="form-label" for="pass_user">Clave</label>
-                  <div class="input-group input-group-merge">
-                    <input
-                      type="password"
-                      class="form-control"
-                      name="pass_user"
-                      id="pass_user"
-                      placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                      aria-describedby="password"
-                      required />                                       
-                  </div>
+                    id="confirm_pass_user"
+                    name="confirm_pass_user"
+                    placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                    aria-describedby="confirm-password"
+                    required />                
                 </div>
               </div>
 
-              <!-- Columna derecha -->
-              <div class="col-md-6">
-                <div class="mb-4">
-                  <label for="cc" class="form-label">DOCUMENTO IDENTIDAD</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    name="cc"
-                    required />
-                </div>
-                <div class="mb-4">
-                  <label for="direccion" class="form-label">Dirección</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    name="direccion"
-                    required />
-                </div>
-                <div class="mb-4">
-                  <label for="telefono" class="form-label">Teléfono</label>
-                  <input
-                    type="tel"
-                    class="form-control"
-                    name="telefono"
-                    required />
-                </div>
-              </div>
             </div>
 
             <!-- Botón de enviar -->
-            <button class="btn btn-primary w-100">
+            <button class="btn btn-primary w-100" type="submit">
               Crear cuenta
               <i class="bi bi-arrow-right-circle"></i>
             </button>
           </form>
 
           <!-- Enlace para volver -->
-          <div class="text-center">
+          <div class="text-center mt-4">
             <a
               href="{{ url_for('inicio') }}"
               class="d-flex align-items-center justify-content-center">
               <i class="bx bx-chevron-left scaleX-n1-rtl bx-sm"></i>
-              volver
+              Volver
             </a>
           </div>
         </div>
@@ -108,4 +151,11 @@
     </div>
   </div>
 </div>
+
+<!-- Script de intl-tel-input -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+
+<script src="{{ url_for('static', filename='assets/customJS/home.js') }}"></script>
+
 {% endblock %}
