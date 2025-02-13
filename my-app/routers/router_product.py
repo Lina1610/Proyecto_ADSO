@@ -1,6 +1,9 @@
 from app import app
 from flask import render_template, request, flash, redirect, url_for, session
 from controllers.funciones_product import procesar_producto  # Asegúrate de que esta función esté importada correctamente
+from controllers.funciones_product import obtener_productos
+from controllers.funciones_product import obtener_producto_por_id
+from controllers.funciones_product import actualizar_producto
 
 PATH_URL = "public/producto"
 
@@ -22,3 +25,40 @@ def viewFormProducto():
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))  # Redirige a la página de inicio si no está conectado
+
+
+# lista productos
+@app.route('/lista-de-productos')
+def lista_productos():
+    if 'conectado' in session:
+        productos = obtener_productos()
+        return render_template('public/producto/lista_productos.html', productos=productos)
+    else:
+        flash('Primero debes iniciar sesión.', 'error')
+        return redirect(url_for('inicio'))
+
+#editar producto
+
+@app.route('/editar-producto/<int:id>', methods=['GET', 'POST'])
+def viewEditarProducto(id):
+    if 'conectado' in session:
+        if request.method == 'GET':
+            # Obtener los datos del producto por su ID
+            producto = obtener_producto_por_id(id)
+            if producto:
+                return render_template('public/producto/editar_producto.html', producto=producto)
+            else:
+                flash('Producto no encontrado', 'error')
+                return redirect(url_for('lista_productos'))
+        elif request.method == 'POST':
+            # Procesar la actualización del producto
+            data_form = request.form
+            resultado = actualizar_producto(id, data_form)
+            if resultado:
+                flash('Producto actualizado correctamente', 'success')
+            else:
+                flash('Error al actualizar el producto', 'error')
+            return redirect(url_for('lista_productos'))
+    else:
+        flash('Primero debes iniciar sesión.', 'error')
+        return redirect(url_for('inicio'))

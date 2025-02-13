@@ -19,7 +19,7 @@ from flask import send_file
 
 def procesar_producto(dataForm):
     # Asegúrate de procesar el precio y convertirlo a un valor numérico decimal
-    precio_sin_puntos = re.sub('[^0-9,\.]', '', dataForm['precio'])  # Limpiar cualquier carácter no numérico
+    precio_sin_puntos = re.sub(r'[^0-9,.]', '', dataForm['precio'])
     precio_decimal = float(precio_sin_puntos.replace(',', '.'))  # Reemplazar coma por punto para el decimal
 
     # Convertir unidad de medida a float si es necesario
@@ -62,6 +62,43 @@ def procesar_producto(dataForm):
 
     except Exception as e:
         return f'Se produjo un error en procesar_producto: {str(e)}'
+def obtener_productos():
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                querySQL = "SELECT * FROM producto ORDER BY id DESC"
+                cursor.execute(querySQL)
+                productos = cursor.fetchall()
+                
+                # Convertir decimales a float para manipulación en Python
+                for producto in productos:
+                    if 'precio' in producto:
+                        producto['precio'] = float(producto['precio'])
+                    if 'total' in producto:
+                        producto['total'] = float(producto['total'])
+                
+                return productos
+    except Exception as e:
+        print(f"Error en obtener_productos: {e}")
+        return []
+    
+# buscar
+def obtener_producto_por_id(id):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                querySQL = "SELECT * FROM producto WHERE id = %s"
+                cursor.execute(querySQL, (id,))
+                producto = cursor.fetchone()
+                if producto:
+                    # Convertir decimales a float
+                    producto['precio'] = float(producto['precio']) if producto['precio'] is not None else 0.0
+                    producto['total'] = float(producto['total']) if producto['total'] is not None else 0.0
+                return producto
+    except Exception as e:
+        print(f"Error en obtener_producto_por_id: {e}")
+        return None
+
 
 def obtener_productos():
     try:
@@ -73,3 +110,31 @@ def obtener_productos():
                 return productos
     except Exception as e:
         return f'Se produjo un error en obtener_productos: {str(e)}'
+
+# actualizar
+def actualizar_producto(id, data_form):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Procesar el precio y total como en procesar_producto
+                precio_sin_puntos = re.sub(r'[^0-9,.]', '', data_form['precio'])
+                precio_decimal = float(precio_sin_puntos.replace(',', '.'))
+                total_decimal = float(data_form['total'])
+
+                sql = """
+                    UPDATE producto 
+                    SET nombre = %s, descripcion = %s, precio = %s, 
+                        estado = %s, cantidad = %s, marca = %s, tipo = %s, total = %s
+                    WHERE id = %s
+                """
+                valores = (
+                    data_form['nombre'], data_form['descripcion'], precio_decimal,
+                    data_form['estado'], data_form['cantidad'], data_form['marca'],
+                    data_form['tipo'], total_decimal, id
+                )
+                cursor.execute(sql, valores)
+                conexion_MySQLdb.commit()
+                return cursor.rowcount > 0
+    except Exception as e:
+        print(f"Error en actualizar_producto: {e}")
+        return False

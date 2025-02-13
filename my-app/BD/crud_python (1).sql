@@ -83,24 +83,15 @@ CREATE TABLE IF NOT EXISTS `tbl_empleados` (
 -- Volcando datos para la tabla crud_python.tbl_empleados: ~3 rows (aproximadamente)
 INSERT INTO `tbl_empleados` VALUES (4,'Urian','Viera',1,'54544454','programadorphp2017@gmail.com','Ingeniero de Sistemas','fda30f83ebbc4fb1a2ce2609b2b1e34c6614c1dff6e44460b9ba27ed5bb8e927.png',3500000,'2023-08-23 17:04:49'),(5,'Brenda','Viera',2,'323543543','brenda@gmail.com','Dev','22c055aeec314572a0046ec50b84f21719270dac6ea34c91b8380ac289fff9e5.png',1200000,'2023-08-23 17:05:34'),(6,'Alejandro','Torres',1,'324242342','alejandro@gmail.com','Tecnico','7b84aceb56534d27aa2e8b727a245dca9f60156a070a47c491ff2d21da1742e5.png',2100,'2023-08-23 17:06:13'),(7,'Karla','Ramos',2,'345678','karla@gmail.com','Ingeniera','248cc9c38cfb494bb2300d7cbf4a3b317522f295338b4639a8e025e6b203291c.png',2300,'2023-08-23 17:07:28'),(8,'hojas','Ramos',2,'345678','karla@gmail.com','Ingeniera','248cc9c38cfb494bb2300d7cbf4a3b317522f295338b4639a8e025e6b203291c.png',2300,'2023-08-23 17:07:28');
 
-
-
--- Volcando estructura para tabla crud_python.proveedor
 CREATE TABLE IF NOT EXISTS `proveedor` (
-`id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `tipo_persona` ENUM("Juridica", "Natural") NOT NULL,
   `razon_social` VARCHAR(100) NOT NULL,
   `nombre_comercial` VARCHAR(85) NOT NULL,
   `representante_legal` VARCHAR(85) NOT NULL,
-  `persona_id` BIGINT UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`, `persona_id`),
-  INDEX `fk_proveedor_persona1_idx` (`persona_id` ASC) VISIBLE,
-  CONSTRAINT `fk_proveedor_persona1`
-    FOREIGN KEY (`persona_id`)
-    REFERENCES `cliente` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+  `telefono_proveedor` VARCHAR(15),  -- Si es necesario el campo teléfono
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 
 
 -- Volcando estructura para tabla crud_python.users
@@ -282,7 +273,7 @@ CREATE TABLE IF NOT EXISTS `promocion` (
 -- Volcando estructura para tabla crud_python.producto
 CREATE TABLE IF NOT EXISTS `producto` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `nombre` ENUM("Tamal clásico") NOT NULL,  -- Esto está bien si solo tienes este valor
+  `nombre` varchar(50) NOT NULL,  -- Esto está bien si solo tienes este valor
   `descripcion` TEXT(200) NOT NULL,
   `precio` DECIMAL(10, 2) NOT NULL,  -- Se recomienda especificar la precisión para DECIMAL
   `estado` ENUM("Disponible", "No disponible") NOT NULL,
