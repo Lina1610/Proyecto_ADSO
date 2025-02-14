@@ -10,6 +10,7 @@ from routers.router_supplier import *
 from routers.router_invoice import *
 from routers.router_order import *
 from routers.router_pass import *
+from routers.router_user import *
 
 # Definir la ruta principal
 @app.route('/')

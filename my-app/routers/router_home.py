@@ -24,16 +24,16 @@ def formEmpleado():
         if 'foto_empleado' in request.files:
             foto_perfil = request.files['foto_empleado']
             resultado = procesar_form_empleado(request.form, foto_perfil)
-            if resultado:
-                return redirect(url_for('lista_empleados'))
+
+            if isinstance(resultado, int) and resultado > 0:
+                flash('Empleado registrado correctamente.', 'success')  # Mensaje de éxito
+                return redirect(url_for('lista_empleados'))  # Redirige a la lista de empleados
             else:
-                flash('El empleado NO fue registrado.', 'error')
+                flash(f'Error al registrar empleado: {resultado}', 'error')  # Mensaje de error
                 return render_template(f'{PATH_URL}/form_empleado.html')
     else:
-        flash('primero debes iniciar sesión.', 'error')
+        flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
-
-
 @app.route('/lista-de-empleados', methods=['GET'])
 def lista_empleados():
     if 'conectado' in session:

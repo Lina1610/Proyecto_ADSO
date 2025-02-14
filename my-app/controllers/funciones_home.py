@@ -19,31 +19,49 @@ from flask import send_file
 
 
 def procesar_form_empleado(dataForm, foto_perfil):
-    # Formateando Salario
-    salario_sin_puntos = re.sub('[^0-9]+', '', dataForm['salario_empleado'])
-    # convertir salario a INT
-    salario_entero = int(salario_sin_puntos)
-
-    result_foto_perfil = procesar_imagen_perfil(foto_perfil)
     try:
+        # Formateando Salario
+        salario_sin_puntos = re.sub('[^0-9]+', '', dataForm['salario_empleado'])
+        salario_entero = int(salario_sin_puntos)
+
+        # Procesar la imagen de perfil
+        result_foto_perfil = procesar_imagen_perfil(foto_perfil)
+        if not result_foto_perfil:
+            return "Error al procesar la imagen de perfil."
+
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-
-                sql = "INSERT INTO tbl_empleados (nombre_empleado, apellido_empleado, sexo_empleado, telefono_empleado, email_empleado, profesion_empleado, foto_empleado, salario_empleado) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-
+                # SQL para insertar el empleado
+                sql = """
+                    INSERT INTO tbl_empleados (
+                        nombre_empleado, apellido_empleado, sexo_empleado, 
+                        telefono_empleado, email_empleado, profesion_empleado, 
+                        foto_empleado, salario_empleado
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """
                 # Creando una tupla con los valores del INSERT
-                valores = (dataForm['nombre_empleado'], dataForm['apellido_empleado'], dataForm['sexo_empleado'],
-                           dataForm['telefono_empleado'], dataForm['email_empleado'], dataForm['profesion_empleado'], result_foto_perfil, salario_entero)
+                valores = (
+                    dataForm.get('nombre_empleado'), 
+                    dataForm.get('apellido_empleado'), 
+                    dataForm.get('sexo_empleado'),
+                    dataForm.get('telefono_empleado'), 
+                    dataForm.get('email_empleado'), 
+                    dataForm.get('profesion_empleado'), 
+                    result_foto_perfil, 
+                    salario_entero
+                )
                 cursor.execute(sql, valores)
-
-                conexion_MySQLdb.commit()
+                conexion_MySQLdb.commit()  # Confirmar la transacción
                 resultado_insert = cursor.rowcount
-                return resultado_insert
+
+                if resultado_insert > 0:
+                    return resultado_insert  # Éxito
+                else:
+                    return "No se pudo insertar el empleado en la base de datos."
 
     except Exception as e:
-        return f'Se produjo un error en procesar_form_empleado: {str(e)}'
-
-
+        print(f"Error en procesar_form_empleado: {e}")  # Debug
+        return f"Se produjo un error en procesar_form_empleado: {str(e)}"
 def procesar_imagen_perfil(foto):
     try:
         # Nombre original del archivo
