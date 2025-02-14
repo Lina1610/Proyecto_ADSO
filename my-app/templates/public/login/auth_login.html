@@ -19,12 +19,12 @@
             action="{{ url_for('loginCliente') }}"
             method="POST">
             <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
+              <label for="documento" class="form-label">Documento</label>
               <input
-                type="email"
+                type="text"
                 class="form-control"
-                name="email_user"
-                placeholder="Escribe tu email"
+                name="documento"
+                placeholder="Escribe tu número de documento"
                 autofocus
                 required />
             </div>
@@ -39,12 +39,11 @@
                 <input
                   type="password"
                   class="form-control"
-                  name="pass_user"
-                  id="pass_user"
+                  name="contrasena"
+                  id="contrasena"
                   placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                   aria-describedby="password"
                   required />
-                
               </div>
             </div>
             <div class="mb-3">

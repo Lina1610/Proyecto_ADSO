@@ -32,10 +32,9 @@
                 <label for="tipo_documento" class="form-label">Tipo de documento</label>
                 <select class="form-control" id="tipo_documento" name="tipo_documento" required>
                   <option value="">Seleccione...</option>
-                  <option value="cc">Cédula de Ciudadanía</option>
-                  <option value="ti">Tarjeta de Identidad</option>
-                  <option value="ce">Cédula de Extranjería</option>
-                  <option value="nit">NIT</option>
+                  <option value="Cedula ciudadania">Cédula de Ciudadanía</option>
+                  <option value="Tarjeta identidad">Tarjeta de Identidad</option>
+                  <option value="Cedula extranjeria">Cédula de Extranjería</option>
                 </select>
               </div>
 
@@ -72,7 +71,7 @@
                   required />
               </div>
 
-              <!-- Campo de teléfono con código de país -->
+              <!-- Campo de teléfono -->
               <div class="col-12 col-md-6 mb-4">
                 <label for="telefono" class="form-label">Teléfono</label>
                 <input
@@ -82,51 +81,50 @@
                   name="telefono"
                   placeholder="Número de teléfono"
                   required />
-                <!-- Campo oculto para almacenar el código de país -->
-                <input type="hidden" id="codigo_pais" name="codigo_pais" />
               </div>
 
               <div class="col-12 col-md-6 mb-4">
                 <!-- Campo de correo electrónico -->
-                <label for="email_user" class="form-label">Correo electrónico</label>
+                <label for="correo" class="form-label">Correo electrónico</label>
                 <input
                   type="email"
                   class="form-control"
-                  id="email_user"
-                  name="email_user"
+                  id="correo"
+                  name="correo"
                   required />
               </div>
-
+              
               <div class="col-12 col-md-6 mb-4">
                 <!-- Campo de contraseña -->
-                <label class="form-label" for="pass_user">Contraseña</label>
+                <label class="form-label" for="contrasena">Contraseña</label>
                 <div class="input-group input-group-merge">
                   <input
                     type="password"
                     class="form-control"
-                    id="pass_user"
-                    name="pass_user"
+                    id="contrasena"
+                    name="contrasena"
                     placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                     aria-describedby="password"
                     required />                
                 </div>
                 <div id="password-strength" class="mt-2"></div>
               </div>
-
+              
               <!-- Campo de confirmación de contraseña -->
               <div class="col-12 col-md-6 mb-4">
-                <label class="form-label" for="confirm_pass_user">Confirmar contraseña</label>
+                <label class="form-label" for="confirm_contrasena">Confirmar contraseña</label>
                 <div class="input-group input-group-merge">
                   <input
                     type="password"
                     class="form-control"
-                    id="confirm_pass_user"
-                    name="confirm_pass_user"
+                    id="confirm_contrasena"
+                    name="confirm_contrasena"
                     placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                     aria-describedby="confirm-password"
                     required />                
                 </div>
               </div>
+
 
             </div>
 

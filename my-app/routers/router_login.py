@@ -9,16 +9,17 @@ from werkzeug.security import check_password_hash
 
 # Importando controllers para el modulo de login
 from controllers.funciones_login import *
+
+from controllers.funciones_login import recibeInsertRegisterUser, validarDataRegisterLogin, info_perfil_session, procesar_update_perfil, updatePefilSinPass, dataLoginSesion
 PATH_URL_LOGIN = "public/login"
 
-#probando
+
 @app.route('/login', methods=['GET'])
 def inicio():
     if 'conectado' in session:
         return render_template('public/base_cpanel.html', dataLogin=dataLoginSesion())
     else:
         return render_template(f'{PATH_URL_LOGIN}/base_login.html')
-
 
 @app.route('/mi-perfil', methods=['GET'])
 def perfil():
@@ -45,26 +46,37 @@ def cpanelRecoveryPassUser():
     else:
         return render_template(f'{PATH_URL_LOGIN}/auth_forgot_password.html')
 
-
 # Crear cuenta de usuario
 @app.route('/saved-register', methods=['POST'])
 def cpanelResgisterUserBD():
-    if request.method == 'POST' and 'name_surname' in request.form and 'pass_user' in request.form:
-        name_surname = request.form['name_surname']
-        email_user = request.form['email_user']
-        pass_user = request.form['pass_user']
+    print("Iniciando cpanelResgisterUserBD...")  # Depuración
+    if request.method == 'POST' and 'nombre' in request.form and 'contrasena' in request.form:
+        tipo_documento = request.form['tipo_documento']
+        documento = request.form['documento']
+        nombre = request.form['nombre']
+        apellido = request.form['apellido']
+        telefono = request.form['telefono']
+        correo = request.form['correo']
+        contrasena = request.form['contrasena']
+
+        print(f"Datos recibidos: {tipo_documento}, {documento}, {nombre}, {apellido}, {telefono}, {correo}, {contrasena}")  # Depuración
 
         resultData = recibeInsertRegisterUser(
-            name_surname, email_user, pass_user)
-        if (resultData != 0):
-            flash('la cuenta fue creada correctamente.', 'success')
+            tipo_documento, documento, nombre, apellido, telefono, correo, contrasena
+        )
+        if resultData != 0:
+            flash('La cuenta fue creada correctamente.', 'success')
+            print("Cuenta creada correctamente.")  # Depuración
             return redirect(url_for('inicio'))
         else:
+            flash('Hubo un error al crear la cuenta.', 'error')
+            print("Error al crear la cuenta.")  # Depuración
             return redirect(url_for('inicio'))
     else:
-        flash('el método HTTP es incorrecto', 'error')
+        flash('El método HTTP es incorrecto o faltan campos en el formulario.', 'error')
+        print("Método HTTP incorrecto o faltan campos en el formulario.")  # Depuración
         return redirect(url_for('inicio'))
-
+    
 
 # Actualizar datos de mi perfil
 @app.route("/actualizar-datos-perfil", methods=['POST'])
@@ -99,51 +111,56 @@ def loginCliente():
     if 'conectado' in session:
         return redirect(url_for('inicio'))
     else:
-        if request.method == 'POST' and 'email_user' in request.form and 'pass_user' in request.form:
+        if request.method == 'POST' and 'documento' in request.form and 'contrasena' in request.form:
 
-            email_user = str(request.form['email_user'])
-            pass_user = str(request.form['pass_user'])
+            documento = request.form['documento']
+            contrasena = request.form['contrasena']
 
             # Comprobando si existe una cuenta
             conexion_MySQLdb = connectionBD()
             cursor = conexion_MySQLdb.cursor(dictionary=True)
-            cursor.execute(
-                "SELECT * FROM users WHERE email_user = %s", [email_user])
+            cursor.execute("SELECT * FROM users WHERE documento = %s", [documento])
             account = cursor.fetchone()
 
             if account:
-                if check_password_hash(account['pass_user'], pass_user):
+                if check_password_hash(account['contrasena'], contrasena):
                     # Crear datos de sesión, para poder acceder a estos datos en otras rutas
                     session['conectado'] = True
                     session['id'] = account['id']
-                    session['name_surname'] = account['name_surname']
-                    session['email_user'] = account['email_user']
+                    session['nombre'] = account['nombre']
+                    session['apellido'] = account['apellido']
+                    session['telefono'] = account['telefono']
+                    session['correo'] = account['correo']
+                    session['documento'] = account['documento']
 
-                    flash('la sesión fue correcta.', 'success')
+                    flash('La sesión fue correcta.', 'success')
                     return redirect(url_for('inicio'))
                 else:
-                    # La cuenta no existe o el nombre de usuario/contraseña es incorrecto
-                    flash('datos incorrectos por favor revise.', 'error')
+                    # La contraseña es incorrecta
+                    flash('Datos incorrectos, por favor revise.', 'error')
                     return render_template(f'{PATH_URL_LOGIN}/base_login.html')
             else:
-                flash('el usuario no existe, por favor verifique.', 'error')
+                # El documento no existe
+                flash('El usuario no existe, por favor verifique.', 'error')
                 return render_template(f'{PATH_URL_LOGIN}/base_login.html')
         else:
-            flash('primero debes iniciar sesión.', 'error')
+            flash('Primero debes iniciar sesión.', 'error')
             return render_template(f'{PATH_URL_LOGIN}/base_login.html')
-
-
-@app.route('/closed-session',  methods=['GET'])
+        
+@app.route('/closed-session', methods=['GET'])
 def cerraSesion():
     if request.method == 'GET':
         if 'conectado' in session:
             # Eliminar datos de sesión, esto cerrará la sesión del usuario
             session.pop('conectado', None)
             session.pop('id', None)
-            session.pop('name_surname', None)
-            session.pop('email', None)
-            flash('tu sesión fue cerrada correctamente.', 'success')
+            session.pop('nombre', None)
+            session.pop('apellido', None)
+            session.pop('telefono', None)
+            session.pop('correo', None)
+            session.pop('documento', None)
+            flash('Tu sesión fue cerrada correctamente.', 'success')
             return redirect(url_for('inicio'))
         else:
-            flash('recuerde debe iniciar sesión.', 'error')
+            flash('Recuerde, debe iniciar sesión.', 'error')
             return render_template(f'{PATH_URL_LOGIN}/base_login.html')
