@@ -10,9 +10,9 @@ import re
 # Para encriptar contraseña generate_password_hash
 from werkzeug.security import generate_password_hash
 
-def recibeInsertRegisterUser(tipo_documento, documento, nombre, apellido, telefono, correo, contrasena):
+def recibeInsertRegisterUser(tipo_documento, documento, nombre, apellido, telefono, correo, contrasena, rol='cliente', estado='activo'):
     print("Iniciando recibeInsertRegisterUser...")  # Depuración
-    print(f"Valores recibidos: tipo_documento={tipo_documento}, documento={documento}, nombre={nombre}, apellido={apellido}, telefono={telefono}, correo={correo}, contrasena={contrasena}")  # Depuración
+    print(f"Valores recibidos: tipo_documento={tipo_documento}, documento={documento}, nombre={nombre}, apellido={apellido}, telefono={telefono}, correo={correo}, contrasena={contrasena}, rol={rol}, estado={estado}")  # Depuración
 
     respuestaValidar = validarDataRegisterLogin(nombre, correo, contrasena)
 
@@ -25,11 +25,11 @@ def recibeInsertRegisterUser(tipo_documento, documento, nombre, apellido, telefo
                 with conexion_MySQLdb.cursor(dictionary=True) as mycursor:
                     sql = """
                         INSERT INTO users (
-                            tipo_documento, documento, nombre, apellido, telefono, correo, contrasena, created_user
-                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, NOW())
+                            tipo_documento, documento, nombre, apellido, telefono, correo, contrasena, rol, estado, created_user
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
                     """
                     valores = (
-                        tipo_documento, documento, nombre, apellido, telefono, correo, nueva_password
+                        tipo_documento, documento, nombre, apellido, telefono, correo, nueva_password, rol, estado
                     )
                     print(f"Valores a insertar: {valores}")  # Depuración
                     mycursor.execute(sql, valores)
@@ -39,131 +39,110 @@ def recibeInsertRegisterUser(tipo_documento, documento, nombre, apellido, telefo
                     return resultado_insert
         except Exception as e:
             print(f"Error en el Insert users: {e}")  # Depuración
-            return []
+            return f"Error en la base de datos: {str(e)}"
     else:
         print("Validación fallida, no se insertaron datos.")  # Depuración
+        return "Validación fallida: Verifica los datos ingresados."
+
+def validarDataRegisterLogin(nombre, correo, contrasena):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Verificar si el correo ya está registrado
+                querySQL = "SELECT * FROM users WHERE correo = %s"
+                cursor.execute(querySQL, (correo,))
+                userBD = cursor.fetchone()
+
+                if userBD is not None:
+                    flash('El correo ya está registrado.', 'error')
+                    print("El correo ya está registrado.")  # Depuración
+                    return False
+                elif not re.match(r'[^@]+@[^@]+\.[^@]+', correo):
+                    flash('El correo es inválido.', 'error')
+                    print("Correo inválido.")  # Depuración
+                    return False
+                elif not nombre or not correo or not contrasena:
+                    flash('Por favor, llene los campos del formulario.', 'error')
+                    print("Faltan campos obligatorios.")  # Depuración
+                    return False
+                else:
+                    # La cuenta no existe y los datos del formulario son válidos
+                    print("Validación exitosa, procediendo a insertar.")  # Depuración
+                    return True
+    except Exception as e:
+        print(f"Error en validarDataRegisterLogin: {e}")  # Depuración
         return False
 
-def validarDataRegisterLogin(nombre, correo, contrasena):
-    try:
-        with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                querySQL = "SELECT * FROM users WHERE correo = %s"
-                cursor.execute(querySQL, (correo,))
-                userBD = cursor.fetchone()  # Obtener la primera fila de resultados
-
-                if userBD is not None:
-                    flash('El registro no fue procesado, ya existe la cuenta.', 'error')
-                    print("El correo ya está registrado.")  # Depuración
-                    return False
-                elif not re.match(r'[^@]+@[^@]+\.[^@]+', correo):
-                    flash('El correo es inválido.', 'error')
-                    print("Correo inválido.")  # Depuración
-                    return False
-                elif not nombre or not correo or not contrasena:
-                    flash('Por favor, llene los campos del formulario.', 'error')
-                    print("Faltan campos obligatorios.")  # Depuración
-                    return False
-                else:
-                    # La cuenta no existe y los datos del formulario son válidos, puedo realizar el Insert
-                    print("Validación exitosa, procediendo a insertar.")  # Depuración
-                    return True
-    except Exception as e:
-        print(f"Error en validarDataRegisterLogin: {e}")  # Depuración
-        return []
-# Validando la data del Registros para el login
-def validarDataRegisterLogin(nombre, correo, contrasena):
-    try:
-        with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                querySQL = "SELECT * FROM users WHERE correo = %s"
-                cursor.execute(querySQL, (correo,))
-                userBD = cursor.fetchone()  # Obtener la primera fila de resultados
-
-                if userBD is not None:
-                    flash('El registro no fue procesado, ya existe la cuenta.', 'error')
-                    print("El correo ya está registrado.")  # Depuración
-                    return False
-                elif not re.match(r'[^@]+@[^@]+\.[^@]+', correo):
-                    flash('El correo es inválido.', 'error')
-                    print("Correo inválido.")  # Depuración
-                    return False
-                elif not nombre or not correo or not contrasena:
-                    flash('Por favor, llene los campos del formulario.', 'error')
-                    print("Faltan campos obligatorios.")  # Depuración
-                    return False
-                else:
-                    # La cuenta no existe y los datos del formulario son válidos, puedo realizar el Insert
-                    print("Validación exitosa, procediendo a insertar.")  # Depuración
-                    return True
-    except Exception as e:
-        print(f"Error en validarDataRegisterLogin: {e}")  # Depuración
-        return []
 
 
 def info_perfil_session():
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                querySQL = "SELECT nombre, apellido, telefono, correo FROM users WHERE id = %s"
+                querySQL = """
+                    SELECT tipo_documento, documento, nombre, apellido, telefono, correo, rol, estado 
+                    FROM users 
+                    WHERE id = %s
+                """
                 cursor.execute(querySQL, (session['id'],))
-                info_perfil = cursor.fetchall()
-        return info_perfil
+                info_perfil = cursor.fetchone()  # Obtener la primera fila de resultados
+                return info_perfil
     except Exception as e:
-        print(f"Error en info_perfil_session : {e}")
-        return []
+        print(f"Error en info_perfil_session: {e}")
+        return None
 
 
 def procesar_update_perfil(data_form):
-    # Extraer datos del diccionario data_form
-    id_user = session['id']
-    nombre = data_form['nombre']
-    apellido = data_form['apellido']
-    telefono = data_form['telefono']
-    correo = data_form['correo']
-    pass_actual = data_form['pass_actual']
-    new_pass_user = data_form['new_pass_user']
-    repetir_pass_user = data_form['repetir_pass_user']
+    try:
+        id_user = session['id']
+        nombre = data_form.get('nombre')
+        apellido = data_form.get('apellido')
+        telefono = data_form.get('telefono')
+        pass_actual = data_form.get('pass_actual')
+        new_pass_user = data_form.get('new_pass_user')
+        repetir_pass_user = data_form.get('repetir_pass_user')
 
-    if not pass_actual or not correo:
-        return 3
+        if not pass_actual:
+            return 3  # La contraseña actual es obligatoria
 
-    with connectionBD() as conexion_MySQLdb:
-        with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-            querySQL = """SELECT * FROM users WHERE correo = %s LIMIT 1"""
-            cursor.execute(querySQL, (correo,))
-            account = cursor.fetchone()
-            if account:
-                if check_password_hash(account['contrasena'], pass_actual):
-                    # Verificar si new_pass_user y repetir_pass_user están vacías
-                    if not new_pass_user or not repetir_pass_user:
-                        return updatePefilSinPass(id_user, nombre, apellido, telefono)
-                    else:
-                        if new_pass_user != repetir_pass_user:
-                            return 2
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Verificar la contraseña actual
+                querySQL = "SELECT contrasena FROM users WHERE id = %s"
+                cursor.execute(querySQL, (id_user,))
+                usuario = cursor.fetchone()
+
+                if usuario and check_password_hash(usuario['contrasena'], pass_actual):
+                    # Si la contraseña actual es correcta
+                    if new_pass_user and repetir_pass_user:
+                        if new_pass_user == repetir_pass_user:
+                            # Actualizar contraseña
+                            nueva_password = generate_password_hash(new_pass_user, method='scrypt')
+                            querySQL = """
+                                UPDATE users 
+                                SET nombre = %s, apellido = %s, telefono = %s, contrasena = %s 
+                                WHERE id = %s
+                            """
+                            valores = (nombre, apellido, telefono, nueva_password, id_user)
                         else:
-                            try:
-                                nueva_password = generate_password_hash(new_pass_user, method='scrypt')
-                                with connectionBD() as conexion_MySQLdb:
-                                    with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                                        querySQL = """
-                                            UPDATE users
-                                            SET 
-                                                nombre = %s,
-                                                apellido = %s,
-                                                telefono = %s,
-                                                contrasena = %s
-                                            WHERE id = %s
-                                        """
-                                        params = (nombre, apellido, telefono, nueva_password, id_user)
-                                        cursor.execute(querySQL, params)
-                                        conexion_MySQLdb.commit()
-                                return cursor.rowcount or []
-                            except Exception as e:
-                                print(f"Ocurrió en procesar_update_perfil: {e}")
-                                return []
-            else:
-                return 0
+                            return 2  # Las contraseñas no coinciden
+                    else:
+                        # Actualizar solo los datos (sin cambiar la contraseña)
+                        querySQL = """
+                            UPDATE users 
+                            SET nombre = %s, apellido = %s, telefono = %s 
+                            WHERE id = %s
+                        """
+                        valores = (nombre, apellido, telefono, id_user)
+
+                    cursor.execute(querySQL, valores)
+                    conexion_MySQLdb.commit()
+                    return cursor.rowcount  # Retorna el número de filas afectadas
+                else:
+                    return 0  # Contraseña actual incorrecta
+    except Exception as e:
+        print(f"Error en procesar_update_perfil: {e}")
+        return None
 
 def updatePefilSinPass(id_user, nombre, apellido, telefono):
     try:

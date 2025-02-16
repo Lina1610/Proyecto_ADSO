@@ -107,3 +107,26 @@ document.addEventListener("DOMContentLoaded", function () {
     console.error("No se encontró el campo de teléfono o el campo de código de país.");
   }
 });
+
+
+function eliminarUsuario(id) {
+  if (confirm("¿Estás seguro de eliminar este usuario?")) {
+      fetch(`/eliminar-usuario/${id}`, {
+          method: "GET",
+      })
+      .then((response) => response.json())
+      .then((data) => {
+          if (data.success) {
+              // Eliminar la fila de la tabla sin recargar la página
+              const fila = document.getElementById(`usuario_${id}`);
+              if (fila) {
+                  fila.remove();
+              }
+              alert("Usuario eliminado correctamente");
+          } else {
+              alert("Error al eliminar el usuario");
+          }
+      })
+      .catch((error) => console.error("Error:", error));
+  }
+}

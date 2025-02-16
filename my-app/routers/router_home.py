@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, request, flash, redirect, url_for, session,  jsonify
 from mysql.connector.errors import Error
-
+from controllers.funciones_home import lista_usuariosBD 
 
 # Importando cenexión a BD
 from controllers.funciones_home import *
@@ -94,10 +94,12 @@ def actualizarEmpleado():
 @app.route("/lista-de-usuarios", methods=['GET'])
 def usuarios():
     if 'conectado' in session:
-        resp_usuariosBD = lista_usuariosBD()
-        return render_template('public/usuarios/lista_usuarios.html', resp_usuariosBD=resp_usuariosBD)
+        resp_usuariosBD = lista_usuariosBD()  # Obtener la lista de usuarios
+        print("Usuarios obtenidos en la ruta:", resp_usuariosBD)  # Depuración
+        return render_template('public/nuevosUsuarios/lista_usuarios.html', resp_usuariosBD=resp_usuariosBD)
     else:
-        return redirect(url_for('inicioCpanel'))
+        flash('Primero debes iniciar sesión.', 'error')
+        return redirect(url_for('inicio'))
 
 
 @app.route('/borrar-usuario/<string:id>', methods=['GET'])

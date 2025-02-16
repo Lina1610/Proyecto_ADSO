@@ -23,9 +23,16 @@ def inicio():
 
 @app.route('/mi-perfil', methods=['GET'])
 def perfil():
+    
     if 'conectado' in session:
-        return render_template(f'public/perfil/perfil.html', info_perfil_session=info_perfil_session())
+        info_perfil = info_perfil_session()  # Obtener los datos del usuario
+        if info_perfil:
+            return render_template('public/perfil/perfil.html', info_perfil_session=info_perfil)
+        else:
+            flash('No se pudieron cargar los datos del perfil.', 'error')
+            return redirect(url_for('inicio'))
     else:
+        flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
 
 
@@ -81,28 +88,25 @@ def cpanelResgisterUserBD():
 # Actualizar datos de mi perfil
 @app.route("/actualizar-datos-perfil", methods=['POST'])
 def actualizarPerfil():
-    if request.method == 'POST':
-        if 'conectado' in session:
-            respuesta = procesar_update_perfil(request.form)
-            if respuesta == 1:
-                flash('Los datos fuerón actualizados correctamente.', 'success')
-                return redirect(url_for('inicio'))
-            elif respuesta == 0:
-                flash(
-                    'La contraseña actual esta incorrecta, por favor verifique.', 'error')
-                return redirect(url_for('perfil'))
-            elif respuesta == 2:
-                flash('Ambas claves deben se igual, por favor verifique.', 'error')
-                return redirect(url_for('perfil'))
-            elif respuesta == 3:
-                flash('La Clave actual es obligatoria.', 'error')
-                return redirect(url_for('perfil'))
+    if 'conectado' in session:
+        respuesta = procesar_update_perfil(request.form)
+        if respuesta == 1:
+            flash('Los datos fueron actualizados correctamente.', 'success')
+        elif respuesta == 0:
+            flash('La contraseña actual es incorrecta.', 'error')
+        elif respuesta == 2:
+            flash('Las contraseñas no coinciden.', 'error')
+        elif respuesta == 3:
+            flash('La contraseña actual es obligatoria.', 'error')
         else:
-            flash('primero debes iniciar sesión.', 'error')
-            return redirect(url_for('inicio'))
+            flash('Error al actualizar los datos.', 'error')
+        return redirect(url_for('perfil'))
     else:
-        flash('primero debes iniciar sesión.', 'error')
+        flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
+
+
+
 
 
 # Validar sesión
