@@ -1,7 +1,11 @@
 from app import app
-from flask import Flask, render_template, redirect, url_for, session, flash
+from flask import render_template, redirect, url_for, session, flash
+from flask_mail import Mail, Message
+from config import Config  # Importar la configuración
+from dotenv import load_dotenv
+load_dotenv()  # Cargar variables de entorno desde .env
 
-# Importando los Routers (Rutas)
+# Importando los Routers
 from routers.router_login import *
 from routers.router_home import *
 from routers.router_page_not_found import *
@@ -12,17 +16,31 @@ from routers.router_order import *
 from routers.router_pass import *
 from routers.router_user import *
 
-# Definir la ruta principal
+# Cargar la configuración desde config.py
+app.config.from_object(Config)
+
+# Inicializar Flask-Mail
+mail = Mail(app)
+
 @app.route('/')
 def home():
-    # Si el usuario está conectado, podrías mostrar algo adicional (opcional)
     if 'conectado' in session:
         flash('Ya estás conectado.', 'success')
-    # Siempre renderiza el index.html
     return render_template('public/index.html')
 
-# Ejecutando el objeto Flask
-if __name__ == '__main__':  # Correcta forma de escribir esta condición
-    app.run(debug=True, port=5600)  # Puedes cambiar el puerto si es necesario
+# Ruta para probar el envío de correos
+@app.route('/enviar-correo')
+def enviar_correo():
+    msg = Message("Prueba de Correo", recipients=["destinatario@gmail.com"])
+    msg.body = "Este es un mensaje de prueba desde Flask-Mail."
+    
+    try:
+        mail.send(msg)
+        flash("Correo enviado con éxito", "success")
+    except Exception as e:
+        flash(f"Error al enviar el correo: {str(e)}", "danger")
+    
+    return redirect(url_for('home'))
 
-
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)

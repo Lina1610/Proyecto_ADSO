@@ -11,6 +11,8 @@ from flask import send_file
 
 from werkzeug.security import generate_password_hash
 from conexion.conexionBD import connectionBD
+from werkzeug.security import generate_password_hash
+
 
 def procesar_usuario(dataForm):
     try:
@@ -133,3 +135,19 @@ def buscarUsuarioBD(search):
     except Exception as e:
         print(f"Error en buscarUsuarioBD: {e}")
         return []
+
+def actualizar_password(user_id, nueva_password):
+    try:
+        # Hashear la nueva contraseña
+        hashed_password = generate_password_hash(nueva_password, method='scrypt')
+
+        # Actualizar la contraseña en la base de datos
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor() as cursor:
+                query = "UPDATE users SET contrasena = %s WHERE id = %s"
+                cursor.execute(query, (hashed_password, user_id))
+                conexion_MySQLdb.commit()
+                return True
+    except Exception as e:
+        print(f"Error en actualizar_password: {e}")
+        return False
