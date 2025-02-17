@@ -31,6 +31,10 @@
         <div class="row">
           <!-- Columna 1 -->
           <div class="col-md-6">
+            <label for="codigo" class="form-label">Código del producto</label> <!-- Nuevo campo: código -->
+            <br />
+            {{ producto.codigo }}
+
             <label for="nombre" class="form-label">Nombre del producto</label>
             <br />
             {{ producto.nombre }}
@@ -66,8 +70,6 @@
             <br />
             $ {{ '{:,.2f}'.format(producto.total) }}
           </div>
-        </div>
-       
         </div>
       </div>
     </div>

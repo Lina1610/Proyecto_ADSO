@@ -15,6 +15,23 @@
   </div>
 
   <div class="menu-inner-shadow"></div>
+
+
+<!-- Sección del Perfil del Usuario -->
+<div class="user-profile-sidebar">
+  {% if session.conectado %}
+    <div class="user-info">
+      <h5 class="user-name mb-1">{{ session.nombre }} {{ session.apellido }}</h5>
+      <p class="user-documento text-muted mb-1">{{ session.documento }}</p>
+    </div>
+  {% else %}
+    <p class="text-center p-3">No hay usuario logueado</p>
+  {% endif %}
+</div>
+
+
+
+
   <ul class="menu-inner py-5">
     <!-- Sección de Registro de Usuarios (Menú desplegable) -->
 <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-usuario', '/lista-de-usuarios'] %} active open {% endif %}" data-menu="menu-usuarios">

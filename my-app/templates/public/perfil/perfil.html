@@ -1,7 +1,5 @@
 {% extends 'public/base_cpanel.html' %}
-<!--Cambiando el title-->
 {% block title %}Crud con Python 🐍 | Perfil {% endblock %}
-<!--Inicio del block-->
 {% block body %}
 <div class="card" style="border-radius: 0px !important">
   <div class="row justify-content-center mb-2">
@@ -15,11 +13,10 @@
     <div class="col-md-8 col-lg-6">
       <div class="card custom-card">
         <div class="card-body">
-          <form class="mb-3" method="POST" action="/actualizar-datos-perfil">
+          <form class="mb-3" method="POST" action="/actualizar-datos-perfil" enctype="multipart/form-data">
             <div class="row">
               <!-- Columna 1 -->
               <div class="col-12 col-md-6 mb-4">
-                <!-- Campo: Tipo de Documento (solo lectura) -->
                 <label for="tipo_documento" class="form-label">Tipo de Documento</label>
                 <input
                     type="text"
@@ -30,7 +27,6 @@
               </div>
 
               <div class="col-12 col-md-6 mb-4">
-                <!-- Campo: Documento (solo lectura) -->
                 <label for="documento" class="form-label">Documento</label>
                 <input
                     type="text"
@@ -41,7 +37,6 @@
               </div>
 
               <div class="col-12 col-md-6 mb-4">
-                <!-- Campo: Nombre (editable) -->
                 <label for="nombre" class="form-label">Nombre</label>
                 <input
                     type="text"
@@ -52,7 +47,6 @@
               </div>
 
               <div class="col-12 col-md-6 mb-4">
-                <!-- Campo: Apellido (editable) -->
                 <label for="apellido" class="form-label">Apellido</label>
                 <input
                     type="text"
@@ -63,7 +57,6 @@
               </div>
 
               <div class="col-12 col-md-6 mb-4">
-                <!-- Campo: Teléfono (editable) -->
                 <label for="telefono" class="form-label">Teléfono</label>
                 <input
                     type="text"
@@ -74,7 +67,6 @@
               </div>
 
               <div class="col-12 col-md-6 mb-4">
-                <!-- Campo: Correo (solo lectura) -->
                 <label for="correo" class="form-label">Correo</label>
                 <input
                     type="email"
@@ -88,7 +80,6 @@
             <div class="row">
               <!-- Columna 2 -->
               <div class="col-12 col-md-6 mb-4">
-                <!-- Campo: Rol (solo lectura) -->
                 <label for="rol" class="form-label">Rol</label>
                 <input
                     type="text"
@@ -99,7 +90,6 @@
               </div>
 
               <div class="col-12 col-md-6 mb-4">
-                <!-- Campo: Estado (solo lectura) -->
                 <label for="estado" class="form-label">Estado</label>
                 <input
                     type="text"
@@ -110,7 +100,6 @@
               </div>
 
               <div class="col-12 col-md-6 mb-4">
-                <!-- Campo: Clave Actual (editable) -->
                 <label class="form-label" for="pass_actual">Clave Actual</label>
                 <div class="input-group input-group-merge">
                     <input
@@ -128,7 +117,6 @@
               </div>
 
               <div class="col-12 col-md-6 mb-4">
-                <!-- Campo: Nueva Clave (editable) -->
                 <label class="form-label" for="new_pass_user">Nueva Clave</label>
                 <div class="input-group input-group-merge">
                     <input
@@ -145,7 +133,6 @@
               </div>
 
               <div class="col-12 col-md-6 mb-4">
-                <!-- Campo: Repetir Nueva Clave (editable) -->
                 <label class="form-label" for="repetir_pass_user">
                     Repetir Nueva Clave
                 </label>
@@ -164,6 +151,18 @@
               </div>
             </div>
 
+            <!-- Campo para subir la foto de perfil -->
+             <!--<div class="col-12 col-md-6 mb-4">
+              <label for="foto_perfil" class="form-label">Foto de Perfil</label>
+              <input
+                  type="file"
+                  name="foto_perfil"
+                  id="foto_perfil"
+                  class="form-control"
+                  accept="image/*" />
+            </div>
+            -->
+
             <!-- Botón de Enviar -->
             <div class="mb-3 text-center">
                 <button type="submit" class="btn rounded-pill btn-primary">
@@ -176,4 +175,5 @@
     </div>
   </div>
 </div>
+
 {% endblock %}

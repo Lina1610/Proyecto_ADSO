@@ -7,8 +7,11 @@ from flask_mail import Mail, Message
 import secrets
 from datetime import datetime, timedelta
 from controllers.funciones_user import actualizar_password
-
-
+from controllers.funciones_user import actualizar_datos_usuario
+from flask import jsonify
+import os
+from werkzeug.utils import secure_filename
+from controllers.funciones_user import procesar_imagen_perfil
 
 
 # Configuración del correo
@@ -19,6 +22,15 @@ app.config['MAIL_USERNAME'] = 'EMAIL_SENDER'
 app.config['MAIL_PASSWORD'] = 'EMAIL_PASSWORD'
 
 mail = Mail(app)
+
+# Configuración para guardar las imágenes
+UPLOAD_FOLDER = 'static/uploads/perfil'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Función para verificar extensiones permitidas
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 PATH_URL = "public/usuario"
 
@@ -188,3 +200,32 @@ def resetPassword(token):
             flash('Hubo un error al restablecer la contraseña.', 'error')
     
     return render_template('public/login/auth_reset_password.html', token=token)
+
+@app.route('/actualizar-datos-perfil', methods=['POST'])
+def actualizar_datos_perfil():
+    if 'conectado' in session:
+        # Obtener los datos del formulario
+        nombre = request.form['nombre']
+        apellido = request.form['apellido']
+        documento = request.form['documento']
+        foto_perfil = request.files.get('foto_perfil')  # Obtener el archivo subido
+
+        # Actualizar los datos del perfil
+        if actualizar_datos_perfil(session['id'], nombre, apellido, documento, foto_perfil):
+            flash('Datos actualizados correctamente.', 'success')
+            return jsonify({
+                'success': True,
+                'message': 'Datos actualizados correctamente',
+                'reload': True  # Indicar que la página debe recargarse
+            })
+        else:
+            flash('Hubo un error al actualizar los datos.', 'error')
+            return jsonify({
+                'success': False,
+                'message': 'Hubo un error al actualizar los datos'
+            })
+    else:
+        return jsonify({
+            'success': False,
+            'message': 'Primero debes iniciar sesión'
+        })

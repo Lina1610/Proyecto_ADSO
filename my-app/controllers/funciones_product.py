@@ -39,13 +39,14 @@ def procesar_producto(dataForm):
                 # SQL para insertar el producto
                 sql = """
                     INSERT INTO producto (
-                        nombre, descripcion, precio, estado, unidad_medida, cantidad, marca, total
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                        codigo, nombre, descripcion, precio, estado, unidad_medida, cantidad, marca, total
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """
 
                 # Creando una tupla con los valores del INSERT
                 valores = (
-                    dataForm['nombre'], 
+                    dataForm['codigo'],  # Campo código primero
+                    dataForm['nombre'],  # Campo nombre
                     dataForm['descripcion'], 
                     precio_decimal,  # Usar el precio decimal procesado
                     dataForm['estado'], 
@@ -62,7 +63,6 @@ def procesar_producto(dataForm):
 
     except Exception as e:
         return f'Se produjo un error en procesar_producto: {str(e)}'
-
 
 def obtener_productos():
     try:
@@ -92,13 +92,13 @@ def buscarProductoBD(search):
             with conexion_MySQLdb.cursor(dictionary=True) as mycursor:
                 querySQL = ("""
                     SELECT 
-                        id, nombre, descripcion, precio, cantidad, marca, estado, total
+                        id, codigo, nombre, descripcion, precio, cantidad, marca, estado, total
                     FROM producto
-                    WHERE nombre LIKE %s 
+                    WHERE nombre LIKE %s OR codigo LIKE %s
                     ORDER BY id DESC
                 """)
                 search_pattern = f"%{search}%"  # Agregar "%" alrededor del término de búsqueda
-                mycursor.execute(querySQL, (search_pattern,))
+                mycursor.execute(querySQL, (search_pattern, search_pattern))
                 resultado_busqueda = mycursor.fetchall()
                 return resultado_busqueda
 
@@ -118,12 +118,14 @@ def actualizar_producto(id, data_form):
 
                 sql = """
                     UPDATE producto 
-                    SET nombre = %s, descripcion = %s, precio = %s, 
+                    SET codigo = %s, nombre = %s, descripcion = %s, precio = %s, 
                         estado = %s, cantidad = %s, marca = %s, total = %s
                     WHERE id = %s
                 """
                 valores = (
-                    data_form['nombre'], data_form['descripcion'], precio_decimal,
+                    data_form['codigo'],  # Campo código
+                    data_form['nombre'],  # Campo nombre
+                    data_form['descripcion'], precio_decimal,
                     data_form['estado'], data_form['cantidad'], data_form['marca'],
                     total_decimal, id
                 )
@@ -133,7 +135,6 @@ def actualizar_producto(id, data_form):
     except Exception as e:
         print(f"Error en actualizar_producto: {e}")
         return False
-
 
     
 # funcion para poder optener los productos por su id    

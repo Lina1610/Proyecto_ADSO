@@ -13,7 +13,7 @@
     <div class="row justify-content-end">
       <div class="col-md-6 mt-4 py-2">
         <input
-          type="searchp"
+          type="search"
           id="search_producto"
           class="form-control border-0 shadow-none"
           placeholder="Buscar producto..."
@@ -32,6 +32,7 @@
           <thead>
             <tr>
               <th>#</th>
+              <th>Código</th> <!-- Nueva columna para el código -->
               <th>Nombre</th>
               <th>Descripción</th>
               <th>Precio</th>
@@ -43,6 +44,7 @@
             {% for producto in productos %}
             <tr id="producto_{{ producto.id }}">
               <td>{{ loop.index }}</td>
+              <td>{{ producto.codigo }}</td> <!-- Mostrar el código -->
               <td>{{ producto.nombre }}</td>
               <td>{{ producto.descripcion }}</td>
               <td>$ {{ '{:,.2f}'.format(producto.precio) }}</td>

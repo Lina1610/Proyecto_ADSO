@@ -3,6 +3,8 @@ from flask import render_template, redirect, url_for, session, flash
 from flask_mail import Mail, Message
 from config import Config  # Importar la configuración
 from dotenv import load_dotenv
+from datetime import datetime  # Necesario para trabajar con las fechas
+
 load_dotenv()  # Cargar variables de entorno desde .env
 
 # Importando los Routers
@@ -21,6 +23,13 @@ app.config.from_object(Config)
 
 # Inicializar Flask-Mail
 mail = Mail(app)
+
+# Registrar el filtro 'date' en el entorno de Jinja2
+@app.template_filter('date')
+def format_date(value, format='%d/%m/%Y %H:%M:%S'):
+    if isinstance(value, datetime):
+        return value.strftime(format)
+    return value  # En caso de que no sea un objeto datetime
 
 @app.route('/')
 def home():

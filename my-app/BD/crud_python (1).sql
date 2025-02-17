@@ -144,7 +144,7 @@ CREATE TABLE IF NOT EXISTS `direccion` (
   `referencias` TEXT(200) NULL,
   `telefono` VARCHAR(15) NOT NULL,
   `estado` ENUM("Activo", "Inactivo") NOT NULL,
-  `persona_id` BIGINT UNSIGNED NOT NULL,
+  `user_id` BIGINT UNSIGNED NOT NULL,
   `municipio_id` BIGINT NOT NULL,
   `departamento_id` BIGINT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),

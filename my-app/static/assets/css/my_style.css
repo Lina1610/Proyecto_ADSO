@@ -1,3 +1,30 @@
+/* Asegurarse de que el perfil del usuario quede alineado a la izquierda */
+.user-profile-sidebar {
+  padding: 10px 15px;  /* Agregar algo de espacio a los lados */
+  text-align: left;     /* Asegurarse que el texto se alinee a la izquierda */
+  margin-top: 10px;     /* Espacio superior */
+  margin-bottom: 20px;  /* Espacio inferior */
+}
+
+.user-info {
+  text-align: left !important;  /* Asegurarse de que la información esté alineada a la izquierda */
+}
+
+.user-info h5,
+.user-info p {
+  margin: 0;  /* Eliminar márgenes */
+  padding: 0; /* Eliminar relleno */
+}
+
+.user-info h5 {
+  font-size: 16px; /* Ajustar el tamaño de la fuente si es necesario */
+  font-weight: bold;
+}
+
+.user-info p {
+  font-size: 14px; /* Ajustar tamaño de texto para el documento */
+  color: #6c757d;  /* Color gris suave */
+}
 
 
 /* Asegurar que las etiquetas estén arriba de los campos */
