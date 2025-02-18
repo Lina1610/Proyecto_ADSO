@@ -136,14 +136,14 @@ def buscarUsuarioBD(search):
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                 querySQL = """
-                    SELECT id, nombre, apellido, documento, correo 
+                    SELECT id, tipo_documento, documento, nombre, apellido, 
+                           telefono, correo, rol, estado, created_user 
                     FROM users 
                     WHERE nombre LIKE %s OR apellido LIKE %s OR documento LIKE %s OR correo LIKE %s
                 """
                 search_pattern = f"%{search}%"
                 cursor.execute(querySQL, (search_pattern, search_pattern, search_pattern, search_pattern))
-                resultado_busqueda = cursor.fetchall()
-                return resultado_busqueda
+                return cursor.fetchall()
     except Exception as e:
         print(f"Error en buscarUsuarioBD: {e}")
         return []

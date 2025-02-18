@@ -37,11 +37,10 @@
               <th>#</th>
               <th>Nombre</th>
               <th>Apellido</th>
-              <th>Documento</th>
-              <th>Correo</th>
+              <th>Documento</th>              
               <th>Estado</th>
-              <th>Acción Estado</th>
-              <th>Acciones</th>
+              <th width="10%">Acción Estado</th> <!-- Reducir el ancho de esta columna -->
+              <th width="20%">Acciones</th> <!-- Ajustar el ancho de esta columna -->
             </tr>
           </thead>
           <tbody id="tabla_usuarios_body">
@@ -52,7 +51,6 @@
                 <td>{{ usuario.nombre }}</td>
                 <td>{{ usuario.apellido }}</td>
                 <td>{{ usuario.documento }}</td>
-                <td>{{ usuario.correo }}</td>
                 
                 <!-- Columna de Estado -->
                 <td>
@@ -69,44 +67,44 @@
                     <a href="/activar-usuario/{{ usuario.id }}" 
                        class="btn btn-sm btn-success"
                        title="Activar usuario">
-                       <i class="bi bi-check-circle"></i>
+                       <i class="bi bi-check-circle"></i> Activar
                     </a>
                   {% else %}
                     <a href="/desactivar-usuario/{{ usuario.id }}" 
                        class="btn btn-sm btn-warning"
                        title="Desactivar usuario">
-                       <i class="bi bi-x-circle"></i>
+                       <i class="bi bi-x-circle"></i> Desactivar
                     </a>
                   {% endif %}
                 </td>
 
                 <!-- Columna de Acciones -->
-                <td width="15%">
+                <td>
                   <a href="/detalles-usuario/{{ usuario.id }}"
                      class="btn btn-info btn-sm"
                      title="Ver detalles">
-                     <i class="bi bi-eye"></i>
+                     <i class="bi bi-eye"></i> Detalles
                   </a>
                   <a href="{{ url_for('viewEditarUsuario', id=usuario.id) }}"
                      class="btn btn-success btn-sm"
                      title="Actualizar">
-                     <i class="bi bi-arrow-clockwise"></i>
+                     <i class="bi bi-arrow-clockwise"></i> Actualizar
                   </a>
                   <a href="#"
                      onclick="eliminarUsuario('{{ usuario.id }}');"
                      class="btn btn-danger btn-sm"
                      title="Eliminar">
-                     <i class="bi bi-trash3"></i>
+                     <i class="bi bi-trash3"></i> Eliminar
                   </a>
                 </td>
               </tr>
               {% endfor %}
             {% else %}
-              <tr>
-                <td colspan="8" class="text-center">
-                  <i class="bi bi-exclamation-circle"></i> No hay usuarios registrados.
-                </td>
-              </tr>
+            <tr>
+              <td colspan="7" class="text-center">  <!-- Cambiar de 8 a 7 -->
+                <i class="bi bi-exclamation-circle"></i> No hay usuarios registrados.
+              </td>
+            </tr>
             {% endif %}
           </tbody>
         </table>

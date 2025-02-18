@@ -276,7 +276,6 @@ body {
   text-align: end;
   background-color: #fff;
 }
-
 .bx-menu {
   background-color: #08b324 !important;
   color: #fff;
@@ -325,10 +324,15 @@ tbody tr:hover {
   height: 4000px;
   width: 400px;
 
+
+  height: 4000px;
+  width: 400px;
+
   width: 400px;
   height: 400px;
 
 }
+
 
 /*Loader para precarga en botn cargar mas consignaciones*/
 .loader {

@@ -87,24 +87,33 @@ def obtener_productos():
 # buscar 
 # Función para buscar productos en la base de datos
 def buscarProductoBD(search):
+    if not search:  # Validar que el término de búsqueda no sea vacío
+        return []
+
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as mycursor:
-                querySQL = ("""
+                querySQL = """
                     SELECT 
                         id, codigo, nombre, descripcion, precio, cantidad, marca, estado, total
                     FROM producto
                     WHERE nombre LIKE %s OR codigo LIKE %s
                     ORDER BY id DESC
-                """)
+                """
                 search_pattern = f"%{search}%"  # Agregar "%" alrededor del término de búsqueda
                 mycursor.execute(querySQL, (search_pattern, search_pattern))
                 resultado_busqueda = mycursor.fetchall()
+
+                # Si no se encontraron resultados, puedes devolver una lista vacía o un mensaje
+                if not resultado_busqueda:
+                    return []  # O bien podrías devolver {'success': False, 'message': 'No se encontraron resultados'}
+
                 return resultado_busqueda
 
     except Exception as e:
         print(f"Ocurrió un error en la función buscarProductoBD: {e}")
         return []
+
 
 # actualizar producto
 def actualizar_producto(id, data_form):

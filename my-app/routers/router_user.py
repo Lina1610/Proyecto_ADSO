@@ -132,7 +132,7 @@ def viewBuscarUsuarioBD():
     resultadoBusqueda = buscarUsuarioBD(request.json['busqueda'])
     if resultadoBusqueda:
         return render_template('public/nuevosUsuarios/busqueda_usuario.html', dataBusqueda=resultadoBusqueda)
-    return jsonify({'success': False, 'html': '<tr><td colspan="6" class="text-center">No se encontraron resultados.</td></tr>'})
+    return jsonify({'success': False, 'html': '<tr><td colspan="7" class="text-center">No se encontraron resultados.</td></tr>'})  # Cambiado de 6 a 7
 
 @app.route('/recuperar-password', methods=['GET', 'POST'])
 def recuperarPassword():
