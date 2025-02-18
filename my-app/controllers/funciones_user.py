@@ -14,6 +14,18 @@ from conexion.conexionBD import connectionBD
 from werkzeug.security import generate_password_hash
 
 
+def cambiar_estado_usuario(user_id, nuevo_estado):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor() as cursor:
+                sql = "UPDATE users SET estado = %s WHERE id = %s"
+                cursor.execute(sql, (nuevo_estado, user_id))
+                conexion_MySQLdb.commit()
+                return cursor.rowcount
+    except Exception as e:
+        print(f"Error al cambiar estado: {e}")
+        return 0
+
 def procesar_usuario(dataForm):
     try:
         # Validar que los campos no estén vacíos

@@ -10,7 +10,7 @@ import re
 # Para encriptar contraseña generate_password_hash
 from werkzeug.security import generate_password_hash
 
-def recibeInsertRegisterUser(tipo_documento, documento, nombre, apellido, telefono, correo, contrasena, rol='cliente', estado='activo'):
+def recibeInsertRegisterUser(tipo_documento, documento, nombre, apellido, telefono, correo, contrasena, rol='cliente', estado='inactivo'):
     print("Iniciando recibeInsertRegisterUser...")  # Depuración
     print(f"Valores recibidos: tipo_documento={tipo_documento}, documento={documento}, nombre={nombre}, apellido={apellido}, telefono={telefono}, correo={correo}, contrasena={contrasena}, rol={rol}, estado={estado}")  # Depuración
 

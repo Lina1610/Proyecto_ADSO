@@ -123,12 +123,21 @@ def loginCliente():
             # Comprobando si existe una cuenta
             conexion_MySQLdb = connectionBD()
             cursor = conexion_MySQLdb.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM users WHERE documento = %s", [documento])
+            
+            # Consulta modificada para incluir rol y estado
+            cursor.execute(
+                "SELECT id, nombre, apellido, telefono, correo, documento, contrasena, rol, estado FROM users WHERE documento = %s AND estado = 'activo'", 
+                [documento]
+            )
             account = cursor.fetchone()
 
             if account:
                 if check_password_hash(account['contrasena'], contrasena):
-                    # Crear datos de sesión, para poder acceder a estos datos en otras rutas
+                    # ========== Datos clave que faltaban ==========
+                    session['rol'] = account['rol']  # 🔑 Guardar rol en sesión
+                    session['estado'] = account['estado']  # 🔑 Guardar estado
+                    # ==============================================
+                    
                     session['conectado'] = True
                     session['id'] = account['id']
                     session['nombre'] = account['nombre']
@@ -137,19 +146,18 @@ def loginCliente():
                     session['correo'] = account['correo']
                     session['documento'] = account['documento']
 
-                    flash('La sesión fue correcta.', 'success')
+                    flash('Sesión iniciada correctamente', 'success')
                     return redirect(url_for('inicio'))
                 else:
-                    # La contraseña es incorrecta
-                    flash('Datos incorrectos, por favor revise.', 'error')
+                    flash('Contraseña incorrecta', 'error')
                     return render_template(f'{PATH_URL_LOGIN}/base_login.html')
             else:
-                # El documento no existe
-                flash('El usuario no existe, por favor verifique.', 'error')
+                flash('Usuario inactivo o no existe', 'error')
                 return render_template(f'{PATH_URL_LOGIN}/base_login.html')
         else:
-            flash('Primero debes iniciar sesión.', 'error')
+            flash('Complete todos los campos', 'error')
             return render_template(f'{PATH_URL_LOGIN}/base_login.html')
+        
         
 @app.route('/closed-session', methods=['GET'])
 def cerraSesion():

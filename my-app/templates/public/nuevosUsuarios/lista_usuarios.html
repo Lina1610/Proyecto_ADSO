@@ -12,10 +12,8 @@
       <hr />
     </div>
 
-    <!-- Mensajes flash -->
     <div id="contenedor-mensajes"></div>
 
-    <!-- Barra de búsqueda -->
     <div class="row justify-content-end">
       <div class="col-md-6 mt-4 py-2">
         <input
@@ -27,7 +25,6 @@
       </div>
     </div>
 
-    <!-- Tabla de usuarios -->
     <div class="row justify-content-center mb-2">
       <div class="table-responsive text-nowrap table-hover">
         <table
@@ -42,7 +39,9 @@
               <th>Apellido</th>
               <th>Documento</th>
               <th>Correo</th>
-              <th>Acción</th>
+              <th>Estado</th>
+              <th>Acción Estado</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody id="tabla_usuarios_body">
@@ -54,36 +53,57 @@
                 <td>{{ usuario.apellido }}</td>
                 <td>{{ usuario.documento }}</td>
                 <td>{{ usuario.correo }}</td>
-                <td width="10px">
-                  <!-- Botones de acción -->
-                  <a
-                    href="/detalles-usuario/{{ usuario.id }}"
-                    class="btn btn-info btn-sm"
-                    title="Ver detalles">
-                    <i class="bi bi-eye"></i>
-                    Ver detalles
+                
+                <!-- Columna de Estado -->
+                <td>
+                  {% if usuario.estado == 'activo' %}
+                    <span class="badge bg-success">Activo</span>
+                  {% else %}
+                    <span class="badge bg-danger">Inactivo</span>
+                  {% endif %}
+                </td>
+
+                <!-- Columna de Activación/Desactivación -->
+                <td>
+                  {% if usuario.estado == 'inactivo' %}
+                    <a href="/activar-usuario/{{ usuario.id }}" 
+                       class="btn btn-sm btn-success"
+                       title="Activar usuario">
+                       <i class="bi bi-check-circle"></i>
+                    </a>
+                  {% else %}
+                    <a href="/desactivar-usuario/{{ usuario.id }}" 
+                       class="btn btn-sm btn-warning"
+                       title="Desactivar usuario">
+                       <i class="bi bi-x-circle"></i>
+                    </a>
+                  {% endif %}
+                </td>
+
+                <!-- Columna de Acciones -->
+                <td width="15%">
+                  <a href="/detalles-usuario/{{ usuario.id }}"
+                     class="btn btn-info btn-sm"
+                     title="Ver detalles">
+                     <i class="bi bi-eye"></i>
                   </a>
-                  <a
-                    href="{{ url_for('viewEditarUsuario', id=usuario.id) }}"
-                    class="btn btn-success btn-sm"
-                    title="Actualizar">
-                    <i class="bi bi-arrow-clockwise"></i>
-                    Actualizar
+                  <a href="{{ url_for('viewEditarUsuario', id=usuario.id) }}"
+                     class="btn btn-success btn-sm"
+                     title="Actualizar">
+                     <i class="bi bi-arrow-clockwise"></i>
                   </a>
-                  <a
-                    href="#"
-                    onclick="eliminarUsuario('{{ usuario.id }}');"
-                    class="btn btn-danger btn-sm"
-                    title="Eliminar">
-                    <i class="bi bi-trash3"></i>
-                    Eliminar
+                  <a href="#"
+                     onclick="eliminarUsuario('{{ usuario.id }}');"
+                     class="btn btn-danger btn-sm"
+                     title="Eliminar">
+                     <i class="bi bi-trash3"></i>
                   </a>
                 </td>
               </tr>
               {% endfor %}
             {% else %}
               <tr>
-                <td colspan="6" class="text-center">
+                <td colspan="8" class="text-center">
                   <i class="bi bi-exclamation-circle"></i> No hay usuarios registrados.
                 </td>
               </tr>
@@ -95,6 +115,5 @@
   </div>
 </div>
 
-<!-- Vincular el archivo JavaScript -->
 <script src="{{ url_for('static', filename='assets/customJS/buscar_usuario.js') }}"></script>
 {% endblock %}

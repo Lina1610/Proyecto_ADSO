@@ -1,0 +1,35 @@
+{% extends 'public/base_cpanel.html' %}
+
+{% block title %}Panel de Administrador{% endblock %}
+
+{% block content %}
+<h1>Panel de Administrador</h1>
+
+<!-- Lista de usuarios -->
+<h2>Usuarios</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in usuarios %}
+        <tr>
+            <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
+            <td>{{ usuario.correo }}</td>
+            <td>{{ usuario.rol }}</td>
+            <td>{{ usuario.estado }}</td>
+            <td>
+                <a href="/activar-usuario/{{ usuario.id }}" class="btn btn-success">Activar</a>
+                <a href="/editar-usuario/{{ usuario.id }}" class="btn btn-warning">Editar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

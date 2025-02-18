@@ -8,11 +8,10 @@ import secrets
 from datetime import datetime, timedelta
 from controllers.funciones_user import actualizar_password
 from controllers.funciones_user import actualizar_datos_usuario
-from flask import jsonify
 import os
 from werkzeug.utils import secure_filename
-from controllers.funciones_user import procesar_imagen_perfil
-
+from middleware import roles_required  # Importación del middleware
+from controllers.funciones_user import cambiar_estado_usuario
 
 # Configuración del correo
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -20,147 +19,132 @@ app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'EMAIL_SENDER'
 app.config['MAIL_PASSWORD'] = 'EMAIL_PASSWORD'
-
 mail = Mail(app)
 
-# Configuración para guardar las imágenes
-UPLOAD_FOLDER = 'static/uploads/perfil'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# Función para verificar extensiones permitidas
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 PATH_URL = "public/usuario"
-
 EXPIRACION_TOKEN = timedelta(hours=1)
-
 tokens_recuperacion = {}
 
+# ============================================== RUTAS PROTEGIDAS CON ROLES ==============================================
+
 @app.route('/registrar-usuario', methods=['GET', 'POST'])
+@roles_required('administrador')  # Decorador aplicado
 def viewFormUsuario():
-    if 'conectado' in session:
-        if request.method == 'POST':
-            data_form = request.form
-            resultado = procesar_usuario(data_form)
-            if isinstance(resultado, int) and resultado > 0:
-                flash('Usuario registrado con éxito', 'success')
-                return redirect(url_for('viewFormUsuario'))
-            else:
-                flash(f'Error al registrar usuario: {resultado}', 'error')
-        return render_template('public/nuevosUsuarios/registro_usuario.html')
+    if request.method == 'POST':
+        data_form = request.form
+        resultado = procesar_usuario(data_form)
+        if isinstance(resultado, int) and resultado > 0:
+            flash('Usuario registrado con éxito', 'success')
+            return redirect(url_for('viewFormUsuario'))
+        else:
+            flash(f'Error al registrar usuario: {resultado}', 'error')
+    return render_template('public/nuevosUsuarios/registro_usuario.html')
+
+@app.route('/activar-usuario/<int:user_id>')
+@roles_required('administrador')
+def activar_usuario(user_id):
+    resultado = cambiar_estado_usuario(user_id, 'activo')
+    if resultado > 0:
+        flash('Usuario activado', 'success')
     else:
-        flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('inicio'))
+        flash('Error al activar', 'error')
+    return redirect(url_for('lista_usuarios'))
+
+@app.route('/desactivar-usuario/<int:user_id>')
+@roles_required('administrador')  # Añade esta ruta
+def desactivar_usuario(user_id):
+    resultado = cambiar_estado_usuario(user_id, 'inactivo')
+    if resultado > 0:
+        flash('Usuario desactivado', 'success')
+    else:
+        flash('Error al desactivar', 'error')
+    return redirect(url_for('lista_usuarios'))
+
+    # ... (similar al anterior)
+
 
 @app.route('/lista-de-usuarios')
+@roles_required('administrador')  # Decorador aplicado
 def lista_usuarios():
-    if 'conectado' in session:
-        usuarios = lista_usuariosBD()
-        return render_template('public/nuevosUsuarios/lista_usuarios.html', resp_usuariosBD=usuarios)
-    else:
-        flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('inicio'))
+    usuarios = lista_usuariosBD()
+    return render_template('public/nuevosUsuarios/lista_usuarios.html', resp_usuariosBD=usuarios)
 
 @app.route("/editar-usuario/<int:id>", methods=['GET'])
+@roles_required('administrador')  # Decorador aplicado
 def viewEditarUsuario(id):
-    if 'conectado' in session:
-        usuario = obtener_usuario_por_id(id)
-        if usuario:
-            return render_template('public/nuevosUsuarios/editar_usuario.html', usuario=usuario)
-        else:
-            flash('El usuario no existe.', 'error')
-            return redirect(url_for('usuarios'))
-    else:
-        flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('inicio'))
+    usuario = obtener_usuario_por_id(id)
+    if usuario:
+        return render_template('public/nuevosUsuarios/editar_usuario.html', usuario=usuario)
+    flash('El usuario no existe.', 'error')
+    return redirect(url_for('lista_usuarios'))
 
 @app.route("/detalles-usuario/<int:id>", methods=['GET'])
+@roles_required('administrador')  # Decorador aplicado
 def detallesUsuario(id):
-    if 'conectado' in session:
-        usuario = obtener_usuario_por_id(id)
-        if usuario:
-            return render_template('public/nuevosUsuarios/detalles_usuario.html', usuario=usuario)
-        else:
-            flash('El usuario no existe.', 'error')
-            return redirect(url_for('usuarios'))
-    else:
-        flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('inicio'))
+    usuario = obtener_usuario_por_id(id)
+    if usuario:
+        return render_template('public/nuevosUsuarios/detalles_usuario.html', usuario=usuario)
+    flash('El usuario no existe.', 'error')
+    return redirect(url_for('lista_usuarios'))
 
 @app.route('/actualizar-usuario', methods=['POST'])
+@roles_required('administrador')  # Decorador aplicado
 def actualizarUsuario():
-    if 'conectado' in session:
-        id = request.form['id']
-        nombre = request.form['nombre']
-        apellido = request.form['apellido']
-        tipo_documento = request.form['tipo_documento']
-        documento = request.form['documento']
-        correo = request.form['correo']
-        telefono = request.form['telefono']
-        rol = request.form['rol']
-        estado = request.form['estado']
+    id = request.form['id']
+    nombre = request.form['nombre']
+    apellido = request.form['apellido']
+    tipo_documento = request.form['tipo_documento']
+    documento = request.form['documento']
+    correo = request.form['correo']
+    telefono = request.form['telefono']
+    rol = request.form['rol']
+    estado = request.form['estado']
 
-        with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                querySQL = """
-                    UPDATE users
-                    SET nombre = %s, apellido = %s, tipo_documento = %s, documento = %s, correo = %s, telefono = %s, rol = %s, estado = %s
-                    WHERE id = %s
-                """
-                valores = (nombre, apellido, tipo_documento, documento, correo, telefono, rol, estado, id)
-                cursor.execute(querySQL, valores)
-                conexion_MySQLdb.commit()
+    with connectionBD() as conexion_MySQLdb:
+        with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+            querySQL = """
+                UPDATE users
+                SET nombre = %s, apellido = %s, tipo_documento = %s, documento = %s, 
+                    correo = %s, telefono = %s, rol = %s, estado = %s
+                WHERE id = %s
+            """
+            valores = (nombre, apellido, tipo_documento, documento, correo, telefono, rol, estado, id)
+            cursor.execute(querySQL, valores)
+            conexion_MySQLdb.commit()
 
-        flash('Usuario actualizado correctamente.', 'success')
-        return redirect(url_for('usuarios'))
-    else:
-        flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('inicio'))
+    flash('Usuario actualizado correctamente.', 'success')
+    return redirect(url_for('lista_usuarios'))
+
+@app.route('/eliminar-usuario/<int:id>', methods=['GET'])
+@roles_required('administrador')  # Decorador aplicado
+def eliminarUsuario(id):
+    resultado = eliminar_usuario(id)
+    if resultado:
+        flash('Usuario eliminado correctamente.', 'success')
+        return jsonify({"success": True})
+    flash('Error al eliminar el usuario', 'error')
+    return jsonify({"success": False})
+
+# ============================================== RUTAS PÚBLICAS ==============================================
 
 @app.route("/buscando-usuario", methods=['POST'])
 def viewBuscarUsuarioBD():
     resultadoBusqueda = buscarUsuarioBD(request.json['busqueda'])
     if resultadoBusqueda:
         return render_template('public/nuevosUsuarios/busqueda_usuario.html', dataBusqueda=resultadoBusqueda)
-    else:
-        return jsonify({'success': False, 'html': '<tr><td colspan="6" class="text-center">No se encontraron resultados.</td></tr>'})
-
-@app.route('/eliminar-usuario/<int:id>', methods=['GET'])
-def eliminarUsuario(id):
-    if 'conectado' in session:
-        resultado = eliminar_usuario(id)
-        if resultado:
-            flash('Usuario eliminado correctamente.', 'success')
-            return jsonify({"success": True})
-        else:
-            flash('Error al eliminar el usuario', 'error')
-            return jsonify({"success": False})
-    else:
-        flash('Primero debes iniciar sesión', 'error')
-        return jsonify({"success": False})
-
-# Recuperación de contraseña
-from datetime import datetime, timedelta
-
-# Tiempo de expiración del token (por ejemplo, 1 hora)
-EXPIRACION_TOKEN = timedelta(hours=1)
-
-tokens_recuperacion = {}
+    return jsonify({'success': False, 'html': '<tr><td colspan="6" class="text-center">No se encontraron resultados.</td></tr>'})
 
 @app.route('/recuperar-password', methods=['GET', 'POST'])
 def recuperarPassword():
     if request.method == 'POST':
         correo = request.form['correo']
         usuario = buscarUsuarioBD(correo)
-        
-        if usuario:  # Si se encuentra un usuario
-            usuario = usuario[0]  # Asegúrate de obtener el primer usuario en la lista
+        if usuario:
+            usuario = usuario[0]
             token = secrets.token_urlsafe(16)
             tokens_recuperacion[token] = {
                 'user_id': usuario['id'],
-                'fecha_creacion': datetime.utcnow()  # Guardamos la fecha y hora en UTC
+                'fecha_creacion': datetime.utcnow()
             }
             enlace = url_for('resetPassword', token=token, _external=True)
             msg = Message('Recuperación de contraseña', sender=app.config['MAIL_USERNAME'], recipients=[correo])
@@ -171,61 +155,38 @@ def recuperarPassword():
             flash('El correo no está registrado.', 'error')
     return render_template('public/login/auth_forgot_password.html')
 
-
 @app.route('/reset-password/<token>', methods=['GET', 'POST'])
 def resetPassword(token):
-    # Verificar si el token es válido
     if token not in tokens_recuperacion:
         flash('Token inválido o expirado.', 'error')
-        return redirect(url_for('inicio'))  # Redirige al inicio si el token no es válido
+        return redirect(url_for('inicio'))
 
-    # Verificar si el token ha expirado
     token_data = tokens_recuperacion[token]
-    fecha_creacion = token_data['fecha_creacion']
-    if datetime.utcnow() - fecha_creacion > EXPIRACION_TOKEN:
+    if datetime.utcnow() - token_data['fecha_creacion'] > EXPIRACION_TOKEN:
+        del tokens_recuperacion[token]
         flash('El enlace ha expirado. Solicita uno nuevo.', 'error')
-        del tokens_recuperacion[token]  # Eliminar el token expirado
-        return redirect(url_for('recuperarPassword'))  # Redirige al formulario de recuperación de contraseña
+        return redirect(url_for('recuperarPassword'))
 
     if request.method == 'POST':
-        nueva_password = request.form['password']  # Obtener la nueva contraseña desde el formulario
-        user_id = token_data['user_id']  # Obtener el ID del usuario asociado al token
-        
-        # Actualizar la contraseña en la base de datos
-        if actualizar_password(user_id, nueva_password):
+        nueva_password = request.form['password']
+        if actualizar_password(token_data['user_id'], nueva_password):
+            del tokens_recuperacion[token]
             flash('Contraseña restablecida con éxito.', 'success')
-            del tokens_recuperacion[token]  # Eliminar el token una vez usado
-            return redirect(url_for('inicio'))  # Redirigir al inicio si todo sale bien
-        else:
-            flash('Hubo un error al restablecer la contraseña.', 'error')
+            return redirect(url_for('inicio'))
+        flash('Hubo un error al restablecer la contraseña.', 'error')
     
     return render_template('public/login/auth_reset_password.html', token=token)
 
 @app.route('/actualizar-datos-perfil', methods=['POST'])
 def actualizar_datos_perfil():
     if 'conectado' in session:
-        # Obtener los datos del formulario
         nombre = request.form['nombre']
         apellido = request.form['apellido']
         documento = request.form['documento']
-        foto_perfil = request.files.get('foto_perfil')  # Obtener el archivo subido
+        foto_perfil = request.files.get('foto_perfil')
 
-        # Actualizar los datos del perfil
-        if actualizar_datos_perfil(session['id'], nombre, apellido, documento, foto_perfil):
+        if actualizar_datos_usuario(session['id'], nombre, apellido, documento, foto_perfil):
             flash('Datos actualizados correctamente.', 'success')
-            return jsonify({
-                'success': True,
-                'message': 'Datos actualizados correctamente',
-                'reload': True  # Indicar que la página debe recargarse
-            })
-        else:
-            flash('Hubo un error al actualizar los datos.', 'error')
-            return jsonify({
-                'success': False,
-                'message': 'Hubo un error al actualizar los datos'
-            })
-    else:
-        return jsonify({
-            'success': False,
-            'message': 'Primero debes iniciar sesión'
-        })
+            return jsonify({'success': True, 'reload': True})
+        return jsonify({'success': False, 'message': 'Error al actualizar datos'})
+    return jsonify({'success': False, 'message': 'Debes iniciar sesión'})

@@ -33,7 +33,8 @@
 
 
   <ul class="menu-inner py-5">
-    <!-- Sección de Registro de Usuarios (Menú desplegable) -->
+  <!-- Sección de Registro de Usuarios (Solo visible para administradores) -->
+{% if session.rol == 'administrador' %}
 <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-usuario', '/lista-de-usuarios'] %} active open {% endif %}" data-menu="menu-usuarios">
   <a href="javascript:void(0);" class="menu-link menu-toggle">
     <i class="menu-icon bi bi-person-plus"></i>
@@ -52,6 +53,7 @@
     </li>
   </ul>
 </li>
+{% endif %}
     <!-- Sección de Empleados (Menú desplegable) -->
     <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-empleado', '/lista-de-empleados', '/descargar-informe-empleados'] %} active open {% endif %}" data-menu="menu-empleados">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
