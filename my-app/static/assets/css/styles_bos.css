@@ -86,25 +86,17 @@
 }
 
 
-
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
 
 @media (prefers-reduced-motion: no-preference) {
   :root {
     scroll-behavior: smooth;
   }
-}
-
-body {
-  margin: 0;
-  font-family: var(--bs-body-font-family);
-  font-size: var(--bs-body-font-size);
-  font-weight: var(--bs-body-font-weight);
-  line-height: var(--bs-body-line-height);
-  color: var(--bs-body-color);
-  text-align: var(--bs-body-text-align);
-  background-color: var(--bs-body-bg);
-  -webkit-text-size-adjust: 100%;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 hr {
@@ -329,16 +321,7 @@ th {
   text-align: -webkit-match-parent;
 }
 
-thead,
-tbody,
-tfoot,
-tr,
-td,
-th {
-  border-color: inherit;
-  border-style: solid;
-  border-width: 0;
-}
+
 
 label {
   display: inline-block;
@@ -4196,11 +4179,7 @@ textarea.form-control-lg {
   border-top: 0;
 }
 
-.card-body {
-  flex: 1 1 auto;
-  padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
-  color: var(--bs-card-color);
-}
+
 
 .card-title {
   margin-bottom: var(--bs-card-title-spacer-y);
@@ -5352,27 +5331,11 @@ textarea.form-control-lg {
   line-height: var(--bs-modal-title-line-height);
 }
 
-.modal-body {
-  position: relative;
-  flex: 1 1 auto;
-  padding: var(--bs-modal-padding);
-}
 
-.modal-footer {
-  display: flex;
-  flex-shrink: 0;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  padding: calc(var(--bs-modal-padding) - var(--bs-modal-footer-gap) * 0.5);
-  background-color: var(--bs-modal-footer-bg);
-  border-top: var(--bs-modal-footer-border-width) solid var(--bs-modal-footer-border-color);
-  border-bottom-right-radius: var(--bs-modal-inner-border-radius);
-  border-bottom-left-radius: var(--bs-modal-inner-border-radius);
-}
-.modal-footer > * {
-  margin: calc(var(--bs-modal-footer-gap) * 0.5);
-}
+
+
+
+
 
 @media (min-width: 576px) {
   .modal {
@@ -5410,10 +5373,7 @@ textarea.form-control-lg {
   border: 0;
   border-radius: 0;
 }
-.modal-fullscreen .modal-header,
-.modal-fullscreen .modal-footer {
-  border-radius: 0;
-}
+
 .modal-fullscreen .modal-body {
   overflow-y: auto;
 }
@@ -10817,16 +10777,17 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
-html {
-  scroll-padding-top: 4.5rem;
-}
 
-body {
-  position: relative;
-}
 
 p {
   line-height: 1.75;
+}
+#services {
+  margin-top: -50px; /* Ajusta según necesites */
+  padding-top: 40px; /* Para que no quede demasiado pegado */
+  position: relative;
+  z-index: 2;
+  background-color: #f8f8f8; /* Asegura contraste con el header */
 }
 
 .page-section {
@@ -10945,56 +10906,129 @@ header.masthead {
   background-size: cover;
 }
 
-.header-video{
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-}
-.header-video video{
-  min-width: 100%;
-  min-height: 100%;
-}
-
-.header-overlay{
-  height: 100vh;
-  width: 100vw;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-color: #303952;
-  z-index: 1 ;
-  opacity: .50;
-}
-
-.contenedor{
-  width: 90%;
-  max-width: 1000px;
-  overflow: hidden;
-  margin: auto;
-  color: #087990;
-}
-.contendor ul{
+.masthead {
   position: relative;
   width: 100%;
-  margin: 60px 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+}
+
+/* Fondo de video */
+.header-video video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Capa de oscurecimiento para mejorar la visibilidad del texto */
+.header-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* ----- CAJA FLOTANTE DINÁMICA ----- */
+.caja-dinamica {
+  position: absolute;
+  top: 20%;
+  left: 10%;
+  max-width: 350px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  text-align: left;
+  animation: fadeInUp 1s ease-in-out;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.caja-dinamica h2 {
+  font-size: 1.8rem;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.caja-dinamica p {
+  font-size: 1rem;
+  color: #f1f1f1;
+}
+
+/* ----- ANIMACIONES ----- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Efecto al hacer scroll */
+.caja-dinamica:hover {
+  transform: scale(1.05);
+}
+
+/* ----- TEXTO PRINCIPAL EN EL CENTRO ----- */
+.container {
+  position: relative;
+  z-index: 2;
+}
+
+.masthead-subheading {
+  font-size: 1.5rem;
+  font-weight: 300;
+}
+
+.masthead-heading {
+  font-size: 2.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+/* ----- BOTÓN PRINCIPAL ----- */
+.btn-primary {
+  background: #8B4513;
+  border: none;
+  padding: 12px 30px;
+  font-size: 1rem;
+  border-radius: 5px;
+  transition: background 0.3s ease-in-out, transform 0.2s;
+}
+
+.btn-primary:hover {
+  background: #A0522D;
+  transform: scale(1.05);
+}
+
+.titulo{
+  text-align: center;
+  font-size: 40px;
+  padding-top: 50px;
 
 }
-.contenedor ul li{
-    list-style: none;
-    display: inline-block;
-    padding: 10px 20px;
-    color: #000;
-    border: 1px solid #f8f9fa ;
-    margin-right: 15px;
-    text-transform: capitalize;
-    -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
-    -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
-    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+
+
+
+/* Ajuste para que no se monte sobre el footer */
+footer {
+  margin-top: 50px;
+}
+
   
-  }
 
 
 /* Hero Section */
@@ -11537,42 +11571,44 @@ video {
 }
 
 .whatsapp-button {
-  position: fixed;
-  bottom: 20px; /* Posición desde la parte inferior */
-  right: 20px; /* Posición desde la derecha */
-  background-color: #25D366;
-  color: white;
-  width: auto;
-  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 15px;
-  border-radius: 25px;
-  text-decoration: none;
+  gap: 8px;
+  background-color: #25d366;
+  color: white;
+  padding: 12px 20px;
+  font-size: 18px;
   font-weight: bold;
-  font-size: 16px;
-  font-family: Arial, sans-serif;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease-in-out, background-color 0.3s;
-  z-index: 1000;
+  text-decoration: none;
+  border-radius: 50px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease-in-out;
+  animation: latido 1.5s infinite ease-in-out;
 }
 
 .whatsapp-button img {
-  width: 30px;
-  height: 30px;
-  margin-right: 10px;
+  width: 24px;
+  height: 24px;
 }
 
-.whatsapp-button span {
-  background: rgba(0, 0, 0, 0.2);
-  padding: 5px 10px;
-  border-radius: 10px;
+/* Efecto de latido */
+@keyframes latido {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
+/* Efecto al pasar el mouse */
 .whatsapp-button:hover {
   background-color: #1ebe5d;
-  transform: scale(1.1);
+  transform: scale(1.2);
 }
 
 
@@ -11703,13 +11739,43 @@ video {
       transform: translateY(-15px);
   }
 }
+
+
+/* Estilos generales del carrito */
+.cart-section {
+  max-width: 1000px; /* Más ancho para un diseño más profesional */
+  margin: 40px auto;
+  padding: 40px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+}
+
+.cart-title {
+  font-size: 36px;
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 40px;
+  font-weight: bold;
+}
+
+
+
+
+
 /* Estilos generales del footer */
 .footer {
   background-color: #2c3e50;
-  color: #ecf0f1;
+  margin-top: auto;
+  color: #ecf0f9;
   padding: 40px 20px;
   font-family: Arial, sans-serif;
+  width: 100%;
 }
+.main-content {
+    flex: 1; /* Empuja el footer hacia abajo */
+}
+
 
 .footer-container {
   max-width: 1200px;
@@ -11787,6 +11853,78 @@ video {
   color: #bdc3c7;
 }
 
+.cart-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-icon img {
+  width: 28px; /* Ajusta el tamaño del icono */
+  height: 28px;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Efecto de movimiento al pasar el mouse */
+.cart-icon:hover img {
+  transform: scale(1.2);
+}
+
+/* Contador de productos en el carrito */
+.cart-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.product-card {
+  width: 250px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.product-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.price {
+  font-size: 18px;
+  color: #d9534f;
+  font-weight: bold;
+}
+
+.add-to-cart {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-to-cart:hover {
+  background: #218838;
+}
+
+
+
+
 
 /* Ajustes responsivos */
 @media (max-width: 768px) {
@@ -11808,6 +11946,7 @@ video {
     text-align: center;
     margin-top: 50px;
     padding: 0 20px;
+    
 }
 
 /* Estilo del título principal */

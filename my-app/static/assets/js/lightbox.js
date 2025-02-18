@@ -15,3 +15,14 @@ window.onclick = function(event) {
         closeLightbox();
     }
 }
+
+function checkScroll() {
+    let elemento = document.querySelector(".historia-tamal");
+    let posicion = elemento.getBoundingClientRect().top;
+    let pantalla = window.innerHeight;
+    if (posicion < pantalla * 0.8) {
+      elemento.classList.add("aparece");
+    }
+  }
+  window.addEventListener("scroll", checkScroll);
+  checkScroll();

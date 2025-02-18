@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // 🔴 Exportar a PDF
-  // Exportar a PDF
 $btnExportarPDF.addEventListener("click", function () {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
