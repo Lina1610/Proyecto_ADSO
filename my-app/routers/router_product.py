@@ -107,6 +107,7 @@ def viewBuscarProductoBD():
                 html_resultados += f"""
                 <tr id="producto_{producto['id']}">
                     <td>{producto['id']}</td>
+                    <td>{producto['codigo']}</td>
                     <td>{producto['nombre']}</td>
                     <td>{producto['descripcion']}</td>
                     <td>$ {producto['precio']:,.2f}</td>
@@ -129,7 +130,7 @@ def viewBuscarProductoBD():
             # Si no hay resultados, devolver un mensaje en HTML
             mensaje_html = f"""
             <tr>
-                <td colspan="6" style="text-align:center;color: red;font-weight: bold;">
+                <td colspan="7" style="text-align:center;color: red;font-weight: bold;">
                     No resultados para la búsqueda: <strong style="color: #222;">{search_query}</strong>
                 </td>
             </tr>

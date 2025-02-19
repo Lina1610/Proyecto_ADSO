@@ -45,8 +45,8 @@ def procesar_producto(dataForm):
 
                 # Creando una tupla con los valores del INSERT
                 valores = (
-                    dataForm['codigo'],  # Campo código primero
-                    dataForm['nombre'],  # Campo nombre
+                    dataForm['codigo'],  # Asegúrate de que el campo 'codigo' esté en el formulario
+                    dataForm['nombre'], 
                     dataForm['descripcion'], 
                     precio_decimal,  # Usar el precio decimal procesado
                     dataForm['estado'], 
@@ -63,6 +63,7 @@ def procesar_producto(dataForm):
 
     except Exception as e:
         return f'Se produjo un error en procesar_producto: {str(e)}'
+
 
 def obtener_productos():
     try:
@@ -87,40 +88,31 @@ def obtener_productos():
 # buscar 
 # Función para buscar productos en la base de datos
 def buscarProductoBD(search):
-    if not search:  # Validar que el término de búsqueda no sea vacío
-        return []
-
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as mycursor:
-                querySQL = """
+                querySQL = ("""
                     SELECT 
                         id, codigo, nombre, descripcion, precio, cantidad, marca, estado, total
                     FROM producto
                     WHERE nombre LIKE %s OR codigo LIKE %s
                     ORDER BY id DESC
-                """
+                """)
                 search_pattern = f"%{search}%"  # Agregar "%" alrededor del término de búsqueda
                 mycursor.execute(querySQL, (search_pattern, search_pattern))
                 resultado_busqueda = mycursor.fetchall()
-
-                # Si no se encontraron resultados, puedes devolver una lista vacía o un mensaje
-                if not resultado_busqueda:
-                    return []  # O bien podrías devolver {'success': False, 'message': 'No se encontraron resultados'}
-
                 return resultado_busqueda
 
     except Exception as e:
         print(f"Ocurrió un error en la función buscarProductoBD: {e}")
         return []
 
-
 # actualizar producto
 def actualizar_producto(id, data_form):
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                # Procesar el precio y total como en procesar_producto
+                # Procesar el precio y total
                 precio_sin_puntos = re.sub('[^0-9,\.]', '', data_form['precio'])
                 precio_decimal = float(precio_sin_puntos.replace(',', '.'))
                 total_decimal = float(data_form['total'])
@@ -132,9 +124,7 @@ def actualizar_producto(id, data_form):
                     WHERE id = %s
                 """
                 valores = (
-                    data_form['codigo'],  # Campo código
-                    data_form['nombre'],  # Campo nombre
-                    data_form['descripcion'], precio_decimal,
+                    data_form['codigo'], data_form['nombre'], data_form['descripcion'], precio_decimal,
                     data_form['estado'], data_form['cantidad'], data_form['marca'],
                     total_decimal, id
                 )

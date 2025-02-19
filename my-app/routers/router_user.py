@@ -28,7 +28,7 @@ tokens_recuperacion = {}
 # ============================================== RUTAS PROTEGIDAS CON ROLES ==============================================
 
 @app.route('/registrar-usuario', methods=['GET', 'POST'])
-@roles_required('administrador')  # Decorador aplicado
+@roles_required('administrador','superadmin')  # Decorador aplicado
 def viewFormUsuario():
     if request.method == 'POST':
         data_form = request.form
@@ -41,7 +41,7 @@ def viewFormUsuario():
     return render_template('public/nuevosUsuarios/registro_usuario.html')
 
 @app.route('/activar-usuario/<int:user_id>')
-@roles_required('administrador')
+@roles_required('administrador','superadmin')
 def activar_usuario(user_id):
     resultado = cambiar_estado_usuario(user_id, 'activo')
     if resultado > 0:
@@ -51,7 +51,7 @@ def activar_usuario(user_id):
     return redirect(url_for('lista_usuarios'))
 
 @app.route('/desactivar-usuario/<int:user_id>')
-@roles_required('administrador')  # Añade esta ruta
+@roles_required('administrador','superadmin')  # Añade esta ruta
 def desactivar_usuario(user_id):
     resultado = cambiar_estado_usuario(user_id, 'inactivo')
     if resultado > 0:
@@ -64,13 +64,13 @@ def desactivar_usuario(user_id):
 
 
 @app.route('/lista-de-usuarios')
-@roles_required('administrador')  # Decorador aplicado
+@roles_required('administrador','superadmin')  # Decorador aplicado
 def lista_usuarios():
     usuarios = lista_usuariosBD()
     return render_template('public/nuevosUsuarios/lista_usuarios.html', resp_usuariosBD=usuarios)
 
 @app.route("/editar-usuario/<int:id>", methods=['GET'])
-@roles_required('administrador')  # Decorador aplicado
+@roles_required('administrador','superadmin')  # Decorador aplicado
 def viewEditarUsuario(id):
     usuario = obtener_usuario_por_id(id)
     if usuario:
@@ -79,7 +79,7 @@ def viewEditarUsuario(id):
     return redirect(url_for('lista_usuarios'))
 
 @app.route("/detalles-usuario/<int:id>", methods=['GET'])
-@roles_required('administrador')  # Decorador aplicado
+@roles_required('administrador','superadmin')  # Decorador aplicado
 def detallesUsuario(id):
     usuario = obtener_usuario_por_id(id)
     if usuario:
@@ -88,7 +88,7 @@ def detallesUsuario(id):
     return redirect(url_for('lista_usuarios'))
 
 @app.route('/actualizar-usuario', methods=['POST'])
-@roles_required('administrador')  # Decorador aplicado
+@roles_required('administrador','superadmin')  # Decorador aplicado
 def actualizarUsuario():
     id = request.form['id']
     nombre = request.form['nombre']
@@ -116,7 +116,7 @@ def actualizarUsuario():
     return redirect(url_for('lista_usuarios'))
 
 @app.route('/eliminar-usuario/<int:id>', methods=['GET'])
-@roles_required('administrador')  # Decorador aplicado
+@roles_required('administrador','superadmin')  # Decorador aplicado
 def eliminarUsuario(id):
     resultado = eliminar_usuario(id)
     if resultado:
