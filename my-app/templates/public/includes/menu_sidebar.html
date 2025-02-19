@@ -1,4 +1,4 @@
-<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme" {% if session.rol == 'cliente' %}style="display: none;"{% endif %}> <!-- Solo esta línea cambia -->
   <div class="app-brand demo">
     <a href="{{ url_for('inicio') }}" class="app-brand-link">
       <span class="app-brand-logo demo">
@@ -16,44 +16,41 @@
 
   <div class="menu-inner-shadow"></div>
 
-
-<!-- Sección del Perfil del Usuario -->
-<div class="user-profile-sidebar">
-  {% if session.conectado %}
-    <div class="user-info">
-      <h5 class="user-name mb-1">{{ session.nombre }} {{ session.apellido }}</h5>
-      <p class="user-documento text-muted mb-1">{{ session.documento }}</p>
-    </div>
-  {% else %}
-    <p class="text-center p-3">No hay usuario logueado</p>
-  {% endif %}
-</div>
-
-
-
+  <!-- Sección del Perfil del Usuario -->
+  <div class="user-profile-sidebar">
+    {% if session.conectado %}
+      <div class="user-info">
+        <h5 class="user-name mb-1">{{ session.nombre }} {{ session.apellido }}</h5>
+        <p class="user-documento text-muted mb-1">{{ session.documento }}</p>
+      </div>
+    {% else %}
+      <p class="text-center p-3">No hay usuario logueado</p>
+    {% endif %}
+  </div>
 
   <ul class="menu-inner py-5">
-  <!-- Sección de Registro de Usuarios (Solo visible para administradores) -->
-{% if session.rol == 'administrador','superadmin' %}
-<li class="menu-item menu-item-submenu {% if request.path in ['/registrar-usuario', '/lista-de-usuarios'] %} active open {% endif %}" data-menu="menu-usuarios">
-  <a href="javascript:void(0);" class="menu-link menu-toggle">
-    <i class="menu-icon bi bi-person-plus"></i>
-    <div>Registro de Usuarios</div>
-  </a>
-  <ul class="menu-sub">
-    <li class="menu-item {% if request.path == '/registrar-usuario' %} active {% endif %}">
-      <a href="{{ url_for('viewFormUsuario') }}" class="menu-link">
-        <div>Registrar Usuario</div>
+    <!-- Sección de Registro de Usuarios (Solo visible para administradores) -->
+    {% if session.rol in ['administrador', 'superadmin'] %}
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-usuario', '/lista-de-usuarios'] %} active open {% endif %}" data-menu="menu-usuarios">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon bi bi-person-plus"></i>
+        <div>Registro de Usuarios</div>
       </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if request.path == '/registrar-usuario' %} active {% endif %}">
+          <a href="{{ url_for('viewFormUsuario') }}" class="menu-link">
+            <div>Registrar Usuario</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/lista-de-usuarios' %} active {% endif %}">
+          <a href="/lista-de-usuarios" class="menu-link">
+            <div>Lista de Usuarios</div>
+          </a>
+        </li>
+      </ul>
     </li>
-    <li class="menu-item {% if request.path == '/lista-de-usuarios' %} active {% endif %}">
-      <a href="/lista-de-usuarios" class="menu-link">
-        <div>Lista de Usuarios</div>
-      </a>
-    </li>
-  </ul>
-</li>
-{% endif %}
+    {% endif %}
+    
     <!-- Sección de Empleados (Menú desplegable) -->
     <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-empleado', '/lista-de-empleados', '/descargar-informe-empleados'] %} active open {% endif %}" data-menu="menu-empleados">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -71,7 +68,6 @@
             <div>Lista de Empleados</div>
           </a>
         </li>
-        
       </ul>
     </li>
 
@@ -92,7 +88,6 @@
             <div>Lista de Productos</div>
           </a>
         </li>
-      
       </ul>
     </li>
 
@@ -113,7 +108,6 @@
             <div>Lista de Pedidos</div>
           </a>
         </li>
-      
       </ul>
     </li>
 
@@ -134,7 +128,6 @@
             <div>Lista de Proveedores</div>
           </a>
         </li>
-
       </ul>
     </li>
 
@@ -155,7 +148,6 @@
             <div>Lista de Facturas</div>
           </a>
         </li>
-
       </ul>
     </li>
 

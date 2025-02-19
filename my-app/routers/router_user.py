@@ -129,10 +129,16 @@ def eliminarUsuario(id):
 
 @app.route("/buscando-usuario", methods=['POST'])
 def viewBuscarUsuarioBD():
-    resultadoBusqueda = buscarUsuarioBD(request.json['busqueda'])
+    busqueda = request.json['busqueda']
+    resultadoBusqueda = buscarUsuarioBD(busqueda)
+
     if resultadoBusqueda:
-        return render_template('public/nuevosUsuarios/busqueda_usuario.html', dataBusqueda=resultadoBusqueda)
-    return jsonify({'success': False, 'html': '<tr><td colspan="7" class="text-center">No se encontraron resultados.</td></tr>'})  # Cambiado de 6 a 7
+        html_resultados = render_template('public/nuevosUsuarios/busqueda_usuario.html', dataBusqueda=resultadoBusqueda)
+        return jsonify({'success': True, 'html': html_resultados})
+    
+    mensaje_error = f'No resultados para la búsqueda: "{busqueda}"'
+    return jsonify({'success': False, 'mensaje': mensaje_error})
+
 
 @app.route('/recuperar-password', methods=['GET', 'POST'])
 def recuperarPassword():
@@ -182,10 +188,9 @@ def actualizar_datos_perfil():
     if 'conectado' in session:
         nombre = request.form['nombre']
         apellido = request.form['apellido']
-        documento = request.form['documento']
-        foto_perfil = request.files.get('foto_perfil')
+        documento = request.form['documento']        
 
-        if actualizar_datos_usuario(session['id'], nombre, apellido, documento, foto_perfil):
+        if actualizar_datos_usuario(session['id'], nombre, apellido, documento):
             flash('Datos actualizados correctamente.', 'success')
             return jsonify({'success': True, 'reload': True})
         return jsonify({'success': False, 'message': 'Error al actualizar datos'})

@@ -120,11 +120,9 @@ def loginCliente():
             documento = request.form['documento']
             contrasena = request.form['contrasena']
 
-            # Comprobando si existe una cuenta
             conexion_MySQLdb = connectionBD()
             cursor = conexion_MySQLdb.cursor(dictionary=True)
-            
-            # Consulta modificada para incluir rol y estado
+
             cursor.execute(
                 "SELECT id, nombre, apellido, telefono, correo, documento, contrasena, rol, estado FROM users WHERE documento = %s AND estado = 'activo'", 
                 [documento]
@@ -133,11 +131,8 @@ def loginCliente():
 
             if account:
                 if check_password_hash(account['contrasena'], contrasena):
-                    # ========== Datos clave que faltaban ==========
-                    session['rol'] = account['rol']  # 🔑 Guardar rol en sesión
-                    session['estado'] = account['estado']  # 🔑 Guardar estado
-                    # ==============================================
-                    
+                    session['rol'] = account['rol']
+                    session['estado'] = account['estado']
                     session['conectado'] = True
                     session['id'] = account['id']
                     session['nombre'] = account['nombre']
@@ -147,7 +142,12 @@ def loginCliente():
                     session['documento'] = account['documento']
 
                     flash('Sesión iniciada correctamente', 'success')
-                    return redirect(url_for('inicio'))
+
+                    # 🔥 Redirigir según el rol 🔥
+                    if session['rol'] == 'cliente':
+                        return redirect(url_for('home'))  # Cliente va a index.html
+                    else:
+                        return redirect(url_for('inicio'))  # Admin/empleado a base_cpanel.html
                 else:
                     flash('Contraseña incorrecta', 'error')
                     return render_template(f'{PATH_URL_LOGIN}/base_login.html')
@@ -157,6 +157,7 @@ def loginCliente():
         else:
             flash('Complete todos los campos', 'error')
             return render_template(f'{PATH_URL_LOGIN}/base_login.html')
+
         
         
 @app.route('/closed-session', methods=['GET'])

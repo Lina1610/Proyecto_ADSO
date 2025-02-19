@@ -10,6 +10,56 @@
  * Copyright 2011-2022 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
+/* Estilos usuario */
+
+/* Estilos usuario */
+/* Estilos usuario */
+/* Estilos usuario */
+.user-info-container {
+  border-left: 2px solid rgba(255,255,255,0.2);
+  padding-left: 1.5rem;
+  margin-left: auto;
+  gap: 1.5rem;
+}
+
+.user-info-navbar {
+  min-width: 160px;
+}
+
+.user-name {
+  font-size: 0.95rem;
+}
+
+.user-documento {
+  font-size: 0.75rem;
+}
+
+.user-actions {
+  gap: 1rem !important;
+}
+
+.btn-outline-light {
+  transition: all 0.3s ease;
+}
+
+.btn-outline-light:hover {
+  background: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.btn-danger {
+  transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
 :root {
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;

@@ -8,7 +8,7 @@ def crear_super_admin():
 
         # Datos del superadmin
         tipo_documento = 'Cedula ciudadania'
-        documento = '00000000'
+        documento = '33669989'
         nombre = 'Super'
         apellido = 'Admin'
         telefono = '3000000000'
