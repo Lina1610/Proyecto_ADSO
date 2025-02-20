@@ -12,6 +12,7 @@ from routers.router_order import *
 from routers.router_pass import *
 from routers.routher_pedido import *
 from routers.router_principal import*
+from routers.router_carrito import*
 
 # Definir la ruta principal
 @app.route('/')
