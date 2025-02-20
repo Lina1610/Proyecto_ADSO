@@ -17,6 +17,7 @@ from routers.router_invoice import *
 from routers.router_order import *
 from routers.router_pass import *
 from routers.router_user import *
+from routers.router_address import *
 
 # Cargar la configuración desde config.py
 app.config.from_object(Config)
