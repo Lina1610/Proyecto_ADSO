@@ -104,9 +104,34 @@ def actualizarPerfil():
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
+    
+@app.route("/actualizar-password", methods=['POST'])
+def actualizarPassword():
+    if 'conectado' in session:
+        respuesta = procesar_update_password(request.form)
+        if respuesta == 1:
+            flash('Contraseña actualizada correctamente.', 'success')
+        elif respuesta == 0:
+            flash('Contraseña actual incorrecta.', 'error')
+        elif respuesta == 2:
+            flash('Las contraseñas no coinciden.', 'error')
+        elif respuesta == 3:
+            flash('Debes ingresar tu contraseña actual.', 'error')
+        else:
+            flash('Error al actualizar.', 'error')
+        return redirect(url_for('perfil'))
+    else:
+        flash('Inicia sesión primero.', 'error')
+        return redirect(url_for('inicio'))
 
 
-
+@app.route('/cliente-perfil')
+def perfil_cliente():
+    if 'conectado' in session and session['rol'] == 'cliente':
+        return render_template('public/perfil/perfil_cliente.html', info_perfil_session=info_perfil_session())
+    else:
+        flash('Acceso denegado.', 'error')
+        return redirect(url_for('inicio'))
 
 
 # Validar sesión

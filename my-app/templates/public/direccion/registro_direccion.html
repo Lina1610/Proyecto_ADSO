@@ -1,0 +1,181 @@
+{% extends 'public/base_cpanel.html' %}
+
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Registrar Dirección{% endblock %}
+
+<!---->
+{% block customCSS %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='assets/css/file.css') }}" />
+<!-- Incluir Select2 CSS -->
+<link
+  href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+  rel="stylesheet" />
+{% endblock %}
+
+<!-- Inicio del block -->
+{% block body %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">REGISTRAR UNA NUEVA DIRECCIÓN</h3>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="/registrar-direccion"
+        autocomplete="off"
+        enctype="multipart/form-data">
+        <div class="card-body">
+          <!-- Primera fila: Nombre y Barrio -->
+          <div class="row">
+            <div class="col-md-6">
+              <label for="nombre_completo" class="form-label">
+                Nombre Completo
+              </label>
+              <input
+                type="text"
+                name="nombre_completo"
+                class="form-control"
+                required />
+            </div>
+            <div class="col-md-6">
+              <label for="barrio" class="form-label">
+                Barrio
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                name="barrio"
+                required />
+            </div>
+          </div>
+
+          <!-- Segunda fila: Domicilio y Referencia -->
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <label for="domicilio" class="form-label">
+                Domicilio
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                name="domicilio"
+                required />
+            </div>
+            <div class="col-md-6">
+              <label for="referencias" class="form-label">
+                Referencias
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                name="referencias" />
+            </div>
+          </div>
+
+          <!-- Tercera fila: Teléfono y Estado -->
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <label for="telefono" class="form-label">
+                Teléfono
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                name="telefono"
+                required />
+            </div>
+            <div class="col-md-6">
+              <label for="estado" class="form-label">
+                Estado
+              </label>
+              <select
+                class="form-select"
+                name="estado"
+                aria-label="Default select example">
+                <option selected>Seleccione</option>
+                <option value="activo">Activo</option>
+                <option value="inactivo">Inactivo</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Cuarta fila: Costo Domicilio y Departamento -->
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <label for="costo_domicilio" class="form-label">
+                Costo Domicilio
+              </label>
+              <input
+                class="form-control"
+                type="number"
+                name="costo_domicilio"
+                required
+                min="0"
+                step="1"
+                placeholder="Ingrese el costo del domicilio" />
+            </div>
+            <div class="col-md-6">
+              <label for="departamento_id" class="form-label">
+                Departamento
+              </label>
+              <select
+                class="form-select"
+                name="departamento_id"
+                aria-label="Default select example">
+                <option selected>Seleccione</option>
+                <option value="1">Ejemplo 1</option>
+                <option value="2">Ejemplo 2</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Quinta fila: Municipio y Cliente -->
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <label for="users_id" class="form-label">
+                Cliente
+              </label>
+              <select
+                class="form-select"
+                name="users_id"
+                aria-label="Default select example">
+                <option selected>Seleccione</option>
+                <option value="1">Ejemplo 1</option>
+                <option value="2">Ejemplo 2</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="municipio_id" class="form-label">
+                Municipio
+              </label>
+              <select
+                class="form-select"
+                name="municipio_id"
+                aria-label="Default select example">
+                <option selected>Seleccione</option>
+                <option value="1">Ejemplo 1</option>
+                <option value="2">Ejemplo 2</option>
+              </select>
+            </div>
+          </div>
+          <!-- Botón de envío -->
+          <div class="mb-3 mt-4 text-center">
+            <button type="submit" class="btn rounded-pill btn-primary">
+              Guardar registro ahora
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %} 

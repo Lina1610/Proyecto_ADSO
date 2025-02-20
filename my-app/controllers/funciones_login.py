@@ -99,49 +99,60 @@ def procesar_update_perfil(data_form):
         apellido = data_form.get('apellido')
         telefono = data_form.get('telefono')
         pass_actual = data_form.get('pass_actual')
-        new_pass_user = data_form.get('new_pass_user')
-        repetir_pass_user = data_form.get('repetir_pass_user')
 
         if not pass_actual:
-            return 3  # La contraseña actual es obligatoria
+            return 3  # Contraseña actual requerida
 
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                # Verificar la contraseña actual
-                querySQL = "SELECT contrasena FROM users WHERE id = %s"
-                cursor.execute(querySQL, (id_user,))
-                usuario = cursor.fetchone()
+                cursor.execute("SELECT contrasena FROM users WHERE id = %s", (id_user,))
+                user = cursor.fetchone()
 
-                if usuario and check_password_hash(usuario['contrasena'], pass_actual):
-                    # Si la contraseña actual es correcta
-                    if new_pass_user and repetir_pass_user:
-                        if new_pass_user == repetir_pass_user:
-                            # Actualizar contraseña
-                            nueva_password = generate_password_hash(new_pass_user, method='scrypt')
-                            querySQL = """
-                                UPDATE users 
-                                SET nombre = %s, apellido = %s, telefono = %s, contrasena = %s 
-                                WHERE id = %s
-                            """
-                            valores = (nombre, apellido, telefono, nueva_password, id_user)
-                        else:
-                            return 2  # Las contraseñas no coinciden
-                    else:
-                        # Actualizar solo los datos (sin cambiar la contraseña)
-                        querySQL = """
-                            UPDATE users 
-                            SET nombre = %s, apellido = %s, telefono = %s 
-                            WHERE id = %s
-                        """
-                        valores = (nombre, apellido, telefono, id_user)
-
-                    cursor.execute(querySQL, valores)
+                if user and check_password_hash(user['contrasena'], pass_actual):
+                    cursor.execute("""
+                        UPDATE users 
+                        SET nombre=%s, apellido=%s, telefono=%s 
+                        WHERE id=%s
+                    """, (nombre, apellido, telefono, id_user))
                     conexion_MySQLdb.commit()
-                    return cursor.rowcount  # Retorna el número de filas afectadas
+                    return 1
                 else:
                     return 0  # Contraseña actual incorrecta
     except Exception as e:
-        print(f"Error en procesar_update_perfil: {e}")
+        print(f"Error al actualizar perfil: {e}")
+        return None
+
+def procesar_update_password(data_form):
+    try:
+        id_user = session['id']
+        pass_actual = data_form.get('pass_actual')
+        new_pass = data_form.get('new_pass_user')
+        confirm_pass = data_form.get('repetir_pass_user')
+
+        if not pass_actual:
+            return 3  # Contraseña actual requerida
+
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                cursor.execute("SELECT contrasena FROM users WHERE id = %s", (id_user,))
+                user = cursor.fetchone()
+
+                if user and check_password_hash(user['contrasena'], pass_actual):
+                    if new_pass == confirm_pass:
+                        nueva_password = generate_password_hash(new_pass, method='scrypt')
+                        cursor.execute("""
+                            UPDATE users 
+                            SET contrasena = %s 
+                            WHERE id = %s
+                        """, (nueva_password, id_user))
+                        conexion_MySQLdb.commit()
+                        return 1
+                    else:
+                        return 2  # Contraseñas no coinciden
+                else:
+                    return 0  # Contraseña actual incorrecta
+    except Exception as e:
+        print(f"Error al actualizar contraseña: {e}")
         return None
 
 def updatePefilSinPass(id_user, nombre, apellido, telefono):
