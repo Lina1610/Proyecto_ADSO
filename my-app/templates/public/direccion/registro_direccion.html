@@ -123,16 +123,12 @@
                 placeholder="Ingrese el costo del domicilio" />
             </div>
             <div class="col-md-6">
-              <label for="departamento_id" class="form-label">
-                Departamento
-              </label>
-              <select
-                class="form-select"
-                name="departamento_id"
-                aria-label="Default select example">
+              <label for="departamento_id" class="form-label">Departamento</label>
+              <select class="form-select" name="departamento_id" id="departamento_id" aria-label="Default select example">
                 <option selected>Seleccione</option>
-                <option value="1">Ejemplo 1</option>
-                <option value="2">Ejemplo 2</option>
+                {% for departamento in departamentos %}
+                <option value="{{ departamento.id }}">{{ departamento.nombre }}</option>
+                {% endfor %}
               </select>
             </div>
           </div>
@@ -140,32 +136,23 @@
           <!-- Quinta fila: Municipio y Cliente -->
           <div class="row mt-2">
             <div class="col-md-6">
-              <label for="users_id" class="form-label">
-                Cliente
-              </label>
-              <select
-                class="form-select"
-                name="users_id"
-                aria-label="Default select example">
+              <label for="users_id" class="form-label">Cliente</label>
+              <select class="form-select" name="users_id" aria-label="Default select example">
                 <option selected>Seleccione</option>
-                <option value="1">Ejemplo 1</option>
-                <option value="2">Ejemplo 2</option>
+                {% for usuario in usuarios %}
+                <option value="{{ usuario.id }}">{{ usuario.nombre }}</option>
+                {% endfor %}
               </select>
             </div>
             <div class="col-md-6">
-              <label for="municipio_id" class="form-label">
-                Municipio
-              </label>
-              <select
-                class="form-select"
-                name="municipio_id"
-                aria-label="Default select example">
+              <label for="municipio_id" class="form-label">Municipio</label>
+              <select class="form-select" name="municipio_id" id="municipio_id" aria-label="Default select example">
                 <option selected>Seleccione</option>
-                <option value="1">Ejemplo 1</option>
-                <option value="2">Ejemplo 2</option>
+                <!-- Los municipios se cargarán dinámicamente aquí -->
               </select>
             </div>
           </div>
+
           <!-- Botón de envío -->
           <div class="mb-3 mt-4 text-center">
             <button type="submit" class="btn rounded-pill btn-primary">
@@ -178,4 +165,36 @@
     </div>
   </div>
 </div>
-{% endblock %} 
+{% endblock %}
+
+<!-- Script para cargar municipios dinámicamente -->
+{% block customJS %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Cuando se selecciona un departamento, cargar los municipios
+    $('#departamento_id').change(function () {
+      var departamento_id = $(this).val();
+      if (departamento_id) {
+        $.ajax({
+          url: '/obtener-municipios/' + departamento_id,
+          type: 'GET',
+          success: function (data) {
+            var municipio_select = $('#municipio_id');
+            municipio_select.empty();
+            municipio_select.append('<option selected>Seleccione</option>');
+            $.each(data, function (index, municipio) {
+              municipio_select.append(
+                '<option value="' + municipio.id + '">' + municipio.nombre + '</option>'
+              );
+            });
+          },
+        });
+      } else {
+        $('#municipio_id').empty();
+        $('#municipio_id').append('<option selected>Seleccione</option>');
+      }
+    });
+  });
+</script>
+{% endblock %}

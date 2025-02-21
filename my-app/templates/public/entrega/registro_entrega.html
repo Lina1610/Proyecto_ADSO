@@ -1,0 +1,106 @@
+{% extends 'public/base_cpanel.html' %}
+
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Registrar Entrega{% endblock %}
+
+<!---->
+{% block customCSS %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='assets/css/file.css') }}" />
+{% endblock %}
+
+<!-- Inicio del block -->
+{% block body %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">REGISTRAR NUEVA ENTREGA</h3>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="/registrar-entrega"
+        autocomplete="off"
+        enctype="multipart/form-data">
+        <div class="card-body">
+          <!-- Primera fila: Tipo de entrega y Fecha/Hora -->
+          <div class="row">
+            <div class="col-md-6">
+              <label for="tipo" class="form-label">
+                Tipo de Entrega
+              </label>
+              <select
+                class="form-select"
+                name="tipo"
+                aria-label="Default select example">
+                <option selected>Seleccione</option>
+                <option value="Domicilio">Domicilio</option>
+                <option value="Establecimiento fisico">Establecimiento Físico</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="fecha_hora" class="form-label">
+                Fecha y Hora
+              </label>
+              <input
+                class="form-control"
+                type="datetime-local"
+                name="fecha_hora"
+                required />
+            </div>
+          </div>
+
+          <!-- Segunda fila: Estado y Costo de Domicilio -->
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <label for="estado" class="form-label">
+                Estado
+              </label>
+              <select
+                class="form-select"
+                name="estado"
+                aria-label="Default select example">
+                <option selected>Seleccione</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="En camino">En camino</option>
+                <option value="Entregado">Entregado</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="costo_domicilio" class="form-label">
+                Costo de Domicilio
+              </label>
+              <input
+                class="form-control"
+                type="number"
+                name="costo_domicilio"
+                step="0.01"
+                min="0"
+                placeholder="Ingrese el costo del domicilio"
+                required />
+            </div>
+          </div>
+
+          <!-- Botón de envío -->
+          <div class="mb-3 mt-4 text-center">
+            <button type="submit" class="btn rounded-pill btn-primary">
+              Guardar registro ahora
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block customJS %}
+<script src="{{ url_for('static', filename='assets/customJS/file.js') }}"></script>
+{% endblock %}

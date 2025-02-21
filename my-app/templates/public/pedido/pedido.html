@@ -1,141 +1,187 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Pedido de Tamales</title>
-        <!-- FontAwesome para íconos -->
-        <link rel="stylesheet"
-            href="{{ url_for('static', filename ='assets/css/styles_bos.css') }}" />
-        <link>
-        <link rel="stylesheet"
-            href="{{ url_for('static', filename ='assets/css/style_order.css') }}" />
-        <link rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pedido de Tamales</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='assets/css/style_order.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='assets/css/styles_bos.css') }}"
+    />
+  </head>
 
-    </head>
-    <body>
-        <!-- Menú dinámico -->
-        <header class="menu-dinamico">
-            <div class="logo">Tamales Doña María</div>
-            <ul>
-                <li class="nav-item">
-                    <a class="nav-link"
-                        href="{{ url_for('indexPrincipal') }}">Inicio</a>
-                </li>
-                <li><a href="servicios.html">Carrito</a></li>
-                <li><a href="historial.html">Pago</a></li>
-                <li><a href="cuenta.html">Mi Cuenta</a></li>
-                <li>
-                    <div class="carrito-icono" onclick="mostrarCarrito()">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="contador">0</span>
-                    </div>
-                </li>
+  <body>
+    <!-- Fondo con imagen -->
+    <div class="fondo-imagen"></div>
+
+    <!-- Menú -->
+    <main class="main-content">
+      <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+        <div class="container">
+          <a class="navbar-brand" href="#page-top">
+            <img
+              src="{{ url_for('static', filename='assets/img/navbar-logo.svg') }}"
+              alt="..."
+              height="1000px"
+            />
+          </a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarResponsive"
+            aria-controls="navbarResponsive"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            Menu
+            <i class="fas fa-bars ms-1"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('indexPrincipal') }}"
+                  >Inicio</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('carritoCompras') }}">Carrito</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('pedido') }}">Pago</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}"
+                  >Mi cuenta</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="login">Iniciar sesión</a>
+              </li>
             </ul>
-        </header>
-
-        <!-- Contenido principal -->
-        <div class="contenido">
-            <h1>Tamales Doña María</h1>
-            <div class="producto">
-                <img src="/static/assets/img/presentacion.jpeg" alt="Tamal">
-                <h2>Tamal de Pollo</h2>
-                <p>Delicioso tamal de pollo con salsa verde, hecho con
-                    ingredientes frescos y tradicionales.</p>
-                <div class="cantidad">
-                    <label for="cantidad">Cantidad:</label>
-                    <input type="number" id="cantidad" value="1" min="1">
-                </div>
-                <button class="boton-agregar"
-                    onclick="agregarAlCarrito()">Agregar al carrito</button>
-                    <div id="carrito-container">
-                        <h2>Carrito de Compras</h2>
-                        <ul id="carrito-lista"></ul>
-                        <p>Total: $<span id="total-carrito">0.00</span></p>
-                        <button id="confirmar-pedido" onclick="confirmarPedido()">Confirmar Pedido</button>
-                    </div>
-            </div>
-            
+          </div>
         </div>
+      </nav>
+      
 
-        
-        
-
-        <!-- Footer -->
-        <footer>
-            <footer class="footer">
-                <div class="footer-container">
-
-                    <!-- Sección de Información de la Empresa -->
-                    <div class="footer-section">
-                        <h3 class="footer-title">Nombre de la Empresa</h3>
-                        <p class="footer-text">
-                            Somos una empresa comprometida con la innovación y
-                            la excelencia.
-                            Ofrecemos soluciones a medida para nuestros
-                            clientes.
-                        </p>
-                        <div class="footer-links">
-                            <a href="#" class="footer-link">Política de
-                                Privacidad</a>
-                            <a href="#" class="footer-link">Términos y
-                                Condiciones</a>
-                        </div>
+      <!-- Contenido principal -->
+      <main class="contenido">
+        <div class="seccion-agregar">
+          <div class="card-producto">
+              <img src="/static/assets/img/presentacion.jpeg" alt="Tamal de pollo" />
+              <div class="detalles">
+                  <h2>Tamal de Pollo</h2>
+                  <p>Delicioso tamal con pollo desmenuzado y salsa verde</p>
+      
+                  <div class="selector-cantidad">
+                      <label>Cantidad:</label>
+                      <div class="input-wrapper">
+                          <button class="btn-menos" onclick="cambiarCantidad(-1)">-</button>
+                          <input type="number" id="cantidad" value="1" min="1" class="input-cantidad">
+                          <button class="btn-mas" onclick="cambiarCantidad(1)">+</button>
+                      </div>
+                  </div>
+      
+                  <button class="btn-agregar" onclick="agregarAlCarrito()" >
+                      <i class="fas fa-cart-plus"></i> Añadir al carrito
+                  </button>
+              </div>
+          </div>
+      </div>
+    
+        <div class="seccion-confirmar">
+            <div class="card-carrito">
+                <h3>Tu Pedido</h3>
+                
+                <div class="lista-items" id="lista-items">
                     </div>
-
-                    <!-- Enlaces Rápidos -->
-                    <div class="footer-section">
-                        <h3 class="footer-title">Enlaces Rápidos</h3>
-                        <ul class="footer-list">
-                            <li><a href="#" class="footer-link">Inicio</a></li>
-                            <li><a href="#"
-                                    class="footer-link">Servicios</a></li>
-                            <li><a href="#"
-                                    class="footer-link">Nosotros</a></li>
-                            <li><a href="#"
-                                    class="footer-link">Contacto</a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Contacto -->
-                    <div class="footer-section">
-                        <h3 class="footer-title">Contacto</h3>
-                        <p class="footer-text">
-                            <strong>Email:</strong> info@empresa.com<br>
-                            <strong>Teléfono:</strong> +123 456 789<br>
-                            <strong>Dirección:</strong> Calle Falsa 123, Ciudad,
-                            País
-                        </p>
-                    </div>
-
-                    <!-- Redes Sociales -->
-                    <div class="footer-section">
-                        <h3 class="footer-title">Síguenos</h3>
-                        <div class="social-icons">
-                            <a href="#" class="social-icon"><i
-                                    class="fab fa-facebook"></i></a>
-                            <a href="#" class="social-icon"><i
-                                    class="fab fa-twitter"></i></a>
-                            <a href="#" class="social-icon"><i
-                                    class="fab fa-linkedin"></i></a>
-                            <a href="#" class="social-icon"><i
-                                    class="fab fa-instagram"></i></a>
-                        </div>
-                    </div>
-
+    
+                <div class="total-pedido">
+                    <span>Total:</span>
+                    <span class="monto-total" id="total-carrito">$0.00</span>
                 </div>
+    
+                <button class="btn-confirmar" onclick="confirmarPedido()" >
+                    <i class="fas fa-check-circle"></i> Confirmar Pedido
+                </button>
+            </div>
+        </div>
+    </main>
 
-                <!-- Derechos de Autor -->
-                <div class="footer-bottom">
-                    <p class="footer-copy">
-                        &copy; 2023 Nombre de la Empresa. Todos los derechos
-                        reservados.
-                    </p>
-                </div>
-            </footer>
+<div class="carrito-icono" onclick="mostrarCarrito()">
+    <i class="fas fa-shopping-cart"></i>
+    <span class="contador" id="contador-carrito">0</span>
+</div>
 
-            <script src="/static/assets/js/pedido.js">
-    </script>
-        </body>
-    </html>
+        <!-- En el menú, asegura este contador -->
+        <div class="carrito-icono" onclick="mostrarCarrito()">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="contador" id="contador-carrito">0</span>
+        </div>
+      </main>
+
+      <!-- Botón "Volver arriba" -->
+      <button
+        id="btn-volver-arriba"
+        onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+      >
+        <i class="fas fa-arrow-up"></i>
+      </button>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-container">
+          <div class="footer-left">
+              <div class="footer-brand">
+                  <h3>Tamales D. María</h3>
+              </div>
+              <div class="social-icons">
+                  <a href="#"><i class="fab fa-facebook"></i></a>
+                  <a href="#"><i class="fab fa-instagram"></i></a>
+                  <a href="#"><i class="fab fa-whatsapp"></i></a>
+              </div>
+              <div class="footer-contact">
+                  <p>[dirección de correo electrónico eliminada]</p>
+                  <p>+57 312 345 6789</p>
+              </div>
+          </div>
+          <div class="footer-center">
+              <ul class="footer-list">
+                  <li><a href="#" class="footer-link">Inicio</a></li>
+                  <li><a href="#" class="footer-link">Menú</a></li>
+                  <li><a href="#" class="footer-link">Pedidos</a></li>
+                  <li><a href="#" class="footer-link">Contacto</a></li>
+              </ul>
+          </div>
+          <div class="footer-right">
+              <p class="footer-bottom">© 2023 Tamales DM</p>
+          </div>
+      </div>
+  </footer>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='assets/js/scripts_bos.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/lightbox.js') }}"></script>
+    <script src="/static/assets/js/pedido.js"></script>
+
+    
+
+  </body>
+</html>

@@ -1,15 +1,11 @@
-<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme" {% if session.rol == 'cliente' %}style="display: none;"{% endif %}> <!-- Solo esta línea cambia -->
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme" {% if session.rol == 'cliente' %}style="display: none;"{% endif %}>
   <div class="app-brand demo">
     <a href="{{ url_for('inicio') }}" class="app-brand-link">
       <span class="app-brand-logo demo">
-        <img
-          src="{{ url_for('static', filename ='assets/img/logose.png') }}"
-          alt="Logo" height="200px">
+        <img src="{{ url_for('static', filename='assets/img/logose.png') }}" alt="Logo" height="200px">
       </span>
     </a>
-    <a
-      href="javascript:void(0);"
-      class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
       <i class="bx bx-chevron-left bx-sm align-middle"></i>
     </a>
   </div>
@@ -51,8 +47,8 @@
     </li>
     {% endif %}
     
-    <!-- Sección de Empleados (Menú desplegable) -->
-    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-empleado', '/lista-de-empleados', '/descargar-informe-empleados'] %} active open {% endif %}" data-menu="menu-empleados">
+    <!-- Sección de Empleados -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-empleado', '/lista-de-empleados'] %} active open {% endif %}" data-menu="menu-empleados">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon bi bi-person-bounding-box"></i>
         <div>Empleados</div>
@@ -71,8 +67,8 @@
       </ul>
     </li>
 
-    <!-- Sección de Productos (Menú desplegable) -->
-    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-producto', '/lista-de-productos', '/descargar-informe-productos'] %} active open {% endif %}" data-menu="menu-productos">
+    <!-- Sección de Productos -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-producto', '/lista-de-productos'] %} active open {% endif %}" data-menu="menu-productos">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon bi bi-box"></i>
         <div>Productos</div>
@@ -91,8 +87,8 @@
       </ul>
     </li>
 
-    <!-- Sección de Pedidos (Menú desplegable) -->
-    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-pedido', '/lista-de-pedidos', '/descargar-informe-pedidos'] %} active open {% endif %}" data-menu="menu-pedidos">
+    <!-- Sección de Pedidos -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-pedido', '/lista-de-pedidos'] %} active open {% endif %}" data-menu="menu-pedidos">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon bi bi-cart"></i>
         <div>Pedidos</div>
@@ -111,8 +107,28 @@
       </ul>
     </li>
 
-    <!-- Sección de Proveedores (Menú desplegable) -->
-    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-proveedor', '/lista-de-proveedores', '/descargar-informe-proveedores'] %} active open {% endif %}" data-menu="menu-proveedores">
+    <!-- Sección de Entregas -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-entrega', '/lista-de-entregas'] %} active open {% endif %}" data-menu="menu-entrega">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon bi bi-truck"></i>
+        <div>Entregas</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if request.path == '/registrar-entrega' %} active {% endif %}">
+          <a href="{{ url_for('viewFormEntrega') }}" class="menu-link">
+            <div>Registrar Entrega</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/lista-de-entregas' %} active {% endif %}">
+          <a href="/lista-de-entregas" class="menu-link">
+            <div>Lista de Entregas</div>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- Sección de Proveedores -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-proveedor', '/lista-de-proveedores'] %} active open {% endif %}" data-menu="menu-proveedores">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon bi bi-archive"></i>
         <div>Proveedores</div>
@@ -131,8 +147,8 @@
       </ul>
     </li>
 
-    <!-- Sección de Facturas (Menú desplegable) -->
-    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-factura', '/lista-de-facturas', '/descargar-informe-facturas'] %} active open {% endif %}" data-menu="menu-facturas">
+    <!-- Sección de Facturas -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-factura', '/lista-de-facturas'] %} active open {% endif %}" data-menu="menu-facturas">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon bi bi-file-earmark-text"></i>
         <div>Facturas</div>
@@ -151,8 +167,8 @@
       </ul>
     </li>
 
-    <!-- Sección de Abonos (Menú desplegable) -->
-    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-abono', '/lista-de-abonos', '/descargar-informe-abonos'] %} active open {% endif %}" data-menu="menu-abonos">
+    <!-- Sección de Abonos -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-abono', '/lista-de-abonos'] %} active open {% endif %}" data-menu="menu-abonos">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon bi bi-cash"></i>
         <div>Abonos</div>
@@ -169,11 +185,13 @@
           </a>
         </li>
       </ul>
-    </li>    
-    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-direccion', '/lista-de-direccion', '/descargar-informe-direccion'] %} active open {% endif %}" data-menu="menu-direccion">
+    </li>
+
+    <!-- Sección de Direcciones -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-direccion', '/lista-de-direccion'] %} active open {% endif %}" data-menu="menu-direccion">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon bi bi-geo-alt"></i>
-        <div>Dirección</div>
+        <div>Direcciones</div>
       </a>
       <ul class="menu-sub">
         <li class="menu-item {% if request.path == '/registrar-direccion' %} active {% endif %}">
@@ -186,15 +204,10 @@
             <div>Lista de Direcciones</div>
           </a>
         </li>
-        <li class="menu-item {% if request.path == '/descargar-informe-direccion' %} active {% endif %}">
-          <a href="/descargar-informe-direccion" class="menu-link">
-            <div>Reportes</div>
-          </a>
-        </li>
       </ul>
     </li>
-    
 
+    <!-- Sección de Mi Perfil -->
     <li class="menu-item {% if request.path == '/mi-perfil' %} active {% endif %}">
       <a href="/mi-perfil" class="menu-link">
         <i class="menu-icon bi bi-person-fill-gear"></i>
@@ -202,10 +215,11 @@
       </a>
     </li>
 
+    <!-- Sección de Cerrar Sesión -->
     <li class="menu-item">
       <a href="{{ url_for('cerraSesion') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-        <div>Cerra sesion</div>
+        <div>Cerrar Sesión</div>
       </a>
     </li>
   </ul>
