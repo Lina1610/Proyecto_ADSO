@@ -23,8 +23,11 @@ def inicio():
 
 @app.route('/mi-perfil', methods=['GET'])
 def perfil():
-    
     if 'conectado' in session:
+        # Verificar que no sea un cliente intentando acceder al perfil administrativo
+        if session['rol'] == 'cliente':
+            return redirect(url_for('perfil_cliente'))
+            
         info_perfil = info_perfil_session()  # Obtener los datos del usuario
         if info_perfil:
             return render_template('public/perfil/perfil.html', info_perfil_session=info_perfil)
@@ -86,6 +89,7 @@ def cpanelResgisterUserBD():
     
 
 # Actualizar datos de mi perfil
+# Actualizar datos de mi perfil
 @app.route("/actualizar-datos-perfil", methods=['POST'])
 def actualizarPerfil():
     if 'conectado' in session:
@@ -100,11 +104,17 @@ def actualizarPerfil():
             flash('La contraseña actual es obligatoria.', 'error')
         else:
             flash('Error al actualizar los datos.', 'error')
-        return redirect(url_for('perfil'))
+        
+        # Redirigir según el rol del usuario
+        if session.get('rol') == 'cliente':
+            return redirect(url_for('perfil_cliente'))
+        else:
+            return redirect(url_for('perfil'))
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
-    
+
+# También actualizar la función de actualizar contraseña
 @app.route("/actualizar-password", methods=['POST'])
 def actualizarPassword():
     if 'conectado' in session:
@@ -119,7 +129,12 @@ def actualizarPassword():
             flash('Debes ingresar tu contraseña actual.', 'error')
         else:
             flash('Error al actualizar.', 'error')
-        return redirect(url_for('perfil'))
+        
+        # Redirigir según el rol del usuario
+        if session.get('rol') == 'cliente':
+            return redirect(url_for('perfil_cliente'))
+        else:
+            return redirect(url_for('perfil'))
     else:
         flash('Inicia sesión primero.', 'error')
         return redirect(url_for('inicio'))
@@ -127,8 +142,12 @@ def actualizarPassword():
 
 @app.route('/cliente-perfil')
 def perfil_cliente():
-    if 'conectado' in session and session['rol'] == 'cliente':
-        return render_template('public/perfil/perfil_cliente.html', info_perfil_session=info_perfil_session())
+    if 'conectado' in session:
+        if session['rol'] == 'cliente':
+            return render_template('public/perfil/perfil_cliente.html', info_perfil_session=info_perfil_session())
+        else:
+            # Si no es cliente, redirigir al perfil administrativo
+            return redirect(url_for('perfil'))
     else:
         flash('Acceso denegado.', 'error')
         return redirect(url_for('inicio'))
@@ -172,7 +191,7 @@ def loginCliente():
                     if session['rol'] == 'cliente':
                         return redirect(url_for('home'))  # Cliente va a index.html
                     else:
-                        return redirect(url_for('inicio'))  # Admin/empleado a base_cpanel.html
+                        return redirect(url_for('perfil'))  # Admin/empleado a base_cpanel.html
                 else:
                     flash('Contraseña incorrecta', 'error')
                     return render_template(f'{PATH_URL_LOGIN}/base_login.html')
