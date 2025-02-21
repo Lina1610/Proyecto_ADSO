@@ -4,7 +4,7 @@ from mysql.connector.errors import Error
 
 
 # Importando cenexión a BD
-from controllers.funciones_home import *
+from controllers.funciones_order import *
 
 PATH_URL = "public/pedido"
 
