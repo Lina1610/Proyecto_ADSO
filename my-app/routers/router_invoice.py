@@ -5,7 +5,7 @@ from mysql.connector.errors import Error
 # Importando conexión a BD
 from controllers.funciones_home import *
 
-PATH_URL = "public/proveedor"
+PATH_URL = "public/factura"
 
 @app.route('/registrar-factura', methods=['GET'])
 def viewFormFactura():

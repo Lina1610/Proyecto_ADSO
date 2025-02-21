@@ -127,7 +127,6 @@
       </ul>
     </li>
 
-
     <!-- Sección de Facturas -->
     <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-factura', '/lista-de-facturas'] %} active open {% endif %}" data-menu="menu-facturas">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -183,6 +182,26 @@
         <li class="menu-item {% if request.path == '/lista-de-direccion' %} active {% endif %}">
           <a href="/lista-de-direccion" class="menu-link">
             <div>Lista de Direcciones</div>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- Sección de Inventario -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-inventario', '/lista-de-inventario'] %} active open {% endif %}" data-menu="menu-inventario">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon bi bi-clipboard-data"></i>
+        <div>Inventario</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if request.path == '/registrar-inventario' %} active {% endif %}">
+          <a href="{{ url_for('viewFormInventario') }}" class="menu-link">
+            <div>Registrar Inventario</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/lista-de-inventario' %} active {% endif %}">
+          <a href="/lista-de-inventario" class="menu-link">
+            <div>Lista de Inventario</div>
           </a>
         </li>
       </ul>
