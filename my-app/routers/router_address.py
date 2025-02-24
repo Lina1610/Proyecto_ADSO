@@ -1,11 +1,16 @@
 from app import app
-from flask import Flask, jsonify, request
+from flask import jsonify
 from flask import render_template, request, flash, redirect, url_for, session, jsonify
 from mysql.connector.errors import Error
 
+
 # Importando conexión a BD
+
 from controllers.funciones_address import *
 
+ 
+
+ 
 PATH_URL = "public/direccion"
 
 # Función para registrar una dirección
@@ -64,3 +69,16 @@ def obtener_municipios():
                 return jsonify(municipios)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+# lista direcciones
+
+
+@app.route('/lista-de-direccion')
+def lista_direcciones():
+    if 'conectado' in session:
+        direcciones = obtener_direcciones()  # Obtener la lista de direcciones
+        print(direcciones)  # Depuración: Verifica los datos obtenidos
+        return render_template('public/direccion/lista_direccion.html', direcciones=direcciones)
+    else:
+        flash('Primero debes iniciar sesión.', 'error')
+        return redirect(url_for('inicio'))

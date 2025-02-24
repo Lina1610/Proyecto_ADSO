@@ -96,3 +96,23 @@ def procesar_direccion(dataForm):
     except Exception as e:
         print(f"Error en procesar_form_direccion: {e}")  # Debug
         return f"Se produjo un error en procesar_form_direccion: {str(e)}"
+    
+# controllers/funciones_address.py
+
+
+def obtener_direcciones():
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Obtener todas las direcciones
+                sql = """
+                    SELECT id, nombre_completo, barrio, domicilio, referencias, telefono, estado, costo_domicilio
+                    FROM direcciones
+                    ORDER BY id DESC
+                """
+                cursor.execute(sql)
+                direcciones = cursor.fetchall()
+                return direcciones
+    except Exception as e:
+        print(f"Error al obtener direcciones: {e}")
+        return []
