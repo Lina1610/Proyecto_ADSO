@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, request, flash, redirect, url_for, session,  jsonify
 from mysql.connector.errors import Error
-
+from controllers.funciones_home import lista_usuariosBD 
 
 # Importando cenexión a BD
 from controllers.funciones_home import *
@@ -24,16 +24,16 @@ def formEmpleado():
         if 'foto_empleado' in request.files:
             foto_perfil = request.files['foto_empleado']
             resultado = procesar_form_empleado(request.form, foto_perfil)
-            if resultado:
-                return redirect(url_for('lista_empleados'))
+
+            if isinstance(resultado, int) and resultado > 0:
+                flash('Empleado registrado correctamente.', 'success')  # Mensaje de éxito
+                return redirect(url_for('lista_empleados'))  # Redirige a la lista de empleados
             else:
-                flash('El empleado NO fue registrado.', 'error')
+                flash(f'Error al registrar empleado: {resultado}', 'error')  # Mensaje de error
                 return render_template(f'{PATH_URL}/form_empleado.html')
     else:
-        flash('primero debes iniciar sesión.', 'error')
+        flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
-
-
 @app.route('/lista-de-empleados', methods=['GET'])
 def lista_empleados():
     if 'conectado' in session:
@@ -94,10 +94,12 @@ def actualizarEmpleado():
 @app.route("/lista-de-usuarios", methods=['GET'])
 def usuarios():
     if 'conectado' in session:
-        resp_usuariosBD = lista_usuariosBD()
-        return render_template('public/usuarios/lista_usuarios.html', resp_usuariosBD=resp_usuariosBD)
+        resp_usuariosBD = lista_usuariosBD()  # Obtener la lista de usuarios
+        print("Usuarios obtenidos en la ruta:", resp_usuariosBD)  # Depuración
+        return render_template('public/nuevosUsuarios/lista_usuarios.html', resp_usuariosBD=resp_usuariosBD)
     else:
-        return redirect(url_for('inicioCpanel'))
+        flash('Primero debes iniciar sesión.', 'error')
+        return redirect(url_for('inicio'))
 
 
 @app.route('/borrar-usuario/<string:id>', methods=['GET'])

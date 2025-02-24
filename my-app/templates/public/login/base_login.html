@@ -52,6 +52,15 @@
       rel="stylesheet"
       href="{{ url_for('static', filename ='assets/css/my_style.css') }}" />
 
+    <!-- CSS de la librería intl-tel-input -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+
+    <!-- Script de intl-tel-input -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+
     <script src="{{ url_for('static', filename ='assets/vendor/js/helpers.js') }}"></script>
     <script src="{{ url_for('static', filename ='assets/js/config.js') }}"></script>
   </head>
@@ -64,6 +73,7 @@
     </div>
 
     {% include 'public/includes/messages.html' %}
+    
     <!--cuerpo-->
     {% block body %}
 
@@ -72,6 +82,6 @@
     <!--fin del cuerpo-->
     {% endblock %}
 
-    <script src="{{ url_for('static', filename ='assets/customJS/home.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/customJS/home.js') }}"></script>
   </body>
 </html>

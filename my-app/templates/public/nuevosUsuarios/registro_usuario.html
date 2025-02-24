@@ -1,0 +1,141 @@
+{% extends 'public/base_cpanel.html' %}
+
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Registrar Usuario{% endblock %}
+
+<!---->
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/file.css') }}" />
+{% endblock %}
+
+<!-- Inicio del block -->
+{% block body %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">REGISTRAR NUEVO USUARIO</h3>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="/registrar-usuario"
+        autocomplete="off">
+        <div class="row">
+          <!-- Columna 1 -->
+          <div class="col-md-6">
+            <!-- Rol -->
+            <div class="mb-3">
+              <label for="rol" class="form-label">Rol</label>
+              <select class="form-select" name="rol" required>
+                <option value="" selected disabled>Seleccione</option>
+                <option value="administrador">Administrador</option>
+                <option value="cliente">Cliente</option>
+                <!--<option value="proveedor">Proveedor</option>-->
+                <option value="empleado">Empleado</option>
+              </select>
+            </div>
+    
+            <!-- Documento -->
+            <div class="mb-3">
+              <label for="documento" class="form-label">Documento</label>
+              <input type="text" name="documento" class="form-control" required />
+            </div>
+    
+            <!-- Apellido -->
+            <div class="mb-3">
+              <label for="apellido" class="form-label">Apellido</label>
+              <input type="text" name="apellido" class="form-control" required />
+            </div>
+    
+            <!-- Correo Electrónico -->
+            <div class="mb-3">
+              <label for="correo" class="form-label">Correo Electrónico</label>
+              <input type="email" name="correo" class="form-control" required />
+            </div>
+    
+            <!-- Estado -->
+            <div class="mb-3">
+              <label for="estado" class="form-label">Estado</label>
+              <select class="form-select" name="estado" required>
+                <option value="" selected disabled>Seleccione</option>
+                <option value="activo">Activo</option>
+                <option value="inactivo">Inactivo</option>
+              </select>
+            </div>
+          </div>
+    
+          <!-- Columna 2 -->
+          <div class="col-md-6">
+            <!-- Tipo de Documento -->
+            <div class="mb-3">
+              <label for="tipo_documento" class="form-label">Tipo de Documento</label>
+              <select class="form-select" name="tipo_documento" required>
+                <option value="" selected disabled>Seleccione</option>
+                <option value="Cedula ciudadania">Cédula de Ciudadanía</option>
+                <option value="Tarjeta identidad">Tarjeta de Identidad</option>
+                <option value="Cedula extranjeria">Cédula Extranjera</option>
+                <option value="NIT">NIT</option>
+              </select>
+            </div>
+    
+            <!-- Nombre -->
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input type="text" name="nombre" class="form-control" required />
+            </div>
+    
+            <!-- Teléfono -->
+            <div class="mb-3">
+              <label for="telefono" class="form-label">Teléfono</label>
+              <input type="text" name="telefono" class="form-control" required />
+            </div>
+    
+            <!-- Contraseña -->
+            <div class="mb-3 position-relative">
+              <label for="contrasena" class="form-label">Contraseña</label>
+              <div class="input-group">
+                <input type="password" id="password" name="contrasena" class="form-control" required />
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+    
+        <!-- Botón de guardar registro -->
+        <div class="mb-3 mt-4 text-center">
+          <button type="submit" class="btn rounded-pill btn-primary">
+            Guardar registro ahora <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block customJS %}
+<script>
+  // Función para mostrar/ocultar la contraseña
+  document.getElementById("togglePassword").addEventListener("click", function () {
+    const passwordInput = document.getElementById("password");
+    const icon = this.querySelector("i");
+
+    if (passwordInput.type === "password") {
+      passwordInput.type = "text";
+      icon.classList.remove("bi-eye");
+      icon.classList.add("bi-eye-slash");
+    } else {
+      passwordInput.type = "password";
+      icon.classList.remove("bi-eye-slash");
+      icon.classList.add("bi-eye");
+    }
+  });
+</script>
+{% endblock %}

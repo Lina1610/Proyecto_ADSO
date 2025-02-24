@@ -4,13 +4,15 @@
       <div class="card">
         <div class="card-body">
           <div class="app-brand justify-content-center">
-            <span class="app-brand-logo">
-              <img
-                class="logo"
-                style="display: flex"
-                src="{{ url_for('static', filename ='./assets/img/logose.png') }}"
-                alt="Logo" />
-            </span>
+            <a href="{{ url_for('home') }}"> <!-- Enlace corregido -->
+              <span class="app-brand-logo">
+                <img
+                  class="logo"
+                  style="display: flex"
+                  src="{{ url_for('static', filename='assets/img/logose.png') }}" 
+                  alt="Logo" />
+              </span>
+            </a>
           </div>
 
           <form
@@ -19,12 +21,12 @@
             action="{{ url_for('loginCliente') }}"
             method="POST">
             <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
+              <label for="documento" class="form-label">Documento</label>
               <input
-                type="email"
+                type="text"
                 class="form-control"
-                name="email_user"
-                placeholder="Escribe tu email"
+                name="documento"
+                placeholder="Escribe tu número de documento"
                 autofocus
                 required />
             </div>
@@ -39,14 +41,11 @@
                 <input
                   type="password"
                   class="form-control"
-                  name="pass_user"
-                  id="pass_user"
+                  name="contrasena"
+                  id="contrasena"
                   placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                   aria-describedby="password"
                   required />
-                <span class="input-group-text cursor-pointer">
-                  <i class="bx bx-hide"></i>
-                </span>
               </div>
             </div>
             <div class="mb-3">

@@ -44,43 +44,64 @@
       <main class="main-content">
 
       <!-- Navigation-->
-      <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
-        <div class="container">
-          <a class="navbar-brand" href="#page-top"><img
-              src="{{ url_for('static', filename ='assets/img/navbar-logo.svg') }}"
-              alt="..." height="1000px" /></a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-            data-bs-target="#navbarResponsive" aria-controls="navbarResponsive"
-            aria-expanded="false" aria-label="Toggle navigation">
-            Menu
-            <i class="fas fa-bars ms-1"></i>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
-              <li class="nav-item"><a class="nav-link"
-                  href="#services">Servicios</a></li>
-              <li class="nav-item"><a class="nav-link"
-                  href="#sobre_nosotros">Sobre Nosotros</a></li>
-              <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('pedido') }}">Pedido</a>
-                </li>
-                  
+      <!-- Modificado para mostrar nombre de usuario y botones condicionales -->
+<!-- Navigation-->
+<!-- Navigation-->
+<!-- Navigation-->
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+  <div class="container">
+      <a class="navbar-brand" href="#page-top">
+          <img src="{{ url_for('static', filename ='assets/img/navbar-logo.svg') }}" alt="..." height="40">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive">
+          <i class="fas fa-bars ms-1"></i>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0 align-items-center">
+              <!-- Elementos del menú principal -->
+              <li class="nav-item"><a class="nav-link" href="#services">Servicios</a></li>
+              <li class="nav-item"><a class="nav-link" href="#sobre_nosotros">Sobre Nosotros</a></li>
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('pedido') }}">Pedido</a></li>
+
+              <!-- Sección de usuario -->
+              {% if session.conectado %}
+                  <div class="d-flex align-items-center ms-4 user-info-container">
+                      <!-- Información del usuario -->
+                      <div class="user-info-navbar text-end pe-3">
+                          <span class="text-white d-block user-name">{{ session.nombre }} </span>
+                         
+                      </div>
+                      
+                      <!-- Botones -->
+                      <div class="btn-group user-actions">
+                          <a class="btn btn-sm btn-outline-light" href="{{ url_for('perfil_cliente') }}">
+                              <i class="fas fa-user-circle me-2"></i>Perfil
+                          </a>
+                          <a class="btn btn-sm btn-danger" href="{{ url_for('cerraSesion') }}">
+                              <i class="fas fa-sign-out-alt me-2"></i>Salir
+                          </a>
+                      </div>
+                  </div>
+              {% else %}
                   <li class="nav-item"><a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}">Registrarse</a></li>
+                  <li class="nav-item"><a class="nav-link" href="{{ url_for('loginCliente') }}">Iniciar sesión</a></li>
+              {% endif %}
+          </ul>
+      </div>
+  </div>
+</nav>
 
-              <li class="nav-item"><a class="nav-link" href="login">iniciar
-                  sesión</a></li>
 
-                  
-   </ul>
-          </div>
-        </div>
-      </nav>
+
       <!-- Masthead-->
       <header class="masthead">
         <div class="header-video">
           <video src="/static/assets/img/Videos/Video_Tamal.mp4" autoplay loop muted></video>
         </div>
-        <div class="header-overlay"></div>
+        <div class="header-overlay"></div>        
+
       
         <!-- Contenedor de texto principal -->
         <div class="container">

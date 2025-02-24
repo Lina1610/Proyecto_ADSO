@@ -1,3 +1,189 @@
+/* Asegurarse de que el perfil del usuario quede alineado a la izquierda */
+.user-profile-sidebar {
+  padding: 10px 15px;  /* Agregar algo de espacio a los lados */
+  text-align: left;     /* Asegurarse que el texto se alinee a la izquierda */
+  margin-top: 10px;     /* Espacio superior */
+  margin-bottom: 20px;  /* Espacio inferior */
+}
+
+.user-info {
+  text-align: left !important;  /* Asegurarse de que la información esté alineada a la izquierda */
+}
+
+.user-info h5,
+.user-info p {
+  margin: 0;  /* Eliminar márgenes */
+  padding: 0; /* Eliminar relleno */
+}
+
+.user-info h5 {
+  font-size: 16px; /* Ajustar el tamaño de la fuente si es necesario */
+  font-weight: bold;
+}
+
+.user-info p {
+  font-size: 14px; /* Ajustar tamaño de texto para el documento */
+  color: #6c757d;  /* Color gris suave */
+}
+
+
+/* Asegurar que las etiquetas estén arriba de los campos */
+.form-label {
+  display: block; /* Asegura que las etiquetas estén en su propia línea */
+  margin-bottom: 8px; /* Añade espacio entre la etiqueta y el campo */
+}
+
+/* Estilo general de los campos de entrada */
+.form-control {
+  width: 100%; /* Asegura que los campos ocupen todo el ancho disponible */
+  padding: 12px; /* Más espacio dentro de los campos */
+  font-size: 14px; /* Ajustar tamaño de la fuente */
+  border-radius: 4px; /* Bordes redondeados */
+  border: 1px solid #e0e0e0; /* Borde suave */
+  box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+}
+
+
+
+/* Estilo para campos con foco */
+.form-control:focus {
+  border-color: #3483fa;
+  box-shadow: 0 0 5px rgba(52, 131, 250, 0.5);
+}
+
+/* Estilo para los botones */
+.btn-primary {
+  background-color: #3483fa;
+  border: none;
+  padding: 12px; /* Aumenta el tamaño de los botones */
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 4px;
+  width: 100%; /* Hace que el botón ocupe todo el ancho disponible */
+}
+
+.btn-primary:hover {
+  background-color: #2968c8;
+}
+
+/* Asegura que la tarjeta esté centrada y tenga un tamaño adecuado */
+.custom-card {
+  width: 100%;
+  max-width: 800px; /* Ancho máximo */
+  margin: 50px auto; /* Centrar la tarjeta con menos espacio superior */
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para los enlaces */
+.text-center a {
+  color: #3483fa;
+  text-decoration: none;
+}
+
+.text-center a:hover {
+  text-decoration: underline;
+}
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 768px) {
+  .col-12.col-md-6.mb-4 {
+    width: 100% !important; /* Asegura que todos los campos ocupen el 100% en pantallas pequeñas */
+  }
+  
+  #telefono {
+    width: 100% !important; /* Asegura que el campo de teléfono ocupe todo el espacio disponible */
+  }
+}
+
+/* Ajustes para pantallas grandes */
+@media (min-width: 769px) {
+  .col-md-6 {
+    width: 50% !important; /* Los campos en pantallas grandes ocupan el 50% */
+  }
+
+  #telefono {
+    width: 100% !important; /* El campo de teléfono ocupa el 100% dentro de su columna */
+  }
+}
+
+
+
+/**/
+/* Estilos específicos para el formulario de inicio de sesión */
+.login-custom-card {
+  width: 100%;
+  max-width: 500px; /* Ancho máximo */
+  margin: 20px auto; /* Centrar la tarjeta */
+  padding: 20px;
+  border: 1px solid #e0e0e0; /* Borde suave */
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+.login-form-control {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.login-form-control:focus {
+  border-color: #3483fa;
+  box-shadow: 0 0 5px rgba(52, 131, 250, 0.5);
+}
+
+.login-btn-primary {
+  background-color: #3483fa;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.login-btn-primary:hover {
+  background-color: #2968c8;
+}
+
+.login-form-password-toggle .login-input-group-merge {
+  display: flex;
+  align-items: center;
+}
+
+.login-form-password-toggle .login-input-group-merge input {
+  flex: 1;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.login-form-password-toggle .login-input-group-merge button {
+  border: 1px solid #e0e0e0;
+  border-left: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+.login-form-password-toggle .login-input-group-merge button:hover {
+  background-color: #e9ecef;
+}
+
+.login-text-center a {
+  color: #3483fa;
+  text-decoration: none;
+}
+
+.login-text-center a:hover {
+  text-decoration: underline;
+}
+/**/
+
 body {
   font-family: "Open Sans", sans-serif;
 }
@@ -134,8 +320,14 @@ tbody tr:hover {
   justify-content: center;
 }
 .logo{
+
   height: 4000px;
   width: 400px;
+
+
+  height: 4000px;
+  width: 400px;
+
   width: 400px;
   height: 400px;
 
@@ -194,6 +386,8 @@ tbody tr:hover {
   }
 }
 
+
+
 .menu-vertical .menu-item.active:not(.open) > .menu-link {
   font-size: 14px !important;
 }
@@ -238,6 +432,15 @@ tbody tr:hover {
 }
 
 #search {
+  min-width: 44% !important;
+  background-color: #f3efef !important;
+}
+
+#search_producto {
+  min-width: 44% !important;
+  background-color: #f3efef !important;
+}
+#search_usuarios{
   min-width: 44% !important;
   background-color: #f3efef !important;
 }

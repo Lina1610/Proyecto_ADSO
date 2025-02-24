@@ -9,6 +9,8 @@ from werkzeug.security import check_password_hash
 
 # Importando controllers para el modulo de login
 from controllers.funciones_login import *
+
+from controllers.funciones_login import recibeInsertRegisterUser, validarDataRegisterLogin, info_perfil_session, procesar_update_perfil, updatePefilSinPass, dataLoginSesion
 PATH_URL_LOGIN = "public/login"
 
 
@@ -19,12 +21,21 @@ def inicio():
     else:
         return render_template(f'{PATH_URL_LOGIN}/base_login.html')
 
-
 @app.route('/mi-perfil', methods=['GET'])
 def perfil():
     if 'conectado' in session:
-        return render_template(f'public/perfil/perfil.html', info_perfil_session=info_perfil_session())
+        # Verificar que no sea un cliente intentando acceder al perfil administrativo
+        if session['rol'] == 'cliente':
+            return redirect(url_for('perfil_cliente'))
+            
+        info_perfil = info_perfil_session()  # Obtener los datos del usuario
+        if info_perfil:
+            return render_template('public/perfil/perfil.html', info_perfil_session=info_perfil)
+        else:
+            flash('No se pudieron cargar los datos del perfil.', 'error')
+            return redirect(url_for('inicio'))
     else:
+        flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
 
 
@@ -45,51 +56,100 @@ def cpanelRecoveryPassUser():
     else:
         return render_template(f'{PATH_URL_LOGIN}/auth_forgot_password.html')
 
-
 # Crear cuenta de usuario
 @app.route('/saved-register', methods=['POST'])
 def cpanelResgisterUserBD():
-    if request.method == 'POST' and 'name_surname' in request.form and 'pass_user' in request.form:
-        name_surname = request.form['name_surname']
-        email_user = request.form['email_user']
-        pass_user = request.form['pass_user']
+    print("Iniciando cpanelResgisterUserBD...")  # Depuración
+    if request.method == 'POST' and 'nombre' in request.form and 'contrasena' in request.form:
+        tipo_documento = request.form['tipo_documento']
+        documento = request.form['documento']
+        nombre = request.form['nombre']
+        apellido = request.form['apellido']
+        telefono = request.form['telefono']
+        correo = request.form['correo']
+        contrasena = request.form['contrasena']
+
+        print(f"Datos recibidos: {tipo_documento}, {documento}, {nombre}, {apellido}, {telefono}, {correo}, {contrasena}")  # Depuración
 
         resultData = recibeInsertRegisterUser(
-            name_surname, email_user, pass_user)
-        if (resultData != 0):
-            flash('la cuenta fue creada correctamente.', 'success')
+            tipo_documento, documento, nombre, apellido, telefono, correo, contrasena
+        )
+        if resultData != 0:
+            flash('La cuenta fue creada correctamente.', 'success')
+            print("Cuenta creada correctamente.")  # Depuración
             return redirect(url_for('inicio'))
         else:
+            flash('Hubo un error al crear la cuenta.', 'error')
+            print("Error al crear la cuenta.")  # Depuración
             return redirect(url_for('inicio'))
     else:
-        flash('el método HTTP es incorrecto', 'error')
+        flash('El método HTTP es incorrecto o faltan campos en el formulario.', 'error')
+        print("Método HTTP incorrecto o faltan campos en el formulario.")  # Depuración
         return redirect(url_for('inicio'))
+    
 
-
+# Actualizar datos de mi perfil
 # Actualizar datos de mi perfil
 @app.route("/actualizar-datos-perfil", methods=['POST'])
 def actualizarPerfil():
-    if request.method == 'POST':
-        if 'conectado' in session:
-            respuesta = procesar_update_perfil(request.form)
-            if respuesta == 1:
-                flash('Los datos fuerón actualizados correctamente.', 'success')
-                return redirect(url_for('inicio'))
-            elif respuesta == 0:
-                flash(
-                    'La contraseña actual esta incorrecta, por favor verifique.', 'error')
-                return redirect(url_for('perfil'))
-            elif respuesta == 2:
-                flash('Ambas claves deben se igual, por favor verifique.', 'error')
-                return redirect(url_for('perfil'))
-            elif respuesta == 3:
-                flash('La Clave actual es obligatoria.', 'error')
-                return redirect(url_for('perfil'))
+    if 'conectado' in session:
+        respuesta = procesar_update_perfil(request.form)
+        if respuesta == 1:
+            flash('Los datos fueron actualizados correctamente.', 'success')
+        elif respuesta == 0:
+            flash('La contraseña actual es incorrecta.', 'error')
+        elif respuesta == 2:
+            flash('Las contraseñas no coinciden.', 'error')
+        elif respuesta == 3:
+            flash('La contraseña actual es obligatoria.', 'error')
         else:
-            flash('primero debes iniciar sesión.', 'error')
-            return redirect(url_for('inicio'))
+            flash('Error al actualizar los datos.', 'error')
+        
+        # Redirigir según el rol del usuario
+        if session.get('rol') == 'cliente':
+            return redirect(url_for('perfil_cliente'))
+        else:
+            return redirect(url_for('perfil'))
     else:
-        flash('primero debes iniciar sesión.', 'error')
+        flash('Primero debes iniciar sesión.', 'error')
+        return redirect(url_for('inicio'))
+
+# También actualizar la función de actualizar contraseña
+@app.route("/actualizar-password", methods=['POST'])
+def actualizarPassword():
+    if 'conectado' in session:
+        respuesta = procesar_update_password(request.form)
+        if respuesta == 1:
+            flash('Contraseña actualizada correctamente.', 'success')
+        elif respuesta == 0:
+            flash('Contraseña actual incorrecta.', 'error')
+        elif respuesta == 2:
+            flash('Las contraseñas no coinciden.', 'error')
+        elif respuesta == 3:
+            flash('Debes ingresar tu contraseña actual.', 'error')
+        else:
+            flash('Error al actualizar.', 'error')
+        
+        # Redirigir según el rol del usuario
+        if session.get('rol') == 'cliente':
+            return redirect(url_for('perfil_cliente'))
+        else:
+            return redirect(url_for('perfil'))
+    else:
+        flash('Inicia sesión primero.', 'error')
+        return redirect(url_for('inicio'))
+
+
+@app.route('/cliente-perfil')
+def perfil_cliente():
+    if 'conectado' in session:
+        if session['rol'] == 'cliente':
+            return render_template('public/perfil/perfil_cliente.html', info_perfil_session=info_perfil_session())
+        else:
+            # Si no es cliente, redirigir al perfil administrativo
+            return redirect(url_for('perfil'))
+    else:
+        flash('Acceso denegado.', 'error')
         return redirect(url_for('inicio'))
 
 
@@ -99,51 +159,65 @@ def loginCliente():
     if 'conectado' in session:
         return redirect(url_for('inicio'))
     else:
-        if request.method == 'POST' and 'email_user' in request.form and 'pass_user' in request.form:
+        if request.method == 'POST' and 'documento' in request.form and 'contrasena' in request.form:
 
-            email_user = str(request.form['email_user'])
-            pass_user = str(request.form['pass_user'])
+            documento = request.form['documento']
+            contrasena = request.form['contrasena']
 
-            # Comprobando si existe una cuenta
             conexion_MySQLdb = connectionBD()
             cursor = conexion_MySQLdb.cursor(dictionary=True)
+
             cursor.execute(
-                "SELECT * FROM users WHERE email_user = %s", [email_user])
+                "SELECT id, nombre, apellido, telefono, correo, documento, contrasena, rol, estado FROM users WHERE documento = %s AND estado = 'activo'", 
+                [documento]
+            )
             account = cursor.fetchone()
 
             if account:
-                if check_password_hash(account['pass_user'], pass_user):
-                    # Crear datos de sesión, para poder acceder a estos datos en otras rutas
+                if check_password_hash(account['contrasena'], contrasena):
+                    session['rol'] = account['rol']
+                    session['estado'] = account['estado']
                     session['conectado'] = True
                     session['id'] = account['id']
-                    session['name_surname'] = account['name_surname']
-                    session['email_user'] = account['email_user']
+                    session['nombre'] = account['nombre']
+                    session['apellido'] = account['apellido']
+                    session['telefono'] = account['telefono']
+                    session['correo'] = account['correo']
+                    session['documento'] = account['documento']
 
-                    flash('la sesión fue correcta.', 'success')
-                    return redirect(url_for('inicio'))
+                    flash('Sesión iniciada correctamente', 'success')
+
+                    # 🔥 Redirigir según el rol 🔥
+                    if session['rol'] == 'cliente':
+                        return redirect(url_for('home'))  # Cliente va a index.html
+                    else:
+                        return redirect(url_for('perfil'))  # Admin/empleado a base_cpanel.html
                 else:
-                    # La cuenta no existe o el nombre de usuario/contraseña es incorrecto
-                    flash('datos incorrectos por favor revise.', 'error')
+                    flash('Contraseña incorrecta', 'error')
                     return render_template(f'{PATH_URL_LOGIN}/base_login.html')
             else:
-                flash('el usuario no existe, por favor verifique.', 'error')
+                flash('Usuario inactivo o no existe', 'error')
                 return render_template(f'{PATH_URL_LOGIN}/base_login.html')
         else:
-            flash('primero debes iniciar sesión.', 'error')
+            flash('Complete todos los campos', 'error')
             return render_template(f'{PATH_URL_LOGIN}/base_login.html')
 
-
-@app.route('/closed-session',  methods=['GET'])
+        
+        
+@app.route('/closed-session', methods=['GET'])
 def cerraSesion():
     if request.method == 'GET':
         if 'conectado' in session:
             # Eliminar datos de sesión, esto cerrará la sesión del usuario
             session.pop('conectado', None)
             session.pop('id', None)
-            session.pop('name_surname', None)
-            session.pop('email', None)
-            flash('tu sesión fue cerrada correctamente.', 'success')
+            session.pop('nombre', None)
+            session.pop('apellido', None)
+            session.pop('telefono', None)
+            session.pop('correo', None)
+            session.pop('documento', None)
+            flash('Tu sesión fue cerrada correctamente.', 'success')
             return redirect(url_for('inicio'))
         else:
-            flash('recuerde debe iniciar sesión.', 'error')
+            flash('Recuerde, debe iniciar sesión.', 'error')
             return render_template(f'{PATH_URL_LOGIN}/base_login.html')

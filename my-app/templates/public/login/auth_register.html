@@ -1,13 +1,16 @@
 {% extends 'public/login/base_login.html' %}
-<!---->
-{% block title %}Crud con Python 🐍 | crear cuenta{% endblock %}
-<!---->
-{% block body %}
 
-<div class="container-xxl">
-  <div class="authentication-wrapper authentication-basic container-p-y">
-    <div class="authentication-inner">
-      <div class="card">
+{% block title %}Crud con Python 🐍 | Crear cuenta{% endblock %}
+
+{% block body %}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"
+/>
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card custom-card">
         <div class="card-body">
           <div class="app-brand justify-content-center">
             <span class="app-brand-logo">
@@ -17,58 +20,129 @@
                 alt="Logo" />
             </span>
           </div>
-
           <form
             class="mb-3"
             action="{{ url_for('cpanelResgisterUserBD') }}"
-            method="POST">
-            <div class="mb-3">
-              <label for="name_surname" class="form-label">
-                Nombre y apellido
-              </label>
-              <input
-                type="text"
-                class="form-control"
-                name="name_surname"
-                required
-                autofocus />
-            </div>
-            <div class="mb-3">
-              <label for="email_user" class="form-label">Email</label>
-              <input
-                type="email"
-                class="form-control"
-                name="email_user"
-                required />
-            </div>
-            <div class="mb-3 form-password-toggle">
-              <label class="form-label" for="pass_user">Clave</label>
-              <div class="input-group input-group-merge">
-                <input
-                  type="password"
-                  class="form-control"
-                  name="pass_user"
-                  id="pass_user"
-                  placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                  aria-describedby="password"
-                  required />
-                <span class="input-group-text cursor-pointer">
-                  <i class="bx bx-hide"></i>
-                </span>
+            method="POST"
+            id="register-form">
+            <div class="row">
+              <!-- Columna para los campos -->
+              <div class="col-12 col-md-6 mb-4">
+                <!-- Campo de tipo de documento -->
+                <label for="tipo_documento" class="form-label">Tipo de documento</label>
+                <select class="form-control" id="tipo_documento" name="tipo_documento" required>
+                  <option value="">Seleccione...</option>
+                  <option value="Cedula ciudadania">Cédula de Ciudadanía</option>
+                  <option value="Tarjeta identidad">Tarjeta de Identidad</option>
+                  <option value="Cedula extranjeria">Cédula de Extranjería</option>
+                  <option value="NIT">Nit</option>
+                </select>
               </div>
+
+              <div class="col-12 col-md-6 mb-4">
+                <!-- Campo de documento -->
+                <label for="documento" class="form-label">Documento</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="documento"
+                  name="documento"
+                  required />
+              </div>
+
+              <div class="col-12 col-md-6 mb-4">
+                <!-- Campo de nombre -->
+                <label for="nombre" class="form-label">Nombre</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nombre"
+                  name="nombre"
+                  required />
+              </div>
+
+              <div class="col-12 col-md-6 mb-4">
+                <!-- Campo de apellido -->
+                <label for="apellido" class="form-label">Apellido</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="apellido"
+                  name="apellido"
+                  required />
+              </div>
+
+              <!-- Campo de teléfono -->
+              <div class="col-12 col-md-6 mb-4">
+                <label for="telefono" class="form-label">Teléfono</label>
+                <input
+                  type="tel"
+                  class="form-control"
+                  id="telefono"
+                  name="telefono"
+                  placeholder="Número de teléfono"
+                  required />
+              </div>
+
+              <div class="col-12 col-md-6 mb-4">
+                <!-- Campo de correo electrónico -->
+                <label for="correo" class="form-label">Correo electrónico</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="correo"
+                  name="correo"
+                  required />
+              </div>
+              
+              <div class="col-12 col-md-6 mb-4">
+                <!-- Campo de contraseña -->
+                <label class="form-label" for="contrasena">Contraseña</label>
+                <div class="input-group input-group-merge">
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="contrasena"
+                    name="contrasena"
+                    placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                    aria-describedby="password"
+                    required />                
+                </div>
+                <div id="password-strength" class="mt-2"></div>
+              </div>
+              
+              <!-- Campo de confirmación de contraseña -->
+              <div class="col-12 col-md-6 mb-4">
+                <label class="form-label" for="confirm_contrasena">Confirmar contraseña</label>
+                <div class="input-group input-group-merge">
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="confirm_contrasena"
+                    name="confirm_contrasena"
+                    placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                    aria-describedby="confirm-password"
+                    required />                
+                </div>
+              </div>
+
+
             </div>
-            <button class="btn btn-primary w-100">
+
+            <!-- Botón de enviar -->
+            <button class="btn btn-primary w-100" type="submit">
               Crear cuenta
               <i class="bi bi-arrow-right-circle"></i>
             </button>
           </form>
 
-          <div class="text-center">
+          <!-- Enlace para volver -->
+          <div class="text-center mt-4">
             <a
               href="{{ url_for('inicio') }}"
               class="d-flex align-items-center justify-content-center">
               <i class="bx bx-chevron-left scaleX-n1-rtl bx-sm"></i>
-              volver
+              Volver
             </a>
           </div>
         </div>
@@ -76,5 +150,11 @@
     </div>
   </div>
 </div>
+
+<!-- Script de intl-tel-input -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+
+<script src="{{ url_for('static', filename='assets/customJS/home.js') }}"></script>
 
 {% endblock %}

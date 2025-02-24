@@ -9,7 +9,9 @@
   <head>
     {% include 'public/includes/head.html' %}
     <!---->
-    {% block customCSS %} {% endblock %}
+    {% block customCSS %} 
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/my_style.css') }}" />
+    {% endblock %}
   </head>
   <body>
     {% include 'public/includes/pre_loader.html' %}
