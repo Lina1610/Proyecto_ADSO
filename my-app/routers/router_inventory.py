@@ -7,8 +7,8 @@ from mysql.connector.errors import Error
 # Importando cenexión a BD
 from controllers.funciones_inventory import *
 
-PATH_URL = "public/inventario"  # Ruta base para las plantillas de inventario
 
+PATH_URL = "public/inventario"  # Ruta base para las plantillas de inventario
 
 @app.route('/registrar-inventario', methods=['GET', 'POST'])
 def viewFormInventario():
@@ -35,4 +35,4 @@ def viewFormInventario():
 
     else:
         flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('inicio'))  # Redirige al inicio si no está conectadoo
+        return redirect(url_for('inicio'))  # Redirige al inicio si no está conectado

@@ -5,6 +5,33 @@ from conexion.conexionBD import connectionBD
 import re
 from flask import send_file
 
+def validar_claves_foraneas(users_id, departamento_id, municipio_id):
+    """
+    Valida que las claves foráneas existan en la base de datos.
+    Retorna un mensaje de error si alguna no existe, o None si todo está bien.
+    """
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Validar users_id
+                cursor.execute("SELECT id FROM users WHERE id = %s", (users_id,))
+                if not cursor.fetchone():
+                    return "El users_id proporcionado no existe."
+
+                # Validar departamento_id
+                cursor.execute("SELECT id FROM departamento WHERE id = %s", (departamento_id,))
+                if not cursor.fetchone():
+                    return "El departamento_id proporcionado no existe."
+
+                # Validar municipio_id
+                cursor.execute("SELECT id FROM municipio WHERE id = %s", (municipio_id,))
+                if not cursor.fetchone():
+                    return "El municipio_id proporcionado no existe."
+
+        return None  # Si todo está bien, retorna None
+
+    except Exception as e:
+        return f"Error al validar claves foráneas: {str(e)}"
 def procesar_direccion(dataForm):
     try:
         # Validar que los campos no estén vacíos
@@ -15,6 +42,10 @@ def procesar_direccion(dataForm):
         for campo in campos_requeridos:
             if campo not in dataForm or not dataForm[campo].strip():
                 return f"El campo {campo} es obligatorio."
+
+        # Validar que users_id, departamento_id y municipio_id sean números válidos
+        if not (dataForm['users_id'].isdigit() and dataForm['departamento_id'].isdigit() and dataForm['municipio_id'].isdigit()):
+            return "Los valores de users_id, departamento_id y municipio_id deben ser números válidos."
 
         # Validar que el costo_domicilio sea un número
         try:
