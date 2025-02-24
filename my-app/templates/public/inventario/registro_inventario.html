@@ -1,6 +1,6 @@
 {% extends 'public/base_cpanel.html' %}
 <!--Cambiando el title-->
-{% block title %}Crud con Python 🐍 | Registrar Abono{% endblock %}
+{% block title %}Crud con Python 🐍 | Registrar Inventario{% endblock %}
 <!---->
 {% block customCSS %}
 <link
@@ -13,7 +13,7 @@
 <div class="card" style="border-radius: 0px !important">
   <div class="row justify-content-center mb-2">
     <div class="col-md-12">
-      <h3 class="text-center mt-5 mb-3">REGISTRAR NUEVO ABONO</h3>
+      <h3 class="text-center mt-5 mb-3">REGISTRAR NUEVO INVENTARIO</h3>
       <hr />
     </div>
   </div>
@@ -23,48 +23,44 @@
       <form
         class="form-horizontal mx-auto"
         method="POST"
-        action="/registrar-abono"
+        action="/registrar-inventario"
         autocomplete="off"
         enctype="multipart/form-data">
         <div class="card-body">
           <div class="row">
             <div class="col-md-6">
-              <label for="abono" class="form-label">
-                Número de Abono
+              <label for="cantidad_disponible" class="form-label">
+                Cantidad Disponible
               </label>
-              <select
-                class="form-select"
-                name="abono"
-                aria-label="Default select example">
-                <option selected>Seleccione</option>
-                <option value="Pago inicial">Pago Inicial</option>
-                <option value="Pago final">Pago Final</option>
-              </select>
+              <input
+                class="form-control"
+                type="number"
+                name="cantidad_disponible"
+                required
+                placeholder="Ingrese la cantidad disponible" />
             </div>
             <div class="col-md-6">
-              <label for="fecha" class="form-label">
-                Fecha
+              <label for="fecha_actualizacion" class="form-label">
+                Fecha de Actualización
               </label>
               <input
                 class="form-control"
                 type="date"
-                name="fecha"
+                name="fecha_actualizacion"
                 required />
             </div>
           </div>
 
           <div class="row mt-2">
             <div class="col-md-6">
-              <label for="estado" class="form-label">
-                Estado
+              <label for="fecha_registro" class="form-label">
+                Fecha de Registro
               </label>
-              <select
-                class="form-select"
-                name="estado"
-                aria-label="Default select example">
-                <option selected>Seleccione</option>
-                <option value="Abono confirmado">Abono Confirmado</option>
-              </select>
+              <input
+                class="form-control"
+                type="datetime-local"
+                name="fecha_registro"
+                required />
             </div>
           </div>
 

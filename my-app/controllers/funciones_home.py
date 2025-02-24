@@ -62,6 +62,7 @@ def procesar_form_empleado(dataForm, foto_perfil):
     except Exception as e:
         print(f"Error en procesar_form_empleado: {e}")  # Debug
         return f"Se produjo un error en procesar_form_empleado: {str(e)}"
+    
 def procesar_imagen_perfil(foto):
     try:
         # Nombre original del archivo

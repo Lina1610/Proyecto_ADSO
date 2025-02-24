@@ -5,7 +5,7 @@
 {% block customCSS %}
 <link
   rel="stylesheet"
-  href="{{ url_for('static', filename ='assets/css/file.css') }}" />
+  href="{{ url_for('static', filename='assets/css/file.css') }}" />
 {% endblock %}
 
 {% block body %}
@@ -61,33 +61,11 @@
                 name="estado_pedido"
                 aria-label="Default select example">
                 <option selected>Seleccione</option>
-                <option value="1">Pendiente</option>
-                <option value="2">En Proceso</option>
-                <option value="3">En camino</option>
-                <option value="4">Entregado</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Proceso">En Proceso</option>
+                <option value="En camino">En camino</option>
+                <option value="Entregado">Entregado</option>
               </select>
-            </div>
-            <div class="col-md-6 mt-2">
-              <label for="persona_id" class="form-label">Persona ID</label>
-              <input 
-                class="form-control" 
-                type="number" 
-                name="persona_id" 
-                required />
-            </div>
-          </div>
-
-          <!-- Campo entrega_id -->
-          <div class="row mt-2">
-            <div class="col-md-6">
-              <label for="entrega_id" class="form-label">
-                Entrega ID
-              </label>
-              <input 
-                class="form-control" 
-                type="number" 
-                name="entrega_id" 
-                required />
             </div>
           </div>
 
@@ -105,5 +83,5 @@
 {% endblock %}
 
 {% block customJS %}
-<script src="{{ url_for('static', filename ='assets/customJS/file.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/customJS/file.js') }}"></script>
 {% endblock %}

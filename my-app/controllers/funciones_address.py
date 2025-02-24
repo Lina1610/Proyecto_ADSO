@@ -2,9 +2,43 @@ from werkzeug.utils import secure_filename
 import uuid
 from conexion.conexionBD import connectionBD
 import re
-from flask import send_file
+
+def validar_claves_foraneas(users_id, departamento_codigo, municipio_id):
+    """
+    Valida que las claves foráneas existan en la base de datos.
+    Retorna un mensaje de error si alguna no existe, o None si todo está bien.
+    """
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Validar users_id
+                cursor.execute("SELECT id FROM users WHERE id = %s", (users_id,))
+                if not cursor.fetchone():
+                    return "El users_id proporcionado no existe."
+
+                # Validar departamento_id por código
+                cursor.execute("SELECT id FROM departamento WHERE codigo = %s", (departamento_codigo,))
+                departamento = cursor.fetchone()
+                if not departamento:
+                    return "El departamento_id proporcionado no existe."
+                
+                departamento_id = departamento['id']  # Obtener el ID real del departamento
+                
+                # Validar municipio_id
+                cursor.execute("SELECT id FROM municipio WHERE id = %s", (municipio_id,))
+                if not cursor.fetchone():
+                    return "El municipio_id proporcionado no existe."
+
+        return departamento_id  # Retorna el ID real del departamento si todo está bien
+
+    except Exception as e:
+        return f"Error al validar claves foráneas: {str(e)}"
+
 
 def procesar_direccion(dataForm):
+    """
+    Procesa y guarda una dirección en la base de datos.
+    """
     try:
         # Validar que los campos no estén vacíos
         campos_requeridos = [
@@ -15,20 +49,26 @@ def procesar_direccion(dataForm):
             if campo not in dataForm or not dataForm[campo].strip():
                 return f"El campo {campo} es obligatorio."
 
+        # Validar que users_id y municipio_id sean números válidos
+        if not (dataForm['users_id'].isdigit() and dataForm['municipio_id'].isdigit()):
+            return "Los valores de users_id y municipio_id deben ser números válidos."
+
         # Validar que el costo_domicilio sea un número
         try:
             costo_domicilio = int(dataForm['costo_domicilio'])
+            if costo_domicilio < 0:
+                return "El costo del domicilio no puede ser negativo."
         except ValueError:
             return "El costo del domicilio debe ser un número válido."
 
-        # Validar claves foráneas
-        error = validar_claves_foraneas(
+        # Validar claves foráneas y obtener el ID real del departamento
+        departamento_id = validar_claves_foraneas(
             dataForm['users_id'],
-            dataForm['departamento_id'],
+            dataForm['departamento_id'],  # Aquí se pasa el código, no el ID
             dataForm['municipio_id']
         )
-        if error:
-            return error
+        if isinstance(departamento_id, str):  # Si retorna un mensaje de error
+            return departamento_id
 
         # Insertar en la tabla direccion
         with connectionBD() as conexion_MySQLdb:
@@ -49,7 +89,7 @@ def procesar_direccion(dataForm):
                     dataForm.get('estado'),
                     costo_domicilio,
                     dataForm.get('users_id'),
-                    dataForm.get('departamento_id'),
+                    departamento_id,  # Se inserta el ID real del departamento
                     dataForm.get('municipio_id')
                 )
                 cursor.execute(sql, valores)
@@ -62,5 +102,5 @@ def procesar_direccion(dataForm):
                     return "No se pudo insertar la dirección en la base de datos."
 
     except Exception as e:
-        print(f"Error en procesar_form_direccion: {e}")  # Debug
-        return f"Se produjo un error en procesar_form_direccion: {str(e)}"
+        print(f"Error en procesar_direccion: {e}")  # Debug
+        return f"Se produjo un error en procesar_direccion: {str(e)}"
