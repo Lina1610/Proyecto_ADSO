@@ -105,23 +105,33 @@
           </div>
       </div>
     
-        <div class="seccion-confirmar">
-            <div class="card-carrito">
-                <h3>Tu Pedido</h3>
-                
-                <div class="lista-items" id="lista-items">
-                    </div>
-    
-                <div class="total-pedido">
-                    <span>Total:</span>
-                    <span class="monto-total" id="total-carrito">$0.00</span>
-                </div>
-    
-                <button class="btn-confirmar" onclick="confirmarPedido()" >
-                    <i class="fas fa-check-circle"></i> Confirmar Pedido
-                </button>
+      <div class="seccion-confirmar">
+        <div class="card-carrito">
+            <h3>Tu Pedido</h3>
+            
+            <div class="lista-items" id="lista-items">
             </div>
+    
+            <!-- Campo agregado para dirección -->
+            <div class="campo-direccion">
+                <label for="direccion">Dirección de entrega:</label>
+                <input type="text" 
+                       id="direccion" 
+                       name="direccion" 
+                       placeholder="Ingresa tu dirección completa"
+                       required>
+            </div>
+    
+            <div class="total-pedido">
+                <span>Total:</span>
+                <span class="monto-total" id="total-carrito">$0.00</span>
+            </div>
+    
+            <button class="btn-confirmar" onclick="confirmarPedido()">
+                <i class="fas fa-check-circle"></i> Confirmar Pedido
+            </button>
         </div>
+    </div>
     </main>
 
 <div class="carrito-icono" onclick="mostrarCarrito()">
