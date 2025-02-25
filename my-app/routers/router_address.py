@@ -19,9 +19,16 @@ def viewFormDireccion():
 
             if isinstance(resultado, int) and resultado > 0:  # Si el registro fue exitoso
                 flash('Dirección registrada con éxito', 'success')
-                return redirect(url_for('viewFormDireccion'))  # Redirige al formulario vacío
+                if session['rol'] == 'cliente':  # Si el usuario es un cliente
+                    return redirect(url_for('perfil_cliente'))  # Redirige al perfil del cliente
+                else:  # Si el usuario es administrador o empleado
+                    return redirect(url_for('viewFormDireccion'))  # Redirige al formulario vacío
             else:  # Si hubo un error en el registro
                 flash(f'Error al registrar dirección: {resultado}', 'error')
+                if session['rol'] == 'cliente':  # Si el usuario es un cliente
+                    return redirect(url_for('perfil_cliente'))  # Redirige al perfil del cliente
+                else:  # Si el usuario es administrador o empleado
+                    return redirect(url_for('viewFormDireccion'))  # Redirige al formulario vacío
         
         # Si es un GET, obtener los datos de departamento y usuarios
         with connectionBD() as conexion_MySQLdb:
@@ -65,3 +72,7 @@ def obtener_municipios():
                 return jsonify(municipios)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+    
+

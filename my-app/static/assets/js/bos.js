@@ -37,3 +37,16 @@ document.addEventListener("DOMContentLoaded", function () {
     setupPasswordToggle(); // Configurar alternar contraseña
     setupFormSubmit(); // Configurar envío del formulario
 });
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const botonAgregarDireccion = document.querySelector("[data-bs-target='#modalNuevaDireccion']");
+
+    if (botonAgregarDireccion) {
+        botonAgregarDireccion.addEventListener("click", function() {
+            console.log("Abriendo modal de nueva dirección...");
+        });
+    } else {
+        console.error("El botón para agregar dirección no se encontró.");
+    }
+});
