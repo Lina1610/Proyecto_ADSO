@@ -119,27 +119,92 @@ def procesar_direccion(dataForm):
     
 
 def obtener_direcciones_usuario(user_id):
-    """
-    Obtiene todas las direcciones registradas para un usuario específico.
-    """
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                # Consulta para obtener las direcciones del usuario con los nombres de departamento y municipio
-                sql = """
+                cursor.execute("""
                     SELECT d.id, d.nombre_completo, d.barrio, d.domicilio, d.referencias, d.telefono, 
-                           d.estado, d.costo_domicilio,
-                           dep.nombre AS departamento, mun.nombre AS municipio
+                           dep.nombre AS nombre_departamento, mun.nombre AS nombre_municipio
                     FROM direccion d
-                    JOIN departamento dep ON d.departamento_id = dep.id
-                    JOIN municipio mun ON d.municipio_id = mun.id
+                    LEFT JOIN departamento dep ON d.departamento_id = dep.id
+                    LEFT JOIN municipio mun ON d.municipio_id = mun.id
                     WHERE d.users_id = %s
                     ORDER BY d.id DESC
-                """
-                cursor.execute(sql, (user_id,))
+                """, (user_id,))
                 direcciones = cursor.fetchall()
+
+                # 🚀 Debug: Ver qué devuelve la consulta
+                print(f"Direcciones para usuario {user_id}:", direcciones)
+
                 return direcciones
     except Exception as e:
         print(f"Error en obtener_direcciones_usuario: {e}")
         return []
 
+
+
+def obtener_direccion():
+    """
+    Obtiene todas las direcciones de la base de datos con los nombres de municipio, departamento y documento del usuario.
+    """
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                sql = """
+                    SELECT 
+                        d.id, 
+                        d.nombre_completo, 
+                        d.barrio, 
+                        d.domicilio, 
+                        d.referencias, 
+                        d.telefono,
+                        d.estado,
+                        d.costo_domicilio,
+                        u.documento AS usuario_documento,  # Obtener el documento del usuario
+                        m.nombre AS municipio_nombre,      # Obtener el nombre del municipio
+                        dep.nombre AS departamento_nombre  # Obtener el nombre del departamento
+                    FROM direccion d
+                    LEFT JOIN users u ON d.users_id = u.id
+                    LEFT JOIN municipio m ON d.municipio_id = m.id
+                    LEFT JOIN departamento dep ON d.departamento_id = dep.id
+                    ORDER BY d.id DESC
+                """
+                print("Ejecutando consulta SQL:", sql)  # Depuración
+                cursor.execute(sql)
+                direcciones = cursor.fetchall()
+                print("Datos de direcciones obtenidos:", direcciones)  # Depuración
+                return direcciones
+    except Exception as e:
+        print(f"Error en obtener_direccion: {e}")  # Depuración
+        return []
+    
+def obtener_direccion_por_id(id):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                sql = """
+                    SELECT 
+                        d.id, 
+                        d.nombre_completo, 
+                        d.barrio, 
+                        d.domicilio, 
+                        d.referencias, 
+                        d.telefono,
+                        d.estado,
+                        d.costo_domicilio,
+                        d.created_at,
+                        u.documento AS usuario_documento,
+                        m.nombre AS municipio_nombre,
+                        dep.nombre AS departamento_nombre
+                    FROM direccion d
+                    LEFT JOIN users u ON d.users_id = u.id
+                    LEFT JOIN municipio m ON d.municipio_id = m.id
+                    LEFT JOIN departamento dep ON d.departamento_id = dep.id
+                    WHERE d.id = %s
+                """
+                cursor.execute(sql, (id,))
+                direccion = cursor.fetchone()
+                return direccion
+    except Exception as e:
+        print(f"Error en obtener_direccion_por_id: {e}")
+        return None
