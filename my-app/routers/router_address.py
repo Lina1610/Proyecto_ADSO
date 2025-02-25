@@ -2,13 +2,8 @@ from app import app
 from flask import jsonify
 from flask import render_template, request, flash, redirect, url_for, session, jsonify
 from mysql.connector.errors import Error
-
-
 # Importando conexión a BD
-
-from controllers.funciones_address import *
-
- 
+from controllers.funciones_address import * 
 
  
 PATH_URL = "public/direccion"
@@ -23,9 +18,16 @@ def viewFormDireccion():
 
             if isinstance(resultado, int) and resultado > 0:  # Si el registro fue exitoso
                 flash('Dirección registrada con éxito', 'success')
-                return redirect(url_for('viewFormDireccion'))  # Redirige al formulario vacío
+                if session['rol'] == 'cliente':  # Si el usuario es un cliente
+                    return redirect(url_for('perfil_cliente'))  # Redirige al perfil del cliente
+                else:  # Si el usuario es administrador o empleado
+                    return redirect(url_for('viewFormDireccion'))  # Redirige al formulario vacío
             else:  # Si hubo un error en el registro
                 flash(f'Error al registrar dirección: {resultado}', 'error')
+                if session['rol'] == 'cliente':  # Si el usuario es un cliente
+                    return redirect(url_for('perfil_cliente'))  # Redirige al perfil del cliente
+                else:  # Si el usuario es administrador o empleado
+                    return redirect(url_for('viewFormDireccion'))  # Redirige al formulario vacío
         
         # Si es un GET, obtener los datos de departamento y usuarios
         with connectionBD() as conexion_MySQLdb:
@@ -70,15 +72,29 @@ def obtener_municipios():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
+
 # lista direcciones
-
-
 @app.route('/lista-de-direccion')
 def lista_direcciones():
-    if 'conectado' in session:
-        direcciones = obtener_direcciones()  # Obtener la lista de direcciones
-        print(direcciones)  # Depuración: Verifica los datos obtenidos
-        return render_template('public/direccion/lista_direccion.html', direcciones=direcciones)
+    if 'conectado' in session:  # Verifica si el usuario está conectado
+        try:
+            # Obtener la lista de direcciones desde la base de datos
+            direcciones = obtener_direccion()
+            
+            # Depuración: Verifica los datos obtenidos
+            print(direcciones)
+            
+            # Renderizar la plantilla con los datos de las direcciones
+            return render_template('public/direccion/lista_direccion.html', direcciones=direcciones)
+        except Exception as e:
+            # Manejo de errores: Si ocurre un error, muestra un mensaje y redirige al inicio
+            print(f"Error al obtener las direcciones: {e}")
+            flash('Error al obtener las direcciones. Por favor, inténtalo de nuevo.', 'error')
+            return redirect(url_for('inicio'))
     else:
+        # Si el usuario no está conectado, muestra un mensaje y redirige al inicio
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
+    
+
+

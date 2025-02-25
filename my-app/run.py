@@ -22,6 +22,7 @@ from routers.router_inventory import *
 
 
 
+
 # Cargar la configuración desde config.py
 app.config.from_object(Config)
 

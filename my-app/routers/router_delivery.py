@@ -9,7 +9,6 @@ from controllers.funciones_delivery import *
 PATH_URL = "public/entrega"
 
 
-# Función para registrar una entrega (delivery)
 @app.route('/registrar-entrega', methods=['GET', 'POST'])
 def viewFormEntrega():
     if 'conectado' in session:  # Verifica si el usuario está conectado
@@ -24,7 +23,25 @@ def viewFormEntrega():
                 flash(f'Error al registrar entrega: {resultado}', 'error')
         
         # Si es un GET, solo mostramos el formulario
-        return render_template(f'{PATH_URL}/registro_entrega.html')
+        # Obtener las direcciones desde la base de datos
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Construye la dirección concatenando columnas
+                cursor.execute("""
+                    SELECT 
+                        id, 
+                        CONCAT_WS(', ', domicilio, barrio, referencias) AS direccion_completa
+                    FROM 
+                        direccion
+                    WHERE 
+                        estado = 'Activo'
+                """)
+                direcciones = cursor.fetchall()
+
+        return render_template(
+            f'{PATH_URL}/registro_entrega.html',
+            direcciones=direcciones
+        )
     else:
         flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('inicio'))  # Redirige a la página de inicio si no está conectado
+        return redirect(url_for('inicio'))  # Redirige a la página de inicio si no está conectado  # Redirige a la página de inicio si no está conectado

@@ -186,3 +186,5 @@ def dataLoginSesion():
         "documento": session['documento']
     }
     return inforLogin
+
+

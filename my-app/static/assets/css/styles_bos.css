@@ -15,6 +15,42 @@
 /* Estilos usuario */
 /* Estilos usuario */
 /* Estilos usuario */
+
+/* Estilos para el menú */
+.custom-navbar {
+  background-color: rgb(0, 0, 0) !important; /* Fondo negro */
+  border-bottom: 1px solid rgba(197, 41, 41, 0.1); /* Borde inferior */
+}
+
+.custom-navbar .navbar-brand,
+.custom-navbar .navbar-nav .nav-link {
+  color: white !important; /* Texto blanco */
+}
+
+.custom-navbar .navbar-toggler {
+  border-color: white !important; /* Color del borde del botón hamburguesa */
+}
+
+.custom-navbar .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='white' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E") !important; /* Ícono del botón hamburguesa en blanco */
+}
+
+.custom-navbar .navbar-nav .nav-link:hover {
+  color: #ffc107 !important; /* Color amarillo al pasar el mouse */
+}
+
+/* Estilos para el menú desplegable */
+
+
+.custom-navbar .navbar-collapse .nav-link {
+  color: white !important; /* Texto blanco en el menú desplegable */
+}
+
+.custom-navbar .navbar-collapse .nav-link:hover {
+  color: #ffc107 !important; /* Color amarillo al pasar el mouse */
+}
+
+
 .user-info-container {
   border-left: 2px solid rgba(255,255,255,0.2);
   padding-left: 1.5rem;
@@ -10877,7 +10913,11 @@ p {
   padding: 0;
   border-radius: 100%;
 }
-
+#mainNav1 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: #000;
+}
 #mainNav {
   padding-top: 1rem;
   padding-bottom: 1rem;
