@@ -46,7 +46,7 @@ def cliente_direcciones():
         flash('Acceso denegado.', 'error')
         return redirect(url_for('inicio'))
 
-# Ruta para registrar una dirección
+# Ruta para registrar una dirección 
 @app.route('/registrar-direccion', methods=['GET', 'POST'])
 def viewFormDireccion():
     """
@@ -153,39 +153,83 @@ def detalles_direccion(id):
     print(f"Datos de la dirección obtenidos: {direccion}")  # Depuración
     return render_template('public/direccion/detalles_direccion.html', direccion=direccion)
     
+
+# optener los datos del cliete
+@app.route('/guardar-direccion', methods=['POST'])
+def guardar_direccion():
+    """
+    Guarda una nueva dirección en la base de datos.
+    """
+    if 'conectado' not in session:
+        return jsonify({"error": "Primero debes iniciar sesión"}), 401
+
+    try:
+        # Obtener los datos del formulario
+        data = request.get_json()
+
+        # Validar que los datos estén completos
+        if not data or not all(key in data for key in ['nombre_completo', 'barrio', 'domicilio', 'telefono', 'departamento_id', 'municipio_id']):
+            return jsonify({"error": "Datos incompletos"}), 400
+
+        # Guardar la dirección en la base de datos
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                sql = """
+                    INSERT INTO direccion (
+                        nombre_completo, barrio, domicilio, referencias, telefono,
+                        departamento_id, municipio_id, users_id
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                valores = (
+                    data['nombre_completo'],
+                    data['barrio'],
+                    data['domicilio'],
+                    data.get('referencias', ''),  # Campo opcional
+                    data['telefono'],
+                    data['departamento_id'],
+                    data['municipio_id'],
+                    session['id']  # ID del usuario conectado
+                )
+                cursor.execute(sql, valores)
+                conexion_MySQLdb.commit()
+
+        return jsonify({"success": True, "message": "Dirección guardada correctamente"}), 201
+
+    except Exception as e:
+        print(f"Error al guardar la dirección: {e}")
+        return jsonify({"error": "Error al guardar la dirección"}), 500
+
+
+
 # Ruta para mostrar el formulario de edición de una dirección
 @app.route('/editar-direccion/<int:id>', methods=['GET'])
 def viewEditarDireccion(id):
-    """
-    Muestra el formulario para editar una dirección específica por su ID.
-    Solo accesible si el usuario está conectado.
-    """
+
+    #Muestra el formulario para editar una dirección específica por su ID.
+    #Solo accesible si el usuario está conectado.
+ 
     if 'conectado' in session:
         # Obtener la dirección por su ID
         direccion = obtener_direccion_por_id(id)
 
         if direccion:
-            # Obtener departamentos y municipios para el formulario
+            # Obtener departamentos para el formulario
             with connectionBD() as conexion_MySQLdb:
                 with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                     cursor.execute("SELECT id, nombre FROM departamento")
                     departamentos = cursor.fetchall()
 
-                    cursor.execute("SELECT id, nombre FROM municipio")
-                    municipios = cursor.fetchall()
-
             return render_template(
                 'public/direccion/editar_direccion.html',
                 direccion=direccion,
-                departamentos=departamentos,
-                municipios=municipios
+                departamentos=departamentos
             )
         else:
             flash('La dirección no existe.', 'error')
             return redirect(url_for('lista_direcciones'))
     else:
         flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('inicio'))
+        return redirect(url_for('inicio')) 
 
 # Ruta para procesar la actualización de una dirección
 @app.route('/actualizar-direccion', methods=['POST'])
@@ -248,6 +292,7 @@ def actualizarDireccion():
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
     
+### cualquier cosa aca va la direccion que mando a watsap     
 
 @app.route('/activar-direccion/<int:id>')
 def activar_direccion(id):

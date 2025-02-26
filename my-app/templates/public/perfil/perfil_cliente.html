@@ -172,165 +172,127 @@
                         </div>
                     </div>
                 </div>
-                <!-- direcciones-->
 
-                <div class="card mb-4">
-                    <div class="card-header section-header" data-bs-toggle="collapse" href="#seccionDirecciones">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-map-marker-alt fa-2x me-3 text-primary"></i>
-                            <div>
-                                <h5 class="mb-0">Mis Direcciones</h5>
-                                <small class="text-muted">Direcciones registradas para tus envíos</small>
-                            </div>
-                        </div>
+                <!-- Direcciones -->
+<div class="card mb-4">
+    <div class="card-header section-header" data-bs-toggle="collapse" href="#seccionDirecciones">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-map-marker-alt fa-2x me-3 text-primary"></i>
+            <div>
+                <h5 class="mb-0">Mis Direcciones</h5>
+                <small class="text-muted">Direcciones registradas para tus envíos</small>
+            </div>
+        </div>
+    </div>
+    <div class="collapse" id="seccionDirecciones">
+        <div class="card-body">
+            {% if direcciones %}
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Barrio</th>
+                                <th>Domicilio</th>
+                                <th>Teléfono</th>
+                                <th>Ubicación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for direccion in direcciones %}
+                            <tr>
+                                <td>{{ direccion.nombre_completo }}</td>
+                                <td>{{ direccion.barrio }}</td>
+                                <td>{{ direccion.domicilio }}</td>
+                                <td>{{ direccion.telefono }}</td>
+                                <td>{{ direccion.nombre_municipio }}, {{ direccion.nombre_departamento }}</td>
+                                <td>
+                                    <!-- Botón para editar -->
+                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editarDireccionModal" onclick="cargarDatosEditar({{ direccion.id }})">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                    <!-- Botón para eliminar -->
+                                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#eliminarDireccionModal" onclick="confirmarEliminar({{ direccion.id }})">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    No tienes direcciones registradas. Agrega una dirección para tus envíos.
+                </div>
+            {% endif %}
+
+            <!-- Formulario Nueva Dirección -->
+            <h6 class="mb-3">Agregar Nueva Dirección</h6>
+            <form class="mt-2" method="POST" action="/registrar-direccion">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="nombre_completo" class="form-label">Nombre Completo</label>
+                        <input type="text" name="nombre_completo" class="form-control" required />
                     </div>
-                    <div class="collapse" id="seccionDirecciones">
-                        <div class="card-body">
-                            {% if direcciones %}
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Nombre</th>
-                                                <th>Barrio</th>
-                                                <th>Domicilio</th>
-                                                <th>Teléfono</th>
-                                                <th>Ubicación</th>
-                                                <th>Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for direccion in direcciones %}
-                                            <tr>
-                                                <td>{{ direccion.nombre_completo }}</td>
-                                                <td>{{ direccion.barrio }}</td>
-                                                <td>{{ direccion.domicilio }}</td>
-                                                <td>{{ direccion.telefono }}</td>
-                                                <td>{{ direccion.nombre_municipio }}, {{ direccion.nombre_departamento }}</td>
-                                                <td>
-                                                    <button class="btn btn-sm btn-info">Editar</button>
-                                                    <button class="btn btn-sm btn-danger">Eliminar</button>
-                                                </td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            {% else %}
-                                <div class="alert alert-info">
-                                    No tienes direcciones registradas. Agrega una dirección para tus envíos.
-                                </div>
-                            {% endif %}
-
-                            <!-- Formulario Nueva Dirección -->
-                            <h6 class="mb-3">Agregar Nueva Dirección</h6>
-                            <form class="mt-2" method="POST" action="/registrar-direccion">
-
-                                <div class="row ">
-                                    <div class="col-md-6">
-                                        <label for="nombre_completo" class="form-label">
-                                          Nombre Completo
-                                        </label>
-                                        <input
-                                          type="text"
-                                          name="nombre_completo"
-                                          class="form-control"
-                                          required />
-                                      </div>
-                                    
-                                      <div class="col-md-6">
-                                        <label for="barrio" class="form-label">
-                                          Barrio
-                                        </label>
-                                        <input
-                                          class="form-control"
-                                          type="text"
-                                          name="barrio"
-                                          required />
-                                      </div>
-                                    
-                                      <div class="col-md-6">
-                                        <label for="domicilio" class="form-label">
-                                          Domicilio
-                                        </label>
-                                        <input
-                                          class="form-control"
-                                          type="text"
-                                          name="domicilio"
-                                          required />
-                                      </div>
-                                    
-                                      <div class="col-md-6">
-                                        <label for="referencias" class="form-label">
-                                          Referencias
-                                        </label>
-                                        <input
-                                          class="form-control"
-                                          type="text"
-                                          name="referencias" />
-                                      </div>
-                                    
-                                      <div class="col-md-6">
-                                        <label for="telefono" class="form-label">
-                                          Teléfono
-                                        </label>
-                                        <input
-                                          class="form-control"
-                                          type="text"
-                                          name="telefono"
-                                          required />
-                                      </div>
-
-                                    <!-- Departamento y Municipio -->
-                                    <div class="col-md-6">
-                                        <label for="departamento_id" class="form-label">
-                                          Departamento
-                                        </label>
-                                        <select class="form-select" name="departamento_id" id="departamento_id">
-                                            <option selected>Seleccione</option>
-                                            {% for departamento in departamentos %}
-                                                <option value="{{ departamento.id }}">{{ departamento.nombre }}</option>
-                                            {% endfor %}
-                                        </select>
-                                      </div>
-                                    
-                                      <div class="col-md-6">
-                                        <label for="municipio_id" class="form-label">
-                                          Municipio
-                                        </label>
-                                        <select class="form-select" name="municipio_id" id="municipio_id">
-                                            <option selected>Seleccione</option>
-                                            {% for municipio in municipios %}
-                                                <option value="{{ municipio.id }}">{{ municipio.nombre }}</option>
-                                            {% endfor %}
-                                        </select>
-                                      </div>
-
-                                    <!-- Campo Contraseña para nueva dirección -->
-                                    <div class="col-md-12">
-                                        <label class="form-label">Confirmar con Contraseña Actual</label>
-                                        <div class="input-group input-group-merge">
-                                            <input type="password" 
-                                                   class="form-control" 
-                                                   name="pass_actual"
-                                                   required>
-                                            <span class="input-group-text cursor-pointer">
-                                                <i class="bx bx-hide" onclick="togglePassword(this)"></i>
-                                            </span>
-                                        </div>
-                                        <small class="text-muted">Debe verificar su identidad para agregar una dirección</small>
-                                    </div>
-
-                                    <div class="col-12 text-end">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-plus me-2"></i>Agregar Dirección
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
+                    <div class="col-md-6">
+                        <label for="barrio" class="form-label">Barrio</label>
+                        <input class="form-control" type="text" name="barrio" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="domicilio" class="form-label">Domicilio</label>
+                        <input class="form-control" type="text" name="domicilio" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="referencias" class="form-label">Referencias</label>
+                        <input class="form-control" type="text" name="referencias" />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="telefono" class="form-label">Teléfono</label>
+                        <input class="form-control" type="text" name="telefono" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="departamento_id" class="form-label">Departamento</label>
+                        <select class="form-select" name="departamento_id" id="departamento_id">
+                            <option selected>Seleccione</option>
+                            {% for departamento in departamentos %}
+                                <option value="{{ departamento.id }}">{{ departamento.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="municipio_id" class="form-label">Municipio</label>
+                        <select class="form-select" name="municipio_id" id="municipio_id">
+                            <option selected>Seleccione</option>
+                            {% for municipio in municipios %}
+                                <option value="{{ municipio.id }}">{{ municipio.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Confirmar con Contraseña Actual</label>
+                        <div class="input-group input-group-merge">
+                            <input type="password" class="form-control" name="pass_actual" required>
+                            <span class="input-group-text cursor-pointer">
+                                <i class="bx bx-hide" onclick="togglePassword(this)"></i>
+                            </span>
                         </div>
+                        <small class="text-muted">Debe verificar su identidad para agregar una dirección</small>
+                    </div>
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Agregar Dirección
+                        </button>
                     </div>
                 </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
 
                 <!-- Sección Actualizar Contraseña -->
                 <div class="card">
@@ -401,6 +363,84 @@
             </div>
         </section>
     </main>
+    <!-- Modal para editar dirección -->
+<div class="modal fade" id="editarDireccionModal" tabindex="-1" aria-labelledby="editarDireccionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editarDireccionModalLabel">Editar Dirección</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Formulario de edición -->
+          <form id="formEditarDireccion" method="POST">
+            <input type="hidden" name="id" id="editarDireccionId">
+            <div class="mb-3">
+              <label for="nombre_completo" class="form-label">Nombre Completo</label>
+              <input type="text" name="nombre_completo" id="editarNombreCompleto" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="barrio" class="form-label">Barrio</label>
+              <input type="text" name="barrio" id="editarBarrio" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="domicilio" class="form-label">Domicilio</label>
+              <input type="text" name="domicilio" id="editarDomicilio" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="referencias" class="form-label">Referencias</label>
+              <input type="text" name="referencias" id="editarReferencias" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label for="telefono" class="form-label">Teléfono</label>
+              <input type="text" name="telefono" id="editarTelefono" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="departamento_id" class="form-label">Departamento</label>
+              <select class="form-select" name="departamento_id" id="editarDepartamentoId">
+                <option value="">Seleccione un departamento</option>
+                {% for departamento in departamentos %}
+                  <option value="{{ departamento.id }}">{{ departamento.nombre }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="municipio_id" class="form-label">Municipio</label>
+              <select class="form-select" name="municipio_id" id="editarMunicipioId">
+                <option value="">Seleccione un municipio</option>
+                {% for municipio in municipios %}
+                  <option value="{{ municipio.id }}">{{ municipio.nombre }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              <button type="submit" class="btn btn-primary">Guardar cambios</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Modal para eliminar dirección -->
+<div class="modal fade" id="eliminarDireccionModal" tabindex="-1" aria-labelledby="eliminarDireccionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eliminarDireccionModalLabel">Eliminar Dirección</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar esta dirección?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmarEliminar">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <footer class="footer">
         <div class="footer-container">
@@ -465,10 +505,13 @@
     }
   });
 </script>
-
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
     <script src="{{ url_for('static', filename='assets/js/bos.js') }}"></script>
+    <!-- Incluir el archivo JavaScript externo -->
+    <script src="{{ url_for('static', filename='assets/js/modals.js') }}"></script>
+    <!-- JavaScript para manejar los modales --> 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
 </html>
