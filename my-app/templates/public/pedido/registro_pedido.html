@@ -3,9 +3,7 @@
 {% block title %}Crud con Python 🐍 | Registrar Pedido{% endblock %}
 
 {% block customCSS %}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='assets/css/file.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/file.css') }}" />
 {% endblock %}
 
 {% block body %}
@@ -19,56 +17,85 @@
 
   <div class="row justify-content-center mb-2">
     <div class="col-md-10">
-      <form
-        class="form-horizontal mx-auto"
-        method="POST"
-        action="/registrar-pedido"
-        autocomplete="off"
-        enctype="multipart/form-data">
-
+      <form class="form-horizontal mx-auto" method="POST" action="/registrar-pedido" autocomplete="off" enctype="multipart/form-data">
         <div class="card-body">
           <div class="row">
+            <!-- Columna izquierda: 4 campos -->
             <div class="col-md-6">
-              <label for="fecha" class="form-label">
-                Fecha
-              </label>
-              <input
-                class="form-control"
-                type="date"
-                name="fecha"
-                required />
+              <!-- Fecha de Entrega -->
+              <div class="mb-3">
+                <label for="fechaEntrega" class="form-label">Fecha de Entrega</label>
+                <input class="form-control" type="date" name="fechaEntrega" required />
+              </div>
+
+              <!-- Hora de Entrega -->
+              <div class="mb-3">
+                <label for="horaEntrega" class="form-label">Hora de Entrega</label>
+                <input class="form-control" type="time" name="horaEntrega" required />
+              </div>
+
+              <!-- Estado del Pedido -->
+              <div class="mb-3">
+                <label for="estado" class="form-label">Estado del Pedido</label>
+                <select class="form-select" name="estado" aria-label="Default select example" required>
+                  <option value="" selected disabled>Seleccione</option>
+                  <option value="Pendiente">Pendiente</option>
+                  <option value="En Proceso">En Proceso</option>
+                  <option value="En camino">En camino</option>
+                  <option value="Entregado">Entregado</option>
+                </select>
+              </div>
+
+              <!-- Usuario -->
+              <div class="mb-3">
+                <label for="users_id" class="form-label">Usuario</label>
+                <select class="form-select" name="users_id" id="users_id" required>
+                  <option value="" selected disabled>Seleccione un usuario</option>
+                  {% for usuario in usuarios %}
+                    <option value="{{ usuario.id }}">{{ usuario.nombre }}</option>
+                  {% endfor %}
+                </select>
+              </div>
             </div>
+
+            <!-- Columna derecha: 3 campos -->
             <div class="col-md-6">
-              <label for="fecha_entrega" class="form-label">
-                Fecha y Hora de Entrega
-              </label>
-              <input
-                class="form-control"
-                type="datetime-local"
-                name="fecha_entrega"
-                required />
+              <!-- Producto -->
+              <div class="mb-3">
+                <label for="producto_id" class="form-label">Producto</label>
+                <select class="form-select" name="producto_id" id="producto_id" required>
+                  <option value="" selected disabled>Seleccione un producto</option>
+                  {% for producto in productos %}
+                    <option value="{{ producto.id }}">{{ producto.nombre }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <!-- Método de Pago -->
+              <div class="mb-3">
+                <label for="metodo_pago" class="form-label">Método de Pago</label>
+                <select class="form-select" name="metodo_pago" id="metodo_pago" required>
+                  <option value="" selected disabled>Seleccione</option>
+                  {% for metodo in metodos_pago %}
+                    <option value="{{ metodo.id }}">{{ metodo.metodo }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <!-- Entrega -->
+              <div class="mb-3">
+                <label for="entrega_id" class="form-label">Entrega</label>
+                <select class="form-select" name="entrega_id" id="entrega_id" required>
+                  <option value="" selected disabled>Seleccione una entrega</option>
+                  {% for entrega in entregas %}
+                    <option value="{{ entrega.id }}">{{ entrega.descripcion }}</option>
+                  {% endfor %}
+                </select>
+              </div>
             </div>
           </div>
 
-          <!-- Estado del Pedido y Persona ID -->
-          <div class="row mt-2">
-            <div class="col-md-6">
-              <label for="estado_pedido" class="form-label">
-                Estado del Pedido
-              </label>
-              <select
-                class="form-select"
-                name="estado_pedido"
-                aria-label="Default select example">
-                <option selected>Seleccione</option>
-                <option value="Pendiente">Pendiente</option>
-                <option value="Proceso">En Proceso</option>
-                <option value="En camino">En camino</option>
-                <option value="Entregado">Entregado</option>
-              </select>
-            </div>
-          </div>
-
+          <!-- Botón de guardar -->
           <div class="mb-3 mt-4 text-center">
             <button type="submit" class="btn rounded-pill btn-primary">
               Guardar registro ahora

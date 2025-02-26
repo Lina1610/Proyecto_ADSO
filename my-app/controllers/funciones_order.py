@@ -3,52 +3,126 @@ from conexion.conexionBD import connectionBD
 import datetime
 from mysql.connector.errors import Error
 
-def procesar_pedido(dataForm):
+from datetime import datetime
+from mysql.connector import Error
+from flask import request, flash, redirect, url_for
+from datetime import datetime
+from mysql.connector import Error
+
+from datetime import datetime
+from mysql.connector import Error
+from conexion.conexionBD import connectionBD
+
+
+from flask import render_template, request, flash, redirect, url_for
+from datetime import datetime
+from mysql.connector import Error
+from conexion.conexionBD import connectionBD
+from conexion.conexionBD import connectionBD
+from mysql.connector import Error
+
+def obtener_valores_enum(conexion):
+    """
+    Obtiene los valores del ENUM de la columna 'metodo' en la tabla 'metodo_pago'.
+    """
     try:
-        # Validación de campos obligatorios
-        campos_requeridos = ['fecha', 'fecha_entrega', 'estado_pedido', 'persona_id', 'entrega_id']
+        with conexion.cursor(dictionary=True) as cursor:
+            # Consulta para obtener los valores del ENUM
+            cursor.execute("SHOW COLUMNS FROM metodo_pago WHERE Field = 'metodo'")
+            resultado = cursor.fetchone()
+            
+            # Extraer los valores del ENUM
+            tipo_columna = resultado['Type']
+            valores_enum = tipo_columna.replace("enum(", "").replace(")", "").replace("'", "").split(",")
+            
+            print("Valores ENUM obtenidos:", valores_enum)  # Depuración
+            return valores_enum
+    except Error as err:
+        print(f"Error al obtener valores ENUM: {err}")
+        return []
+
+def obtener_metodos_pago(conexion):
+    """
+    Obtiene los métodos de pago (valores del ENUM) y los formatea para la plantilla.
+    """
+    try:
+        # Obtener los valores del ENUM
+        valores_enum = obtener_valores_enum(conexion)
+        
+        # Formatear los valores para que coincidan con el formato esperado en la plantilla
+        metodos_pago = [{"id": idx + 1, "metodo": valor} for idx, valor in enumerate(valores_enum)]
+        
+        return metodos_pago
+    except Error as err:
+        print(f"Error al obtener métodos de pago: {err}")
+        return []
+def procesar_pedido(dataForm):
+    """
+    Procesa y guarda un pedido en la base de datos.
+    """
+    try:
+        # Validar que los campos no estén vacíos
+        campos_requeridos = [
+            'fechaEntrega', 'horaEntrega', 'estado', 'users_id', 
+            'producto_id', 'metodo_pago', 'entrega_id'  # Agregar 'entrega_id'
+        ]
         for campo in campos_requeridos:
-            if campo not in dataForm or not dataForm[campo]:
+            if campo not in dataForm or not dataForm[campo].strip():
                 return f"El campo {campo} es obligatorio."
 
-        # Convertir fechas y hora
+        # Generar fecha automáticamente
+        fecha_pedido = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        # Convertir y validar fecha de entrega y hora
         try:
-            fecha = datetime.datetime.strptime(dataForm['fecha'], "%Y-%m-%d").date()
-            fecha_entrega = datetime.datetime.strptime(dataForm['fecha_entrega'], "%Y-%m-%dT%H:%M")
-            hora_entrega = fecha_entrega.time()
+            fecha_entrega = datetime.strptime(dataForm['fechaEntrega'], "%Y-%m-%d").date()
+            hora_entrega = datetime.strptime(dataForm['horaEntrega'], "%H:%M").time()
         except ValueError:
-            return "Formato de fecha o hora no válido. Verifica los campos de fecha."
+            return "Formato de fecha o hora no válido."
 
         # Validar estado del pedido
         estados_permitidos = ["Pendiente", "En Proceso", "En camino", "Entregado"]
-        estado_pedido = dataForm['estado_pedido']
+        estado_pedido = dataForm['estado']
         if estado_pedido not in estados_permitidos:
             return f"Estado de pedido no válido. Estados permitidos: {', '.join(estados_permitidos)}"
 
         # Validar IDs
         try:
-            persona_id = int(dataForm['persona_id'])
-            entrega_id = int(dataForm['entrega_id'])
+            users_id = int(dataForm['users_id'])
+            producto_id = int(dataForm['producto_id'])
+            metodo_pago_id = int(dataForm['metodo_pago'])
+            entrega_id = int(dataForm['entrega_id'])  # Agregar 'entrega_id'
         except ValueError:
-            return "Los campos persona_id y entrega_id deben ser números válidos."
+            return "Los campos users_id, producto_id, metodo_pago y entrega_id deben ser números válidos."
 
-        # Insertar en la base de datos
+        # Insertar en la tabla pedido
         with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+            with conexion_MySQLdb.cursor() as cursor:
                 sql = """
-                    INSERT INTO pedido (fecha, fechaEntrega, horaEntrega, estado, persona_id, entrega_id)
-                    VALUES (%s, %s, %s, %s, %s, %s)
+                    INSERT INTO pedido (
+                        fecha, fechaEntrega, horaEntrega, estado, 
+                        users_id, producto_id, metodo_pago_id, entrega_id  # Agregar 'entrega_id'
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)  # Agregar un nuevo marcador de posición
                 """
-                valores = (fecha, fecha_entrega.date(), hora_entrega, estado_pedido, persona_id, entrega_id)
+                valores = (
+                    fecha_pedido,  # Fecha automática
+                    fecha_entrega,  # Fecha de entrega
+                    hora_entrega,   # Hora de entrega
+                    estado_pedido,  # Estado del pedido
+                    users_id,       # ID del usuario
+                    producto_id,    # ID del producto
+                    metodo_pago_id, # ID del método de pago
+                    entrega_id      # ID de la entrega
+                )
                 cursor.execute(sql, valores)
                 conexion_MySQLdb.commit()
+                resultado_insert = cursor.rowcount
 
-                if cursor.rowcount > 0:
-                    return "Pedido registrado con éxito."
+                if resultado_insert > 0:
+                    return resultado_insert  # Éxito
                 else:
-                    return "Error al registrar el pedido."
+                    return "No se pudo insertar el pedido en la base de datos."
 
-    except Error as db_error:
-        return f"Error en la base de datos: {str(db_error)}"
     except Exception as e:
-        return f"Se produjo un error inesperado: {str(e)}"
+        print(f"Error en procesar_pedido: {e}")  # Debug
+        return f"Se produjo un error en procesar_pedido: {str(e)}"
