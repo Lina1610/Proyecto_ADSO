@@ -6,7 +6,7 @@ import re
 
 def validar_claves_foraneas(users_id, departamento_id, municipio_id):
     """
-    Valida que las claves foráneas existan en la base de datos.
+    Valida que las claves foráneas (users_id, departamento_id, municipio_id) existan en la base de datos.
     Retorna un mensaje de error si alguna no existe, o None si todo está bien.
     """
     try:
@@ -17,7 +17,7 @@ def validar_claves_foraneas(users_id, departamento_id, municipio_id):
                 if not cursor.fetchone():
                     return "El users_id proporcionado no existe."
 
-                # Validar departamento_id por ID
+                # Validar departamento_id
                 cursor.execute("SELECT id FROM departamento WHERE id = %s", (departamento_id,))
                 if not cursor.fetchone():
                     return "El departamento_id proporcionado no existe."
@@ -35,6 +35,8 @@ def validar_claves_foraneas(users_id, departamento_id, municipio_id):
 def procesar_direccion(dataForm):
     """
     Procesa y guarda una dirección en la base de datos.
+    Valida los campos obligatorios, claves foráneas y realiza la inserción.
+    Retorna el resultado de la inserción o un mensaje de error.
     """
     try:
         # Validar que los campos no estén vacíos
@@ -116,9 +118,12 @@ def procesar_direccion(dataForm):
     except Exception as e:
         print(f"Error en procesar_direccion: {e}")  # Debug
         return f"Se produjo un error en procesar_direccion: {str(e)}"
-    
 
 def obtener_direcciones_usuario(user_id):
+    """
+    Obtiene todas las direcciones activas de un usuario específico.
+    Retorna una lista de direcciones con detalles como nombre, barrio, domicilio, etc.
+    """
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
@@ -128,7 +133,7 @@ def obtener_direcciones_usuario(user_id):
                     FROM direccion d
                     LEFT JOIN departamento dep ON d.departamento_id = dep.id
                     LEFT JOIN municipio mun ON d.municipio_id = mun.id
-                    WHERE d.users_id = %s
+                    WHERE d.users_id = %s AND d.estado = 'Activo'  -- Filtro para mostrar solo direcciones activas
                     ORDER BY d.id DESC
                 """, (user_id,))
                 direcciones = cursor.fetchall()
@@ -141,16 +146,15 @@ def obtener_direcciones_usuario(user_id):
         print(f"Error en obtener_direcciones_usuario: {e}")
         return []
 
-
-
-def obtener_direccion():
+def buscar_direccionBD(search):
     """
-    Obtiene todas las direcciones de la base de datos con los nombres de municipio, departamento y documento del usuario.
+    Busca direcciones en la base de datos que coincidan con el término de búsqueda.
+    Retorna una lista de direcciones que coinciden con el término de búsqueda.
     """
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                sql = """
+                querySQL = """
                     SELECT 
                         d.id, 
                         d.nombre_completo, 
@@ -160,25 +164,37 @@ def obtener_direccion():
                         d.telefono,
                         d.estado,
                         d.costo_domicilio,
-                        u.documento AS usuario_documento,  # Obtener el documento del usuario
-                        m.nombre AS municipio_nombre,      # Obtener el nombre del municipio
-                        dep.nombre AS departamento_nombre  # Obtener el nombre del departamento
+                        d.created_at,
+                        u.documento AS usuario_documento,
+                        m.nombre AS municipio_nombre,
+                        dep.nombre AS departamento_nombre
                     FROM direccion d
                     LEFT JOIN users u ON d.users_id = u.id
                     LEFT JOIN municipio m ON d.municipio_id = m.id
                     LEFT JOIN departamento dep ON d.departamento_id = dep.id
-                    ORDER BY d.id DESC
+                    WHERE d.nombre_completo LIKE %s 
+                       OR d.barrio LIKE %s 
+                       OR d.domicilio LIKE %s 
+                       OR d.telefono LIKE %s 
+                       OR u.documento LIKE %s 
+                       OR m.nombre LIKE %s 
+                       OR dep.nombre LIKE %s
                 """
-                print("Ejecutando consulta SQL:", sql)  # Depuración
-                cursor.execute(sql)
-                direcciones = cursor.fetchall()
-                print("Datos de direcciones obtenidos:", direcciones)  # Depuración
-                return direcciones
+                search_pattern = f"%{search}%"
+                cursor.execute(querySQL, (
+                    search_pattern, search_pattern, search_pattern, 
+                    search_pattern, search_pattern, search_pattern, search_pattern
+                ))
+                return cursor.fetchall()
     except Exception as e:
-        print(f"Error en obtener_direccion: {e}")  # Depuración
+        print(f"Error en buscar_direccionBD: {e}")
         return []
-    
+
 def obtener_direccion_por_id(id):
+    """
+    Obtiene una dirección específica por su ID, incluyendo los nombres de municipio, departamento y documento del usuario.
+    Retorna un diccionario con los detalles de la dirección.
+    """
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
@@ -202,9 +218,47 @@ def obtener_direccion_por_id(id):
                     LEFT JOIN departamento dep ON d.departamento_id = dep.id
                     WHERE d.id = %s
                 """
+                print("Ejecutando consulta SQL:", sql)  # Depuración
                 cursor.execute(sql, (id,))
                 direccion = cursor.fetchone()
+                print("Datos de la dirección obtenidos:", direccion)  # Depuración
                 return direccion
     except Exception as e:
-        print(f"Error en obtener_direccion_por_id: {e}")
+        print(f"Error en obtener_direccion_por_id: {e}")  # Depuración
         return None
+
+def obtener_direccion():
+    """
+    Obtiene todas las direcciones de la base de datos con los nombres de municipio, departamento y documento del usuario.
+    Retorna una lista de todas las direcciones.
+    """
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                sql = """
+                    SELECT 
+                        d.id, 
+                        d.nombre_completo, 
+                        d.barrio, 
+                        d.domicilio, 
+                        d.referencias, 
+                        d.telefono,
+                        d.estado,
+                        d.costo_domicilio,
+                        u.documento AS usuario_documento,
+                        m.nombre AS municipio_nombre,
+                        dep.nombre AS departamento_nombre
+                    FROM direccion d
+                    LEFT JOIN users u ON d.users_id = u.id
+                    LEFT JOIN municipio m ON d.municipio_id = m.id
+                    LEFT JOIN departamento dep ON d.departamento_id = dep.id
+                    ORDER BY d.id DESC
+                """
+                print("Ejecutando consulta SQL:", sql)  # Depuración
+                cursor.execute(sql)
+                direcciones = cursor.fetchall()
+                print("Datos de direcciones obtenidos:", direcciones)  # Depuración
+                return direcciones
+    except Exception as e:
+        print(f"Error en obtener_direccion: {e}")  # Depuración
+        return []

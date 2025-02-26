@@ -6,7 +6,8 @@ from controllers.funciones_address import (
     obtener_direcciones_usuario,
     procesar_direccion,
     validar_claves_foraneas,
-    obtener_direccion
+    obtener_direccion,
+    buscar_direccionBD
 )
 from controllers.funciones_login import info_perfil_session  # Importar la función necesaria
 
@@ -15,6 +16,10 @@ PATH_URL = "public/direccion"
 # Ruta para mostrar las direcciones del cliente
 @app.route('/cliente-direcciones', methods=['GET'])
 def cliente_direcciones():
+    """
+    Muestra las direcciones del cliente actual.
+    Solo accesible si el usuario está conectado y tiene el rol de 'cliente'.
+    """
     if 'conectado' in session and session['rol'] == 'cliente':
         user_id = session.get('id')
 
@@ -44,6 +49,10 @@ def cliente_direcciones():
 # Ruta para registrar una dirección
 @app.route('/registrar-direccion', methods=['GET', 'POST'])
 def viewFormDireccion():
+    """
+    Muestra el formulario para registrar una nueva dirección y procesa su envío.
+    Solo accesible si el usuario está conectado.
+    """
     if session.get('conectado'):
         rol_usuario = session.get('rol', '')
         
@@ -83,6 +92,10 @@ def viewFormDireccion():
 # Ruta para obtener municipios según departamento
 @app.route('/obtener_municipios', methods=['GET'])
 def obtener_municipios():
+    """
+    Obtiene los municipios asociados a un departamento específico.
+    Retorna un JSON con los municipios o un mensaje de error.
+    """
     departamento_id = request.args.get('departamento_id')
     if not departamento_id or not departamento_id.isdigit():
         return jsonify({"error": "ID de departamento inválido"}), 400
@@ -103,6 +116,10 @@ def obtener_municipios():
 # Ruta para listar direcciones
 @app.route('/lista-de-direccion')
 def lista_direcciones():
+    """
+    Muestra una lista de todas las direcciones registradas.
+    Solo accesible si el usuario está conectado.
+    """
     if session.get('conectado'):
         try:
             direcciones = obtener_direccion() or []  # Asegurar que no sea None
@@ -116,21 +133,202 @@ def lista_direcciones():
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
     
-@app.route('/editar-direccion/<int:id>', methods=['GET', 'POST'])
-def viewEditarDireccion(id):
-    # Lógica para editar la dirección
-    pass
-
-
 @app.route('/detalles-direccion/<int:id>')
 def detalles_direccion(id):
+    """
+    Muestra los detalles de una dirección específica por su ID.
+    Solo accesible si el usuario está conectado.
+    """
+    print(f"ID recibido en detalles_direccion: {id}")  # Depuración
+
     # Obtener la dirección por su ID
     direccion = obtener_direccion_por_id(id)
-    
-    # Si la dirección no existe, pasar una lista vacía
+
+    # Si la dirección no existe, mostrar un mensaje de error
     if not direccion:
-        print("No se encontró la dirección.")  # Depuración
-        return render_template('public/direccion/detalles_direccion.html', direccion=[])
+        print("No se encontró la dirección en la base de datos.")  # Depuración
+        flash('No existe la dirección.', 'error')
+        return redirect(url_for('lista_direcciones'))
     
-    print(f"Datos de la dirección: {direccion}")  # Depuración
+    print(f"Datos de la dirección obtenidos: {direccion}")  # Depuración
     return render_template('public/direccion/detalles_direccion.html', direccion=direccion)
+    
+# Ruta para mostrar el formulario de edición de una dirección
+@app.route('/editar-direccion/<int:id>', methods=['GET'])
+def viewEditarDireccion(id):
+    """
+    Muestra el formulario para editar una dirección específica por su ID.
+    Solo accesible si el usuario está conectado.
+    """
+    if 'conectado' in session:
+        # Obtener la dirección por su ID
+        direccion = obtener_direccion_por_id(id)
+
+        if direccion:
+            # Obtener departamentos y municipios para el formulario
+            with connectionBD() as conexion_MySQLdb:
+                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                    cursor.execute("SELECT id, nombre FROM departamento")
+                    departamentos = cursor.fetchall()
+
+                    cursor.execute("SELECT id, nombre FROM municipio")
+                    municipios = cursor.fetchall()
+
+            return render_template(
+                'public/direccion/editar_direccion.html',
+                direccion=direccion,
+                departamentos=departamentos,
+                municipios=municipios
+            )
+        else:
+            flash('La dirección no existe.', 'error')
+            return redirect(url_for('lista_direcciones'))
+    else:
+        flash('Primero debes iniciar sesión.', 'error')
+        return redirect(url_for('inicio'))
+
+# Ruta para procesar la actualización de una dirección
+@app.route('/actualizar-direccion', methods=['POST'])
+def actualizarDireccion():
+    """
+    Procesa la actualización de una dirección en la base de datos.
+    Solo accesible si el usuario está conectado.
+    """
+    if 'conectado' in session:
+        if request.method == 'POST':
+            # Obtener los datos del formulario
+            data_form = request.form
+            id_direccion = data_form['id']
+
+            # Validar que la dirección exista
+            direccion = obtener_direccion_por_id(id_direccion)
+            if not direccion:
+                flash('La dirección no existe.', 'error')
+                return redirect(url_for('lista_direcciones'))
+
+            # Actualizar la dirección en la base de datos
+            try:
+                with connectionBD() as conexion_MySQLdb:
+                    with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                        sql = """
+                            UPDATE direccion SET
+                                nombre_completo = %s,
+                                barrio = %s,
+                                domicilio = %s,
+                                referencias = %s,
+                                telefono = %s,
+                                estado = %s,
+                                costo_domicilio = %s,
+                                municipio_id = %s,
+                                departamento_id = %s
+                            WHERE id = %s
+                        """
+                        valores = (
+                            data_form['nombre_completo'],
+                            data_form['barrio'],
+                            data_form['domicilio'],
+                            data_form['referencias'],
+                            data_form['telefono'],
+                            data_form['estado'],
+                            int(data_form['costo_domicilio']),
+                            int(data_form['municipio_id']),
+                            int(data_form['departamento_id']),
+                            id_direccion
+                        )
+                        cursor.execute(sql, valores)
+                        conexion_MySQLdb.commit()
+
+                flash('Dirección actualizada correctamente.', 'success')
+                return redirect(url_for('lista_direcciones'))
+            except Exception as e:
+                print(f"Error al actualizar la dirección: {e}")
+                flash('Error al actualizar la dirección.', 'error')
+                return redirect(url_for('lista_direcciones'))
+    else:
+        flash('Primero debes iniciar sesión.', 'error')
+        return redirect(url_for('inicio'))
+    
+
+@app.route('/activar-direccion/<int:id>')
+def activar_direccion(id):
+    """
+    Activa una dirección específica por su ID.
+    Solo accesible si el usuario está conectado.
+    """
+    if 'conectado' in session:
+        try:
+            with connectionBD() as conexion_MySQLdb:
+                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                    sql = "UPDATE direccion SET estado = 'Activo' WHERE id = %s"
+                    cursor.execute(sql, (id,))
+                    conexion_MySQLdb.commit()
+
+            flash('Dirección activada correctamente.', 'success')
+        except Exception as e:
+            print(f"Error al activar la dirección: {e}")
+            flash('Error al activar la dirección.', 'error')
+    else:
+        flash('Primero debes iniciar sesión.', 'error')
+    return redirect(url_for('lista_direcciones'))
+
+
+@app.route('/desactivar-direccion/<int:id>')
+def desactivar_direccion(id):
+    """
+    Desactiva una dirección específica por su ID.
+    Solo accesible si el usuario está conectado.
+    """
+    if 'conectado' in session:
+        try:
+            with connectionBD() as conexion_MySQLdb:
+                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                    sql = "UPDATE direccion SET estado = 'Inactivo' WHERE id = %s"
+                    cursor.execute(sql, (id,))
+                    conexion_MySQLdb.commit()
+
+            flash('Dirección desactivada correctamente.', 'success')
+        except Exception as e:
+            print(f"Error al desactivar la dirección: {e}")
+            flash('Error al desactivar la dirección.', 'error')
+    else:
+        flash('Primero debes iniciar sesión.', 'error')
+    return redirect(url_for('lista_direcciones'))
+
+
+@app.route('/eliminar-direccion/<int:id>', methods=['GET'])
+def eliminar_direccion(id):
+    """
+    Elimina una dirección específica por su ID.
+    Solo accesible si el usuario está conectado.
+    """
+    if 'conectado' in session:
+        try:
+            with connectionBD() as conexion_MySQLdb:
+                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                    sql = "DELETE FROM direccion WHERE id = %s"
+                    cursor.execute(sql, (id,))
+                    conexion_MySQLdb.commit()
+
+            flash('Dirección eliminada correctamente.', 'success')
+        except Exception as e:
+            print(f"Error al eliminar la dirección: {e}")
+            flash('Error al eliminar la dirección.', 'error')
+    else:
+        flash('Primero debes iniciar sesión.', 'error')
+    return redirect(url_for('lista_direcciones'))
+
+@app.route("/buscando-direccion", methods=['POST'])
+def viewBuscarDireccionBD():
+    """
+    Busca direcciones en la base de datos según un término de búsqueda.
+    Retorna un JSON con los resultados o un mensaje de error.
+    """
+    busqueda = request.json['busqueda']
+    resultadoBusqueda = buscar_direccionBD(busqueda)
+
+    if resultadoBusqueda:
+        html_resultados = render_template('public/direccion/busqueda_direccion.html', dataBusqueda=resultadoBusqueda)
+        return jsonify({'success': True, 'html': html_resultados})
+    
+    mensaje_error = f'No resultados para la búsqueda: "{busqueda}"'
+    return jsonify({'success': False, 'mensaje': mensaje_error})

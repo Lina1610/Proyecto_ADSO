@@ -64,21 +64,21 @@
                 </td>
 
                 <!-- Columna de Activación/Desactivación -->
-                <td>
-                  {% if direccion.estado == 'Inactivo' %}
-                    <a href="/activar-direccion/{{ direccion.id }}" 
-                       class="btn btn-sm btn-success"
-                       title="Activar dirección">
-                       <i class="bi bi-check-circle"></i> Activar
-                    </a>
-                  {% else %}
-                    <a href="/desactivar-direccion/{{ direccion.id }}" 
-                       class="btn btn-sm btn-warning"
-                       title="Desactivar dirección">
-                       <i class="bi bi-x-circle"></i> Desactivar
-                    </a>
-                  {% endif %}
-                </td>
+<td>
+  {% if direccion.estado == 'Inactivo' %}
+    <a href="/activar-direccion/{{ direccion.id }}" 
+       class="btn btn-sm btn-success"
+       title="Activar dirección">
+       <i class="bi bi-check-circle"></i> Activar
+    </a>
+  {% else %}
+    <a href="/desactivar-direccion/{{ direccion.id }}" 
+       class="btn btn-sm btn-warning"
+       title="Desactivar dirección">
+       <i class="bi bi-x-circle"></i> Desactivar
+    </a>
+  {% endif %}
+</td>
 
                 <!-- Columna de Acciones -->
                 <td>
@@ -93,11 +93,11 @@
                      <i class="bi bi-arrow-clockwise"></i> Actualizar
                   </a>
                   <a href="#"
-                     onclick="eliminarDireccion('{{ direccion.id }}');"
-                     class="btn btn-danger btn-sm"
-                     title="Eliminar">
-                     <i class="bi bi-trash3"></i> Eliminar
-                  </a>
+   onclick="eliminarDireccion('{{ direccion.id }}');"
+   class="btn btn-danger btn-sm"
+   title="Eliminar">
+   <i class="bi bi-trash3"></i> Eliminar
+</a>
                 </td>
               </tr>
               {% endfor %}
@@ -108,6 +108,7 @@
               </td>
             </tr>
             {% endif %}
+           
           </tbody>
         </table>
       </div>
