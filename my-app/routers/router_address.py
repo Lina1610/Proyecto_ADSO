@@ -88,7 +88,7 @@ def viewFormDireccion():
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
-
+    
 # Ruta para obtener municipios según departamento
 @app.route('/obtener_municipios', methods=['GET'])
 def obtener_municipios():
@@ -242,13 +242,15 @@ def actualizarDireccion():
         if request.method == 'POST':
             # Obtener los datos del formulario
             data_form = request.form
-            id_direccion = data_form['id']
-
+            id_direccion = data_form.get('id')
+            
+            # Impresión de depuración
+            print(f"Datos recibidos para actualizar: ID={id_direccion}, Datos={data_form}")
+            
             # Validar que la dirección exista
             direccion = obtener_direccion_por_id(id_direccion)
             if not direccion:
-                flash('La dirección no existe.', 'error')
-                return redirect(url_for('lista_direcciones'))
+                return jsonify({"success": False, "error": "La dirección no existe."})
 
             # Actualizar la dirección en la base de datos
             try:
@@ -261,8 +263,6 @@ def actualizarDireccion():
                                 domicilio = %s,
                                 referencias = %s,
                                 telefono = %s,
-                                estado = %s,
-                                costo_domicilio = %s,
                                 municipio_id = %s,
                                 departamento_id = %s
                             WHERE id = %s
@@ -273,25 +273,41 @@ def actualizarDireccion():
                             data_form['domicilio'],
                             data_form['referencias'],
                             data_form['telefono'],
-                            data_form['estado'],
-                            int(data_form['costo_domicilio']),
-                            int(data_form['municipio_id']),
-                            int(data_form['departamento_id']),
+                            data_form['municipio_id'],
+                            data_form['departamento_id'],
                             id_direccion
                         )
                         cursor.execute(sql, valores)
                         conexion_MySQLdb.commit()
 
-                flash('Dirección actualizada correctamente.', 'success')
-                return redirect(url_for('lista_direcciones'))
+                return jsonify({"success": True, "message": "Dirección actualizada correctamente."})
             except Exception as e:
                 print(f"Error al actualizar la dirección: {e}")
-                flash('Error al actualizar la dirección.', 'error')
-                return redirect(url_for('lista_direcciones'))
+                return jsonify({"success": False, "error": f"Error al actualizar la dirección: {str(e)}"})
     else:
-        flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('inicio'))
+        return jsonify({"success": False, "error": "Primero debes iniciar sesión."})
+
     
+#lo del cliente
+#lo de direccion cliente
+@app.route('/obtener-direccion/<int:id>', methods=['GET'])
+def obtener_datos_direccion(id):
+    """
+    Obtiene los datos de una dirección específica por su ID.
+    Retorna un JSON con los datos o un mensaje de error.
+    """
+    if 'conectado' in session:
+        try:
+            direccion = obtener_direccion_por_id(id)
+            if direccion:
+                return jsonify({"success": True, "direccion": direccion})
+            else:
+                return jsonify({"success": False, "error": "La dirección no existe."})
+        except Exception as e:
+            print(f"Error al obtener los datos de la dirección: {e}")
+            return jsonify({"success": False, "error": f"Error al obtener los datos: {str(e)}"})
+    else:
+        return jsonify({"success": False, "error": "Primero debes iniciar sesión."})
 ### cualquier cosa aca va la direccion que mando a watsap     
 
 @app.route('/activar-direccion/<int:id>')

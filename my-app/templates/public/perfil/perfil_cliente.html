@@ -209,9 +209,9 @@
                                 <td>{{ direccion.nombre_municipio }}, {{ direccion.nombre_departamento }}</td>
                                 <td>
                                     <!-- Botón para editar -->
-                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editarDireccionModal" onclick="cargarDatosEditar({{ direccion.id }})">
+                                    <button onclick="editarDireccion({{ direccion.id }})" class="btn btn-sm btn-primary">
                                         <i class="fas fa-edit"></i> Editar
-                                    </button>
+                                      </button>
                                     <!-- Botón para eliminar -->
                                     <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#eliminarDireccionModal" onclick="confirmarEliminar({{ direccion.id }})">
                                         <i class="fas fa-trash"></i> Eliminar

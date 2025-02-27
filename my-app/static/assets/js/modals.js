@@ -1,41 +1,103 @@
-document.getElementById('formEditarDireccion').addEventListener('submit', function (event) {
-    event.preventDefault();  // Evitar que el formulario se envíe de forma tradicional
+// Función para abrir el modal de edición
+function editarDireccion(id) {
+    console.log("Editando dirección con ID:", id); // Para depuración
+    
+    // Realizar una solicitud para obtener los datos de la dirección
+    fetch(`/obtener-direccion/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const direccion = data.direccion;
+                
+                // Llenar el formulario con los datos
+                document.getElementById('editarDireccionId').value = direccion.id;
+                document.getElementById('editarNombreCompleto').value = direccion.nombre_completo;
+                document.getElementById('editarBarrio').value = direccion.barrio;
+                document.getElementById('editarDomicilio').value = direccion.domicilio;
+                document.getElementById('editarReferencias').value = direccion.referencias || '';
+                document.getElementById('editarTelefono').value = direccion.telefono;
+                
+                // Establecer el departamento
+                const departamentoSelect = document.getElementById('editarDepartamentoId');
+                departamentoSelect.value = direccion.departamento_id;
+                
+                // Cargar los municipios y establecer el municipio seleccionado
+                cargarMunicipiosEditar(direccion.departamento_id, direccion.municipio_id);
+                
+                // Abrir el modal
+                const modal = new bootstrap.Modal(document.getElementById('editarDireccionModal'));
+                modal.show();
+            } else {
+                alert(data.error || 'Error al cargar los datos de la dirección');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al cargar los datos de la dirección');
+        });
+}
 
-    // Obtener los datos del formulario
-    const formData = {
-        nombre_completo: document.getElementById('editarNombreCompleto').value,
-        barrio: document.getElementById('editarBarrio').value,
-        domicilio: document.getElementById('editarDomicilio').value,
-        referencias: document.getElementById('editarReferencias').value,
-        telefono: document.getElementById('editarTelefono').value,
-        departamento_id: document.getElementById('editarDepartamentoId').value,
-        municipio_id: document.getElementById('editarMunicipioId').value
-    };
+// Función para cargar municipios en el formulario de edición
+function cargarMunicipiosEditar(departamentoId, municipioId) {
+    fetch(`/obtener_municipios?departamento_id=${departamentoId}`)
+        .then(response => response.json())
+        .then(municipios => {
+            const municipioSelect = document.getElementById('editarMunicipioId');
+            municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+            
+            municipios.forEach(municipio => {
+                const option = document.createElement('option');
+                option.value = municipio.id;
+                option.textContent = municipio.nombre;
+                municipioSelect.appendChild(option);
+            });
+            
+            // Establecer el municipio seleccionado
+            if (municipioId) {
+                municipioSelect.value = municipioId;
+            }
+        })
+        .catch(error => {
+            console.error('Error al cargar municipios:', error);
+        });
+}
 
-    // Enviar los datos al backend
-    fetch('/guardar-direccion', {
+// Cambio de departamento en el formulario de edición
+document.getElementById('editarDepartamentoId').addEventListener('change', function() {
+    const departamentoId = this.value;
+    if (departamentoId) {
+        cargarMunicipiosEditar(departamentoId);
+    } else {
+        document.getElementById('editarMunicipioId').innerHTML = '<option value="">Seleccione un municipio</option>';
+    }
+});
+
+// Manejar el envío del formulario de edición
+document.getElementById('formEditarDireccion').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    fetch('/actualizar-direccion', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
+        body: formData
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Dirección guardada correctamente');
-            // Recargar la página o actualizar la lista de direcciones
-            location.reload();
+            alert(data.message || 'Dirección actualizada correctamente');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editarDireccionModal'));
+            modal.hide();
+            location.reload(); // Recargar para ver los cambios
         } else {
-            alert(data.error || 'Error al guardar la dirección');
+            alert(data.error || 'Error al actualizar la dirección');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error al guardar la dirección');
+        alert('Error al actualizar la dirección');
     });
 });
-
 // Función para confirmar la eliminación de una dirección
 let direccionIdAEliminar = null;
 
