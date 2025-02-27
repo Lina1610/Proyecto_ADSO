@@ -32,6 +32,8 @@ def validar_claves_foraneas(users_id, departamento_id, municipio_id):
     except Exception as e:
         return f"Error al validar claves foráneas: {str(e)}"
 
+from flask import session  # Asegúrate de importar session
+
 def procesar_direccion(dataForm):
     """
     Procesa y guarda una dirección en la base de datos.
@@ -39,6 +41,8 @@ def procesar_direccion(dataForm):
     Retorna el resultado de la inserción o un mensaje de error.
     """
     try:
+        print("🔍 Sesión ANTES de procesar la dirección:", session)  # 🛠 Depuración
+
         # Validar que los campos no estén vacíos
         campos_requeridos = [
             'nombre_completo', 'barrio', 'domicilio', 'telefono', 
@@ -57,6 +61,7 @@ def procesar_direccion(dataForm):
         if 'users_id' not in dataForm:
             users_id = session.get('id')  # Obtener el ID del cliente desde la sesión
             if users_id is None:
+                print("⚠️ Error: La sesión no tiene 'id'")  # 🛠 Depuración
                 return "Debes iniciar sesión para registrar una dirección."
         else:
             users_id = dataForm.get('users_id')
@@ -110,14 +115,18 @@ def procesar_direccion(dataForm):
                 conexion_MySQLdb.commit()
                 resultado_insert = cursor.rowcount
 
+                print("✅ Dirección procesada correctamente")  # 🛠 Depuración
+                print("🔍 Sesión DESPUÉS de procesar la dirección:", session)  # 🛠 Depuración
+
                 if resultado_insert > 0:
                     return resultado_insert  # Éxito
                 else:
                     return "No se pudo insertar la dirección en la base de datos."
 
     except Exception as e:
-        print(f"Error en procesar_direccion: {e}")  # Debug
+        print(f"❌ Error en procesar_direccion: {e}")  # Debug
         return f"Se produjo un error en procesar_direccion: {str(e)}"
+
 
 def obtener_direcciones_usuario(user_id):
     """
@@ -262,3 +271,67 @@ def obtener_direccion():
     except Exception as e:
         print(f"Error en obtener_direccion: {e}")  # Depuración
         return []
+    
+
+def actualizar_direccion(id, dataForm):
+    """
+    Actualiza una dirección existente en la base de datos.
+    Retorna un mensaje de éxito o error.
+    """
+    try:
+        # Validar que los campos obligatorios no estén vacíos
+        campos_requeridos = [
+            'nombre_completo', 'barrio', 'domicilio', 'telefono', 
+            'departamento_id', 'municipio_id'
+        ]
+        for campo in campos_requeridos:
+            if campo not in dataForm or not dataForm[campo].strip():
+                return f"El campo {campo} es obligatorio."
+
+        # Validar claves foráneas
+        error_validacion = validar_claves_foraneas(
+            dataForm.get('users_id', session.get('id')), 
+            dataForm['departamento_id'], 
+            dataForm['municipio_id']
+        )
+        if error_validacion:
+            return error_validacion
+
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor() as cursor:
+                sql = """
+                    UPDATE direccion SET 
+                        nombre_completo = %s,
+                        barrio = %s,
+                        domicilio = %s,
+                        referencias = %s,
+                        telefono = %s,
+                        estado = %s,
+                        costo_domicilio = %s,
+                        departamento_id = %s,
+                        municipio_id = %s
+                    WHERE id = %s
+                """
+                valores = (
+                    dataForm.get('nombre_completo'),
+                    dataForm.get('barrio'),
+                    dataForm.get('domicilio'),
+                    dataForm.get('referencias', ''),  # Campo opcional
+                    dataForm.get('telefono'),
+                    dataForm.get('estado', 'Activo'),
+                    int(dataForm.get('costo_domicilio', 0)),
+                    dataForm.get('departamento_id'),
+                    dataForm.get('municipio_id'),
+                    id
+                )
+                cursor.execute(sql, valores)
+                conexion_MySQLdb.commit()
+
+                if cursor.rowcount > 0:
+                    return "Dirección actualizada correctamente."
+                else:
+                    return "No se encontró la dirección o no se realizaron cambios."
+
+    except Exception as e:
+        print(f"Error en actualizar_direccion: {e}")  # Depuración
+        return f"Se produjo un error al actualizar la dirección: {str(e)}"
