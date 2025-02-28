@@ -22,29 +22,36 @@ def cliente_direcciones():
     Muestra las direcciones del cliente actual.
     Solo accesible si el usuario está conectado y tiene el rol de 'cliente'.
     """
-    if 'conectado' in session and session['rol'] == 'cliente':
-        user_id = session.get('id')
+    print("🔍 Sesión en cliente_direcciones:", session)  # 🛠 Depuración
+    if 'conectado' in session:
+        if session['rol'] == 'cliente':
+            user_id = session.get('id')
 
-        # Obtener las direcciones del cliente
-        direcciones = obtener_direcciones_usuario(user_id)
+            # Obtener las direcciones del cliente
+            direcciones = obtener_direcciones_usuario(user_id)
 
-        # Obtener departamentos y municipios para el formulario
-        with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                cursor.execute("SELECT id, nombre FROM departamento")
-                departamentos = cursor.fetchall()
+            # Obtener departamentos y municipios para el formulario
+            with connectionBD() as conexion_MySQLdb:
+                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                    cursor.execute("SELECT id, nombre FROM departamento")
+                    departamentos = cursor.fetchall()
 
-                cursor.execute("SELECT id, nombre FROM municipio")
-                municipios = cursor.fetchall()
+                    cursor.execute("SELECT id, nombre FROM municipio")
+                    municipios = cursor.fetchall()
 
-        return render_template(
-            'public/perfil/perfil_cliente.html',
-            info_perfil_session=info_perfil_session(),  # Usar la función importada
-            departamentos=departamentos,
-            municipios=municipios,
-            direcciones=direcciones
-        )
+            return render_template(
+                'public/perfil/perfil_cliente.html',
+                info_perfil_session=info_perfil_session(),
+                departamentos=departamentos,
+                municipios=municipios,
+                direcciones=direcciones
+            )
+        else:
+            print("⚠️ Error: El usuario no tiene el rol de 'cliente'")  # 🛠 Depuración
+            flash('Acceso denegado.', 'error')
+            return redirect(url_for('inicio'))
     else:
+        print("⚠️ Error: El usuario no está conectado")  # 🛠 Depuración
         flash('Acceso denegado.', 'error')
         return redirect(url_for('inicio'))
 
@@ -56,42 +63,51 @@ def viewFormDireccion():
     Solo accesible si el usuario está conectado.
     """
     print("🔍 Sesión en viewFormDireccion:", session)  # 🛠 Depuración
-    if session.get('conectado'):
-        rol_usuario = session.get('rol', '')
-        print(f"🔍 Rol del usuario: {rol_usuario}")  # 🛠 Depuración
-        
-        if request.method == 'POST':
-            data_form = request.form
-            resultado = procesar_direccion(data_form)
 
-            if isinstance(resultado, int) and resultado > 0:
-                flash('Dirección registrada con éxito', 'success')
-                return redirect(url_for('cliente_direcciones'))
-            else:
-                flash(f'Error al registrar dirección: {resultado}', 'error')
-                return redirect(url_for('cliente_direcciones'))
-
-        # Obtener datos de departamento, municipios y usuarios
-        with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                cursor.execute("SELECT id, nombre FROM departamento")
-                departamentos = cursor.fetchall()
-
-                cursor.execute("SELECT id, nombre FROM municipio")
-                municipios = cursor.fetchall()
-
-                cursor.execute("SELECT id, nombre FROM users")
-                users = cursor.fetchall()
-
-        return render_template(
-            f'{PATH_URL}/registro_direccion.html',
-            departamentos=departamentos,
-            municipios=municipios,
-            users=users
-        )
-    else:
+    # Verificar si el usuario está conectado y tiene un ID válido
+    if 'conectado' not in session or 'id' not in session:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
+
+    # Obtener el rol del usuario
+    rol_usuario = session.get('rol', '')
+    print(f"🔍 Rol del usuario: {rol_usuario}")  # 🛠 Depuración
+
+    if request.method == 'POST':
+        print("🔍 Datos del formulario recibidos:", request.form)  # 🛠 Depuración
+        resultado = procesar_direccion(request.form)
+
+        if isinstance(resultado, int) and resultado > 0:
+            flash('Dirección registrada con éxito', 'success')
+            print("🔍 Sesión DESPUÉS de registrar la dirección:", session)  # 🛠 Depuración
+
+            # Redirigir según el rol del usuario
+            if rol_usuario == 'cliente':
+                return redirect(url_for('cliente_direcciones'))
+            else:
+                return redirect(url_for('lista_direcciones'))  # Ruta para administradores
+        else:
+            flash(f'Error al registrar dirección: {resultado}', 'error')
+            return redirect(url_for('cliente_direcciones' if rol_usuario == 'cliente' else 'lista_direcciones'))
+
+    # Obtener datos de departamento, municipios y usuarios
+    with connectionBD() as conexion_MySQLdb:
+        with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+            cursor.execute("SELECT id, nombre FROM departamento")
+            departamentos = cursor.fetchall()
+
+            cursor.execute("SELECT id, nombre FROM municipio")
+            municipios = cursor.fetchall()
+
+            cursor.execute("SELECT id, nombre FROM users")
+            users = cursor.fetchall()
+
+    return render_template(
+        f'{PATH_URL}/registro_direccion.html',
+        departamentos=departamentos,
+        municipios=municipios,
+        users=users
+    )
     
 # Ruta para obtener municipios según departamento
 @app.route('/obtener_municipios', methods=['GET'])
@@ -118,24 +134,31 @@ def obtener_municipios():
         return jsonify({"error": str(e)}), 500
 
 # Ruta para listar direcciones
-@app.route('/lista-de-direccion')
+@app.route('/lista-direcciones')
 def lista_direcciones():
     """
     Muestra una lista de todas las direcciones registradas.
-    Solo accesible si el usuario está conectado.
+    Solo accesible si el usuario está conectado y tiene un rol de administrador.
     """
-    if session.get('conectado'):
-        try:
-            direcciones = obtener_direccion() or []  # Asegurar que no sea None
-            print("Datos de direcciones obtenidos:", direcciones)  # Depuración
-            return render_template('public/direccion/lista_direccion.html', direcciones=direcciones)
-        except Exception as e:
-            print(f"Error al obtener las direcciones: {e}")
-            flash('Error al obtener las direcciones. Por favor, inténtalo de nuevo.', 'error')
+    print("🔍 Sesión en lista_direcciones:", session)  # 🛠 Depuración
+    if 'conectado' in session:
+        if session['rol'] in ['superadmin', 'administrador', 'empleado']:
+            try:
+                direcciones = obtener_direccion() or []  # Asegurar que no sea None
+                print("Datos de direcciones obtenidos:", direcciones)  # Depuración
+                return render_template('public/direccion/lista_direccion.html', direcciones=direcciones)
+            except Exception as e:
+                print(f"Error al obtener las direcciones: {e}")
+                flash('Error al obtener las direcciones. Por favor, inténtalo de nuevo.', 'error')
+                return redirect(url_for('inicio'))
+        else:
+            flash('Acceso denegado.', 'error')
             return redirect(url_for('inicio'))
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
+    
+
     
 @app.route('/detalles-direccion/<int:id>')
 def detalles_direccion(id):

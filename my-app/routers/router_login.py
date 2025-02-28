@@ -187,7 +187,8 @@ def loginCliente():
         else:
             flash('Complete todos los campos', 'error')
             return render_template(f'{PATH_URL_LOGIN}/base_login.html')
-
+        
+        
 # Cerrar sesión
 @app.route('/closed-session', methods=['GET'])
 def cerraSesion():

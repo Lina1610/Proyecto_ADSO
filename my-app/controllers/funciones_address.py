@@ -32,7 +32,6 @@ def validar_claves_foraneas(users_id, departamento_id, municipio_id):
     except Exception as e:
         return f"Error al validar claves foráneas: {str(e)}"
 
-from flask import session  # Asegúrate de importar session
 
 def procesar_direccion(dataForm):
     """
@@ -53,22 +52,22 @@ def procesar_direccion(dataForm):
                 return f"El campo {campo} es obligatorio."
 
         # Si el formulario es del sitio web, el estado, users_id y costo_domicilio se manejan automáticamente
-        if 'estado' not in dataForm:
-            estado = 'activo'  # Valor predeterminado para el estado
-        else:
-            estado = dataForm.get('estado')
+        estado = dataForm.get('estado', 'activo')  # Valor predeterminado para el estado
 
+        # Obtener el users_id de la sesión
         if 'users_id' not in dataForm:
-            users_id = session.get('id')  # Obtener el ID del cliente desde la sesión
+            users_id = session.get('id')
             if users_id is None:
                 print("⚠️ Error: La sesión no tiene 'id'")  # 🛠 Depuración
                 return "Debes iniciar sesión para registrar una dirección."
         else:
             users_id = dataForm.get('users_id')
 
-        if 'costo_domicilio' not in dataForm:
-            costo_domicilio = 0  # Valor predeterminado para el costo_domicilio
-        else:
+        print("🔍 users_id obtenido:", users_id)  # 🛠 Depuración
+
+        # Validar el costo_domicilio
+        costo_domicilio = 0  # Valor predeterminado
+        if 'costo_domicilio' in dataForm:
             try:
                 costo_domicilio = int(dataForm['costo_domicilio'])
                 if costo_domicilio < 0:
