@@ -36,7 +36,7 @@ def format_date(value, format='%d/%m/%Y %H:%M:%S'):
         return value.strftime(format)
     return value  # En caso de que no sea un objeto datetime
 
-from routers.routher_pedido import *
+from routers.router_pedido import *
 from routers.router_principal import*
 from routers.router_carrito import*
 

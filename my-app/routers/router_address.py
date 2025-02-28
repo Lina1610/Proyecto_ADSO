@@ -134,7 +134,7 @@ def obtener_municipios():
         return jsonify({"error": str(e)}), 500
 
 # Ruta para listar direcciones
-@app.route('/lista-direcciones')
+@app.route('/lista-de-direccion')
 def lista_direcciones():
     """
     Muestra una lista de todas las direcciones registradas.
