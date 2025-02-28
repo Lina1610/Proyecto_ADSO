@@ -10,8 +10,6 @@ from controllers.funciones_order import *
 
 PATH_URL = "public/pedido"
 
-
-
 @app.route('/registrar-pedido', methods=['GET', 'POST'])
 def viewFormPedido():
     if 'conectado' in session:  # Verifica si el usuario está conectado
@@ -24,6 +22,7 @@ def viewFormPedido():
                 return redirect(url_for('viewFormPedido'))  # Redirige al formulario vacío
             else:  # Si hubo un error en el registro
                 flash(f'Error al registrar pedido: {resultado}', 'error')
+                print(f"Error en viewFormPedido (POST): {resultado}")  # Depuración
                 return redirect(url_for('viewFormPedido'))  # Redirige al formulario vacío
 
         # Si es un GET, obtener los datos de usuarios, productos, métodos de pago y entregas
@@ -40,9 +39,9 @@ def viewFormPedido():
                 # Obtener métodos de pago (valores del ENUM)
                 metodos_pago = obtener_metodos_pago(conexion_MySQLdb)
 
-                # Obtener entregas
-                cursor.execute("SELECT id, descripcion FROM entrega")  # Ajusta la consulta según tu tabla
-                entregas = cursor.fetchall()
+                # Obtener entregas (valores del ENUM)
+                entregas = obtener_entregas(conexion_MySQLdb)
+                print("Entregas pasadas a la plantilla:", entregas)  # Depuración
 
         # Pasar los datos a la plantilla
         return render_template(

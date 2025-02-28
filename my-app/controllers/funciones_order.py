@@ -21,33 +21,33 @@ from conexion.conexionBD import connectionBD
 from conexion.conexionBD import connectionBD
 from mysql.connector import Error
 
-def obtener_valores_enum(conexion):
+def obtener_valores_enum(conexion, tabla, campo):
     """
-    Obtiene los valores del ENUM de la columna 'metodo' en la tabla 'metodo_pago'.
+    Obtiene los valores de un campo ENUM en una tabla.
     """
     try:
         with conexion.cursor(dictionary=True) as cursor:
             # Consulta para obtener los valores del ENUM
-            cursor.execute("SHOW COLUMNS FROM metodo_pago WHERE Field = 'metodo'")
+            cursor.execute(f"SHOW COLUMNS FROM {tabla} WHERE Field = '{campo}'")
             resultado = cursor.fetchone()
             
             # Extraer los valores del ENUM
             tipo_columna = resultado['Type']
             valores_enum = tipo_columna.replace("enum(", "").replace(")", "").replace("'", "").split(",")
             
-            print("Valores ENUM obtenidos:", valores_enum)  # Depuración
             return valores_enum
     except Error as err:
         print(f"Error al obtener valores ENUM: {err}")
         return []
 
+# Función para obtener los métodos de pago (valores del ENUM)
 def obtener_metodos_pago(conexion):
     """
     Obtiene los métodos de pago (valores del ENUM) y los formatea para la plantilla.
     """
     try:
         # Obtener los valores del ENUM
-        valores_enum = obtener_valores_enum(conexion)
+        valores_enum = obtener_valores_enum(conexion, 'metodo_pago', 'metodo')
         
         # Formatear los valores para que coincidan con el formato esperado en la plantilla
         metodos_pago = [{"id": idx + 1, "metodo": valor} for idx, valor in enumerate(valores_enum)]
@@ -56,6 +56,34 @@ def obtener_metodos_pago(conexion):
     except Error as err:
         print(f"Error al obtener métodos de pago: {err}")
         return []
+
+# Función para obtener las entregas (valores del ENUM)
+def obtener_entregas(conexion):
+    """
+    Obtiene las entregas con los valores del ENUM 'tipo'.
+    """
+    try:
+        with conexion.cursor(dictionary=True) as cursor:
+            # Obtener los valores del ENUM 'tipo'
+            valores_enum = obtener_valores_enum(conexion, 'entrega', 'tipo')
+            print("Valores ENUM de 'tipo':", valores_enum)  # Depuración
+            
+            # Obtener las entregas de la tabla
+            cursor.execute("SELECT id, tipo FROM entrega")
+            entregas = cursor.fetchall()
+            print("Entregas obtenidas de la base de datos:", entregas)  # Depuración
+            
+            # Combinar los valores del ENUM con los datos de la tabla
+            for entrega in entregas:
+                if entrega['tipo'] in valores_enum:
+                    entrega['tipo'] = entrega['tipo']
+            
+            return entregas
+    except Error as err:
+        print(f"Error al obtener entregas: {err}")
+        return []
+
+# Función para procesar y guardar un pedido
 def procesar_pedido(dataForm):
     """
     Procesa y guarda un pedido en la base de datos.
@@ -64,7 +92,7 @@ def procesar_pedido(dataForm):
         # Validar que los campos no estén vacíos
         campos_requeridos = [
             'fechaEntrega', 'horaEntrega', 'estado', 'users_id', 
-            'producto_id', 'metodo_pago', 'entrega_id'  # Agregar 'entrega_id'
+            'producto_id', 'metodo_pago', 'entrega_id'
         ]
         for campo in campos_requeridos:
             if campo not in dataForm or not dataForm[campo].strip():
@@ -91,7 +119,7 @@ def procesar_pedido(dataForm):
             users_id = int(dataForm['users_id'])
             producto_id = int(dataForm['producto_id'])
             metodo_pago_id = int(dataForm['metodo_pago'])
-            entrega_id = int(dataForm['entrega_id'])  # Agregar 'entrega_id'
+            entrega_id = int(dataForm['entrega_id'])
         except ValueError:
             return "Los campos users_id, producto_id, metodo_pago y entrega_id deben ser números válidos."
 
@@ -101,8 +129,8 @@ def procesar_pedido(dataForm):
                 sql = """
                     INSERT INTO pedido (
                         fecha, fechaEntrega, horaEntrega, estado, 
-                        users_id, producto_id, metodo_pago_id, entrega_id  # Agregar 'entrega_id'
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)  # Agregar un nuevo marcador de posición
+                        users_id, producto_id, metodo_pago_id, entrega_id
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """
                 valores = (
                     fecha_pedido,  # Fecha automática
@@ -126,3 +154,4 @@ def procesar_pedido(dataForm):
     except Exception as e:
         print(f"Error en procesar_pedido: {e}")  # Debug
         return f"Se produjo un error en procesar_pedido: {str(e)}"
+
