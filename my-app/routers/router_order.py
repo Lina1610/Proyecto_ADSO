@@ -9,23 +9,27 @@ from conexion.conexionBD import connectionBD
 from controllers.funciones_order import *
 
 PATH_URL = "public/pedido"
+from app import app
+from flask import render_template, request, flash, redirect, url_for, session
+from mysql.connector import Error
+from conexion.conexionBD import connectionBD
+from controllers.funciones_order import *
 
+# Ruta para el formulario de registro de pedidos
 @app.route('/registrar-pedido', methods=['GET', 'POST'])
 def viewFormPedido():
-    if 'conectado' in session:  # Verifica si el usuario está conectado
-        if request.method == 'POST':  # Si es un POST, procesamos el formulario
-            data_form = request.form  # Captura los datos del formulario
-            resultado = procesar_pedido(data_form)  # Procesa los datos del pedido
+    if 'conectado' in session:
+        if request.method == 'POST':
+            data_form = request.form
+            resultado = procesar_pedido(data_form)
 
-            if isinstance(resultado, int) and resultado > 0:  # Si el registro fue exitoso
+            if isinstance(resultado, int) and resultado > 0:
                 flash('Pedido registrado con éxito', 'success')
-                return redirect(url_for('viewFormPedido'))  # Redirige al formulario vacío
-            else:  # Si hubo un error en el registro
+                return redirect(url_for('viewFormPedido'))
+            else:
                 flash(f'Error al registrar pedido: {resultado}', 'error')
-                print(f"Error en viewFormPedido (POST): {resultado}")  # Depuración
-                return redirect(url_for('viewFormPedido'))  # Redirige al formulario vacío
+                return redirect(url_for('viewFormPedido'))
 
-        # Si es un GET, obtener los datos de usuarios, productos, métodos de pago y entregas
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                 # Obtener usuarios
@@ -36,20 +40,19 @@ def viewFormPedido():
                 cursor.execute("SELECT id, nombre FROM producto")
                 productos = cursor.fetchall()
 
-                # Obtener métodos de pago (valores del ENUM)
+                # Obtener métodos de pago
                 metodos_pago = obtener_metodos_pago(conexion_MySQLdb)
 
-                # Obtener entregas (valores del ENUM)
-                entregas = obtener_entregas(conexion_MySQLdb)
-                print("Entregas pasadas a la plantilla:", entregas)  # Depuración
+                # Obtener tipos de entrega
+                tipos_entrega = obtener_tipos_entrega(conexion_MySQLdb)
+                print("Tipos de entrega obtenidos:", tipos_entrega)  # Depuración
 
-        # Pasar los datos a la plantilla
         return render_template(
-            f'{PATH_URL}/registro_pedido.html',
+            'public/pedido/registro_pedido.html',  # Asegúrate de que la ruta sea correcta
             usuarios=usuarios,
             productos=productos,
             metodos_pago=metodos_pago,
-            entregas=entregas  # Pasar las entregas a la plantilla
+            tipos_entrega=tipos_entrega  # Pasar los tipos de entrega a la plantilla
         )
     else:
         flash('Primero debes iniciar sesión.', 'error')

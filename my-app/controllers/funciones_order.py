@@ -14,13 +14,6 @@ from mysql.connector import Error
 from conexion.conexionBD import connectionBD
 
 
-from flask import render_template, request, flash, redirect, url_for
-from datetime import datetime
-from mysql.connector import Error
-from conexion.conexionBD import connectionBD
-from conexion.conexionBD import connectionBD
-from mysql.connector import Error
-
 def obtener_valores_enum(conexion, tabla, campo):
     """
     Obtiene los valores de un campo ENUM en una tabla.
@@ -40,7 +33,6 @@ def obtener_valores_enum(conexion, tabla, campo):
         print(f"Error al obtener valores ENUM: {err}")
         return []
 
-# Función para obtener los métodos de pago (valores del ENUM)
 def obtener_metodos_pago(conexion):
     """
     Obtiene los métodos de pago (valores del ENUM) y los formatea para la plantilla.
@@ -57,33 +49,26 @@ def obtener_metodos_pago(conexion):
         print(f"Error al obtener métodos de pago: {err}")
         return []
 
-# Función para obtener las entregas (valores del ENUM)
-def obtener_entregas(conexion):
+def obtener_tipos_entrega(conexion):
     """
-    Obtiene las entregas con los valores del ENUM 'tipo'.
+    Obtiene los valores del ENUM 'tipo' de la tabla 'entrega'.
     """
     try:
         with conexion.cursor(dictionary=True) as cursor:
-            # Obtener los valores del ENUM 'tipo'
-            valores_enum = obtener_valores_enum(conexion, 'entrega', 'tipo')
+            # Consulta para obtener los valores del ENUM
+            cursor.execute("SHOW COLUMNS FROM entrega WHERE Field = 'tipo'")
+            resultado = cursor.fetchone()
+            
+            # Extraer los valores del ENUM
+            tipo_columna = resultado['Type']
+            valores_enum = tipo_columna.replace("enum(", "").replace(")", "").replace("'", "").split(",")
+            
             print("Valores ENUM de 'tipo':", valores_enum)  # Depuración
-            
-            # Obtener las entregas de la tabla
-            cursor.execute("SELECT id, tipo FROM entrega")
-            entregas = cursor.fetchall()
-            print("Entregas obtenidas de la base de datos:", entregas)  # Depuración
-            
-            # Combinar los valores del ENUM con los datos de la tabla
-            for entrega in entregas:
-                if entrega['tipo'] in valores_enum:
-                    entrega['tipo'] = entrega['tipo']
-            
-            return entregas
+            return valores_enum
     except Error as err:
-        print(f"Error al obtener entregas: {err}")
+        print(f"Error al obtener valores ENUM: {err}")
         return []
 
-# Función para procesar y guardar un pedido
 def procesar_pedido(dataForm):
     """
     Procesa y guarda un pedido en la base de datos.
@@ -92,7 +77,7 @@ def procesar_pedido(dataForm):
         # Validar que los campos no estén vacíos
         campos_requeridos = [
             'fechaEntrega', 'horaEntrega', 'estado', 'users_id', 
-            'producto_id', 'metodo_pago', 'entrega_id'
+            'producto_id', 'metodo_pago', 'tipo_entrega'
         ]
         for campo in campos_requeridos:
             if campo not in dataForm or not dataForm[campo].strip():
@@ -119,9 +104,20 @@ def procesar_pedido(dataForm):
             users_id = int(dataForm['users_id'])
             producto_id = int(dataForm['producto_id'])
             metodo_pago_id = int(dataForm['metodo_pago'])
-            entrega_id = int(dataForm['entrega_id'])
         except ValueError:
-            return "Los campos users_id, producto_id, metodo_pago y entrega_id deben ser números válidos."
+            return "Los campos users_id, producto_id y metodo_pago deben ser números válidos."
+
+        # Obtener el tipo de entrega
+        tipo_entrega = dataForm['tipo_entrega']
+
+        # Obtener el ID de la entrega basado en el tipo de entrega
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                cursor.execute("SELECT id FROM entrega WHERE tipo = %s", (tipo_entrega,))
+                entrega = cursor.fetchone()
+                if not entrega:
+                    return f"Tipo de entrega no válido: {tipo_entrega}"
+                entrega_id = entrega['id']
 
         # Insertar en la tabla pedido
         with connectionBD() as conexion_MySQLdb:
@@ -154,4 +150,3 @@ def procesar_pedido(dataForm):
     except Exception as e:
         print(f"Error en procesar_pedido: {e}")  # Debug
         return f"Se produjo un error en procesar_pedido: {str(e)}"
-

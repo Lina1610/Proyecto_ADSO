@@ -6,7 +6,7 @@ import re
 
 def validar_claves_foraneas(users_id, departamento_id, municipio_id):
     """
-    Valida que las claves foráneas existan en la base de datos.
+    Valida que las claves foráneas (users_id, departamento_id, municipio_id) existan en la base de datos.
     Retorna un mensaje de error si alguna no existe, o None si todo está bien.
     """
     try:
@@ -17,7 +17,7 @@ def validar_claves_foraneas(users_id, departamento_id, municipio_id):
                 if not cursor.fetchone():
                     return "El users_id proporcionado no existe."
 
-                # Validar departamento_id por ID
+                # Validar departamento_id
                 cursor.execute("SELECT id FROM departamento WHERE id = %s", (departamento_id,))
                 if not cursor.fetchone():
                     return "El departamento_id proporcionado no existe."
@@ -32,11 +32,16 @@ def validar_claves_foraneas(users_id, departamento_id, municipio_id):
     except Exception as e:
         return f"Error al validar claves foráneas: {str(e)}"
 
+
 def procesar_direccion(dataForm):
     """
     Procesa y guarda una dirección en la base de datos.
+    Valida los campos obligatorios, claves foráneas y realiza la inserción.
+    Retorna el resultado de la inserción o un mensaje de error.
     """
     try:
+        print("🔍 Sesión ANTES de procesar la dirección:", session)  # 🛠 Depuración
+
         # Validar que los campos no estén vacíos
         campos_requeridos = [
             'nombre_completo', 'barrio', 'domicilio', 'telefono', 
@@ -47,21 +52,22 @@ def procesar_direccion(dataForm):
                 return f"El campo {campo} es obligatorio."
 
         # Si el formulario es del sitio web, el estado, users_id y costo_domicilio se manejan automáticamente
-        if 'estado' not in dataForm:
-            estado = 'activo'  # Valor predeterminado para el estado
-        else:
-            estado = dataForm.get('estado')
+        estado = dataForm.get('estado', 'activo')  # Valor predeterminado para el estado
 
+        # Obtener el users_id de la sesión
         if 'users_id' not in dataForm:
-            users_id = session.get('id')  # Obtener el ID del cliente desde la sesión
+            users_id = session.get('id')
             if users_id is None:
+                print("⚠️ Error: La sesión no tiene 'id'")  # 🛠 Depuración
                 return "Debes iniciar sesión para registrar una dirección."
         else:
             users_id = dataForm.get('users_id')
 
-        if 'costo_domicilio' not in dataForm:
-            costo_domicilio = 0  # Valor predeterminado para el costo_domicilio
-        else:
+        print("🔍 users_id obtenido:", users_id)  # 🛠 Depuración
+
+        # Validar el costo_domicilio
+        costo_domicilio = 0  # Valor predeterminado
+        if 'costo_domicilio' in dataForm:
             try:
                 costo_domicilio = int(dataForm['costo_domicilio'])
                 if costo_domicilio < 0:
@@ -108,12 +114,16 @@ def procesar_direccion(dataForm):
                 conexion_MySQLdb.commit()
                 resultado_insert = cursor.rowcount
 
+                print("✅ Dirección procesada correctamente")  # 🛠 Depuración
+                print("🔍 Sesión DESPUÉS de procesar la dirección:", session)  # 🛠 Depuración
+
                 if resultado_insert > 0:
                     return resultado_insert  # Éxito
                 else:
                     return "No se pudo insertar la dirección en la base de datos."
 
     except Exception as e:
+
 
         print(f"Error en procesar_form_direccion: {e}")  # Debug
         return f"Se produjo un error en procesar_form_direccion: {str(e)}"
@@ -201,28 +211,216 @@ def eliminar_direccion(id_direccion):
         print(f"Error en eliminar_direccion: {e}")
         return False
 
+        print(f"❌ Error en procesar_direccion: {e}")  # Debug
+        return f"Se produjo un error en procesar_direccion: {str(e)}"
+
+
+
 def obtener_direcciones_usuario(user_id):
     """
-    Obtiene todas las direcciones registradas para un usuario específico.
+    Obtiene todas las direcciones activas de un usuario específico.
+    Retorna una lista de direcciones con detalles como nombre, barrio, domicilio, etc.
     """
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                # Consulta para obtener las direcciones del usuario con los nombres de departamento y municipio
-                sql = """
+                cursor.execute("""
                     SELECT d.id, d.nombre_completo, d.barrio, d.domicilio, d.referencias, d.telefono, 
-                           d.estado, d.costo_domicilio,
-                           dep.nombre AS departamento, mun.nombre AS municipio
+                           dep.nombre AS nombre_departamento, mun.nombre AS nombre_municipio
                     FROM direccion d
-                    JOIN departamento dep ON d.departamento_id = dep.id
-                    JOIN municipio mun ON d.municipio_id = mun.id
-                    WHERE d.users_id = %s
+                    LEFT JOIN departamento dep ON d.departamento_id = dep.id
+                    LEFT JOIN municipio mun ON d.municipio_id = mun.id
+                    WHERE d.users_id = %s AND d.estado = 'Activo'  -- Filtro para mostrar solo direcciones activas
                     ORDER BY d.id DESC
-                """
-                cursor.execute(sql, (user_id,))
+                """, (user_id,))
                 direcciones = cursor.fetchall()
+
+                # 🚀 Debug: Ver qué devuelve la consulta
+                print(f"Direcciones para usuario {user_id}:", direcciones)
+
                 return direcciones
     except Exception as e:
         print(f"Error en obtener_direcciones_usuario: {e}")
         return []
+
+def buscar_direccionBD(search):
+    """
+    Busca direcciones en la base de datos que coincidan con el término de búsqueda.
+    Retorna una lista de direcciones que coinciden con el término de búsqueda.
+    """
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                querySQL = """
+                    SELECT 
+                        d.id, 
+                        d.nombre_completo, 
+                        d.barrio, 
+                        d.domicilio, 
+                        d.referencias, 
+                        d.telefono,
+                        d.estado,
+                        d.costo_domicilio,
+                        d.created_at,
+                        u.documento AS usuario_documento,
+                        m.nombre AS municipio_nombre,
+                        dep.nombre AS departamento_nombre
+                    FROM direccion d
+                    LEFT JOIN users u ON d.users_id = u.id
+                    LEFT JOIN municipio m ON d.municipio_id = m.id
+                    LEFT JOIN departamento dep ON d.departamento_id = dep.id
+                    WHERE d.nombre_completo LIKE %s 
+                       OR d.barrio LIKE %s 
+                       OR d.domicilio LIKE %s 
+                       OR d.telefono LIKE %s 
+                       OR u.documento LIKE %s 
+                       OR m.nombre LIKE %s 
+                       OR dep.nombre LIKE %s
+                """
+                search_pattern = f"%{search}%"
+                cursor.execute(querySQL, (
+                    search_pattern, search_pattern, search_pattern, 
+                    search_pattern, search_pattern, search_pattern, search_pattern
+                ))
+                return cursor.fetchall()
+    except Exception as e:
+        print(f"Error en buscar_direccionBD: {e}")
+        return []
+
+def obtener_direccion_por_id(id):
+    """
+    Obtiene una dirección específica por su ID, incluyendo los nombres de municipio, departamento y documento del usuario.
+    Retorna un diccionario con los detalles de la dirección.
+    """
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                sql = """
+                    SELECT 
+                        d.id, 
+                        d.nombre_completo, 
+                        d.barrio, 
+                        d.domicilio, 
+                        d.referencias, 
+                        d.telefono,
+                        d.estado,
+                        d.costo_domicilio,
+                        d.created_at,
+                        u.documento AS usuario_documento,
+                        m.nombre AS municipio_nombre,
+                        dep.nombre AS departamento_nombre
+                    FROM direccion d
+                    LEFT JOIN users u ON d.users_id = u.id
+                    LEFT JOIN municipio m ON d.municipio_id = m.id
+                    LEFT JOIN departamento dep ON d.departamento_id = dep.id
+                    WHERE d.id = %s
+                """
+                print("Ejecutando consulta SQL:", sql)  # Depuración
+                cursor.execute(sql, (id,))
+                direccion = cursor.fetchone()
+                print("Datos de la dirección obtenidos:", direccion)  # Depuración
+                return direccion
+    except Exception as e:
+        print(f"Error en obtener_direccion_por_id: {e}")  # Depuración
+        return None
+
+def obtener_direccion():
+    """
+    Obtiene todas las direcciones de la base de datos con los nombres de municipio, departamento y documento del usuario.
+    Retorna una lista de todas las direcciones.
+    """
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                sql = """
+                    SELECT 
+                        d.id, 
+                        d.nombre_completo, 
+                        d.barrio, 
+                        d.domicilio, 
+                        d.referencias, 
+                        d.telefono,
+                        d.estado,
+                        d.costo_domicilio,
+                        u.documento AS usuario_documento,
+                        m.nombre AS municipio_nombre,
+                        dep.nombre AS departamento_nombre
+                    FROM direccion d
+                    LEFT JOIN users u ON d.users_id = u.id
+                    LEFT JOIN municipio m ON d.municipio_id = m.id
+                    LEFT JOIN departamento dep ON d.departamento_id = dep.id
+                    ORDER BY d.id DESC
+                """
+                print("Ejecutando consulta SQL:", sql)  # Depuración
+                cursor.execute(sql)
+                direcciones = cursor.fetchall()
+                print("Datos de direcciones obtenidos:", direcciones)  # Depuración
+                return direcciones
+    except Exception as e:
+        print(f"Error en obtener_direccion: {e}")  # Depuración
+        return []
     
+
+def actualizar_direccion(id, dataForm):
+    """
+    Actualiza una dirección existente en la base de datos.
+    Retorna un mensaje de éxito o error.
+    """
+    try:
+        # Validar que los campos obligatorios no estén vacíos
+        campos_requeridos = [
+            'nombre_completo', 'barrio', 'domicilio', 'telefono', 
+            'departamento_id', 'municipio_id'
+        ]
+        for campo in campos_requeridos:
+            if campo not in dataForm or not dataForm[campo].strip():
+                return f"El campo {campo} es obligatorio."
+
+        # Validar claves foráneas
+        error_validacion = validar_claves_foraneas(
+            dataForm.get('users_id', session.get('id')), 
+            dataForm['departamento_id'], 
+            dataForm['municipio_id']
+        )
+        if error_validacion:
+            return error_validacion
+
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor() as cursor:
+                sql = """
+                    UPDATE direccion SET 
+                        nombre_completo = %s,
+                        barrio = %s,
+                        domicilio = %s,
+                        referencias = %s,
+                        telefono = %s,
+                        estado = %s,
+                        costo_domicilio = %s,
+                        departamento_id = %s,
+                        municipio_id = %s
+                    WHERE id = %s
+                """
+                valores = (
+                    dataForm.get('nombre_completo'),
+                    dataForm.get('barrio'),
+                    dataForm.get('domicilio'),
+                    dataForm.get('referencias', ''),  # Campo opcional
+                    dataForm.get('telefono'),
+                    dataForm.get('estado', 'Activo'),
+                    int(dataForm.get('costo_domicilio', 0)),
+                    dataForm.get('departamento_id'),
+                    dataForm.get('municipio_id'),
+                    id
+                )
+                cursor.execute(sql, valores)
+                conexion_MySQLdb.commit()
+
+                if cursor.rowcount > 0:
+                    return "Dirección actualizada correctamente."
+                else:
+                    return "No se encontró la dirección o no se realizaron cambios."
+
+    except Exception as e:
+        print(f"Error en actualizar_direccion: {e}")  # Depuración
+        return f"Se produjo un error al actualizar la dirección: {str(e)}"
+

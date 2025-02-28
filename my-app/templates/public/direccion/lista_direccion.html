@@ -1,7 +1,9 @@
 {% extends 'public/base_cpanel.html' %}
-<!--Cambiando el title-->
+
+<!-- Cambiando el title -->
 {% block title %}Crud con Python 🐍 | Lista de Direcciones{% endblock %}
-<!---->
+
+<!-- Inicio del block -->
 {% block body %}
 <div class="card" style="border-radius: 0px !important">
   <div class="row justify-content-center mb-2">
@@ -33,53 +35,80 @@
         width="100%">
         <thead>
           <tr>
-            <th>#</th>
+            <th>ID</th>
             <th>Nombre Completo</th>
-            <th>Barrio</th>
-            <th>Domicilio</th>
-            <th>Referencias</th>
-            <th>Teléfono</th>
-            <th>Estado</th>
-            <th>Costo Domicilio</th>
-            <th>Departamento</th>
             <th>Municipio</th>
+            <th>Departamento</th>
             <th>Usuario</th>
-            <th>Acción</th>
+            <th>Estado</th>
+            <th width="10%">Acción Estado</th>
+            <th width="20%">Acciones</th>
           </tr>
         </thead>
         <tbody id="tabla_direcciones_body">
-          {% for direccion in direcciones %}
-          <tr id="direccion_{{ direccion.id }}">
-            <td>{{ loop.index }}</td>
-            <td>{{ direccion.nombre_completo }}</td>
-            <td>{{ direccion.barrio }}</td>
-            <td>{{ direccion.domicilio }}</td>
-            <td>{{ direccion.referencias }}</td>
-            <td>{{ direccion.telefono }}</td>
-            <td>{{ direccion.estado }}</td>
-            <td>$ {{ "{:,.2f}".format(direccion.costo_domicilio) }}</td>
-            <td>{{ direccion.nombre_departamento }}</td>
-            <td>{{ direccion.nombre_municipio }}</td>
-            <td>{{ direccion.nombre_usuario }}</td>
-            <td width="10px">
-              <a
-                href="{{ url_for('viewEditarDireccion', id=direccion.id) }}"
-                class="btn btn-success btn-sm"
-                title="Editar">
-                <i class="bi bi-pencil"></i>
-                Editar
-              </a>
-              <a
-                href="#"
-                onclick="eliminarDireccion('{{ direccion.id }}');"
-                class="btn btn-danger btn-sm"
-                title="Eliminar">
-                <i class="bi bi-trash3"></i>
-                Eliminar
-              </a>
+          {% if direcciones %}
+            {% for direccion in direcciones %}
+            <tr id="direccion_{{ direccion.id }}">
+              <td>{{ direccion.id }}</td>
+              <td>{{ direccion.nombre_completo }}</td>
+              <td>{{ direccion.municipio_nombre }}</td>
+              <td>{{ direccion.departamento_nombre }}</td>
+              <td>{{ direccion.usuario_documento }}</td>
+
+              <!-- Columna de Estado -->
+              <td>
+                {% if direccion.estado == 'Activo' %}
+                  <span class="badge bg-success">Activo</span>
+                {% else %}
+                  <span class="badge bg-danger">Inactivo</span>
+                {% endif %}
+              </td>
+
+              <!-- Columna de Activación/Desactivación -->
+              <td>
+                {% if direccion.estado == 'Inactivo' %}
+                  <a href="/activar-direccion/{{ direccion.id }}" 
+                     class="btn btn-sm btn-success"
+                     title="Activar dirección">
+                     <i class="bi bi-check-circle"></i> Activar
+                  </a>
+                {% else %}
+                  <a href="/desactivar-direccion/{{ direccion.id }}" 
+                     class="btn btn-sm btn-warning"
+                     title="Desactivar dirección">
+                     <i class="bi bi-x-circle"></i> Desactivar
+                  </a>
+                {% endif %}
+              </td>
+
+              <!-- Columna de Acciones -->
+              <td>
+                <a href="/detalles-direccion/{{ direccion.id }}"
+                   class="btn btn-info btn-sm"
+                   title="Ver detalles">
+                   <i class="bi bi-eye"></i> Detalles
+                </a>
+                <a href="{{ url_for('viewEditarDireccion', id=direccion.id) }}"
+                   class="btn btn-success btn-sm"
+                   title="Actualizar">
+                   <i class="bi bi-arrow-clockwise"></i> Actualizar
+                </a>
+                <a href="#"
+                   onclick="eliminarDireccion('{{ direccion.id }}');"
+                   class="btn btn-danger btn-sm"
+                   title="Eliminar">
+                   <i class="bi bi-trash3"></i> Eliminar
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+          <tr>
+            <td colspan="8" class="text-center">
+              <i class="bi bi-exclamation-circle"></i> No hay direcciones registradas.
             </td>
           </tr>
-          {% endfor %}
+          {% endif %}
         </tbody>
       </table>
     </div>

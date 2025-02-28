@@ -84,11 +84,11 @@
 
               <!-- Entrega -->
               <div class="mb-3">
-                <label for="entrega_id" class="form-label">Tipo de Entrega</label>
-                <select class="form-select" name="entrega_id" id="entrega_id" required>
+                <label for="tipo_entrega" class="form-label">Tipo de Entrega</label>
+                <select class="form-select" name="tipo_entrega" id="tipo_entrega" required>
                   <option value="" selected disabled>Seleccione un tipo de entrega</option>
-                  {% for entrega in entregas %}
-                    <option value="{{ entrega.id }}">{{ entrega.tipo }}</option>
+                  {% for tipo in tipos_entrega %}
+                    <option value="{{ tipo }}">{{ tipo }}</option>
                   {% endfor %}
                 </select>
               </div>
