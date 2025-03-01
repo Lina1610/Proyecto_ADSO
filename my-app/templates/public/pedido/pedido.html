@@ -53,13 +53,13 @@
                                     <a class="btn btn-sm btn-danger" href="{{ url_for('cerraSesion') }}">
                                         <i class="fas fa-sign-out-alt me-2"></i>Salir
                                     </a>
-                                    <!-- Ícono del carrito -->
-                        <li class="nav-item carrito-icono" onclick="toggleCarrito()">
-                          <i class="fas fa-shopping-cart"></i>
-                          <span class="badge" id="carrito-count">0</span>
-                      </li>
                                 </div>
                             </div>
+                            <!-- Ícono del carrito como elemento independiente -->
+                            <li class="nav-item carrito-icono">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span class="badge" id="carrito-count">0</span>
+                            </li>
                         {% else %}
                             <li class="nav-item"><a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}">Registrarse</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ url_for('loginCliente') }}">Iniciar sesión</a></li>
@@ -70,67 +70,71 @@
         </nav>
 
         <!-- Contenedor del producto y carrito -->
-<div class="producto-container" id="producto-container">
-  <!-- Producto -->
-  <div class="producto-card">
-      <img src="/static/assets/img/tamal.png" alt="Tamal">
-      <h5 class="mt-3">Tamal Tradicional</h5>
-      <p class="card-text">Delicioso tamal hecho con ingredientes frescos y tradicionales.</p>
-      <p class="mt-3"><strong>Precio:</strong> $5.000</p>
-      <button onclick="agregarAlCarrito(1, 'Tamal Tradicional', 5000, '/static/assets/img/tamal.png')">
-        Agregar al carrito
-    </button>
-    
+        <div class="producto-container container mt-5 pt-5" id="producto-container">
+            <h2 class="text-center mb-4">Nuestros Productos</h2>
+            
+            <div class="row">
+                <!-- Producto de ejemplo (puede ser repetido o generado dinámicamente) -->
+                <div class="col-md-4 mb-4">
+                    <div class="card producto-card h-100">
+                        <img src="/static/assets/img/tamal.png" alt="Tamal" class="card-img-top">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Tamal Tradicional</h5>
+                            <p class="card-text">Delicioso tamal hecho con ingredientes frescos y tradicionales.</p>
+                            <p class="card-text mt-auto"><strong>Precio:</strong> $5.000</p>
+                            <button class="btn btn-primary mt-auto" onclick="agregarAlCarrito(1, 'Tamal Tradicional', 5000, '/static/assets/img/tamal.png')">
+                                Agregar al carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aquí puedes agregar más productos -->
+            </div>
+        </div>
 
-  </div>
-
-  <!-- Carrito de Compras -->
-  <div class="carrito-container visible" id="carrito-container">
-      <h5>Carrito de Compras</h5>
-      <div id="carrito-items">
-          <!-- Aquí se mostrarán los productos agregados -->
-      </div>
-      <div class="text-center mt-3">
-          <button class="btn btn-primary btn-lg" onclick="procesarPedido()">Procesar Pedido</button>
-      </div>
-  </div>
-</div>
-
+        <!-- Carrito de Compras (flotante) -->
+        <div class="carrito-container" id="carrito-container">
+            <h5>Carrito de Compras</h5>
+            <div id="carrito-items">
+                <!-- Aquí se mostrarán los productos agregados dinámicamente -->
+            </div>
+        </div>
     </main>
-<!-- Footer-->
-<footer class="footer">
-  <div class="footer-container">
-      <div class="footer-left">
-          <div class="footer-brand">
-              <h3>Tamales D. María</h3>
-          </div>
-          <div class="social-icons">
-              <a href="#"><i class="fab fa-facebook"></i></a>
-              <a href="#"><i class="fab fa-instagram"></i></a>
-              <a href="#"><i class="fab fa-whatsapp"></i></a>
-          </div>
-          <div class="footer-contact">
-              <p>[dirección de correo electrónico eliminada]</p>
-              <p>+57 312 345 6789</p>
-          </div>
-      </div>
-      <div class="footer-center">
-          <ul class="footer-list">
-              <li><a href="#" class="footer-link">Inicio</a></li>
-              <li><a href="#" class="footer-link">Menú</a></li>
-              <li><a href="#" class="footer-link">Pedidos</a></li>
-              <li><a href="#" class="footer-link">Contacto</a></li>
-          </ul>
-      </div>
-      <div class="footer-right">
-          <p class="footer-bottom">© 2023 Tamales DM</p>
-      </div>
-  </div>
-</footer>
+
+    <!-- Footer-->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <div class="footer-brand">
+                    <h3>Tamales D. María</h3>
+                </div>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+                <div class="footer-contact">
+                    <p>[dirección de correo electrónico eliminada]</p>
+                    <p>+57 312 345 6789</p>
+                </div>
+            </div>
+            <div class="footer-center">
+                <ul class="footer-list">
+                    <li><a href="#" class="footer-link">Inicio</a></li>
+                    <li><a href="#" class="footer-link">Menú</a></li>
+                    <li><a href="#" class="footer-link">Pedidos</a></li>
+                    <li><a href="#" class="footer-link">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-right">
+                <p class="footer-bottom">© 2023 Tamales DM</p>
+            </div>
+        </div>
+    </footer>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script src="{{ url_for('static', filename ='assets/js/carrito.js') }}"></script>
 </body>
 </html>
