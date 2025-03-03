@@ -1,28 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content />
-    <meta name="author" content />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrito de Compras - El Rincón del Tamal</title>
-    <!-- Favicon-->
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-    <!-- Font Awesome icons (free version)-->
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
+    <!-- Font Awesome -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-    <!-- Google fonts-->
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
-    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/styles_bos.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/carrito.css') }}" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <!-- Estilos adicionales para el carrito -->    
-    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css">
+    <!-- Bootstrap y Estilos Personalizados -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/styles_bos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/carrito.css') }}">
+    <!-- Animaciones -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 </head>
 <body id="page-top">
     <main class="main-content">
@@ -30,7 +26,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav1">
             <div class="container">
                 <a class="navbar-brand" href="#page-top">
-                    <img src="{{ url_for('static', filename ='assets/img/navbar-logo.svg') }}" alt="..." height="40">
+                    <img src="{{ url_for('static', filename='assets/img/navbar-logo.svg') }}" alt="Logo" height="40">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive">
                     <i class="fas fa-bars ms-1"></i>
@@ -39,12 +35,12 @@
                     <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0 align-items-center">
                         <li class="nav-item"><a class="nav-link" href="#services">Servicios</a></li>
                         <li class="nav-item"><a class="nav-link" href="#sobre_nosotros">Sobre Nosotros</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('pedido') }}">Pedido</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('pedido.pedido') }}">Pedido</a></li>
                         
                         {% if session.conectado %}
                             <div class="d-flex align-items-center ms-4 user-info-container">
                                 <div class="user-info-navbar text-end pe-3">
-                                    <span class="text-white d-block user-name">{{ session.nombre }} </span>
+                                    <span class="text-white d-block user-name">{{ session.nombre }}</span>
                                 </div>
                                 <div class="btn-group user-actions">
                                     <a class="btn btn-sm btn-outline-light" href="{{ url_for('perfil_cliente') }}">
@@ -53,13 +49,13 @@
                                     <a class="btn btn-sm btn-danger" href="{{ url_for('cerraSesion') }}">
                                         <i class="fas fa-sign-out-alt me-2"></i>Salir
                                     </a>
-                                    <!-- Ícono del carrito -->
-                        <li class="nav-item carrito-icono" onclick="toggleCarrito()">
-                          <i class="fas fa-shopping-cart"></i>
-                          <span class="badge" id="carrito-count">0</span>
-                      </li>
                                 </div>
                             </div>
+                            <!-- Ícono del carrito -->
+                            <li class="nav-item carrito-icono">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span class="badge" id="carrito-count">0</span>
+                            </li>
                         {% else %}
                             <li class="nav-item"><a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}">Registrarse</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ url_for('loginCliente') }}">Iniciar sesión</a></li>
@@ -70,63 +66,88 @@
         </nav>
 
         <!-- Contenedor del producto y carrito -->
-<div class="producto-container" id="producto-container">
-  <!-- Producto -->
-  <div class="producto-card">
-      <img src="/static/assets/img/tamal.png" alt="Tamal">
-      <h5 class="mt-3">Tamal Tradicional</h5>
-      <p class="card-text">Delicioso tamal hecho con ingredientes frescos y tradicionales.</p>
-      <p class="mt-3"><strong>Precio:</strong> $5.000</p>
-      <button class="btn btn-primary" onclick="agregarAlCarrito()">Agregar al Carrito</button>
-  </div>
+        <div class="producto-container container mt-5 pt-5" id="producto-container">
+            <h2 class="text-center mb-4" data-aos="fade-up">Nuestros Productos</h2>
+            
+            <div class="row">
+                {% if productos %}
+                    {% for producto in productos %}
+                        <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                            <div class="card producto-card h-100 shadow-sm">
+                                <img src="{{ producto.imagen if producto.imagen else '/static/assets/img/default-product.png' }}" 
+                                     alt="{{ producto.nombre }}" 
+                                     class="card-img-top">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">{{ producto.nombre }}</h5>
+                                    <p class="card-text">{{ producto.descripcion }}</p>
+                                    <p class="card-text mt-auto">
+                                        <strong>Precio:</strong> ${{ producto.precio|float|round(2) }}
+                                    </p>
+                                    <button class="btn btn-primary mt-auto" 
+                                            onclick="agregarAlCarrito({{ producto.id }}, '{{ producto.nombre }}', {{ producto.precio|float }}, '{{ producto.imagen if producto.imagen else '/static/assets/img/default-product.png' }}')">
+                                        Agregar al carrito
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-12 text-center" data-aos="fade-up">
+                        <p class="text-muted">No hay productos disponibles.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
 
-  <!-- Carrito de Compras -->
-  <div class="carrito-container visible" id="carrito-container">
-      <h5>Carrito de Compras</h5>
-      <div id="carrito-items">
-          <!-- Aquí se mostrarán los productos agregados -->
-      </div>
-      <div class="text-center mt-3">
-          <button class="btn btn-primary btn-lg" onclick="procesarPedido()">Procesar Pedido</button>
-      </div>
-  </div>
-</div>
-
+        <!-- Carrito de Compras (flotante) -->
+        <div class="carrito-container" id="carrito-container">
+            <h5>Carrito de Compras</h5>
+            <div id="carrito-items">
+                <!-- Aquí se mostrarán los productos agregados dinámicamente -->
+            </div>
+        </div>
     </main>
-<!-- Footer-->
-<footer class="footer">
-  <div class="footer-container">
-      <div class="footer-left">
-          <div class="footer-brand">
-              <h3>Tamales D. María</h3>
-          </div>
-          <div class="social-icons">
-              <a href="#"><i class="fab fa-facebook"></i></a>
-              <a href="#"><i class="fab fa-instagram"></i></a>
-              <a href="#"><i class="fab fa-whatsapp"></i></a>
-          </div>
-          <div class="footer-contact">
-              <p>[dirección de correo electrónico eliminada]</p>
-              <p>+57 312 345 6789</p>
-          </div>
-      </div>
-      <div class="footer-center">
-          <ul class="footer-list">
-              <li><a href="#" class="footer-link">Inicio</a></li>
-              <li><a href="#" class="footer-link">Menú</a></li>
-              <li><a href="#" class="footer-link">Pedidos</a></li>
-              <li><a href="#" class="footer-link">Contacto</a></li>
-          </ul>
-      </div>
-      <div class="footer-right">
-          <p class="footer-bottom">© 2023 Tamales DM</p>
-      </div>
-  </div>
-</footer>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <div class="footer-brand">
+                    <h3>Tamales D. María</h3>
+                </div>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+                <div class="footer-contact">
+                    <p>[dirección de correo electrónico eliminada]</p>
+                    <p>+57 312 345 6789</p>
+                </div>
+            </div>
+            <div class="footer-center">
+                <ul class="footer-list">
+                    <li><a href="#" class="footer-link">Inicio</a></li>
+                    <li><a href="#" class="footer-link">Menú</a></li>
+                    <li><a href="#" class="footer-link">Pedidos</a></li>
+                    <li><a href="#" class="footer-link">Contacto</a></li>
+                </ul>
+            </div>
+            <div class="footer-right">
+                <p class="footer-bottom">© 2023 Tamales DM</p>
+            </div>
+        </div>
+    </footer>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script src="{{ url_for('static', filename ='assets/js/carrito.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/carrito.js') }}"></script>
+    <script>
+        // Inicializar animaciones AOS
+        AOS.init({
+            duration: 1000,
+            once: true,
+        });
+    </script>
 </body>
 </html>

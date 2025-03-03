@@ -16,7 +16,11 @@ import openpyxl  # Para generar el excel
 from flask import send_file
 
 
-def procesar_producto(dataForm):
+from werkzeug.utils import secure_filename
+import uuid
+import os
+
+def procesar_producto(dataForm, imagen):
     try:
         # Procesar el precio y convertirlo a un valor numérico decimal
         precio_sin_puntos = re.sub('[^0-9,\.]', '', dataForm['precio'])  # Limpiar cualquier carácter no numérico
@@ -34,13 +38,29 @@ def procesar_producto(dataForm):
         except ValueError:
             return 'El total debe ser un número válido.'
 
+        # Procesar la imagen
+        if imagen:
+            # Generar un nombre único para la imagen
+            nombre_imagen = secure_filename(imagen.filename)
+            extension = nombre_imagen.split('.')[-1]
+            nombre_unico = f"{uuid.uuid4()}.{extension}"
+            
+            # Guardar la imagen en la carpeta de imágenes
+            ruta_imagen = os.path.join('static', 'assets', 'img', 'productos', nombre_unico)
+            imagen.save(ruta_imagen)
+            
+            # Guardar la ruta de la imagen en la base de datos
+            ruta_imagen_db = f"/static/assets/img/productos/{nombre_unico}"
+        else:
+            ruta_imagen_db = None  # Si no se sube una imagen
+
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                 # SQL para insertar el producto
                 sql = """
                     INSERT INTO producto (
-                        codigo, nombre, descripcion, precio, estado, unidad_medida, cantidad, marca, total
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        codigo, nombre, descripcion, precio, estado, unidad_medida, cantidad, marca, total, imagen
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """
 
                 # Creando una tupla con los valores del INSERT
@@ -53,7 +73,8 @@ def procesar_producto(dataForm):
                     unidad_medida_float,  # Usar la unidad de medida como float
                     dataForm['cantidad'], 
                     dataForm['marca'], 
-                    total_decimal  # Usar el total como decimal
+                    total_decimal,  # Usar el total como decimal
+                    ruta_imagen_db  # Ruta de la imagen
                 )
                 
                 cursor.execute(sql, valores)
