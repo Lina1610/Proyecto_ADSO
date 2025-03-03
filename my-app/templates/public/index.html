@@ -1,312 +1,360 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <meta charset="utf-8" />
-    <meta name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content />
-    <meta name="author" content />
-    <title>Agency - Start Bootstrap Theme</title>
-    <!-- Favicon-->
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-    <!-- Font Awesome icons (free version)-->
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'
-      rel='stylesheet'>
 
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
-      crossorigin="anonymous"></script>
-    <!-- Google fonts-->
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700"
-      rel="stylesheet" type="text/css" />
-    <link
-      href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700"
-      rel="stylesheet" type="text/css" />
-    <link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
-    <script
-      src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
-    
-     <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
-     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+<head>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content />
+  <meta name="author" content />
+  <title>Agency - Start Bootstrap Theme</title>
+  <!-- Favicon-->
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <!-- Font Awesome icons (free version)-->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+  <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+  <!-- Google fonts-->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
 
 
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <link rel="stylesheet"
-      href="{{ url_for('static', filename ='assets/css/styles_bos.css') }}" />
-    <link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <!-- Core theme CSS (includes Bootstrap)-->
+  <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/styles_bos.css') }}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 
-    <body id="page-top">
+<body id="page-top">
 
 
-      <header class="header">
-        <div class="menu container">
-          <a href="#" class="logo">Logo</a>
-          <input type="checkbox" id="menu"/>
-          <label for="menu">
-            <img src="/static/assets/img/fond" class="menu-icono" alt="">
-          </label>
-          <nav class="navbar">
-            <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0 align-items-center">
-                <li class="nav-item"><a class="nav-link" href="#">Inicio</a></li>
-                <li class="nav-item"><a class="nav-link" href="#service">Servicios</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('pedido') }}">Pedidos</a></li>
-        
-                {% if session.conectado %}
-                <div class="user-menu">
-                  <!-- Contenedor principal -->
-                  <div class="user-container">
-                      <!-- Avatar + Nombre -->
-                      <div class="avatar-name-group">
-                          <div class="user-avatar">
-                              <i class="fas fa-user-circle"></i>
-                          </div>
-                          <span class="user-name">{{ session.nombre }}</span>
-                      </div>
-                      
-                      <!-- Opciones alineadas -->
-                      <div class="user-options">
-                          <a href="{{ url_for('perfil_cliente') }}" class="menu-link">MI Perfil</a>
-                          <a href="{{ url_for('cerraSesion') }}" class="menu-link logout">Cerrar Sesión</a>
-                      </div>
-                  </div>
+  <header class="header">
+    <div class="menu container">
+      <a href="#" class="logo">Logo</a>
+      <input type="checkbox" id="menu" />
+      <label for="menu">
+        <img src="/static/assets/img/fond" class="menu-icono" alt="">
+      </label>
+      <nav class="navbar">
+        <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0 align-items-center">
+          <li class="nav-item"><a class="nav-link" href="#">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="#service">Servicios</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('pedido') }}">Pedidos</a></li>
+
+          {% if session.conectado %}
+          <div class="user-menu">
+            <!-- Contenedor principal -->
+            <div class="user-container">
+              <!-- Avatar + Nombre -->
+              <div class="avatar-name-group">
+                <div class="user-avatar">
+                  <i class="fas fa-user-circle"></i>
+                </div>
+                <span class="user-name">{{ session.nombre }}</span>
               </div>
-                {% else %}
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}">Registrarse</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('loginCliente') }}">Iniciar sesión</a></li>
-                {% endif %}
-            </ul>
-        </nav>
-                
-        </div>
-        <div class="header-content container">
-          <div class="header-content container">
-            <h1 id="animated-text">TAMALES EL BUEN SAZÓN</h1>
-        </div>
-        
-          <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nemo possimus nisi eaque rem? Ullam alias 
-            non molestiae molestias rerum adipisci provident. Commodi, placeat? Minima nostrum culpa rerum odit, pariatur sapiente!</p>
-          <a href="#" class="btn-1">Informacion</a>
-        </div>
-        
-      </header>
-<!-- Navigation-->
 
-      
-<section class="coffee"  data-aos="fade-up">
-  <div class="coffee-content container">
+              <!-- Opciones alineadas -->
+              <div class="user-options">
+                <a href="{{ url_for('perfil_cliente') }}" class="menu-link">MI Perfil</a>
+                <a href="{{ url_for('cerraSesion') }}" class="menu-link logout">Cerrar Sesión</a>
+              </div>
+            </div>
+          </div>
+          {% else %}
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}">Registrarse</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('loginCliente') }}">Iniciar sesión</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+
+    </div>
+    <div class="header-content container">
+      <div class="header-content container">
+        <h1 id="animated-text">TAMALES EL BUEN SAZÓN</h1>
+      </div>
+
+      <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nemo possimus nisi eaque rem? Ullam alias
+        non molestiae molestias rerum adipisci provident. Commodi, placeat? Minima nostrum culpa rerum odit, pariatur
+        sapiente!</p>
+      <a href="#" class="btn-1">Informacion</a>
+    </div>
+
+  </header>
+
+
+  <section class="coffee" data-aos="fade-up">
+    <div class="coffee-content container">
       <h2>Ricos Tamales Boyacenses</h2>
       <p class="txt-p">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facilis libero quis vero porro delectus voluptate ut eveniet aliquid ad, atque, tempore ratione! Vitae vero porro eligendi ab provident eveniet voluptates!
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facilis libero quis vero porro delectus voluptate ut
+        eveniet aliquid ad, atque, tempore ratione! Vitae vero porro eligendi ab provident eveniet voluptates!
       </p>
 
       <div class="coffee-group">
-          <div class="coffee-1">
-              <img src="/static/assets/img/preparoredon.png" alt="">
-              <h3>Tamal Boyacense</h3>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit, facilis...</p>
-          </div>
+        <div class="coffee-1">
+          <img src="/static/assets/img/preparoredon.png" alt="">
+          <h3>Tamal Boyacense</h3>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit, facilis...</p>
+        </div>
 
-          <div class="coffee-1">
-              <img src="/static/assets/img/circuloSinfondo.png" alt="">
-              <h3>Tamal Boyacense</h3>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit, facilis...</p>
-          </div>
+        <div class="coffee-1">
+          <img src="/static/assets/img/circuloSinfondo.png" alt="">
+          <h3>Tamal Boyacense</h3>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit, facilis...</p>
+        </div>
 
-          <div class="coffee-1">
-              <img src="/static/assets/img/ingrediredon.png" alt="">
-              <h3>Tamal Boyacense</h3>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit, facilis...</p>
-          </div>
+        <div class="coffee-1">
+          <img src="/static/assets/img/ingrediredon.png" alt="">
+          <h3>Tamal Boyacense</h3>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit, facilis...</p>
+        </div>
       </div>
 
       <!-- Sección del botón separada -->
       <div class="button-container">
-          <a href="#" class="btn-1">Información</a>
+        <a href="#" class="btn-1">Información</a>
       </div>
-  </div>
-</section>
-
-      <main class="services">
-        <div class="services-content container">
-          <h2 class="sub-title">Servicios Tamaleria</h2>
-          <div class="services-group">
-
-            <div class="services-1">
-              <img src="/static/assets/img/icon.png">
-              <h3>Servicio 1</h3>
-            </div>
-
-            <div class="services-1">
-              <img src="/static/assets/img/i2.png">
-              <h3>Servicio 2</h3>
-            </div>
-
-            <div class="services-1">
-              <img src="/static/assets/img/i3.png">
-              <h3>Servicio 3</h3>
-            </div>
-          </div>
-
-          <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorum odit dicta
-             quisquam totam maiores
-             ut ducimus neque eligendi similique ipsam dolore nulla, labore
-              aperiam quis impedit, facere animi enim unde?</p>
-
-              <a href="#" class="btn-1">Informacion</a>
-          
-        </div>
-        
-      </main>
-
-      <section class="general" data-aos="fade-right">
-        <div class="general-1" data-aos="fade-right">
-          <h2>Tamales Calientes</h2>
-          <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Error odit animi quod pariatur delectus adipisci dolores fugiat,
-             dolorem accusantium, omnis vitae maxime tenetur magnam quidem excepturi. Voluptatem nesciunt quas eum.</p>
-             <a href="#" class="btn-1">Informacion</a>
-        </div>
-        <div class="general-2"></div>
-      </section>
-      
-      <section class="general">
-        <div class="general-3" data-aos="fade-right"></div>
-        <div class="general-1">
-          <h2>Tamales Calientes</h2>
-          <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Error odit animi quod pariatur delectus adipisci dolores fugiat,
-             dolorem accusantium, omnis vitae maxime tenetur magnam quidem excepturi. Voluptatem nesciunt quas eum.</p>
-
-             <a href="#" class="btn-1">Informacion</a>
-        </div>
-      </section>
-
-      <section class="blog container" data-aos="fade-down">
-        <h2>Blog</h2>
-        <p>omnis vitae maxime tenetur magnam quidem excepturi.</p>
-        <div class="blog-content">
-          
-          <div class="blog-1">
-            <img src="/static/assets/img/hojas.jpg">
-            <h2>Blog 1</h2>
-            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eaque fugit omnis, cum ea alias, 
-              quidem minus quis odio ut tempora itaque accusantium corporis facilis non voluptatibus optio, dolore fuga eveniet.</p>
-          </div>
-      
-          <div class="blog-1">
-            <video autoplay loop muted>
-                <source src="/static/assets/img/Videos/videoPreparacion.mp4" type="video/mp4">
-                Tu navegador no soporta el video.
-            </video>
-            <h2>Blog 2</h2>
-            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eaque fugit omnis, cum ea alias, 
-              quidem minus quis odio ut tempora itaque accusantium corporis facilis non voluptatibus optio, dolore fuga eveniet.</p>
-       
     </div>
-      
-          <div class="blog-1">
-            <img src="/static/assets/img/carne.jpg">
-            <h2>Blog 3</h2>
-            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eaque fugit omnis, cum ea alias, 
-              quidem minus quis odio ut tempora itaque accusantium corporis facilis non voluptatibus optio, dolore fuga eveniet.</p>
-          </div>
-      
-        </div> <!-- Cierra el blog-content aquí -->
-        
-        <a href="#" class="btn-1">Informacion</a>
-      </section>
-      
-      <footer class="footer">
-        <div class="footer-content container">
-          <div class="link">
-            <h3>lorem</h3>
-            <ul>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-            </ul>
-          </div>
-          
-          <div class="link">
-            <h3>lorem</h3>
-            <ul>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-            </ul>
-          </div>
+  </section>
 
+  <main class="services">
+    <div class="services-content container">
+      <h2 class="sub-title">Servicios Tamaleria</h2>
+      <div class="services-group">
 
-          <div class="link">
-            <h3>lorem</h3>
-            <ul>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-            </ul>
-          </div>
-
-             <div class="link">
-            <h3>lorem</h3>
-            <ul>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-            </ul>
-          </div>
+        <div class="services-1">
+          <img src="/static/assets/img/icon.png">
+          <h3>Servicio 1</h3>
         </div>
-        
-      </footer>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-       <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
 
-      <script>
-        window.addEventListener('scroll', function() {
-          const menu = document.querySelector('.menu');
-          let scrollPosition = window.scrollY;
-          
-          if (scrollPosition > 50) { // Cambia 50 por los píxeles que prefieras
-            menu.classList.add('scrolled');
-          } else {
-            menu.classList.remove('scrolled');
-          }
-        });
-        </script>
-        <script>
-          AOS.init({
-            duration: 1000,
-            once: false,
-            easing: 'ease-in-out',
-            mirror: true
-          });
-        </script>
-        <script>
-          document.addEventListener("DOMContentLoaded", function () {
-              gsap.registerPlugin(TextPlugin);
-              
-              // Configuración inicial: texto vacío y opacity 0
-              gsap.set("#animated-text", {
-                  text: "", 
-                  opacity: 0
-              });
-          
-              // Animación combinada
-              gsap.to("#animated-text", {
-                  duration: 2,
-                  opacity: 1,
-                  text: "TAMALES EL BUEN SAZÓN",
-                  ease: "power2.out",
-                  delay: 0.5
-              });
-          });
-          </script>
-    </body>
-  </html>
+        <div class="services-1">
+          <img src="/static/assets/img/i2.png">
+          <h3>Servicio 2</h3>
+        </div>
+
+        <div class="services-1">
+          <img src="/static/assets/img/i3.png">
+          <h3>Servicio 3</h3>
+        </div>
+      </div>
+
+      <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorum odit dicta
+        quisquam totam maiores
+        ut ducimus neque eligendi similique ipsam dolore nulla, labore
+        aperiam quis impedit, facere animi enim unde?</p>
+
+      <a href="#" class="btn-1">Informacion</a>
+
+    </div>
+
+  </main>
+
+  <section class="general" data-aos="fade-right">
+    <div class="general-1" data-aos="fade-right">
+      <h2>Tamales Calientes</h2>
+      <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Error odit animi quod pariatur delectus adipisci
+        dolores fugiat,
+        dolorem accusantium, omnis vitae maxime tenetur magnam quidem excepturi. Voluptatem nesciunt quas eum.</p>
+      <a href="#" class="btn-1">Informacion</a>
+    </div>
+    <div class="general-2"></div>
+  </section>
+
+  <section class="general">
+    <div class="general-3" data-aos="fade-right"></div>
+    <div class="general-1">
+      <h2>Tamales Calientes</h2>
+      <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Error odit animi quod pariatur delectus adipisci
+        dolores fugiat,
+        dolorem accusantium, omnis vitae maxime tenetur magnam quidem excepturi. Voluptatem nesciunt quas eum.</p>
+
+      <a href="#" class="btn-1">Informacion</a>
+    </div>
+  </section>
+
+  <section class="blog container" data-aos="fade-down">
+    <h2>Blog</h2>
+    <p>omnis vitae maxime tenetur magnam quidem excepturi.</p>
+    <div class="blog-content">
+
+      <div class="blog-1">
+        <img src="/static/assets/img/hojas.jpg">
+        <h2>Blog 1</h2>
+        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eaque fugit omnis, cum ea alias,
+          quidem minus quis odio ut tempora itaque accusantium corporis facilis non voluptatibus optio, dolore fuga
+          eveniet.</p>
+      </div>
+
+      <div class="blog-1">
+        <video autoplay loop muted>
+          <source src="/static/assets/img/Videos/videoPreparacion.mp4" type="video/mp4">
+          Tu navegador no soporta el video.
+        </video>
+        <h2>Blog 2</h2>
+        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eaque fugit omnis, cum ea alias,
+          quidem minus quis odio ut tempora itaque accusantium corporis facilis non voluptatibus optio, dolore fuga
+          eveniet.</p>
+
+      </div>
+
+      <div class="blog-1">
+        <div src="/static/assets/img/carne.jpg">
+        <h2>Blog 3</h2>
+        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eaque fugit omnis, cum ea alias,
+          quidem minus quis odio ut tempora itaque accusantium corporis facilis non voluptatibus optio, dolore fuga
+          eveniet.</p>
+      </div>
+
+    </div> <!-- Cierra el blog-content aquí -->
+
+    <a href="#" class="btn-1">Informacion</a>
+  </section>
+
+
+  <div class="accessibility-floating">
+    <button class="acc-btn" id="acc-main-btn" aria-label="Accesibilidad">♿</button>
+    <div class="acc-controls">
+      <div class="acc-group">
+        <button id="acc-font-up" class="toggle-btn">A+</button>
+        <button id="acc-font-down" class="toggle-btn">A-</button>
+      </div>
+      <div class="acc-group">
+        <button data-mode="normal" class="contrast-btn">N</button>
+        <button data-mode="high-contrast" class="contrast-btn">HC</button>
+        <button data-mode="dark-mode" class="contrast-btn">DM</button>
+      </div>
+      <div class="acc-group">
+        <button id="acc-links" class="toggle-btn">🔗</button>
+        <button id="acc-tts" class="toggle-btn">🎙</button>
+        <button id="acc-animations" class="toggle-btn">⏸</button>
+        <button id="acc-reset" class="toggle-btn">↺</button>
+      </div>
+    </div>
+  </div>
+  <footer class="footer">
+    <div class="footer-content container">
+      <div class="link">
+        <h3>lorem</h3>
+        <ul>
+          <li><a href="#">lorem</a></li>
+          <li><a href="#">lorem</a></li>
+          <li><a href="#">lorem</a></li>
+          <li><a href="#">lorem</a></li>
+        </ul>
+      </div>
+
+      <div class="link">
+        <h3>lorem</h3>
+        <ul>
+          <li><a href="#">lorem</a></li>
+          <li><a href="#">lorem</a></li>
+          <li><a href="#">lorem</a></li>
+          <li><a href="#">lorem</a></li>
+        </ul>
+      </div>
+
+
+      <div class="link">
+        <h3>lorem</h3>
+        <ul>
+          <li><a href="#">lorem</a></li>
+          <li><a href="#">lorem</a></li>
+          <li><a href="#">lorem</a></li>
+          <li><a href="#">lorem</a></li>
+        </ul>
+      </div>
+
+      <div class="link">
+        <h3>lorem</h3>
+        <ul>
+          <li><a href="#">lorem</a></li>
+          <li><a href="#">lorem</a></li>
+          <li><a href="#">lorem</a></li>
+          <li><a href="#">lorem</a></li>
+        </ul>
+      </div>
+    </div>
+
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
+  <!-- Al final del body -->
+  <script src="{{ url_for('static', filename='assets/js/accesibilidad.js') }}"></script>
+
+
+  <script>
+    window.addEventListener('scroll', function () {
+      const menu = document.querySelector('.menu');
+      let scrollPosition = window.scrollY;
+
+      if (scrollPosition > 50) { // Cambia 50 por los píxeles que prefieras
+        menu.classList.add('scrolled');
+      } else {
+        menu.classList.remove('scrolled');
+      }
+    });
+  </script>
+  <script>
+    AOS.init({
+      duration: 1000,
+      once: false,
+      easing: 'ease-in-out',
+      mirror: true
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      gsap.registerPlugin(TextPlugin);
+
+      // Configuración inicial: texto vacío y opacity 0
+      gsap.set("#animated-text", {
+        text: "",
+        opacity: 0
+      });
+
+      // Animación combinada
+      gsap.to("#animated-text", {
+        duration: 2,
+        opacity: 1,
+        text: "TAMALES EL BUEN SAZÓN",
+        ease: "power2.out",
+        delay: 0.5
+      });
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const whatsappBtn = document.querySelector('.whatsapp-btn');
+
+      window.addEventListener('scroll', function () {
+        // Ajustar posición al hacer scroll
+        const scrollPosition = window.scrollY;
+        const viewportHeight = window.innerHeight;
+
+        // Mover botón hacia arriba cuando se acerca al footer
+        if (scrollPosition + viewportHeight > document.body.offsetHeight - 200) {
+          whatsappBtn.style.bottom = '100px';
+        } else {
+          whatsappBtn.style.bottom = '40px';
+        }
+      });
+    });
+  </script>
+
+
+
+
+  <a href="https://wa.me/573213828939" class="whatsapp-btn" target="_blank" rel="noopener noreferrer">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+</body>
+
+</html>

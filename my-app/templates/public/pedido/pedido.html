@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -17,146 +18,206 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
     <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
     <!-- Core theme CSS (includes Bootstrap)-->
+    <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/style_bos.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/pedido.css') }}" />
+
     <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/carrito.css') }}" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <!-- Estilos adicionales para el carrito -->    
-    
+    <!-- Estilos adicionales para el carrito -->
+
 </head>
 
- <!-- Video Header -->
 
-    <!-- Sección Hero con video -->
-    <header class="video-hero">
-        <video class="hero-video" autoplay muted loop>
-            <source src="/static/assets/img/Videos/Video_Tamal.mp4" type="video/mp4">
-        </video>
-        <div class="hero-overlay"></div>
-        
-        <div class="hero-content" data-aos="fade-up">
-            <h1 class="hero-title">Tamales D. María</h1>
-            <p class="hero-subtitle">Auténtica tradición desde 1985</p>
-            <a href="#menu" class="hero-cta">Descubre más</a>
+<body>
+    <header class="header">
+        <div class="menu container">
+            <a href="#" class="logo">Logo</a>
+            <input type="checkbox" id="menu" />
+            <label for="menu">
+                <img src="/static/assets/img/fond" class="menu-icono" alt="">
+            </label>
+            <nav class="navbar">
+                <ul>
+                    <li class="nav-item"><a class="nav-link" href="#">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#service">Servicios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('pedido') }}">Pedidos</a></li>
+                    <!-- Carrito -->
+                    <li class="nav-item carrito-icono" onclick="toggleCarrito()">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="badge" id="carrito-count">0</span>
+                    </li>
+                    {% if session.conectado %}
+                    <!-- Usuario logueado -->
+                    <li class="nav-item">
+                        <div class="user-menu">
+                            <div class="user-container">
+                                <div class="avatar-name-group">
+                                    <div class="user-avatar">
+                                        <i class="fas fa-user-circle"></i>
+                                    </div>
+                                    <span class="user-name">{{ session.nombre }}</span>
+                                </div>
+                                <div class="user-options">
+                                    <a href="{{ url_for('perfil_cliente') }}" class="menu-link">MI Perfil</a>
+                                    <a href="{{ url_for('cerraSesion') }}" class="menu-link logout">Cerrar Sesión</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    {% else %}
+                    <!-- Usuario no logueado -->
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}">Registrarse</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('loginCliente') }}">Iniciar sesión</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            </div>
+
+
+            <!-- Contenedor del producto y carrito -->
+
+
+             <div class="header-content container">
+                    <div class="header-txt">
+                        <span>Tamales Boyacenses</span>
+                        <h2>Aprovecha esta oportunidad</h2>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur ex atque fugit 
+                            optio laborum quos nihil eum autem esse, quibusdam porro minus laboriosam sint nostrum 
+                            obcaecati necessitatibus dolorum? Fugit, numquam.</p>             
+               
+                    <div class="buttons">
+                        <a href="#" class="btn-1">Información</a>
+                        <a href="#" class="btn-1">Leer más</a>
+                    </div>         
+                </div>
+
+                <div class="header-img">
+                    <img src="/static/assets/img/presenSinFondo.png">
+                </div>
         </div>
     </header>
 
-<body id="page-top">
-    <main class="main-content">
-        <nav class="navbar navbar-expand-lg navbar-dark fixed-top main-nav">
-            <div class="container">
-                <a class="navbar-brand" href="#page-top">
-                    <img src="{{ url_for('static', filename='assets/img/navbar-logo.svg') }}" alt="Logo">
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive">
-                    <i class="fas fa-bars"></i>
+<!-- Contenedor Principal -->
+<main class="producto-container">
+    
+    <!-- Producto -->
+    <div class="producto-card">
+        <img src="/static/assets/img/presentacion.jpeg" alt="Tamal">
+        <div class="producto-info">
+            <h3>Tamal Tradicional</h3>
+            <p>Delicioso tamal hecho con ingredientes frescos y tradicionales.</p>
+            <div class="precio-accion">
+                <span>$5.000</span>
+                <button class="btn-agregar" onclick="agregarAlCarrito()">
+                    <i class="fas fa-cart-plus"></i> Añadir
                 </button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    
-                    <ul class="navbar-nav ms-auto align-items-center">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#services">Servicios</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#sobre_nosotros">Sobre Nosotros</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('pedido') }}">Pedido</a>
-                        </li>
-                        
-                        {% if session.conectado %}
-                            <li class="nav-item">
-<div class="d-flex align-items-center ms-lg-3 user-info-container">
-                                    <div class="user-info-navbar pe-2">
-                                        <span class="user-name">{{ session.nombre }}</span>
-                                                                    </div>
-                                    <div class="d-flex gap-2 user-actions">
-                                        <a class="btn btn-outline-light" href="{{ url_for('perfil_cliente') }}">
-                                            <i class="fas fa-user-circle me-2"></i>Perfil
-                                        </a>
-                                        <a class="btn btn-danger" href="{{ url_for('cerraSesion') }}">
-                                            <i class="fas fa-sign-out-alt me-2"></i>Salir
-                                        </a>
-                                    </div>
-                                    <li class="nav-item carrito-icono" onclick="toggleCarrito()">
-                                        <i class="fas fa-shopping-cart"></i>
-                                        <span class="badge" id="carrito-count">0</span>
-                                    </li>
-                                </div>
-                            </li>
-                        {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}">Registrarse</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('loginCliente') }}">Iniciar sesión</a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-        </nav>
-        <!-- Contenedor del producto y carrito -->
-<div class="producto-container" id="producto-container">
-  <!-- Producto -->
-  <div class="producto-card">
-      <img src="/static/assets/img/tamal.png" alt="Tamal">
-      <h5 class="mt-3">Tamal Tradicional</h5>
-      <p class="card-text">Delicioso tamal hecho con ingredientes frescos y tradicionales.</p>
-      <p class="mt-3"><strong>Precio:</strong> $5.000</p>
-      <button class="btn btn-primary" onclick="agregarAlCarrito()">Agregar al Carrito</button>
-  </div>
-
-  <!-- Carrito de Compras -->
-  <div class="carrito-container visible" id="carrito-container">
-      <h5>Carrito de Compras</h5>
-      <div id="carrito-items">
-          <!-- Aquí se mostrarán los productos agregados -->
-      </div>
-      <div class="text-center mt-3">
-          <button class="btn btn-primary btn-lg" onclick="procesarPedido()">Procesar Pedido</button>
-      </div>
-  </div>
-</div>
-
-    </main>
-<!-- Footer-->
-<!-- Footer -->
-<footer class="main-footer">
-    <div class="footer-content">
-        <div class="footer-section">
-            <h4>Explorar</h4>
-            <nav>
-                <a href="#menu">Menú</a>
-                <a href="#historia">Nuestra Historia</a>
-                <a href="#eventos">Eventos</a>
-            </nav>
-        </div>
-        
-        <div class="footer-section">
-            <h4>Legal</h4>
-            <nav>
-                <a href="#terminos">Términos y Condiciones</a>
-                <a href="#privacidad">Política de Privacidad</a>
-            </nav>
-        </div>
-        
-        <div class="footer-section">
-            <h4>Conéctate</h4>
-            <div class="social-links">
-                <a href="#"><i class="fab fa-tiktok"></i></a>
-                <a href="#"><i class="fab fa-youtube"></i></a>
-                <a href="#"><i class="fab fa-pinterest"></i></a>
             </div>
         </div>
     </div>
-    <p class="copyright">© 2023 Tama les D. Maria - Todos los derechos reservados</p>
-</footer>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Carrito de Compras -->
+    <div class="carrito-container visible" id="carrito-container">
+        <div class="carrito-header">
+            <h3>Tu Pedido <i class="fas fa-shopping-basket"></i></h3>
+            <button class="btn-cerrar" onclick="toggleCarrito()">&times;</button>
+        </div>
+        
+        <div id="carrito-items" class="carrito-items">
+            <!-- Productos agregados dinámicamente -->
+        </div>
+
+        <div class="carrito-footer">
+            <button class="btn-procesar" onclick="procesarPedido()">
+                Confirmar Pedido <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</main>
     
-    <script src="{{ url_for('static', filename ='assets/js/carrito.js') }}"></script>
-</body>
+ 
+
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Explorar</h4>
+                    <nav>
+                        <a href="#menu">Menú</a>
+                        <a href="#historia">Nuestra Historia</a>
+                        <a href="#eventos">Eventos</a>
+                    </nav>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <nav>
+                        <a href="#terminos">Términos y Condiciones</a>
+                        <a href="#privacidad">Política de Privacidad</a>
+                    </nav>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Conéctate</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+            </div>
+            <p class="copyright">© 2023 Tama les D. Maria - Todos los derechos reservados</p>
+        </footer>   
+
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script src="{{ url_for('static', filename ='assets/js/carrito.js') }}"></script>
+
+        <script>
+            document.querySelector('.nav-toggle').addEventListener('click', () => {
+                document.querySelector('.nav-menu').classList.toggle('active');
+            });
+
+            // Cerrar menú al hacer click fuera
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.nav-container')) {
+                    document.querySelector('.nav-menu').classList.remove('active');
+                }
+            });
+        </script>
+
+        <script>
+            window.addEventListener('scroll', function () {
+                const menu = document.querySelector('.menu');
+                let scrollPosition = window.scrollY;
+
+                if (scrollPosition > 50) { // Cambia 50 por los píxeles que prefieras
+                    menu.classList.add('scrolled');
+                } else {
+                    menu.classList.remove('scrolled');
+                }
+            });
+        </script>
+        <script>
+            // Efecto de scroll para el menú
+            window.addEventListener('scroll', function() {
+                const menu = document.querySelector('.menu');
+                const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+                
+                // Activa el efecto después de 80px de scroll
+                if (scrollPosition > 80) {
+                    menu.classList.add('scrolled');
+                } else {
+                    menu.classList.remove('scrolled');
+                }
+            });
+        </script>
+
+
+   </body>
 </html>
