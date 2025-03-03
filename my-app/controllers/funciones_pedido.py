@@ -4,8 +4,8 @@ def obtener_productos():
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                # Consulta SQL para obtener todos los productos
-                querySQL = "SELECT * FROM producto ORDER BY id DESC"
+                # Consulta SQL para obtener solo los productos disponibles
+                querySQL = "SELECT * FROM producto WHERE estado = 'Disponible' ORDER BY id DESC"
                 cursor.execute(querySQL)
                 productos = cursor.fetchall()
                 print(f"Productos recuperados: {productos}")  # Log para depuración

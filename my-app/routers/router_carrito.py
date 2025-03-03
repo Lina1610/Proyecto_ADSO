@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, session, render_template
-from controllers.funciones_carrito import agregar_al_carrito, obtener_carrito, actualizar_cantidad_carrito, vaciar_carrito
+from controllers.funciones_carrito import agregar_al_carrito, obtener_carrito, actualizar_cantidad_carrito, vaciar_carrito, eliminar_del_carrito
 
 carrito_bp = Blueprint('carrito', __name__)
 
@@ -74,3 +74,20 @@ def finalizar_compra():
         return jsonify({'status': 'success', 'mensaje': 'Compra finalizada con éxito'})
     else:
         return jsonify({'status': 'error', 'mensaje': 'Error al finalizar la compra'})
+
+@carrito_bp.route('/eliminar', methods=['POST'])
+def eliminar_producto_carrito():
+    """Ruta para eliminar un producto del carrito"""
+    if 'conectado' not in session or not session['conectado']:
+        return jsonify({'status': 'error', 'mensaje': 'Debe iniciar sesión para eliminar productos del carrito'})
+    
+    datos = request.json
+    carrito_id = datos.get('carrito_id')
+    users_id = session.get('id')
+    
+    if not carrito_id:
+        return jsonify({'status': 'error', 'mensaje': 'ID de carrito no proporcionado'})
+    
+    # Llamar a la función para eliminar el producto del carrito
+    resultado = eliminar_del_carrito(carrito_id, users_id)
+    return jsonify(resultado)

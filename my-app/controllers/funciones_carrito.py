@@ -119,3 +119,32 @@ def vaciar_carrito(users_id):
         if conexion.is_connected():
             cursor.close()
             conexion.close()
+
+def eliminar_del_carrito(carrito_id, users_id):
+    try:
+        conexion = connectionBD()
+        cursor = conexion.cursor()
+        
+        # Verificar que el item del carrito pertenezca al usuario
+        sql_check = "SELECT * FROM carrito_compras WHERE id = %s AND users_id = %s"
+        cursor.execute(sql_check, (carrito_id, users_id))
+        item = cursor.fetchone()
+        
+        if item is None:
+            print(f"El producto con ID {carrito_id} no pertenece al usuario {users_id}")
+            return {'status': 'error', 'mensaje': 'El producto no pertenece a este usuario'}
+        
+        # Eliminar el producto del carrito
+        sql_delete = "DELETE FROM carrito_compras WHERE id = %s"
+        cursor.execute(sql_delete, (carrito_id,))
+        conexion.commit()
+        
+        print(f"Producto con ID {carrito_id} eliminado del carrito del usuario {users_id}")
+        return {'status': 'success', 'mensaje': 'Producto eliminado del carrito'}
+    except Exception as e:
+        print(f"Error al eliminar del carrito: {str(e)}")
+        return {'status': 'error', 'mensaje': f'Error al eliminar del carrito: {str(e)}'}
+    finally:
+        if conexion.is_connected():
+            cursor.close()
+            conexion.close()
