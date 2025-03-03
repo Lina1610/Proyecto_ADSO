@@ -31,7 +31,7 @@
         <div class="row">
           <!-- Columna 1 -->
           <div class="col-md-6">
-            <label for="codigo" class="form-label">codigo</label>            
+            <label for="codigo" class="form-label">Código</label>            
             {{ producto.codigo }}
             <br />
             <label for="nombre" class="form-label">Nombre del producto</label>            
@@ -52,6 +52,19 @@
 
           <!-- Columna 2 -->
           <div class="col-md-6">
+            <!-- Mostrar la imagen del producto -->
+            <label for="imagen" class="form-label">Imagen del producto</label>
+            <br />
+            {% if producto.imagen %}
+              <img src="{{ producto.imagen }}" 
+                   alt="{{ producto.nombre }}" 
+                   class="img-fluid" 
+                   style="max-width: 100%; height: auto;">
+            {% else %}
+              <p class="text-muted">No hay imagen disponible.</p>
+            {% endif %}
+            <br /><br />
+
             <label for="precio" class="form-label">Precio del producto</label>
             <br />
             $ {{ '{:,.2f}'.format(producto.precio) }}
@@ -68,8 +81,6 @@
             <br />
             $ {{ '{:,.2f}'.format(producto.total) }}
           </div>
-        </div>
-       
         </div>
       </div>
     </div>

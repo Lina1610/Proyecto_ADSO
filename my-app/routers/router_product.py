@@ -11,12 +11,17 @@ from flask import jsonify
 PATH_URL = "public/producto"
 
 # funcion para registrar un producto
+from flask import request, flash, redirect, url_for, session
+from controllers.funciones_product import procesar_producto
+
 @app.route('/registrar-producto', methods=['GET', 'POST'])
 def viewFormProducto():
     if 'conectado' in session:  # Verifica si el usuario está conectado
         if request.method == 'POST':  # Si es un POST, procesamos el formulario
             data_form = request.form  # Captura los datos del formulario
-            resultado = procesar_producto(data_form)  # Procesa los datos del producto
+            imagen = request.files.get('imagen')  # Captura la imagen subida
+
+            resultado = procesar_producto(data_form, imagen)  # Procesa los datos del producto
 
             if isinstance(resultado, int) and resultado > 0:  # Si el registro fue exitoso
                 flash('Producto registrado con éxito', 'success')
@@ -140,3 +145,5 @@ def viewBuscarProductoBD():
     except Exception as e:
         print(f"Error en viewBuscarProductoBD: {e}")  # Log de depuración
         return jsonify({'error': str(e)}), 500  # Manejo de errores
+    
+
