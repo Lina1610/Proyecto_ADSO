@@ -7,6 +7,8 @@ function eliminarDireccion(id) {
 
 async function buscarDireccionAjax() {
     const search = document.getElementById("search_direcciones").value;
+    console.log("Término de búsqueda:", search);  // 🛠️ Depuración
+
     const url = "/buscando-direccion";
     const dataPeticion = { busqueda: search };
   
@@ -22,12 +24,11 @@ async function buscarDireccionAjax() {
         }
   
         const data = await response.json();
-  
+        console.log("Respuesta del servidor:", data);  // 🛠️ Depuración
+
         if (data.success) {
-            // Si hay resultados, actualiza la tabla con los datos encontrados
             document.getElementById("tabla_direcciones_body").innerHTML = data.html;
         } else {
-            // Si no hay resultados, muestra el mensaje con los estilos personalizados
             document.getElementById("tabla_direcciones_body").innerHTML = `
                 <tr>
                     <td colspan="8" style="text-align:center; color: red; font-weight: bold;">
@@ -40,6 +41,6 @@ async function buscarDireccionAjax() {
     } catch (error) {
         console.error("Error:", error);
     }
-  }
+}
 
   

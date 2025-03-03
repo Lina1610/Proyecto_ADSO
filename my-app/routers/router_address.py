@@ -508,12 +508,11 @@ def eliminar_direccion_route(id):
 
 @app.route("/buscando-direccion", methods=['POST'])
 def viewBuscarDireccionBD():
-    """
-    Busca direcciones en la base de datos según un término de búsqueda.
-    Retorna un JSON con los resultados o un mensaje de error.
-    """
     busqueda = request.json['busqueda']
+    print(f"Término de búsqueda recibido: {busqueda}")  # 🛠️ Depuración
+
     resultadoBusqueda = buscar_direccionBD(busqueda)
+    print(f"Resultados de la búsqueda: {resultadoBusqueda}")  # 🛠️ Depuración
 
     if resultadoBusqueda:
         html_resultados = render_template('public/direccion/busqueda_direccion.html', dataBusqueda=resultadoBusqueda)
