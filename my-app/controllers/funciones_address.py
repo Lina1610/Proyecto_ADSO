@@ -124,8 +124,97 @@ def procesar_direccion(dataForm):
                     return "No se pudo insertar la dirección en la base de datos."
 
     except Exception as e:
+
+
+        print(f"Error en procesar_form_direccion: {e}")  # Debug
+        return f"Se produjo un error en procesar_form_direccion: {str(e)}"
+    
+# controllers/funciones_address.py
+
+def obtener_direccion():
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Consulta SQL para obtener las direcciones con nombres de departamento, municipio y usuario
+                sql = """
+                    SELECT d.id, d.nombre_completo, d.barrio, d.domicilio, d.referencias, d.telefono, d.estado, d.costo_domicilio,
+                           d.departamento_id, d.municipio_id, d.users_id,
+                           dep.nombre AS nombre_departamento,
+                           mun.nombre AS nombre_municipio,
+                           u.nombre AS nombre_usuario
+                    FROM direccion d  # Asegúrate de que el nombre de la tabla sea correcto
+                    LEFT JOIN departamento dep ON d.departamento_id = dep.id
+                    LEFT JOIN municipio mun ON d.municipio_id = mun.id
+                    LEFT JOIN users u ON d.users_id = u.id
+                    ORDER BY d.id DESC
+                """
+                cursor.execute(sql)
+                direcciones = cursor.fetchall()
+                return direcciones
+    except Exception as e:
+        print(f"Error en obtener_direccion: {e}")  # Imprime el error en la consola para depuración
+        return []  # Retorna una lista vacía en caso de error
+    
+    
+    
+    
+    
+    
+    
+def actualizar_direccion(data_form, id_direccion):
+    """
+    Actualiza una dirección existente en la base de datos.
+    """
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Consulta SQL para actualizar una dirección
+                sql = """
+                    UPDATE direcciones
+                    SET nombre_completo = %s, barrio = %s, domicilio = %s, referencias = %s,
+                        telefono = %s, estado = %s, costo_domicilio = %s, departamento_id = %s, municipio_id = %s, users_id = %s
+                    WHERE id = %s
+                """
+                valores = (
+                    data_form['nombre_completo'],
+                    data_form['barrio'],
+                    data_form['domicilio'],
+                    data_form['referencias'],
+                    data_form['telefono'],
+                    data_form['estado'],
+                    data_form['costo_domicilio'],
+                    data_form['departamento_id'],
+                    data_form['municipio_id'],
+                    data_form['users_id'],
+                    id_direccion
+                )
+                cursor.execute(sql, valores)
+                conexion_MySQLdb.commit()
+                return True  # Retorna True si la actualización fue exitosa
+    except Exception as e:
+        print(f"Error en actualizar_direccion: {e}")
+        return False
+
+
+def eliminar_direccion(id_direccion):
+    """
+    Elimina una dirección de la base de datos.
+    """
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Consulta SQL para eliminar una dirección
+                sql = "DELETE FROM direcciones WHERE id = %s"
+                cursor.execute(sql, (id_direccion,))
+                conexion_MySQLdb.commit()
+                return True  # Retorna True si la eliminación fue exitosa
+    except Exception as e:
+        print(f"Error en eliminar_direccion: {e}")
+        return False
+
         print(f"❌ Error en procesar_direccion: {e}")  # Debug
         return f"Se produjo un error en procesar_direccion: {str(e)}"
+
 
 
 def obtener_direcciones_usuario(user_id):
@@ -336,3 +425,4 @@ def actualizar_direccion(id, dataForm):
     except Exception as e:
         print(f"Error en actualizar_direccion: {e}")  # Depuración
         return f"Se produjo un error al actualizar la dirección: {str(e)}"
+
