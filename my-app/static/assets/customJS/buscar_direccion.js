@@ -4,9 +4,8 @@ function eliminarDireccion(id) {
       window.location.href = `/eliminar-direccion/${id}`;
   }
 }
-
 async function buscarDireccionAjax() {
-    const search = document.getElementById("search_direcciones").value;
+    const search = document.getElementById("search_direccion").value.trim();
     console.log("Término de búsqueda:", search);  // 🛠️ Depuración
 
     const url = "/buscando-direccion";
@@ -29,6 +28,7 @@ async function buscarDireccionAjax() {
         if (data.success) {
             document.getElementById("tabla_direcciones_body").innerHTML = data.html;
         } else {
+            // Si no hay resultados, mostrar un mensaje
             document.getElementById("tabla_direcciones_body").innerHTML = `
                 <tr>
                     <td colspan="8" style="text-align:center; color: red; font-weight: bold;">
@@ -42,5 +42,3 @@ async function buscarDireccionAjax() {
         console.error("Error:", error);
     }
 }
-
-  

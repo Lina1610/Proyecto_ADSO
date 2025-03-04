@@ -508,25 +508,63 @@ def eliminar_direccion_route(id):
 
 @app.route("/buscando-direccion", methods=['POST'])
 def viewBuscarDireccionBD():
-    busqueda = request.json['busqueda']
-    print(f"Término de búsqueda recibido: {busqueda}")  # 🛠️ Depuración
+    try:
+        search_query = request.json.get('busqueda')  # Obtener el término de búsqueda desde el JSON
+        if not search_query:
+            return jsonify({'error': 'No search query provided'}), 400
 
-    resultadoBusqueda = buscar_direccionBD(busqueda)
-    print(f"Resultados de la búsqueda: {resultadoBusqueda}")  # 🛠️ Depuración
+        resultadoBusqueda = buscar_direccionBD(search_query)  # Buscar direcciones en la base de datos
 
-    if resultadoBusqueda:
-        html_resultados = render_template('public/direccion/busqueda_direccion.html', dataBusqueda=resultadoBusqueda)
-        return jsonify({'success': True, 'html': html_resultados})
-    
-    mensaje_error = f'No resultados para la búsqueda: "{busqueda}"'
-    return jsonify({'success': False, 'mensaje': mensaje_error})
+        if resultadoBusqueda:
+            # Si hay resultados, generar el HTML de la tabla
+            html_resultados = ""
+            for direccion in resultadoBusqueda:
+                html_resultados += f"""
+                <tr id="direccion_{direccion['id']}">
+                    <td>{direccion['id']}</td>
+                    <td>{direccion['nombre_completo']}</td>
+                    <td>{direccion['municipio_nombre']}</td>
+                    <td>{direccion['departamento_nombre']}</td>
+                    <td>{direccion['usuario_documento']}</td>
 
-@app.route('/verificar-sesion')
-def verificar_sesion():
-    if 'conectado' not in session:
-        return jsonify({"success": False, "error": "No autorizado"}), 401  # ⚡ Devolver JSON en lugar de redirección
+                    <!-- Columna de Estado -->
+                    <td>
+                        <span class="badge bg-{'success' if direccion['estado'] == 'Activo' else 'danger'}">
+                            {direccion['estado']}
+                        </span>
+                    </td>
 
-    return jsonify({
-        "success": True,
-        "user": session.get('usuario')
-    })
+                    <!-- Columna de Activación/Desactivación -->
+                    <td>
+                        {"<a href='/activar-direccion/" + str(direccion['id']) + "' class='btn btn-sm btn-success' title='Activar dirección'><i class='bi bi-check-circle'></i> Activar</a>" if direccion['estado'] == 'Inactivo' else "<a href='/desactivar-direccion/" + str(direccion['id']) + "' class='btn btn-sm btn-warning' title='Desactivar dirección'><i class='bi bi-x-circle'></i> Desactivar</a>"}
+                    </td>
+
+                    <!-- Columna de Acciones -->
+                    <td>
+                        <a href="/detalles-direccion/{direccion['id']}" class="btn btn-info btn-sm" title="Ver detalles">
+                            <i class="bi bi-eye"></i> Detalles
+                        </a>
+                        <a href="/editar-direccion/{direccion['id']}" class="btn btn-success btn-sm" title="Actualizar">
+                            <i class="bi bi-arrow-clockwise"></i> Actualizar
+                        </a>
+                        <a href="#" onclick="eliminarDireccion('{direccion['id']}');" class="btn btn-danger btn-sm" title="Eliminar">
+                            <i class="bi bi-trash3"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+                """
+            return jsonify({'success': True, 'html': html_resultados})
+        else:
+            # Si no hay resultados, devolver un mensaje en HTML
+            mensaje_html = f"""
+            <tr>
+                <td colspan="8" style="text-align:center;color: red;font-weight: bold;">
+                    No resultados para la búsqueda: <strong style="color: #222;">{search_query}</strong>
+                </td>
+            </tr>
+            """
+            return jsonify({'success': False, 'html': mensaje_html})
+
+    except Exception as e:
+        print(f"Error en viewBuscarDireccionBD: {e}")  # Log de depuración
+        return jsonify({'error': str(e)}), 500  # Manejo de errores
