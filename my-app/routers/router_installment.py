@@ -1,33 +1,32 @@
-from app import app
-from flask import render_template, request, flash, redirect, url_for, session, jsonify
-from mysql.connector.errors import Error
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from conexion.conexionBD import connectionBD
+from controllers.funciones_installment import procesar_abono
 
-# Importando conexión a BD
-from controllers.funciones_invoice import *
+router_installment = Blueprint('router_installment', __name__)
 
-PATH_URL = "public/factura"
-@app.route('/registrar-factura', methods=['GET', 'POST'])
-def viewFormFactura():
+@router_installment.route('/registrar-abono', methods=['GET', 'POST'])
+def viewFormAbono():
     if 'conectado' in session:
         if request.method == 'POST':
             # Obtener los datos del formulario
             dataForm = {
+                'numero_abonos': request.form.get('numero_abonos'),
                 'estado': request.form.get('estado'),
+                'monto': request.form.get('monto'),
                 'pedido_id': request.form.get('pedido_id'),
-                'users_id': request.form.get('users_id')  # Obtener el users_id del campo oculto
+                'users_id': request.form.get('users_id')
             }
 
-            # Procesar la factura
-            resultado = procesar_factura(dataForm)
+            # Procesar el abono
+            resultado = procesar_abono(dataForm)
 
             # Manejar el resultado
             if isinstance(resultado, int) and resultado > 0:
-                flash('Factura registrada correctamente.', 'success')
+                flash('Abono registrado correctamente.', 'success')
             else:
                 flash(resultado, 'error')  # Mostrar mensaje de error
 
-            return redirect(url_for('registrar-factura'))
+            return redirect(url_for('router_installment.viewFormAbono'))
 
         # Si es GET, mostrar el formulario con los datos necesarios
         with connectionBD() as conexion_MySQLdb:
@@ -41,7 +40,7 @@ def viewFormFactura():
                 pedidos = cursor.fetchall()
 
         return render_template(
-            'public/factura/registro_factura.html',  # Ruta corregida
+            'public/abono/registro_abono.html',  # Ruta corregida
             pedidos=pedidos
         )
     else:
