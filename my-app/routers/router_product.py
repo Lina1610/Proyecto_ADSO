@@ -6,6 +6,7 @@ from controllers.funciones_product import obtener_producto_por_id
 from controllers.funciones_product import actualizar_producto 
 from controllers.funciones_product import eliminar_producto
 from controllers.funciones_product import buscarProductoBD
+from controllers.funciones_product import obtener_todos_los_productos
 from flask import jsonify
 
 PATH_URL = "public/producto"
@@ -40,7 +41,8 @@ def viewFormProducto():
 @app.route('/lista-de-productos')
 def lista_productos():
     if 'conectado' in session:
-        productos = obtener_productos()
+        # Obtener todos los productos (para el panel de administración)
+        productos = obtener_todos_los_productos()
         return render_template('public/producto/lista_productos.html', productos=productos)
     else:
         flash('Primero debes iniciar sesión.', 'error')

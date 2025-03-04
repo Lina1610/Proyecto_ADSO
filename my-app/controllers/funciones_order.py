@@ -2,6 +2,7 @@ import re
 from conexion.conexionBD import connectionBD
 import datetime
 from mysql.connector.errors import Error
+from datetime import datetime
 
 from datetime import datetime
 from mysql.connector import Error
@@ -93,6 +94,8 @@ def asegurar_registros_entrega(conexion, direccion_id=1):
     except Error as err:
         print(f"Error al asegurar registros de entrega: {err}")
 
+from datetime import datetime
+
 def procesar_pedido(dataForm):
     """
     Procesa y guarda un pedido en la base de datos.
@@ -113,10 +116,21 @@ def procesar_pedido(dataForm):
         # Mostrar información de depuración
         print(f"Tipo de entrega recibido del formulario: '{tipo_entrega}'")
 
+        # Obtener el método de pago
+        metodo_pago_id = int(dataForm['metodo_pago'])
+        print(f"Valor de metodo_pago_id: {metodo_pago_id}")  # Depuración
+
         # Paso 1: Obtener el ID de la entrega basado en el tipo de entrega
         with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                # Consulta para obtener el ID de la entrega
+            with conexion_MySQLdb.cursor(dictionary=True, buffered=True) as cursor:
+                # Verificar que el método de pago exista
+                cursor.execute("SELECT id FROM metodo_pago WHERE id = %s", (metodo_pago_id,))
+                metodo_pago = cursor.fetchone()
+
+                if not metodo_pago:
+                    return f"El método de pago con ID {metodo_pago_id} no existe."
+
+                # Obtener el ID de la entrega
                 cursor.execute("SELECT id FROM entrega WHERE tipo = %s", (tipo_entrega,))
                 entrega = cursor.fetchone()  # Consumir el resultado
                 
@@ -147,14 +161,14 @@ def procesar_pedido(dataForm):
                     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """
                 valores = (
-                    datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),  # Fecha automática
-                    dataForm['fechaEntrega'],                              # Fecha de entrega
-                    dataForm['horaEntrega'],                               # Hora de entrega
-                    dataForm['estado'],                                    # Estado del pedido
-                    int(dataForm['users_id']),                             # ID del usuario
-                    int(dataForm['producto_id']),                          # ID del producto
-                    int(dataForm['metodo_pago']),                          # ID del método de pago
-                    entrega_id                                             # ID de la entrega
+                    datetime.now().strftime('%Y-%m-%d'),  # Solo la fecha (formato DATE)
+                    dataForm['fechaEntrega'],            # Fecha de entrega
+                    dataForm['horaEntrega'],             # Hora de entrega
+                    dataForm['estado'],                  # Estado del pedido
+                    int(dataForm['users_id']),           # ID del usuario
+                    int(dataForm['producto_id']),        # ID del producto
+                    metodo_pago_id,                     # ID del método de pago
+                    entrega_id                          # ID de la entrega
                 )
                 cursor.execute(sql, valores)
                 conexion_MySQLdb.commit()

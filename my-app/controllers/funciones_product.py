@@ -186,3 +186,24 @@ def eliminar_producto(id):
     except Exception as e:
         print(f"Error en eliminar_producto: {e}")
         return None
+    
+def obtener_todos_los_productos():
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Consulta SQL para obtener todos los productos (sin filtrar por estado)
+                querySQL = "SELECT * FROM producto ORDER BY id DESC"
+                cursor.execute(querySQL)
+                productos = cursor.fetchall()
+                
+                # Convertir decimales a float para manipulación en Python
+                for producto in productos:
+                    if 'precio' in producto:
+                        producto['precio'] = float(producto['precio'])
+                    if 'total' in producto:
+                        producto['total'] = float(producto['total'])
+                
+                return productos
+    except Exception as e:
+        print(f"Error en obtener_todos_los_productos: {e}")
+        return []
