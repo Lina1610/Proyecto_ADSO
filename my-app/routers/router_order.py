@@ -145,7 +145,8 @@ def viewEditarPedido(id):
         if request.method == 'GET':
             # Obtener los datos del pedido por su ID
             with connectionBD() as conexion_MySQLdb:
-                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Usar un cursor con buffered=True
+                with conexion_MySQLdb.cursor(dictionary=True, buffered=True) as cursor:
                     cursor.execute("""
                         SELECT p.id, p.fecha, p.fechaEntrega, p.horaEntrega, p.estado,
                                p.users_id, p.producto_id, p.metodo_pago_id, p.entrega_id,
@@ -158,7 +159,7 @@ def viewEditarPedido(id):
                         JOIN entrega e ON p.entrega_id = e.id
                         WHERE p.id = %s
                     """, (id,))
-                    pedido = cursor.fetchone()
+                    pedido = cursor.fetchone()  # Consumir el resultado
 
                     if not pedido:
                         flash('Pedido no encontrado', 'error')
@@ -166,10 +167,10 @@ def viewEditarPedido(id):
 
                     # Obtener usuarios, productos, métodos de pago y tipos de entrega
                     cursor.execute("SELECT id, nombre FROM users")
-                    usuarios = cursor.fetchall()
+                    usuarios = cursor.fetchall()  # Consumir todos los resultados
 
                     cursor.execute("SELECT id, nombre FROM producto")
-                    productos = cursor.fetchall()
+                    productos = cursor.fetchall()  # Consumir todos los resultados
 
                     metodos_pago = obtener_metodos_pago(conexion_MySQLdb)
                     tipos_entrega = obtener_tipos_entrega(conexion_MySQLdb)
@@ -188,12 +189,46 @@ def viewEditarPedido(id):
             data_form = request.form
             resultado = actualizar_pedido(id, data_form)
 
-            if resultado:
+            if resultado is True:
                 flash('Pedido actualizado correctamente', 'success')
             else:
-                flash('Error al actualizar el pedido', 'error')
+                flash(f'Error al actualizar el pedido: {resultado}', 'error')
 
             return redirect(url_for('lista_pedidos'))
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
+    
+@app.route('/detalles-pedido/<int:id>')
+def detalles_pedido(id):
+    """
+    Muestra los detalles de un pedido específico por su ID.
+    Solo accesible si el usuario está conectado.
+    """
+    if 'conectado' in session:
+        # Obtener el pedido por su ID
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                cursor.execute("""
+                    SELECT p.id, p.fecha, p.fechaEntrega, p.horaEntrega, p.estado,
+                           u.nombre AS usuario_nombre, pr.nombre AS producto_nombre,
+                           mp.metodo AS metodo_pago, e.tipo AS tipo_entrega
+                    FROM pedido p
+                    JOIN users u ON p.users_id = u.id
+                    JOIN producto pr ON p.producto_id = pr.id
+                    JOIN metodo_pago mp ON p.metodo_pago_id = mp.id
+                    JOIN entrega e ON p.entrega_id = e.id
+                    WHERE p.id = %s
+                """, (id,))
+                pedido = cursor.fetchone()
+
+        if pedido:
+            return render_template('public/pedido/detalles_pedido.html', pedido=pedido)
+        else:
+            flash('Pedido no encontrado', 'error')
+            return redirect(url_for('lista_pedidos'))
+    else:
+        flash('Primero debes iniciar sesión.', 'error')
+        return redirect(url_for('inicio'))
+    
+

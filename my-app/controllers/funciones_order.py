@@ -247,7 +247,27 @@ def eliminar_pedido(id):
 def actualizar_pedido(id, data_form):
     try:
         with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+            # Usar un cursor con buffered=True
+            with conexion_MySQLdb.cursor(dictionary=True, buffered=True) as cursor:
+                # Validar que los campos no estén vacíos
+                campos_requeridos = [
+                    'fecha', 'fechaEntrega', 'horaEntrega', 'estado',
+                    'users_id', 'producto_id', 'metodo_pago', 'tipo_entrega'
+                ]
+                for campo in campos_requeridos:
+                    if campo not in data_form or not data_form[campo].strip():
+                        return f"El campo {campo} es obligatorio."
+
+                # Obtener el ID de la entrega basado en el tipo de entrega
+                cursor.execute("SELECT id FROM entrega WHERE tipo = %s", (data_form['tipo_entrega'],))
+                entrega = cursor.fetchone()  # Consumir el resultado
+
+                if not entrega:
+                    return f"Tipo de entrega no válido: {data_form['tipo_entrega']}"
+
+                entrega_id = entrega['id']
+
+                # Actualizar el pedido en la base de datos
                 sql = """
                     UPDATE pedido 
                     SET fecha = %s, fechaEntrega = %s, horaEntrega = %s, estado = %s,
@@ -262,12 +282,17 @@ def actualizar_pedido(id, data_form):
                     int(data_form['users_id']),
                     int(data_form['producto_id']),
                     int(data_form['metodo_pago']),
-                    int(data_form['tipo_entrega']),
+                    entrega_id,
                     id
                 )
                 cursor.execute(sql, valores)
                 conexion_MySQLdb.commit()
-                return cursor.rowcount > 0
+
+                if cursor.rowcount > 0:
+                    return True  # Éxito
+                else:
+                    return "No se encontró el pedido o no se realizaron cambios."
+
     except Exception as e:
-        print(f"Error en actualizar_pedido: {e}")
-        return False
+        print(f"Error en actualizar_pedido: {e}")  # Depuración
+        return f"Se produjo un error al actualizar el pedido: {str(e)}"
