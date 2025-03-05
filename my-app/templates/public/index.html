@@ -330,6 +330,100 @@
   });
   </script>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Crear elementos
+      const panel = document.createElement('div');
+      panel.className = 'accessibility-panel';
+      panel.innerHTML = `
+          <button class="accessibility-option" data-action="increase-font">
+              <i class="fas fa-search-plus"></i>Aumentar Texto
+          </button>
+          <button class="accessibility-option" data-action="decrease-font">
+              <i class="fas fa-search-minus"></i>Reducir Texto
+          </button>
+          <button class="accessibility-option" data-action="high-contrast">
+              <i class="fas fa-adjust"></i>Contraste Alto
+          </button>
+          <button class="accessibility-option" data-action="reset">
+              <i class="fas fa-sync"></i>Reiniciar
+          </button>
+      `;
+  
+      const toggleBtn = document.createElement('button');
+      toggleBtn.className = 'accessibility-toggle';
+      toggleBtn.innerHTML = '<i class="fas fa-universal-access"></i>';
+      toggleBtn.ariaLabel = 'Panel de accesibilidad';
+  
+      // Variables de control
+      let currentFontSize = 16;
+      const minFont = 14;
+      const maxFont = 20;
+  
+      // Funcionalidades
+      const updateFontSize = () => {
+          document.documentElement.style.fontSize = `${currentFontSize}px`;
+          localStorage.setItem('fontSize', currentFontSize);
+      };
+  
+      toggleBtn.addEventListener('click', () => {
+          panel.classList.toggle('active');
+          toggleBtn.classList.toggle('active');
+      });
+  
+      panel.addEventListener('click', (e) => {
+          const action = e.target.closest('button')?.dataset.action;
+          if (!action) return;
+  
+          switch(action) {
+              case 'increase-font':
+                  if (currentFontSize < maxFont) {
+                      currentFontSize += 1;
+                      updateFontSize();
+                  }
+                  break;
+                  
+              case 'decrease-font':
+                  if (currentFontSize > minFont) {
+                      currentFontSize -= 1;
+                      updateFontSize();
+                  }
+                  break;
+                  
+              case 'high-contrast':
+                  document.body.classList.toggle('high-contrast');
+                  localStorage.setItem('highContrast', document.body.classList.contains('high-contrast'));
+                  break;
+                  
+              case 'reset':
+                  currentFontSize = 16;
+                  document.body.classList.remove('high-contrast');
+                  localStorage.removeItem('highContrast');
+                  updateFontSize();
+                  break;
+          }
+      });
+  
+      // Cargar preferencias
+      const savedFontSize = localStorage.getItem('fontSize');
+      if (savedFontSize) currentFontSize = parseInt(savedFontSize);
+      updateFontSize();
+  
+      if (localStorage.getItem('highContrast') === 'true') {
+          document.body.classList.add('high-contrast');
+      }
+  
+      // Añadir al DOM
+      document.body.append(toggleBtn, panel);
+  
+      // Cerrar panel al hacer click fuera
+      document.addEventListener('click', (e) => {
+          if (!e.target.closest('.accessibility-toggle') && !e.target.closest('.accessibility-panel')) {
+              panel.classList.remove('active');
+          }
+      });
+  });
+  </script>
 
 
 
