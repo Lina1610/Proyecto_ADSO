@@ -1,9 +1,5 @@
 {% extends 'public/base_cpanel.html' %}
-
-<!-- Cambiando el title -->
 {% block title %}Crud con Python 🐍 | Lista de Facturas{% endblock %}
-
-<!-- Inicio del block -->
 {% block body %}
 
 <div class="card" style="border-radius: 0px !important">
@@ -13,17 +9,19 @@
       <hr />
     </div>
 
+    <!-- Campo de búsqueda -->
     <div class="row justify-content-end">
       <div class="col-md-6 mt-4 py-2">
         <input
-          type="search_facturas_1"
-          id="search_facturas_1"
+          type="search"
+          id="search_factura"
           class="form-control border-0 shadow-none"
           placeholder="Buscar factura..."
-          onkeyup="buscadorTable('tbl_facturas')" />
+          onkeyup="buscarFacturaAjax()" />
       </div>
     </div>
 
+    <!-- Tabla de facturas -->
     <div class="row justify-content-center mb-2">
       <div class="table-responsive text-nowrap table-hover">
         <table
@@ -40,7 +38,7 @@
               <th>Acción</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="tabla_facturas_body">
             {% for factura in facturas %}
             <tr id="factura_{{ factura.id }}">
               <td>{{ loop.index }}</td>
@@ -49,22 +47,16 @@
               <td>{{ factura.pedido_id }}</td>
               <td width="10px">
                 <a
-                  href="/detalles-factura/{{ factura.id }}"
-                  title="Ver detalles"
-                  type="button"
+                  href="{{ url_for('detalles_factura', id=factura.id) }}"
                   class="btn btn-info btn-sm"
-                  data-bs-toggle="tooltip"
-                  data-bs-offset="0,4"
-                  data-bs-placement="top"
-                  data-bs-html="true"
-                  title="<span>Ver detalles</span>">
+                  title="Ver detalles">
                   <i class="bi bi-eye"></i>
                   Ver detalles
                 </a>
                 <a
-                  href="{{ url_for('viewEditarFactura', id = factura.id) }}"
+                  href="{{ url_for('viewEditarFactura', id=factura.id) }}"
                   class="btn btn-success btn-sm"
-                  tooltip="Actualizar Registro">
+                  title="Actualizar">
                   <i class="bi bi-arrow-clockwise"></i>
                   Actualizar
                 </a>
@@ -72,11 +64,7 @@
                   href="#"
                   onclick="eliminarFactura('{{ factura.id }}');"
                   class="btn btn-danger btn-sm"
-                  data-bs-toggle="tooltip"
-                  data-bs-offset="0,4"
-                  data-bs-placement="top"
-                  data-bs-html="true"
-                  title="<span>Eliminar factura</span>">
+                  title="Eliminar">
                   <i class="bi bi-trash3"></i>
                   Eliminar
                 </a>
@@ -85,10 +73,12 @@
             {% endfor %}
           </tbody>
         </table>
-        
       </div>
     </div>
   </div>
 </div>
+
+<!-- Vincular el archivo JavaScript -->
+<script src="{{ url_for('static', filename='assets/customJS/buscar_factura.js') }}"></script>
 
 {% endblock %}

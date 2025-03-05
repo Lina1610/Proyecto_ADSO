@@ -93,13 +93,14 @@ def lista_facturas():
 @app.route("/buscando-factura", methods=['POST'])
 def viewBuscarFacturaBD():
     try:
-        search_query = request.json.get('busqueda')
+        search_query = request.json.get('busqueda')  # Obtener el término de búsqueda desde el JSON
         if not search_query:
             return jsonify({'error': 'No search query provided'}), 400
 
-        resultadoBusqueda = buscarFacturaBD(search_query)
+        resultadoBusqueda = buscarFacturaBD(search_query)  # Buscar facturas en la base de datos
 
         if resultadoBusqueda:
+            # Si hay resultados, generar el HTML de la tabla
             html_resultados = ""
             for factura in resultadoBusqueda:
                 html_resultados += f"""
@@ -109,10 +110,10 @@ def viewBuscarFacturaBD():
                     <td>{factura['fecha']}</td>
                     <td>{factura['pedido_id']}</td>
                     <td width="10px">
-                        <a href="#" class="btn btn-info btn-sm" title="Ver detalles">
+                        <a href="/detalles-factura/{factura['id']}" class="btn btn-info btn-sm" title="Ver detalles">
                             <i class="bi bi-eye"></i> Ver detalles
                         </a>
-                        <a href="#" class="btn btn-success btn-sm" title="Actualizar">
+                        <a href="/editar-factura/{factura['id']}" class="btn btn-success btn-sm" title="Actualizar">
                             <i class="bi bi-arrow-clockwise"></i> Actualizar
                         </a>
                         <a href="#" onclick="eliminarFactura('{factura['id']}');" class="btn btn-danger btn-sm" title="Eliminar">
@@ -123,6 +124,7 @@ def viewBuscarFacturaBD():
                 """
             return jsonify({'success': True, 'html': html_resultados})
         else:
+            # Si no hay resultados, devolver un mensaje en HTML
             mensaje_html = f"""
             <tr>
                 <td colspan="5" style="text-align:center;color: red;font-weight: bold;">
@@ -131,9 +133,10 @@ def viewBuscarFacturaBD():
             </tr>
             """
             return jsonify({'success': False, 'html': mensaje_html})
+
     except Exception as e:
-        print(f"Error en viewBuscarFacturaBD: {e}")
-        return jsonify({'error': str(e)}), 500
+        print(f"Error en viewBuscarFacturaBD: {e}")  # Log de depuración
+        return jsonify({'error': str(e)}), 500  # Manejo de errores
 
 # Ruta para eliminar una factura
 @app.route('/eliminar-factura/<int:id>', methods=['DELETE'])

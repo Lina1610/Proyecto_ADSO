@@ -72,10 +72,13 @@ def buscarFacturaBD(search_query):
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                cursor.execute("""
+                querySQL = """
                     SELECT * FROM factura
                     WHERE estado LIKE %s OR fecha LIKE %s OR pedido_id LIKE %s
-                """, (f"%{search_query}%", f"%{search_query}%", f"%{search_query}%"))
+                    ORDER BY id DESC
+                """
+                search_pattern = f"%{search_query}%"
+                cursor.execute(querySQL, (search_pattern, search_pattern, search_pattern))
                 facturas = cursor.fetchall()
                 return facturas
     except Exception as e:
@@ -92,6 +95,7 @@ def eliminar_factura(id):
     except Exception as e:
         print(f"Error en eliminar_factura: {e}")
         return 0
+    
 
 def actualizar_factura(id, data_form):
     try:
