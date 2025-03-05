@@ -48,3 +48,63 @@ def procesar_stock(dataForm):
     except Exception as e:
         print(f"Error en procesar_stock: {e}")
         return f"Se produjo un error en procesar_stock: {str(e)}"
+    
+def obtener_stock():
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                cursor.execute("""
+                    SELECT s.id, s.cantidad_disponible,
+                           p.nombre AS producto_nombre, p.id AS producto_id,
+                           u.nombre AS usuario_nombre, u.id AS users_id
+                    FROM stock s
+                    JOIN producto p ON s.producto_id = p.id
+                    JOIN users u ON s.users_id = u.id
+                """)
+                stock = cursor.fetchall()
+                print("Datos obtenidos de la base de datos:", stock)  # Depuración
+                return stock
+    except Exception as e:
+        print(f"Error en obtener_stock: {e}")
+        return []
+
+def obtener_stock_por_id(id):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                cursor.execute("""
+                    SELECT s.id, s.cantidad_disponible, s.fecha_registro,
+                           p.nombre AS producto_nombre, p.id AS producto_id,
+                           u.nombre AS usuario_nombre, u.id AS users_id
+                    FROM stock s
+                    JOIN producto p ON s.producto_id = p.id
+                    JOIN users u ON s.users_id = u.id
+                    WHERE s.id = %s
+                """, (id,))
+                stock = cursor.fetchone()
+                return stock
+    except Exception as e:
+        print(f"Error en obtener_stock_por_id: {e}")
+        return None
+
+def obtener_productos():
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                cursor.execute("SELECT id, nombre FROM producto")
+                productos = cursor.fetchall()
+                return productos
+    except Exception as e:
+        print(f"Error en obtener_productos: {e}")
+        return []
+
+def obtener_usuarios():
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                cursor.execute("SELECT id, nombre FROM users")
+                usuarios = cursor.fetchall()
+                return usuarios
+    except Exception as e:
+        print(f"Error en obtener_usuarios: {e}")
+        return []

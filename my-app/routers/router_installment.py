@@ -1,9 +1,11 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from conexion.conexionBD import connectionBD
 from controllers.funciones_installment import procesar_abono
+from app import app
 
-router_installment = Blueprint('router_installment', __name__)
-@router_installment.route('/registrar-abono', methods=['GET', 'POST'])
+
+
+@app.route('/registrar-abono', methods=['GET', 'POST'])
 def viewFormAbono():
     if 'conectado' in session:
         if request.method == 'POST':
@@ -21,7 +23,7 @@ def viewFormAbono():
             else:
                 flash(resultado, 'error')
 
-            return redirect(url_for('router_installment.viewFormAbono'))
+            return redirect(url_for('viewFormAbono'))
 
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:

@@ -13,7 +13,6 @@ from routers.router_home import *
 from routers.router_page_not_found import *
 from routers.router_product import *
 from routers.router_order import *
-from routers.router_pass import *
 from routers.router_user import *
 from routers.router_address import *
 from routers.router_delivery import *

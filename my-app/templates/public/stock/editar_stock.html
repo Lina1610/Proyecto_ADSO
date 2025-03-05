@@ -1,0 +1,78 @@
+{% extends 'public/base_cpanel.html' %}
+
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Editar Stock{% endblock %}
+
+<!-- Inicio del block -->
+{% block body %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">
+        <a href="/lista-de-stock">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        EDITAR STOCK
+      </h3>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="{{ url_for('router_stock.actualizarStock') }}"
+        autocomplete="off">
+        <input type="hidden" name="id" value="{{ stock.id }}">
+
+        <div class="row">
+          <div class="col-md-6">
+            <label for="cantidad_disponible" class="form-label">Cantidad Disponible</label>
+            <input
+              type="number"
+              name="cantidad_disponible"
+              class="form-control"
+              value="{{ stock.cantidad_disponible }}"
+              min="1"
+              required />
+          </div>
+          <div class="col-md-6">
+            <label for="producto_id" class="form-label">Producto</label>
+            <select class="form-select" name="producto_id" required>
+              <option value="" selected disabled>Seleccione un producto</option>
+              {% for producto in productos %}
+                <option value="{{ producto.id }}" {% if producto.id == stock.producto_id %}selected{% endif %}>
+                  {{ producto.nombre }} (ID: {{ producto.id }})
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="users_id" class="form-label">Usuario</label>
+            <select class="form-select" name="users_id" required>
+              <option value="" selected disabled>Seleccione un usuario</option>
+              {% for usuario in usuarios %}
+                <option value="{{ usuario.id }}" {% if usuario.id == stock.users_id %}selected{% endif %}>
+                  {{ usuario.nombre }} (ID: {{ usuario.id }})
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3 mt-4 text-center">
+          <button type="submit" class="btn rounded-pill btn-primary">
+            Guardar cambios
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
