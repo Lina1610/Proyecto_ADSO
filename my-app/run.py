@@ -18,7 +18,7 @@ from routers.router_user import *
 from routers.router_address import *
 from routers.router_delivery import *
 from routers.router_invoice import *
-from routers.router_inventory import *
+from routers.router_stock import *
 from routers.router_installment import *
 
 
