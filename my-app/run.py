@@ -5,6 +5,7 @@ from config import Config  # Importar la configuración
 from dotenv import load_dotenv
 from datetime import datetime  # Necesario para trabajar con las fechas
 
+
 load_dotenv()  # Cargar variables de entorno desde .env
 
 # Importando los Routers
@@ -13,12 +14,12 @@ from routers.router_home import *
 from routers.router_page_not_found import *
 from routers.router_product import *
 from routers.router_order import *
-from routers.router_pass import *
 from routers.router_user import *
 from routers.router_address import *
 from routers.router_delivery import *
 from routers.router_invoice import *
 from routers.router_inventory import *
+from routers.router_installment import *
 
 
 

@@ -58,7 +58,11 @@ def viewFormFactura():
             else:
                 flash(resultado, 'error')  # Mostrar mensaje de error
 
+
             return redirect(url_for('viewFormFactura'))
+
+            return redirect(url_for('registrar-factura'))
+
 
         # Si es GET, mostrar el formulario con los datos necesarios
         with connectionBD() as conexion_MySQLdb:
