@@ -18,32 +18,30 @@ def procesar_factura(dataForm):
             return "Estado de factura inválido. Debe ser 'Pendiente' o 'Facturado'"
 
         # Conversión de pedido_id a entero
-        pedido_id = int(dataForm['pedido_id'])
+        try:
+            pedido_id = int(dataForm['pedido_id'])
+        except ValueError:
+            return "Datos numéricos inválidos. Asegúrate de que el ID del pedido sea un número válido"
 
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                 # Verificar existencia del pedido
-                cursor.execute("SELECT id, users_id FROM pedido WHERE id = %s", (pedido_id,))
+                cursor.execute("SELECT id FROM pedido WHERE id = %s", (pedido_id,))
                 pedido = cursor.fetchone()
                 if not pedido:
                     return "El pedido seleccionado no existe"
 
-                # Obtener el users_id del pedido
-                users_id = pedido['users_id']
-
-                # SQL para insertar la factura
+                # SQL para insertar la factura (sin users_id)
                 sql = """
                     INSERT INTO factura (
                         estado,
-                        pedido_id,
-                        users_id
-                    ) VALUES (%s, %s, %s)
+                        pedido_id
+                    ) VALUES (%s, %s)
                 """
                 # Creando una tupla con los valores del INSERT
                 valores = (
                     estado,
-                    pedido_id,
-                    users_id
+                    pedido_id
                 )
 
                 cursor.execute(sql, valores)
@@ -55,8 +53,69 @@ def procesar_factura(dataForm):
                 else:
                     return "No se pudo insertar la factura en la base de datos"
 
-    except ValueError:
-        return "Datos numéricos inválidos. Asegúrate de que el ID del pedido sea un número válido"
     except Exception as e:
         print(f"Error en procesar_factura: {e}")  # Debug
         return f"Se produjo un error en procesar_factura: {str(e)}"
+    
+def obtener_facturas():
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                cursor.execute("SELECT * FROM factura")
+                facturas = cursor.fetchall()
+                return facturas
+    except Exception as e:
+        print(f"Error en obtener_facturas: {e}")
+        return []
+
+def buscarFacturaBD(search_query):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                querySQL = """
+                    SELECT * FROM factura
+                    WHERE estado LIKE %s OR fecha LIKE %s OR pedido_id LIKE %s
+                    ORDER BY id DESC
+                """
+                search_pattern = f"%{search_query}%"
+                cursor.execute(querySQL, (search_pattern, search_pattern, search_pattern))
+                facturas = cursor.fetchall()
+                return facturas
+    except Exception as e:
+        print(f"Error en buscarFacturaBD: {e}")
+        return []
+
+def eliminar_factura(id):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor() as cursor:
+                cursor.execute("DELETE FROM factura WHERE id = %s", (id,))
+                conexion_MySQLdb.commit()
+                return cursor.rowcount
+    except Exception as e:
+        print(f"Error en eliminar_factura: {e}")
+        return 0
+    
+
+def actualizar_factura(id, data_form):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor() as cursor:
+                sql = """
+                    UPDATE factura
+                    SET estado = %s, fecha = %s, pedido_id = %s
+                    WHERE id = %s
+                """
+                valores = (
+                    data_form['estado'],
+                    data_form['fecha'],
+                    data_form['pedido_id'],
+                    id
+                )
+                cursor.execute(sql, valores)
+                conexion_MySQLdb.commit()
+                return True
+    except Exception as e:
+        print(f"Error en actualizar_factura: {e}")
+        return str(e)
+    

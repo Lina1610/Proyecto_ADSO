@@ -132,28 +132,41 @@ def procesar_direccion(dataForm):
 # controllers/funciones_address.py
 
 def obtener_direccion():
+    """
+    Obtiene todas las direcciones de la base de datos con los nombres de municipio, departamento y documento del usuario.
+    Retorna una lista de todas las direcciones.
+    """
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                # Consulta SQL para obtener las direcciones con nombres de departamento, municipio y usuario
                 sql = """
-                    SELECT d.id, d.nombre_completo, d.barrio, d.domicilio, d.referencias, d.telefono, d.estado, d.costo_domicilio,
-                           d.departamento_id, d.municipio_id, d.users_id,
-                           dep.nombre AS nombre_departamento,
-                           mun.nombre AS nombre_municipio,
-                           u.nombre AS nombre_usuario
-                    FROM direccion d  # Asegúrate de que el nombre de la tabla sea correcto
-                    LEFT JOIN departamento dep ON d.departamento_id = dep.id
-                    LEFT JOIN municipio mun ON d.municipio_id = mun.id
+                    SELECT 
+                        d.id, 
+                        d.nombre_completo, 
+                        d.barrio, 
+                        d.domicilio, 
+                        d.referencias, 
+                        d.telefono,
+                        d.estado,
+                        d.costo_domicilio,
+                        d.created_at,
+                        u.documento AS usuario_documento,
+                        m.nombre AS municipio_nombre,
+                        dep.nombre AS departamento_nombre
+                    FROM direccion d
                     LEFT JOIN users u ON d.users_id = u.id
+                    LEFT JOIN municipio m ON d.municipio_id = m.id
+                    LEFT JOIN departamento dep ON d.departamento_id = dep.id
                     ORDER BY d.id DESC
                 """
+                print("Ejecutando consulta SQL:", sql)  # Depuración
                 cursor.execute(sql)
                 direcciones = cursor.fetchall()
+                print("Datos de direcciones obtenidos:", direcciones)  # Depuración
                 return direcciones
     except Exception as e:
-        print(f"Error en obtener_direccion: {e}")  # Imprime el error en la consola para depuración
-        return []  # Retorna una lista vacía en caso de error
+        print(f"Error en obtener_direccion: {e}")  # Depuración
+        return []
     
     
     

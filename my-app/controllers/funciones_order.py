@@ -182,3 +182,117 @@ def procesar_pedido(dataForm):
     except Exception as e:
         print(f"Error en procesar_pedido: {e}")  # Debug
         return f"Se produjo un error en procesar_pedido: {str(e)}"
+
+def obtener_pedidos():
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                querySQL = """
+                    SELECT p.id, p.fecha, p.fechaEntrega, p.horaEntrega, p.estado,
+                           u.nombre AS usuario_nombre, pr.nombre AS producto_nombre,
+                           mp.metodo AS metodo_pago, e.tipo AS tipo_entrega
+                    FROM pedido p
+                    JOIN users u ON p.users_id = u.id
+                    JOIN producto pr ON p.producto_id = pr.id
+                    JOIN metodo_pago mp ON p.metodo_pago_id = mp.id
+                    JOIN entrega e ON p.entrega_id = e.id
+                    ORDER BY p.id DESC
+                """
+                cursor.execute(querySQL)
+                pedidos = cursor.fetchall()
+                print("Pedidos obtenidos:", pedidos)  # Depuración
+                return pedidos
+    except Exception as e:
+        print(f"Error en obtener_pedidos: {e}")
+        return []
+
+
+def buscarPedidoBD(search):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                querySQL = """
+                    SELECT p.id, p.fecha, p.fechaEntrega, p.horaEntrega, p.estado,
+                           u.nombre AS usuario_nombre, pr.nombre AS producto_nombre,
+                           mp.metodo AS metodo_pago, e.tipo AS tipo_entrega
+                    FROM pedido p
+                    JOIN users u ON p.users_id = u.id
+                    JOIN producto pr ON p.producto_id = pr.id
+                    JOIN metodo_pago mp ON p.metodo_pago_id = mp.id
+                    JOIN entrega e ON p.entrega_id = e.id
+                    WHERE u.nombre LIKE %s OR pr.nombre LIKE %s OR mp.metodo LIKE %s OR e.tipo LIKE %s
+                    ORDER BY p.id DESC
+                """
+                search_pattern = f"%{search}%"
+                cursor.execute(querySQL, (search_pattern, search_pattern, search_pattern, search_pattern))
+                resultado_busqueda = cursor.fetchall()
+                return resultado_busqueda
+    except Exception as e:
+        print(f"Error en buscarPedidoBD: {e}")
+        return []
+
+
+def eliminar_pedido(id):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                querySQL = "DELETE FROM pedido WHERE id = %s"
+                cursor.execute(querySQL, (id,))
+                conexion_MySQLdb.commit()
+                return cursor.rowcount
+    except Exception as e:
+        print(f"Error en eliminar_pedido: {e}")
+        return None
+    
+def actualizar_pedido(id, data_form):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            # Usar un cursor con buffered=True
+            with conexion_MySQLdb.cursor(dictionary=True, buffered=True) as cursor:
+                # Validar que los campos no estén vacíos
+                campos_requeridos = [
+                    'fecha', 'fechaEntrega', 'horaEntrega', 'estado',
+                    'users_id', 'producto_id', 'metodo_pago', 'tipo_entrega'
+                ]
+                for campo in campos_requeridos:
+                    if campo not in data_form or not data_form[campo].strip():
+                        return f"El campo {campo} es obligatorio."
+
+                # Obtener el ID de la entrega basado en el tipo de entrega
+                cursor.execute("SELECT id FROM entrega WHERE tipo = %s", (data_form['tipo_entrega'],))
+                entrega = cursor.fetchone()  # Consumir el resultado
+
+                if not entrega:
+                    return f"Tipo de entrega no válido: {data_form['tipo_entrega']}"
+
+                entrega_id = entrega['id']
+
+                # Actualizar el pedido en la base de datos
+                sql = """
+                    UPDATE pedido 
+                    SET fecha = %s, fechaEntrega = %s, horaEntrega = %s, estado = %s,
+                        users_id = %s, producto_id = %s, metodo_pago_id = %s, entrega_id = %s
+                    WHERE id = %s
+                """
+                valores = (
+                    data_form['fecha'],
+                    data_form['fechaEntrega'],
+                    data_form['horaEntrega'],
+                    data_form['estado'],
+                    int(data_form['users_id']),
+                    int(data_form['producto_id']),
+                    int(data_form['metodo_pago']),
+                    entrega_id,
+                    id
+                )
+                cursor.execute(sql, valores)
+                conexion_MySQLdb.commit()
+
+                if cursor.rowcount > 0:
+                    return True  # Éxito
+                else:
+                    return "No se encontró el pedido o no se realizaron cambios."
+
+    except Exception as e:
+        print(f"Error en actualizar_pedido: {e}")  # Depuración
+        return f"Se produjo un error al actualizar el pedido: {str(e)}"

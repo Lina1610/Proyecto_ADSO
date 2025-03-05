@@ -1,0 +1,84 @@
+{% extends 'public/base_cpanel.html' %}
+{% block title %}Crud con Python 🐍 | Lista de Facturas{% endblock %}
+{% block body %}
+
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12 mb-4">
+      <h3 class="text-center mt-5 mb-3">LISTA DE FACTURAS</h3>
+      <hr />
+    </div>
+
+    <!-- Campo de búsqueda -->
+    <div class="row justify-content-end">
+      <div class="col-md-6 mt-4 py-2">
+        <input
+          type="search"
+          id="search_factura"
+          class="form-control border-0 shadow-none"
+          placeholder="Buscar factura..."
+          onkeyup="buscarFacturaAjax()" />
+      </div>
+    </div>
+
+    <!-- Tabla de facturas -->
+    <div class="row justify-content-center mb-2">
+      <div class="table-responsive text-nowrap table-hover">
+        <table
+          id="tbl_facturas"
+          class="table table-striped table-bordered"
+          cellspacing="0"
+          width="100%">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+              <th>Pedido ID</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tabla_facturas_body">
+            {% for factura in facturas %}
+            <tr id="factura_{{ factura.id }}">
+              <td>{{ loop.index }}</td>
+              <td>{{ factura.estado }}</td>
+              <td>{{ factura.fecha }}</td>
+              <td>{{ factura.pedido_id }}</td>
+              <td width="10px">
+                <a
+                  href="{{ url_for('detalles_factura', id=factura.id) }}"
+                  class="btn btn-info btn-sm"
+                  title="Ver detalles">
+                  <i class="bi bi-eye"></i>
+                  Ver detalles
+                </a>
+                <a
+                  href="{{ url_for('viewEditarFactura', id=factura.id) }}"
+                  class="btn btn-success btn-sm"
+                  title="Actualizar">
+                  <i class="bi bi-arrow-clockwise"></i>
+                  Actualizar
+                </a>
+                <a
+                  href="#"
+                  onclick="eliminarFactura('{{ factura.id }}');"
+                  class="btn btn-danger btn-sm"
+                  title="Eliminar">
+                  <i class="bi bi-trash3"></i>
+                  Eliminar
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Vincular el archivo JavaScript -->
+<script src="{{ url_for('static', filename='assets/customJS/buscar_factura.js') }}"></script>
+
+{% endblock %}
