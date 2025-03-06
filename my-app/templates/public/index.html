@@ -28,8 +28,7 @@
     <script
       src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
-    <link rel="stylesheet" 
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   
     
      <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
      <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
@@ -39,6 +38,9 @@
     <!-- Core theme CSS (includes Bootstrap)-->
     <link rel="stylesheet"
       href="{{ url_for('static', filename ='assets/css/style.css') }}" />
+      <link rel="stylesheet"
+      href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
+      
     <link rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -47,7 +49,7 @@
 
 
       <header class="header">
-        <div class="menu container">
+        <div class="menu">
           <a href="#" class="logo">Logo</a>
           <input type="checkbox" id="menu"/>
           <label for="menu">
@@ -216,58 +218,63 @@
             <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eaque fugit omnis, cum ea alias, 
               quidem minus quis odio ut tempora itaque accusantium corporis facilis non voluptatibus optio, dolore fuga eveniet.</p>
           </div>
+          <div class="blog-1">
+            <img src="/static/assets/img/Videos/Video_Tamal.mp4">
+            <h2>Blog 4</h2>
+            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eaque fugit omnis, cum ea alias, 
+              quidem minus quis odio ut tempora itaque accusantium corporis facilis non voluptatibus optio, dolore fuga eveniet.</p>
+          </div>
       
         </div> <!-- Cierra el blog-content aquí -->
         
         <a href="#" class="btn-1">Informacion</a>
       </section>
 
+    </body>
+    </html>
+
+    <a href="https://wa.me/573213828939" class="whatsapp-btn" target="_blank" rel="noopener noreferrer">
+      <i class="fab fa-whatsapp"></i>
+    </a>
       
-      <footer class="footer">
-        <div class="footer-content container">
-          <div class="link">
-            <h3>lorem</h3>
-            <ul>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-            </ul>
+     <!-- Footer -->
+<footer class="footer">
+  <div class="footer-container">
+      <div class="footer-left">
+          <div class="footer-brand">
+              <h3>Tamales D. María</h3>
+              <p class="location">📍 Sogamoso, Boyacá</p>
           </div>
-          
-          <div class="link">
-            <h3>lorem</h3>
-            <ul>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-            </ul>
+          <div class="social-icons">
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="https://wa.me/573213828939" target="_blank"><i class="fab fa-whatsapp"></i></a>
           </div>
-
-
-          <div class="link">
-            <h3>lorem</h3>
-            <ul>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-            </ul>
+          <div class="footer-contact">
+              <p><i class="fas fa-envelope"></i> lescobarhiguera@gmail.com</p>
+              <p><i class="fas fa-phone-alt"></i> 321 382 8939</p>
           </div>
-
-             <div class="link">
-            <h3>lorem</h3>
-            <ul>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-              <li><a href="#">lorem</a></li>
-            </ul>
+      </div>
+      
+      <div class="footer-center">
+          <ul class="footer-list">
+              <li><a href="#" class="footer-link">Inicio</a></li>
+              <li><a href="#" class="footer-link">Menú</a></li>
+              <li><a href="#" class="footer-link">Pedidos</a></li>
+              <li><a href="#" class="footer-link">Sobre Nosotros</a></li>
+          </ul>
+      </div>
+      
+      <div class="footer-right">
+          <div class="business-hours">
+              <h4>Horario de atención</h4>
+              <p>Lunes a Sábado</p>
+              <p>7:00 AM - 7:00 PM</p>
           </div>
-        </div>
-        
-      </footer>
+          <p class="footer-bottom">© 2023 Tamales el buen sazón<br>Todos los derechos reservados</p>
+      </div>
+  </div>
+</footer>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
 
@@ -330,105 +337,11 @@
   });
   </script>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Crear elementos
-      const panel = document.createElement('div');
-      panel.className = 'accessibility-panel';
-      panel.innerHTML = `
-          <button class="accessibility-option" data-action="increase-font">
-              <i class="fas fa-search-plus"></i>Aumentar Texto
-          </button>
-          <button class="accessibility-option" data-action="decrease-font">
-              <i class="fas fa-search-minus"></i>Reducir Texto
-          </button>
-          <button class="accessibility-option" data-action="high-contrast">
-              <i class="fas fa-adjust"></i>Contraste Alto
-          </button>
-          <button class="accessibility-option" data-action="reset">
-              <i class="fas fa-sync"></i>Reiniciar
-          </button>
-      `;
-  
-      const toggleBtn = document.createElement('button');
-      toggleBtn.className = 'accessibility-toggle';
-      toggleBtn.innerHTML = '<i class="fas fa-universal-access"></i>';
-      toggleBtn.ariaLabel = 'Panel de accesibilidad';
-  
-      // Variables de control
-      let currentFontSize = 16;
-      const minFont = 14;
-      const maxFont = 20;
-  
-      // Funcionalidades
-      const updateFontSize = () => {
-          document.documentElement.style.fontSize = `${currentFontSize}px`;
-          localStorage.setItem('fontSize', currentFontSize);
-      };
-  
-      toggleBtn.addEventListener('click', () => {
-          panel.classList.toggle('active');
-          toggleBtn.classList.toggle('active');
-      });
-  
-      panel.addEventListener('click', (e) => {
-          const action = e.target.closest('button')?.dataset.action;
-          if (!action) return;
-  
-          switch(action) {
-              case 'increase-font':
-                  if (currentFontSize < maxFont) {
-                      currentFontSize += 1;
-                      updateFontSize();
-                  }
-                  break;
-                  
-              case 'decrease-font':
-                  if (currentFontSize > minFont) {
-                      currentFontSize -= 1;
-                      updateFontSize();
-                  }
-                  break;
-                  
-              case 'high-contrast':
-                  document.body.classList.toggle('high-contrast');
-                  localStorage.setItem('highContrast', document.body.classList.contains('high-contrast'));
-                  break;
-                  
-              case 'reset':
-                  currentFontSize = 16;
-                  document.body.classList.remove('high-contrast');
-                  localStorage.removeItem('highContrast');
-                  updateFontSize();
-                  break;
-          }
-      });
-  
-      // Cargar preferencias
-      const savedFontSize = localStorage.getItem('fontSize');
-      if (savedFontSize) currentFontSize = parseInt(savedFontSize);
-      updateFontSize();
-  
-      if (localStorage.getItem('highContrast') === 'true') {
-          document.body.classList.add('high-contrast');
-      }
-  
-      // Añadir al DOM
-      document.body.append(toggleBtn, panel);
-  
-      // Cerrar panel al hacer click fuera
-      document.addEventListener('click', (e) => {
-          if (!e.target.closest('.accessibility-toggle') && !e.target.closest('.accessibility-panel')) {
-              panel.classList.remove('active');
-          }
-      });
-  });
-  </script>
+ 
+    <script src="/static/assets/js/sienna.js"></script>
+    <script src="/static/assets/js/custom.js"></script>
 
 
 
-          <a href="https://wa.me/573213828939" class="whatsapp-btn" target="_blank" rel="noopener noreferrer">
-            <i class="fab fa-whatsapp"></i>
-        </a>
-    </body>
+  </body>
   </html>
