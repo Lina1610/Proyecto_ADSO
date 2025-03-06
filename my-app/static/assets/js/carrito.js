@@ -209,7 +209,7 @@ function toggleCarrito() {
     carritoContainer.classList.toggle('visible');
 }
 
-// Función para procesar el pedido
+
 
 // Función para mostrar notificaciones
 function mostrarNotificacion(mensaje, tipo) {
@@ -280,46 +280,234 @@ function procesarPedido() {
         mostrarNotificacion('El carrito está vacío', 'error');
         return;
     }
-    
-    fetch('/carrito/obtener-direcciones')
+
+    // Obtener métodos de pago y tipos de entrega
+    fetch('/obtener-metodos-pago-tipos-entrega')
         .then(response => response.json())
         .then(data => {
-            const direccionesContainer = document.getElementById('contenedor-direcciones');
+            const modalBody = document.getElementById('modal-body-procesar-pedido');
+            modalBody.innerHTML = '';
 
-            if (!direccionesContainer) {
-            console.error("Error: No se encontró el contenedor de direcciones.");
-            mostrarNotificacion('Error al cargar direcciones', 'error');
-            return;
-    }
+            // Mostrar métodos de pago
+            const metodosPagoHTML = data.metodos_pago.map(metodo => `
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="metodo_pago" id="metodo_pago_${metodo.id}" value="${metodo.id}">
+                    <label class="form-check-label" for="metodo_pago_${metodo.id}">
+                        ${metodo.metodo}
+                    </label>
+                </div>
+            `).join('');
 
-            direccionesContainer.innerHTML = '';
+            modalBody.innerHTML += `<h5>Métodos de Pago</h5>${metodosPagoHTML}`;
 
-            if (data.status === 'success' && data.direcciones.length > 0) {
-                data.direcciones.forEach(direccion => {
-                    const item = document.createElement('label');
-                    item.className = 'list-group-item';
-                    item.innerHTML = `
-                        <input type="radio" name="direccion" value="${direccion.id}" class="form-check-input me-2">
-                        <strong>${direccion.nombre_completo}</strong><br>
-                        ${direccion.domicilio}, ${direccion.barrio}<br>
-                        ${direccion.nombre_municipio}, ${direccion.nombre_departamento}<br>
-                        Teléfono: ${direccion.telefono}
-                    `;
-                    direccionesContainer.appendChild(item);
-                });
-            } else {
-                direccionesContainer.innerHTML = `
-                    <div class="alert alert-warning">
-                        No tienes direcciones registradas. Por favor, agrega una dirección en tu perfil.
-                    </div>
-                `;
-            }
+            // Mostrar tipos de entrega
+            const tiposEntregaHTML = data.tipos_entrega.map(tipo => `
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="tipo_entrega" id="tipo_entrega_${tipo}" value="${tipo}" onchange="mostrarDirecciones('${tipo}')">
+                    <label class="form-check-label" for="tipo_entrega_${tipo}">
+                        ${tipo}
+                    </label>
+                </div>
+            `).join('');
 
-            const modalDirecciones = new bootstrap.Modal(document.getElementById('modalDirecciones'));
-            modalDirecciones.show();
+            modalBody.innerHTML += `<h5 class="mt-3">Tipos de Entrega</h5>${tiposEntregaHTML}`;
+
+            // Mostrar el modal de procesar pedido
+            const modalProcesarPedido = new bootstrap.Modal(document.getElementById('modalProcesarPedido'));
+            modalProcesarPedido.show();
         })
         .catch(error => {
-            console.error('Error al obtener direcciones:', error);
-            mostrarNotificacion('Error al cargar direcciones', 'error');
+            console.error('Error al obtener métodos de pago y tipos de entrega:', error);
+            mostrarNotificacion('Error al cargar métodos de pago y tipos de entrega', 'error');
         });
 }
+
+function mostrarDirecciones(tipoEntrega) {
+    if (tipoEntrega === 'Domicilio') {
+        // Cerrar el modal actual (Procesar Pedido)
+        const modalProcesarPedido = bootstrap.Modal.getInstance(document.getElementById('modalProcesarPedido'));
+        modalProcesarPedido.hide();
+
+        // Obtener las direcciones del usuario
+        fetch('/carrito/obtener-direcciones')
+            .then(response => response.json())
+            .then(data => {
+                const direccionesContainer = document.getElementById('contenedor-direcciones');
+                direccionesContainer.innerHTML = '';
+
+                if (data.status === 'success' && data.direcciones.length > 0) {
+                    // Mostrar las direcciones disponibles
+                    data.direcciones.forEach(direccion => {
+                        const item = document.createElement('label');
+                        item.className = 'list-group-item';
+                        item.innerHTML = `
+                            <input type="radio" name="direccion" value="${direccion.id}" class="form-check-input me-2">
+                            <strong>${direccion.nombre_completo}</strong><br>
+                            ${direccion.domicilio}, ${direccion.barrio}<br>
+                            ${direccion.nombre_municipio}, ${direccion.nombre_departamento}<br>
+                            Teléfono: ${direccion.telefono}
+                        `;
+                        direccionesContainer.appendChild(item);
+                    });
+                } else {
+                    // Mostrar un mensaje si no hay direcciones registradas
+                    direccionesContainer.innerHTML = `
+                        <div class="alert alert-warning">
+                            No tienes direcciones registradas. Por favor, agrega una dirección.
+                        </div>
+                    `;
+                }
+
+                // Agregar un botón para abrir el modal de registro de dirección
+                const botonAgregarDireccion = document.createElement('button');
+                botonAgregarDireccion.className = 'btn btn-primary w-100 mt-3';
+                botonAgregarDireccion.innerHTML = '<i class="fas fa-plus"></i> Agregar Nueva Dirección';
+                botonAgregarDireccion.onclick = () => {
+                    const modalRegistrarDireccion = new bootstrap.Modal(document.getElementById('editarDireccionModal'));
+                    modalRegistrarDireccion.show();
+                };
+                direccionesContainer.appendChild(botonAgregarDireccion);
+
+                // Mostrar el modal de direcciones
+                const modalDirecciones = new bootstrap.Modal(document.getElementById('modalDirecciones'));
+                modalDirecciones.show();
+
+                // Manejar el evento de cancelar en el modal de direcciones
+                document.getElementById('modalDirecciones').addEventListener('hidden.bs.modal', () => {
+                    // Volver a abrir el modal de procesar pedido
+                    modalProcesarPedido.show();
+                });
+            })
+            .catch(error => {
+                console.error('Error al obtener direcciones:', error);
+                mostrarNotificacion('Error al cargar direcciones', 'error');
+            });
+    }
+}
+
+// ==================== FUNCIONES DE DIRECCIONES ====================
+function cargarDepartamentos() {
+    fetch('/obtener-departamentos')
+        .then(handleResponse)
+        .then(data => poblarSelect(data, 'registrarDepartamentoId', 'departamento'))
+        .catch(handleError);
+}
+
+function cargarMunicipios(departamentoId) {
+    if (!departamentoId) return;
+    
+    fetch(`/obtener_municipios?departamento_id=${departamentoId}`)
+        .then(handleResponse)
+        .then(data => poblarSelect(data, 'registrarMunicipioId', 'municipio'))
+        .catch(handleError);
+}
+
+// ==================== FUNCIONES AUXILIARES ====================
+function handleResponse(response) {
+    if (!response.ok) throw new Error('Error en la respuesta del servidor');
+    return response.json();
+}
+
+function handleError(error) {
+    console.error('Error:', error);
+    mostrarNotificacion('Ocurrió un error inesperado', 'error');
+}
+
+function mostrarNotificacion(mensaje, tipo) {
+    const notificacion = document.createElement('div');
+    notificacion.className = `notificacion ${tipo}`;
+    notificacion.textContent = mensaje;
+    document.body.appendChild(notificacion);
+    setTimeout(() => notificacion.remove(), 3000);
+}
+
+// ==================== INICIALIZACIÓN ====================
+document.addEventListener('DOMContentLoaded', () => {
+    cargarCarrito();
+    cargarDepartamentos();
+    
+    document.getElementById('registrarDepartamentoId')?.addEventListener('change', function() {
+        cargarMunicipios(this.value);
+    });
+
+    document.querySelector('.carrito-icono')?.addEventListener('click', toggleCarrito);
+});
+
+// ==================== FUNCIONES RESTANTES ORGANIZADAS ====================
+function verificarAutenticacion() {
+    const isLoggedIn = document.querySelector('.user-info-container') !== null;
+    if (!isLoggedIn) {
+        mostrarNotificacion('Debe iniciar sesión para esta acción', 'error');
+        setTimeout(() => window.location.href = '/login-cliente', 1500);
+    }
+    return isLoggedIn;
+}
+
+function generarHTMLCarrito() {
+    let totalCompra = 0;
+    let html = '';
+    
+    carritoItems.forEach(producto => {
+        const subtotal = producto.precio * producto.cantidad;
+        totalCompra += subtotal;
+        
+        html += `
+            <div class="carrito-item">
+                <div class="item-info">
+                    <img src="${producto.imagen}" alt="${producto.nombre}">
+                    <div class="item-details">
+                        <h6>${producto.nombre}</h6>
+                        <p class="item-price">$${producto.precio.toLocaleString()}</p>
+                        <div class="quantity-control">
+                            <button class="quantity-btn" onclick="actualizarCantidad(${producto.id}, -1)">-</button>
+                            <span class="quantity">${producto.cantidad}</span>
+                            <button class="quantity-btn" onclick="actualizarCantidad(${producto.id}, 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-subtotal">
+                    <p>$${subtotal.toLocaleString()}</p>
+                    <button class="delete-btn" onclick="eliminarDelCarrito(${producto.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+
+    return html + `
+        <div class="carrito-total"><h5><strong>Total:</strong> $${totalCompra.toLocaleString()}</h5></div>
+        <div class="carrito-footer">
+            <button class="btn-procesar" onclick="procesarPedido()">
+                <i class="fas fa-check-circle"></i> Procesar Pedido
+            </button>
+        </div>
+    `;
+}
+
+function poblarSelect(data, selectId, tipo) {
+    const select = document.getElementById(selectId);
+    select.innerHTML = `<option value="">Seleccione un ${tipo}</option>`;
+    data.forEach(item => {
+        select.innerHTML += `<option value="${item.id}">${item.nombre}</option>`;
+    });
+}
+
+function manejarRespuestaCarrito(data, accion) {
+    if (data.status === 'success') {
+        cargarCarrito();
+        mostrarNotificacion(`Producto ${accion} correctamente`, 'success');
+        animarIconoCarrito();
+    } else {
+        mostrarNotificacion(data.mensaje, 'error');
+    }
+}
+
+function animarIconoCarrito() {
+    const icono = document.querySelector('.carrito-icono');
+    icono?.classList.add('carrito-animado');
+    setTimeout(() => icono?.classList.remove('carrito-animado'), 500);
+}
+
+// Mantener las demás funciones esenciales sin duplicados
+// ... (procesarPedido, mostrarDirecciones, confirmarPedido, etc)

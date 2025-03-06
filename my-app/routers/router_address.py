@@ -561,3 +561,4 @@ def viewBuscarDireccionBD():
     except Exception as e:
         print(f"Error en viewBuscarDireccionBD: {e}")  # Log de depuración
         return jsonify({'error': str(e)}), 500  # Manejo de errores
+    

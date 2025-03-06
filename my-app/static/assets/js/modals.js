@@ -216,4 +216,3 @@ function togglePassword(icon) {
         icon.classList.add("bx-hide");
     }
 }
-
