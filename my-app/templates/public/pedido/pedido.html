@@ -146,6 +146,25 @@
         </div>
     </main>
 
+<!-- Modal para seleccionar dirección -->
+<div id="modalDirecciones" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Selecciona una Dirección</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="list-group" id="contenedor-direcciones"></div> <!-- ESTE ES EL CONTENEDOR QUE NECESITAS -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="finalizarCompra()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-container">

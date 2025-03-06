@@ -210,51 +210,19 @@ function toggleCarrito() {
 }
 
 // Función para procesar el pedido
-function procesarPedido() {
-    // Verificar si hay productos en el carrito
-    if (carritoItems.length === 0) {
-        mostrarNotificacion('El carrito está vacío', 'error');
-        return;
-    }
-    
-    fetch('/carrito/finalizar-compra', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            mostrarNotificacion('¡Pedido procesado con éxito!', 'success');
-            // Recargar el carrito vacío
-            cargarCarrito();
-        } else {
-            mostrarNotificacion(data.mensaje, 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error al procesar el pedido:', error);
-        mostrarNotificacion('Error al procesar el pedido', 'error');
-    });
-}
 
 // Función para mostrar notificaciones
 function mostrarNotificacion(mensaje, tipo) {
-    // Crear el elemento de notificación
     const notificacion = document.createElement('div');
     notificacion.className = `notificacion ${tipo}`;
     notificacion.textContent = mensaje;
-    
-    // Agregar al cuerpo del documento
+
     document.body.appendChild(notificacion);
-    
-    // Mostrar la notificación
+
     setTimeout(() => {
         notificacion.classList.add('mostrar');
     }, 100);
-    
-    // Eliminar la notificación después de 3 segundos
+
     setTimeout(() => {
         notificacion.classList.remove('mostrar');
         setTimeout(() => {
@@ -263,14 +231,95 @@ function mostrarNotificacion(mensaje, tipo) {
     }, 3000);
 }
 
-// Cargar el carrito cuando se carga la página
+// Cargar el carrito al cargar la página
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar el carrito
     cargarCarrito();
     
-    // Añadir evento de clic al icono del carrito
     const carritoIcono = document.querySelector('.carrito-icono');
     if (carritoIcono) {
         carritoIcono.addEventListener('click', toggleCarrito);
     }
 });
+
+// Función para finalizar la compra
+function finalizarCompra() {
+    const direccionSeleccionada = document.querySelector('input[name="direccion"]:checked');
+    
+    if (!direccionSeleccionada) {
+        mostrarNotificacion('Por favor, selecciona una dirección de envío.', 'error');
+        return;
+    }
+
+    const direccionId = direccionSeleccionada.value;
+
+    fetch('/finalizar-compra', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ direccion_id: direccionId }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            mostrarNotificacion('Pedido creado con éxito.', 'success');
+            window.location.href = '/pedidos'; 
+        } else {
+            mostrarNotificacion('Error al finalizar la compra: ' + data.mensaje, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarNotificacion('Ocurrió un error al finalizar la compra.', 'error');
+    });
+}
+
+// Función para procesar el pedido y mostrar las direcciones
+function procesarPedido() {
+    if (carritoItems.length === 0) {
+        mostrarNotificacion('El carrito está vacío', 'error');
+        return;
+    }
+    
+    fetch('/carrito/obtener-direcciones')
+        .then(response => response.json())
+        .then(data => {
+            const direccionesContainer = document.getElementById('contenedor-direcciones');
+
+            if (!direccionesContainer) {
+            console.error("Error: No se encontró el contenedor de direcciones.");
+            mostrarNotificacion('Error al cargar direcciones', 'error');
+            return;
+    }
+
+            direccionesContainer.innerHTML = '';
+
+            if (data.status === 'success' && data.direcciones.length > 0) {
+                data.direcciones.forEach(direccion => {
+                    const item = document.createElement('label');
+                    item.className = 'list-group-item';
+                    item.innerHTML = `
+                        <input type="radio" name="direccion" value="${direccion.id}" class="form-check-input me-2">
+                        <strong>${direccion.nombre_completo}</strong><br>
+                        ${direccion.domicilio}, ${direccion.barrio}<br>
+                        ${direccion.nombre_municipio}, ${direccion.nombre_departamento}<br>
+                        Teléfono: ${direccion.telefono}
+                    `;
+                    direccionesContainer.appendChild(item);
+                });
+            } else {
+                direccionesContainer.innerHTML = `
+                    <div class="alert alert-warning">
+                        No tienes direcciones registradas. Por favor, agrega una dirección en tu perfil.
+                    </div>
+                `;
+            }
+
+            const modalDirecciones = new bootstrap.Modal(document.getElementById('modalDirecciones'));
+            modalDirecciones.show();
+        })
+        .catch(error => {
+            console.error('Error al obtener direcciones:', error);
+            mostrarNotificacion('Error al cargar direcciones', 'error');
+        });
+}

@@ -1,0 +1,113 @@
+{% extends 'public/base_cpanel.html' %}
+{% block title %}Crud con Python 🐍 | Lista de Stock{% endblock %}
+{% block body %}
+
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12 mb-4">
+      <h3 class="text-center mt-5 mb-3">LISTA DE STOCK</h3>
+      <hr />
+    </div>
+
+    <!-- Campo de búsqueda -->
+    <div class="row justify-content-end">
+      <div class="col-md-6 mt-4 py-2">
+        <input
+          type="search"
+          id="search_stock"
+          class="form-control border-0 shadow-none"
+          placeholder="Buscar stock..."
+          onkeyup="buscarStockAjax()" />
+      </div>
+    </div>
+
+    <!-- Tabla de stock -->
+    <div class="row justify-content-center mb-2">
+      <div class="table-responsive text-nowrap table-hover">
+        <table
+          id="tbl_stock"
+          class="table table-striped table-bordered"
+          cellspacing="0"
+          width="100%">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Cantidad Disponible</th>
+              <th>Fecha de Registro</th>
+              <th>Producto</th>
+              <th>Usuario</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tabla_stock_body">
+            {% for stock in resp_stockBD %}
+            <tr id="stock_{{ stock.id }}">
+              <td>{{ loop.index }}</td>
+              <td>{{ stock.cantidad_disponible }}</td>
+              <td>{{ stock.fecha_registro }}</td>
+              <td>{{ stock.producto_nombre }} (ID: {{ stock.producto_id }})</td>
+              <td>{{ stock.usuario_nombre }} (ID: {{ stock.users_id }})</td>
+              <td width="10px">
+                <a
+                  href="{{ url_for('detalles_stock', id=stock.id) }}"
+                  class="btn btn-info btn-sm"
+                  title="Ver detalles">
+                  <i class="bi bi-eye"></i>
+                  Ver detalles
+                </a>
+                <a
+                  href="{{ url_for('viewEditarStock', id=stock.id) }}"
+                  class="btn btn-success btn-sm"
+                  title="Actualizar">
+                  <i class="bi bi-arrow-clockwise"></i>
+                  Actualizar
+                </a>
+                <a
+                  href="#"
+                  onclick="eliminarStock('{{ stock.id }}');"
+                  class="btn btn-danger btn-sm"
+                  title="Eliminar">
+                  <i class="bi bi-trash3"></i>
+                  Eliminar
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Paginación -->
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        {% if pagina > 1 %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('lista_stock', pagina=pagina-1) }}" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+        {% endif %}
+
+        {% for p in range(1, (total_stock // 10) + 2) %}
+          <li class="page-item {% if p == pagina %}active{% endif %}">
+            <a class="page-link" href="{{ url_for('lista_stock', pagina=p) }}">{{ p }}</a>
+          </li>
+        {% endfor %}
+
+        {% if pagina < (total_stock // 10) + 1 %}
+          <li class="page-item">
+            <a class="page-link" href="{{ url_for('lista_stock', pagina=pagina+1) }}" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<!-- Vincular el archivo JavaScript -->
+<script src="{{ url_for('static', filename='assets/customJS/buscar_stock.js') }}"></script>
+
+{% endblock %}

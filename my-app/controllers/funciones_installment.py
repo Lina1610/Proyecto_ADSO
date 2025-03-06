@@ -159,7 +159,7 @@ def buscarAbonoBD(search_query):
                     JOIN 
                         pedido ON abono.pedido_id = pedido.id
                     JOIN 
-                        users ON pedido.users_id = u.id
+                        users ON pedido.users_id = users.id
                     WHERE 
                         abono.numero_abonos LIKE %s OR
                         abono.estado LIKE %s OR
@@ -183,8 +183,6 @@ def eliminar_abono(id):
                 conexion_MySQLdb.commit()
                 return cursor.rowcount  # Retorna el número de filas afectadas
     except Exception as e:
-        print(f"Error en eliminar_abono: {e}")
-        return None
-    
-
+        print(f"Error en eliminar_abono: {e}")       
+        return f"Se produjo un error en procesar_abono: {str(e)}"
 

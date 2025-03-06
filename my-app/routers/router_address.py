@@ -18,17 +18,13 @@ PATH_URL = "public/direccion"
 # Ruta para mostrar las direcciones del cliente
 @app.route('/cliente-direcciones', methods=['GET'])
 def cliente_direcciones():
-    """
-    Muestra las direcciones del cliente actual.
-    Solo accesible si el usuario está conectado y tiene el rol de 'cliente'.
-    """
-    print("🔍 Sesión en cliente_direcciones:", session)  # 🛠 Depuración
     if 'conectado' in session:
         if session['rol'] == 'cliente':
             user_id = session.get('id')
 
             # Obtener las direcciones del cliente
             direcciones = obtener_direcciones_usuario(user_id)
+            print("Direcciones obtenidas:", direcciones)  # Depuración
 
             # Obtener departamentos y municipios para el formulario
             with connectionBD() as conexion_MySQLdb:
@@ -47,14 +43,11 @@ def cliente_direcciones():
                 direcciones=direcciones
             )
         else:
-            print("⚠️ Error: El usuario no tiene el rol de 'cliente'")  # 🛠 Depuración
             flash('Acceso denegado.', 'error')
             return redirect(url_for('inicio'))
     else:
-        print("⚠️ Error: El usuario no está conectado")  # 🛠 Depuración
-        flash('Acceso denegado.', 'error')
+        flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
-
 # Ruta para registrar una dirección 
 @app.route('/registrar-direccion', methods=['GET', 'POST'])
 def viewFormDireccion():

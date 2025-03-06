@@ -59,9 +59,15 @@ def viewFormFactura():
                 flash(resultado, 'error')  # Mostrar mensaje de error
 
 
+
             return redirect(url_for('viewFormFactura'))
 
             return redirect(url_for('registrar-factura'))
+
+
+            return redirect(url_for('registrar-factura'))
+
+            return redirect(url_for('viewFormFactura'))
 
 
         # Si es GET, mostrar el formulario con los datos necesarios

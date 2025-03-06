@@ -3,6 +3,7 @@ from flask import render_template, request, flash, redirect, url_for, session
 from conexion.conexionBD import connectionBD
 from werkzeug.security import check_password_hash
 from controllers.funciones_login import *
+from controllers.funciones_address import *
 
 PATH_URL_LOGIN = "public/login"
 
@@ -16,19 +17,50 @@ def inicio():
 @app.route('/mi-perfil', methods=['GET'])
 def perfil():
     if 'conectado' in session:
-        # Verificar que no sea un cliente intentando acceder al perfil administrativo
-        if session['rol'] == 'cliente':
+        user_id = session.get('id')
+        rol = session.get('rol')
+
+        # Redirigir a perfil de cliente si aplica
+        if rol == 'cliente':
             return redirect(url_for('perfil_cliente'))
-            
-        info_perfil = info_perfil_session()  # Obtener los datos del usuario
+
+        # Obtener información del perfil
+        info_perfil = info_perfil_session()
+
+        # Obtener direcciones del usuario
+        direcciones = obtener_direcciones_usuario(user_id) if user_id else []
+
+        # Obtener departamentos y municipios
+        try:
+            with connectionBD() as conexion_MySQLdb:
+                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                    cursor.execute("SELECT id, nombre FROM departamento")
+                    departamentos = cursor.fetchall()
+
+                    cursor.execute("SELECT id, nombre FROM municipio")
+                    municipios = cursor.fetchall()
+        except Exception as e:
+            print(f"Error al obtener departamentos y municipios: {e}")
+            departamentos = []
+            municipios = []
+
+        # Renderizar la plantilla con la información
         if info_perfil:
-            return render_template('public/perfil/perfil.html', info_perfil_session=info_perfil)
+            return render_template(
+                'public/perfil/perfil.html',
+                info_perfil_session=info_perfil,
+                departamentos=departamentos,
+                municipios=municipios,
+                direcciones=direcciones
+            )
         else:
             flash('No se pudieron cargar los datos del perfil.', 'error')
             return redirect(url_for('inicio'))
+    
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
+
 
 # Crear cuenta de usuario
 @app.route('/register-user', methods=['GET'])

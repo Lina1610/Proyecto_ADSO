@@ -208,4 +208,3 @@ def procesar_imagen_perfil(foto_perfil):
         return f"uploads/perfil/{filename}"
     
     return None  # Si no se sube una imagen, retornar None
-
