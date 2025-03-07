@@ -1,12 +1,25 @@
+# app.py
 from flask import Flask
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
 application = app
-app.secret_key = '97110c78ae51a45af397b6534caef90ebb9b1dcb3380f008f90b23a5d1616bf1bc29098105da20fe'
 
+# Configuración (la misma que ya tienes)
+app.secret_key = os.getenv('SECRET_KEY')
+# ... resto de configuraciones ...
+
+# Registra todos los blueprints
 from routers.router_carrito import carrito_bp
-from routers.router_pedido import pedido_bp  # <-- Agregar esta línea
+from routers.router_pedido import pedido_bp
+from routers.router_soporte import soporte_bp  # 👈 
 
-# Luego registra el blueprint así
 app.register_blueprint(carrito_bp, url_prefix='/carrito')
-app.register_blueprint(pedido_bp, url_prefix='/pedido') 
+app.register_blueprint(pedido_bp, url_prefix='/pedido')
+app.register_blueprint(soporte_bp, url_prefix='/soporte')  # 👈 Registra el nuevo blueprint
+
+if __name__ == '__main__':
+    app.run(ssl_context='adhoc')

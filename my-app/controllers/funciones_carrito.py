@@ -148,3 +148,30 @@ def eliminar_del_carrito(carrito_id, users_id):
         if conexion.is_connected():
             cursor.close()
             conexion.close()
+
+def obtener_direcciones_usuario(users_id):
+    try:
+        conexion = connectionBD()
+        cursor = conexion.cursor(dictionary=True)
+        
+        # Modificar la consulta para incluir nombres de municipio y departamento
+        sql = """
+        SELECT d.*, m.nombre AS nombre_municipio, dep.nombre AS nombre_departamento 
+        FROM direccion d
+        LEFT JOIN municipio m ON d.municipio_id = m.id
+        LEFT JOIN departamento dep ON d.departamento_id = dep.id
+        WHERE d.users_id = %s
+        """
+        print(f"Ejecutando consulta con JOIN: {sql} con users_id={users_id}")
+        cursor.execute(sql, (users_id,))
+        direcciones = cursor.fetchall()
+        print(f"Direcciones completas obtenidas de la BD: {direcciones}")
+        
+        return direcciones
+    except Exception as e:
+        print(f"Error al obtener direcciones: {e}")
+        return []
+    finally:
+        if conexion.is_connected():
+            cursor.close()
+            conexion.close()

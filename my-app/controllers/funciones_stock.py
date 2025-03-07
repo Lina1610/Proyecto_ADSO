@@ -49,29 +49,14 @@ def procesar_stock(dataForm):
         print(f"Error en procesar_stock: {e}")
         return f"Se produjo un error en procesar_stock: {str(e)}"
     
-def obtener_stock():
+def obtener_stock(pagina=1, por_pagina=10):
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                cursor.execute("""
-                    SELECT s.id, s.cantidad_disponible,
-                           p.nombre AS producto_nombre, p.id AS producto_id,
-                           u.nombre AS usuario_nombre, u.id AS users_id
-                    FROM stock s
-                    JOIN producto p ON s.producto_id = p.id
-                    JOIN users u ON s.users_id = u.id
-                """)
-                stock = cursor.fetchall()
-                print("Datos obtenidos de la base de datos:", stock)  # Depuración
-                return stock
-    except Exception as e:
-        print(f"Error en obtener_stock: {e}")
-        return []
+                # Calcular el offset para la paginación
+                offset = (pagina - 1) * por_pagina
 
-def obtener_stock_por_id(id):
-    try:
-        with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Consulta SQL con paginación
                 cursor.execute("""
                     SELECT s.id, s.cantidad_disponible, s.fecha_registro,
                            p.nombre AS producto_nombre, p.id AS producto_id,
@@ -79,7 +64,40 @@ def obtener_stock_por_id(id):
                     FROM stock s
                     JOIN producto p ON s.producto_id = p.id
                     JOIN users u ON s.users_id = u.id
-                    WHERE s.id = %s
+                    LIMIT %s OFFSET %s
+                """, (por_pagina, offset))
+                stock = cursor.fetchall()
+
+                # Obtener el total de registros para la paginación
+                cursor.execute("SELECT COUNT(*) AS total FROM stock")
+                total_stock = cursor.fetchone()['total']
+
+                return stock, total_stock
+    except Exception as e:
+        print(f"Error en obtener_stock: {e}")
+        return [], 0
+
+def obtener_stock_por_id(id):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                cursor.execute("""
+                    SELECT 
+                        s.id,
+                        s.cantidad_disponible,
+                        s.fecha_registro,
+                        p.nombre AS producto_nombre,
+                        p.id AS producto_id,
+                        u.nombre AS usuario_nombre,
+                        u.id AS users_id
+                    FROM 
+                        stock s
+                    JOIN 
+                        producto p ON s.producto_id = p.id
+                    JOIN 
+                        users u ON s.users_id = u.id
+                    WHERE 
+                        s.id = %s
                 """, (id,))
                 stock = cursor.fetchone()
                 return stock
@@ -108,3 +126,47 @@ def obtener_usuarios():
     except Exception as e:
         print(f"Error en obtener_usuarios: {e}")
         return []
+    
+def buscarStockBD(search_query):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                querySQL = """
+                    SELECT 
+                        s.id,
+                        s.cantidad_disponible,
+                        s.fecha_registro,
+                        p.nombre AS producto_nombre,
+                        p.id AS producto_id,
+                        u.nombre AS usuario_nombre,
+                        u.id AS users_id
+                    FROM 
+                        stock s
+                    JOIN 
+                        producto p ON s.producto_id = p.id
+                    JOIN 
+                        users u ON s.users_id = u.id
+                    WHERE 
+                        s.cantidad_disponible LIKE %s OR
+                        s.fecha_registro LIKE %s OR
+                        p.nombre LIKE %s OR
+                        u.nombre LIKE %s
+                """
+                search_pattern = f"%{search_query}%"
+                cursor.execute(querySQL, (search_pattern, search_pattern, search_pattern, search_pattern))
+                return cursor.fetchall()
+    except Exception as e:
+        print(f"Error en buscarStockBD: {e}")
+        return None
+    
+def eliminar_stock(id):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor() as cursor:
+                querySQL = "DELETE FROM stock WHERE id = %s"
+                cursor.execute(querySQL, (id,))
+                conexion_MySQLdb.commit()
+                return cursor.rowcount  # Retorna el número de filas afectadas
+    except Exception as e:
+        print(f"Error en eliminar_stock: {e}")
+        return None

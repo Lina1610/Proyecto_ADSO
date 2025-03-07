@@ -64,6 +64,22 @@ def viewFormPedido():
 
 from controllers.funciones_order import obtener_pedidos
 
+@app.route('/obtener-metodos-pago-tipos-entrega', methods=['GET'])
+def obtener_metodos_pago_tipos_entrega():
+    
+    if 'conectado' not in session:
+        return jsonify({'status': 'error', 'mensaje': 'Debe iniciar sesión para procesar el pedido'})
+    
+    with connectionBD() as conexion_MySQLdb:
+        metodos_pago = obtener_metodos_pago(conexion_MySQLdb)
+        tipos_entrega = obtener_tipos_entrega(conexion_MySQLdb)
+        
+        return jsonify({
+            'status': 'success',
+            'metodos_pago': metodos_pago,
+            'tipos_entrega': tipos_entrega
+        })
+
 @app.route('/lista-de-pedidos')
 def lista_pedidos():
     if 'conectado' in session:

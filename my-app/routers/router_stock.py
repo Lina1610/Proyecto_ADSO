@@ -45,96 +45,22 @@ def viewFormStock():
 @app.route('/lista-de-stock')
 def lista_stock():
     if 'conectado' in session:
-        resp_stockBD = obtener_stock()  # Cambia el nombre de la variable
-        print(resp_stockBD)  # Depuración: Imprime los datos en la consola del servidor
-        return render_template('public/stock/lista_stock.html', resp_stockBD=resp_stockBD)
+        # Obtener el número de página desde la URL (por defecto es 1)
+        pagina = request.args.get('pagina', 1, type=int)
+
+        # Obtener los datos de stock con paginación
+        resp_stockBD, total_stock = obtener_stock(pagina=pagina, por_pagina=10)
+
+        return render_template(
+            'public/stock/lista_stock.html',
+            resp_stockBD=resp_stockBD,
+            pagina=pagina,
+            total_stock=total_stock
+        )
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
-  
-  
-from flask import Blueprint, render_template, request, flash, redirect, url_for, session
-from conexion.conexionBD import connectionBD
-
-# Crear un Blueprint para las rutas de stock
-router_stock = Blueprint('router_stock', __name__)
-
-# Función para obtener un registro de stock por ID
-def obtener_stock_por_id(id):
-    try:
-        with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                cursor.execute("""
-                    SELECT s.id, s.cantidad_disponible, s.fecha_registro,
-                           p.nombre AS producto_nombre, p.id AS producto_id,
-                           u.nombre AS usuario_nombre, u.id AS users_id
-                    FROM stock s
-                    JOIN producto p ON s.producto_id = p.id
-                    JOIN users u ON s.users_id = u.id
-                    WHERE s.id = %s
-                """, (id,))
-                stock = cursor.fetchone()
-                return stock
-    except Exception as e:
-        print(f"Error en obtener_stock_por_id: {e}")
-        return None
-
-# Función para obtener todos los productos
-def obtener_productos():
-    try:
-        with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                cursor.execute("SELECT id, nombre FROM producto")
-                productos = cursor.fetchall()
-                return productos
-    except Exception as e:
-        print(f"Error en obtener_productos: {e}")
-        return []
-
-# Función para obtener todos los usuarios
-def obtener_usuarios():
-    try:
-        with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                cursor.execute("SELECT id, nombre FROM users")
-                usuarios = cursor.fetchall()
-                return usuarios
-    except Exception as e:
-        print(f"Error en obtener_usuarios: {e}")
-        return []
-
-# Función para obtener todos los registros de stock
-def obtener_stock():
-    try:
-        with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                cursor.execute("""
-                    SELECT s.id, s.cantidad_disponible, s.fecha_registro,
-                           p.nombre AS producto_nombre, p.id AS producto_id,
-                           u.nombre AS usuario_nombre, u.id AS users_id
-                    FROM stock s
-                    JOIN producto p ON s.producto_id = p.id
-                    JOIN users u ON s.users_id = u.id
-                """)
-                stock = cursor.fetchall()
-                return stock
-    except Exception as e:
-        print(f"Error en obtener_stock: {e}")
-        return []
-
-# Ruta para listar el stock
-@router_stock.route('/lista-de-stock')
-def lista_stock():
-    if 'conectado' in session:
-        stock = obtener_stock()
-        print(stock)  # Depuración: Imprime los datos en la consola del servidor
-        return render_template('public/stock/lista_stock.html', resp_stockBD=stock)
-    else:
-        flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('inicio'))
-
-# Ruta para mostrar el formulario de edición de stock
-@router_stock.route('/editar-stock/<int:id>', methods=['GET'])
+@app.route('/editar-stock/<int:id>', methods=['GET'])
 def viewEditarStock(id):
     if 'conectado' in session:
         # Obtener el stock por ID
@@ -146,13 +72,12 @@ def viewEditarStock(id):
             return render_template('public/stock/editar_stock.html', stock=stock, productos=productos, usuarios=usuarios)
         else:
             flash('El stock no existe.', 'error')
-            return redirect(url_for('router_stock.lista_stock'))
+            return redirect(url_for('lista_stock'))
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
 
-# Ruta para actualizar el stock
-@router_stock.route('/actualizar-stock', methods=['POST'])
+@app.route('/actualizar-stock', methods=['POST'])
 def actualizarStock():
     if 'conectado' in session:
         try:
@@ -168,14 +93,16 @@ def actualizarStock():
             cantidad_disponible = int(dataForm['cantidad_disponible'])
             if cantidad_disponible <= 0:
                 flash('La cantidad disponible debe ser mayor a cero.', 'error')
-                return redirect(url_for('router_stock.viewEditarStock', id=dataForm['id']))
+                return redirect(url_for('viewEditarStock', id=dataForm['id']))
 
             # Actualizar el stock en la base de datos
             with connectionBD() as conexion_MySQLdb:
-                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                with conexion_MySQLdb.cursor() as cursor:
                     sql = """
                         UPDATE stock
-                        SET cantidad_disponible = %s, producto_id = %s, users_id = %s
+                        SET cantidad_disponible = %s,
+                            producto_id = %s,
+                            users_id = %s
                         WHERE id = %s
                     """
                     valores = (
@@ -188,11 +115,83 @@ def actualizarStock():
                     conexion_MySQLdb.commit()
 
             flash('Stock actualizado correctamente.', 'success')
-            return redirect(url_for('router_stock.lista_stock'))
+            return redirect(url_for('lista_stock'))
         except Exception as e:
             print(f"Error en actualizarStock: {e}")
             flash('Ocurrió un error al actualizar el stock.', 'error')
-            return redirect(url_for('router_stock.viewEditarStock', id=dataForm['id']))
+            return redirect(url_for('viewEditarStock', id=dataForm['id']))
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
+    
+@app.route('/detalles-stock/<int:id>')
+def detalles_stock(id):
+    if 'conectado' in session:
+        stock = obtener_stock_por_id(id)
+        if stock:
+            return render_template('public/stock/detalles_stock.html', stock=stock)
+        else:
+            flash('Stock no encontrado', 'error')
+            return redirect(url_for('lista_stock'))
+    else:
+        flash('Primero debes iniciar sesión.', 'error')
+        return redirect(url_for('inicio'))
+    
+@app.route("/buscando-stock", methods=['POST'])
+def viewBuscarStockBD():
+    try:
+        search_query = request.json.get('busqueda')  # Obtener el término de búsqueda desde el JSON
+        if not search_query:
+            return jsonify({'error': 'No search query provided'}), 400
+
+        resultadoBusqueda = buscarStockBD(search_query)  # Buscar stock en la base de datos
+
+        if resultadoBusqueda:
+            # Si hay resultados, generar el HTML de la tabla
+            html_resultados = ""
+            for stock in resultadoBusqueda:
+                html_resultados += f"""
+                <tr id="stock_{stock['id']}">
+                    <td>{stock['id']}</td>
+                    <td>{stock['cantidad_disponible']}</td>
+                    <td>{stock['fecha_registro']}</td>
+                    <td>{stock['producto_nombre']} (ID: {stock['producto_id']})</td>
+                    <td>{stock['usuario_nombre']} (ID: {stock['users_id']})</td>
+                    <td width="10px">
+                        <a href="/detalles-stock/{stock['id']}" class="btn btn-info btn-sm" title="Ver detalles">
+                            <i class="bi bi-eye"></i> Ver detalles
+                        </a>
+                        <a href="/editar-stock/{stock['id']}" class="btn btn-success btn-sm" title="Actualizar">
+                            <i class="bi bi-arrow-clockwise"></i> Actualizar
+                        </a>
+                        <a href="#" onclick="eliminarStock('{stock['id']}');" class="btn btn-danger btn-sm" title="Eliminar">
+                            <i class="bi bi-trash3"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+                """
+            return jsonify({'success': True, 'html': html_resultados})
+        else:
+            # Si no hay resultados, devolver un mensaje en HTML
+            mensaje_html = f"""
+            <tr>
+                <td colspan="6" style="text-align:center;color: red;font-weight: bold;">
+                    No resultados para la búsqueda: <strong style="color: #222;">{search_query}</strong>
+                </td>
+            </tr>
+            """
+            return jsonify({'success': False, 'html': mensaje_html})
+
+    except Exception as e:
+        print(f"Error en viewBuscarStockBD: {e}")  # Log de depuración
+        return jsonify({'error': str(e)}), 500  # Manejo de errores
+    
+@app.route('/eliminar-stock/<int:id>', methods=['DELETE'])
+def eliminar_stock_route(id):
+    if 'conectado' in session:
+        resultado = eliminar_stock(id)
+        if resultado and resultado > 0:
+            return jsonify({'success': True, 'message': 'Stock eliminado correctamente'})
+        return jsonify({'success': False, 'message': 'Error al eliminar stock'})
+    return jsonify({'success': False, 'message': 'Usuario no autenticado'}), 401
+    

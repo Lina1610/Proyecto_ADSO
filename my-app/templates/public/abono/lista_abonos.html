@@ -1,0 +1,86 @@
+{% extends 'public/base_cpanel.html' %}
+{% block title %}Crud con Python 🐍 | Lista de Abonos{% endblock %}
+{% block body %}
+
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12 mb-4">
+      <h3 class="text-center mt-5 mb-3">LISTA DE ABONOS</h3>
+      <hr />
+    </div>
+
+    <!-- Campo de búsqueda -->
+    <div class="row justify-content-end">
+      <div class="col-md-6 mt-4 py-2">
+        <input
+          type="search"
+          id="search_abono"
+          class="form-control border-0 shadow-none"
+          placeholder="Buscar abono..."
+          onkeyup="buscarAbonoAjax()" />
+      </div>
+    </div>
+
+    <!-- Tabla de abonos -->
+    <div class="row justify-content-center mb-2">
+      <div class="table-responsive text-nowrap table-hover">
+        <table
+          id="tbl_abonos"
+          class="table table-striped table-bordered"
+          cellspacing="0"
+          width="100%">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Número de Abono</th>
+              <th>Estado</th>
+              <th>Monto</th>
+              <th>Pedido ID</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tabla_abonos_body">
+            {% for abono in abonos %}
+            <tr id="abono_{{ abono.id }}">
+              <td>{{ loop.index }}</td>
+              <td>{{ abono.numero_abonos }}</td>
+              <td>{{ abono.estado }}</td>
+              <td>{{ abono.monto }}</td>
+              <td>{{ abono.pedido_id }}</td>
+              <td width="10px">
+                <a
+                  href="{{ url_for('detalles_abono', id=abono.id) }}"
+                  class="btn btn-info btn-sm"
+                  title="Ver detalles">
+                  <i class="bi bi-eye"></i>
+                  Ver detalles
+                </a>
+                <a
+                  href="{{ url_for('viewEditarAbono', id=abono.id) }}"
+                  class="btn btn-success btn-sm"
+                  title="Actualizar">
+                  <i class="bi bi-arrow-clockwise"></i>
+                  Actualizar
+                </a>
+                <a
+                  href="#"
+                  onclick="eliminarAbono('{{ abono.id }}');"
+                  class="btn btn-danger btn-sm"
+                  title="Eliminar">
+                  <i class="bi bi-trash3"></i>
+                  Eliminar
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Vincular el archivo JavaScript -->
+<script src="{{ url_for('static', filename='assets/customJS/buscar_abono.js') }}"></script>
+
+{% endblock %}

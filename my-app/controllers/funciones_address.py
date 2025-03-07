@@ -131,10 +131,10 @@ def procesar_direccion(dataForm):
     
 # controllers/funciones_address.py
 
-def obtener_direccion():
+def obtener_direccion(user_id=None):
     """
-    Obtiene todas las direcciones de la base de datos con los nombres de municipio, departamento y documento del usuario.
-    Retorna una lista de todas las direcciones.
+    Obtiene todas las direcciones de la base de datos.
+    Si se proporciona un user_id, filtra las direcciones por ese usuario.
     """
     try:
         with connectionBD() as conexion_MySQLdb:
@@ -157,15 +157,16 @@ def obtener_direccion():
                     LEFT JOIN users u ON d.users_id = u.id
                     LEFT JOIN municipio m ON d.municipio_id = m.id
                     LEFT JOIN departamento dep ON d.departamento_id = dep.id
-                    ORDER BY d.id DESC
                 """
-                print("Ejecutando consulta SQL:", sql)  # Depuración
-                cursor.execute(sql)
+                if user_id:
+                    sql += " WHERE d.users_id = %s"
+                    cursor.execute(sql, (user_id,))
+                else:
+                    cursor.execute(sql)
                 direcciones = cursor.fetchall()
-                print("Datos de direcciones obtenidos:", direcciones)  # Depuración
                 return direcciones
     except Exception as e:
-        print(f"Error en obtener_direccion: {e}")  # Depuración
+        print(f"Error en obtener_direccion: {e}")
         return []
     
     

@@ -5,6 +5,7 @@ from config import Config  # Importar la configuración
 from dotenv import load_dotenv
 from datetime import datetime  # Necesario para trabajar con las fechas
 
+
 load_dotenv()  # Cargar variables de entorno desde .env
 
 # Importando los Routers

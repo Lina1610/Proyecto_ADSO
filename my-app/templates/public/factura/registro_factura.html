@@ -24,10 +24,14 @@
         class="form-horizontal mx-auto"
         method="POST"
 
+        action="{{ url_for('viewFormFactura') }}"
+
+        action="registrar-factura"
+
+
         action="registrar-factura"
         action="{{ url_for('viewFormFactura') }}"
-        autocomplete="off"
-        enctype="multipart/form-data">
+
         <div class="card-body">
           <div class="row">
             <!-- Columna Izquierda -->
