@@ -196,6 +196,9 @@ def detalles_factura(id):
                 cursor.execute(sql, (id,))
                 factura_pedido = cursor.fetchone()
 
+                # Depuración: Imprimir los datos obtenidos
+                print("Datos de la factura y pedido:", factura_pedido)
+
         if factura_pedido:
             return render_template('public/factura/detalles_factura.html', factura_pedido=factura_pedido)
         else:
