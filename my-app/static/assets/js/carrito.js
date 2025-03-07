@@ -386,22 +386,99 @@ function mostrarDirecciones(tipoEntrega) {
 }
 
 // ==================== FUNCIONES DE DIRECCIONES ====================
+async function guardarDireccion(event) {
+    event.preventDefault();
+    
+    // Validar sesión
+    if (!verificarAutenticacion()) return;
+
+    // Obtener datos del formulario
+    const formData = {
+        nombre_completo: document.getElementById('registrarNombreCompleto').value.trim(),
+        barrio: document.getElementById('registrarBarrio').value.trim(),
+        domicilio: document.getElementById('registrarDomicilio').value.trim(),
+        referencias: document.getElementById('registrarReferencias').value.trim(),
+        telefono: document.getElementById('registrarTelefono').value.trim(),
+        departamento_id: document.getElementById('registrarDepartamentoId').value,
+        municipio_id: document.getElementById('registrarMunicipioId').value
+    };
+
+    // Validación básica
+    if (!validarCamposDireccion(formData)) return;
+
+    try {
+        const response = await fetch('/guardar-direccion', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.error || "Error desconocido");
+        
+        mostrarNotificacion('¡Dirección guardada exitosamente!', 'success');
+        $('#editarDireccionModal').modal('hide');
+        mostrarDirecciones('Domicilio');
+        
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarNotificacion(error.message || 'Error al guardar la dirección', 'error');
+    }
+}
+// Función para cargar los departamentos en el modal
 function cargarDepartamentos() {
     fetch('/obtener-departamentos')
-        .then(handleResponse)
-        .then(data => poblarSelect(data, 'registrarDepartamentoId', 'departamento'))
-        .catch(handleError);
+        .then(response => response.json())
+        .then(data => {
+            const selectDepartamento = document.getElementById('registrarDepartamentoId');
+            selectDepartamento.innerHTML = '<option value="">Seleccione un departamento</option>'; // Limpiar opciones anteriores
+            data.forEach(departamento => {
+                const option = document.createElement('option');
+                option.value = departamento.id;
+                option.textContent = departamento.nombre;
+                selectDepartamento.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error al cargar departamentos:', error));
 }
 
+// Función para cargar los municipios cuando se selecciona un departamento
 function cargarMunicipios(departamentoId) {
-    if (!departamentoId) return;
-    
     fetch(`/obtener_municipios?departamento_id=${departamentoId}`)
-        .then(handleResponse)
-        .then(data => poblarSelect(data, 'registrarMunicipioId', 'municipio'))
-        .catch(handleError);
+        .then(response => response.json())
+        .then(data => {
+            const selectMunicipio = document.getElementById('registrarMunicipioId');
+            selectMunicipio.innerHTML = '<option value="">Seleccione un municipio</option>'; // Limpiar opciones anteriores
+            data.forEach(municipio => {
+                const option = document.createElement('option');
+                option.value = municipio.id;
+                option.textContent = municipio.nombre;
+                selectMunicipio.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error al cargar municipios:', error));
 }
 
+// Evento para cargar los departamentos cuando el modal se abre
+document.getElementById('editarDireccionModal').addEventListener('shown.bs.modal', function () {
+    cargarDepartamentos();
+});
+
+// Evento para cargar los municipios cuando se selecciona un departamento
+document.getElementById('registrarDepartamentoId').addEventListener('change', function () {
+    const departamentoId = this.value;
+    if (departamentoId) {
+        cargarMunicipios(departamentoId);
+    } else {
+        // Limpiar municipios si no se selecciona un departamento
+        const selectMunicipio = document.getElementById('registrarMunicipioId');
+        selectMunicipio.innerHTML = '<option value="">Seleccione un municipio</option>';
+    }
+});
 // ==================== FUNCIONES AUXILIARES ====================
 function handleResponse(response) {
     if (!response.ok) throw new Error('Error en la respuesta del servidor');
@@ -422,15 +499,25 @@ function mostrarNotificacion(mensaje, tipo) {
 }
 
 // ==================== INICIALIZACIÓN ====================
+// Modificar la función de inicialización
 document.addEventListener('DOMContentLoaded', () => {
     cargarCarrito();
-    cargarDepartamentos();
     
+    // Cargar departamentos cuando se abre el modal
+    const modalDireccion = document.getElementById('editarDireccionModal');
+    if (modalDireccion) {
+        modalDireccion.addEventListener('show.bs.modal', () => {
+            cargarDepartamentos();
+            // Reiniciar municipios al abrir el modal
+            const selectMunicipio = document.getElementById('registrarMunicipioId');
+            selectMunicipio.innerHTML = '<option value="">Seleccione un municipio</option>';
+        });
+    }
+
+    // Manejar cambio de departamento
     document.getElementById('registrarDepartamentoId')?.addEventListener('change', function() {
         cargarMunicipios(this.value);
     });
-
-    document.querySelector('.carrito-icono')?.addEventListener('click', toggleCarrito);
 });
 
 // ==================== FUNCIONES RESTANTES ORGANIZADAS ====================
@@ -439,8 +526,9 @@ function verificarAutenticacion() {
     if (!isLoggedIn) {
         mostrarNotificacion('Debe iniciar sesión para esta acción', 'error');
         setTimeout(() => window.location.href = '/login-cliente', 1500);
+        return false;
     }
-    return isLoggedIn;
+    return true;
 }
 
 function generarHTMLCarrito() {

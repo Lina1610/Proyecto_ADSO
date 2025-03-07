@@ -494,39 +494,25 @@
                 <p class="footer-text">
                     <strong>Email:</strong> info@empresa.com<br>
 
-<script>
-  document.getElementById('departamento_id').addEventListener('change', function () {
-    const departamentoId = this.value;
-    const municipioSelect = document.getElementById('municipio_id');
-
-    if (departamentoId) {
-      fetch(`/obtener_municipios?departamento_id=${departamentoId}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Error en la solicitud');
-          }
-          return response.json();
-        })
-        .then(data => {
-          municipioSelect.innerHTML = '<option value="">Seleccione</option>';
-          data.forEach(municipio => {
-            const option = document.createElement('option');
-            option.value = municipio.id;
-            option.textContent = municipio.nombre;
-            municipioSelect.appendChild(option);
-          });
-        })
-        .catch(error => {
-          console.error('Error al obtener municipios:', error);
-          municipioSelect.innerHTML = '<option value="">Error al cargar municipios</option>';
-        });
-    } else {
-      municipioSelect.innerHTML = '<option value="">Seleccione</option>';
-    }
-  });
-  
-
-</script>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            // Cargar municipios al cambiar departamento
+                            document.getElementById('registrarDepartamentoId').addEventListener('change', function() {
+                                const departamentoId = this.value;
+                                if (departamentoId) {
+                                    fetch(`/obtener-municipios?departamento_id=${departamentoId}`)
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            const municipioSelect = document.getElementById('registrarMunicipioId');
+                                            municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+                                            data.forEach(municipio => {
+                                                municipioSelect.innerHTML += `<option value="${municipio.id}">${municipio.nombre}</option>`;
+                                            });
+                                        });
+                                }
+                            });
+                        });
+                        </script>
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->

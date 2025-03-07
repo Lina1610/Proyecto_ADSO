@@ -15,6 +15,8 @@ from controllers.funciones_login import info_perfil_session  # Importar la funci
 
 PATH_URL = "public/direccion"
 
+
+
 # Ruta para mostrar las direcciones del cliente
 @app.route('/cliente-direcciones', methods=['GET'])
 def cliente_direcciones():
@@ -101,6 +103,21 @@ def viewFormDireccion():
         municipios=municipios,
         users=users
     )
+
+@app.route('/obtener-departamentos', methods=['GET'])
+def obtener_departamentos():
+    """
+    Obtiene todos los departamentos disponibles.
+    Retorna un JSON con los departamentos o un mensaje de error.
+    """
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                cursor.execute("SELECT id, nombre FROM departamento")
+                departamentos = cursor.fetchall()
+                return jsonify(departamentos)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
     
 # Ruta para obtener municipios según departamento
 @app.route('/obtener_municipios', methods=['GET'])

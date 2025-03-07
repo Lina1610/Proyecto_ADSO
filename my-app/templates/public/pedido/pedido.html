@@ -185,57 +185,62 @@
 
 <!-- Modal para agregar dirección -->
 <div class="modal fade" id="editarDireccionModal" tabindex="-1" aria-labelledby="editarDireccionModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg"> <!-- Cambiado a modal-lg para mejor visualización -->
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="editarDireccionModalLabel">Agregar Nueva Dirección</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="formRegistrarDireccion" method="POST">
-                    <input type="hidden" name="contexto" id="registrarContexto" value="web">
-                    <div class="mb-3">
-                        <label for="nombre_completo" class="form-label">Nombre Completo</label>
-                        <input type="text" name="nombre_completo" id="registrarNombreCompleto" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="barrio" class="form-label">Barrio</label>
-                        <input type="text" name="barrio" id="registrarBarrio" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="domicilio" class="form-label">Domicilio</label>
-                        <input type="text" name="domicilio" id="registrarDomicilio" class="form-control" required>
+                <form method="POST" action="/registrar-direccion">
+                    <div class="row">
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="nombre_completo" class="form-label">Nombre Completo</label>
+                                <input type="text" name="nombre_completo" id="registrarNombreCompleto" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="telefono" class="form-label">Teléfono</label>
+                                <input type="tel" name="telefono" id="registrarTelefono" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="departamento_id" class="form-label">Departamento</label>
+                                <select class="form-select" name="departamento_id" id="registrarDepartamentoId" required>
+                                    <option value="">Seleccione un departamento</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="municipio_id" class="form-label">Municipio</label>
+                                <select class="form-select" name="municipio_id" id="registrarMunicipioId" required>
+                                    <option value="">Seleccione un municipio</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="domicilio" class="form-label">Domicilio</label>
+                                <input type="text" name="domicilio" id="registrarDomicilio" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="barrio" class="form-label">Barrio</label>
+                                <input type="text" name="barrio" id="registrarBarrio" class="form-control" required>
+                            </div>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="referencias" class="form-label">Referencias</label>
-                        <input type="text" name="referencias" id="registrarReferencias" class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label for="telefono" class="form-label">Teléfono</label>
-                        <input type="text" name="telefono" id="registrarTelefono" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="departamento_id" class="form-label">Departamento</label>
-                        <select class="form-select" name="departamento_id" id="registrarDepartamentoId" required>
-                            <option value="">Seleccione un departamento</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="municipio_id" class="form-label">Municipio</label>
-                        <select class="form-select" name="municipio_id" id="registrarMunicipioId" required>
-                            <option value="">Seleccione un municipio</option>
-                        </select>
+                        <textarea name="referencias" id="registrarReferencias" class="form-control" rows="2"></textarea>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Dirección</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-container">
