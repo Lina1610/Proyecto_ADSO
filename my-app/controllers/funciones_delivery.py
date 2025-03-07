@@ -73,44 +73,24 @@ def insertar_entrega(tipo, estado, costo_domicilio, direccion_id):
     except MySQLError as err:
         return f"Error de MySQL al insertar la entrega: {err}"
 
-def procesar_entrega(data_form):
-    """Procesa el formulario de entrega y realiza las validaciones necesarias."""
-    # Campos obligatorios
-    campos_requeridos = ['tipo', 'estado', 'costo_domicilio', 'direccion_id']
-    error = validar_campos_obligatorios(data_form, campos_requeridos)
-    if error:
-        return error
-
-    # Validar tipo
-    tipo = data_form.get('tipo')
-    error = validar_tipo(tipo)
-    if error:
-        return error
-
-    # Validar estado
-    estado = data_form.get('estado')
-    error = validar_estado(estado)
-    if error:
-        return error
-
-    # Validar costo_domicilio
-    costo_domicilio, error = validar_costo_domicilio(data_form.get('costo_domicilio'))
-    if error:
-        return error
-
-    # Validar direccion_id
-    direccion_id, error = validar_direccion_id(data_form.get('direccion_id'))
-    if error:
-        return error
-
-    # Verificar que el direccion_id exista en la base de datos
-    error = verificar_direccion_existe(direccion_id)
-    if error:
-        return error
-
-    # Insertar la entrega en la base de datos
-    id_entrega = insertar_entrega(tipo, estado, costo_domicilio, direccion_id)
-    if isinstance(id_entrega, int) and id_entrega > 0:
-        return id_entrega  # Éxito
-    else:
-        return id_entrega  # Devuelve el mensaje de error
+def procesar_entrega(tipo_entrega, direccion_id=None):
+    """Crea un registro en la tabla 'entrega' y devuelve el ID."""
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                sql = """
+                    INSERT INTO entrega (
+                        tipo, estado, costo_domicilio, direccion_id, fecha_hora
+                    ) VALUES (%s, %s, %s, %s, NOW())
+                """
+                valores = (
+                    tipo_entrega,
+                    'Pendiente',  # Estado por defecto
+                    None,  # Costo de domicilio inicialmente nulo
+                    direccion_id if tipo_entrega == 'Domicilio' else None
+                )
+                cursor.execute(sql, valores)
+                conexion_MySQLdb.commit()
+                return cursor.lastrowid  # Devuelve el ID de la entrega creada
+    except Exception as e:
+        return f"Error al crear la entrega: {str(e)}"

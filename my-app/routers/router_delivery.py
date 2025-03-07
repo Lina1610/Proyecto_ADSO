@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request, flash, redirect, url_for, session
+from flask import render_template, request, flash,jsonify, redirect, url_for, session
 from mysql.connector.errors import Error
 from controllers.funciones_delivery import *
 from conexion.conexionBD import connectionBD
@@ -30,7 +30,7 @@ def viewFormEntrega():
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                # Nueva consulta SQL con JOIN
+                # Obtener las direcciones del usuario
                 cursor.execute("""
                     SELECT 
                         d.id, 
@@ -48,7 +48,6 @@ def viewFormEntrega():
                         d.estado = 'Activo'
                 """)
                 direcciones = cursor.fetchall()  # Obtiene todas las direcciones activas
-                print(direcciones)  # Depuración: Verifica los datos obtenidos
     except Error as e:  # Captura errores de la base de datos
         flash(f'Error al cargar direcciones: {str(e)}', 'error')
         direcciones = []  # Si hay un error, devuelve una lista vacía
@@ -57,3 +56,62 @@ def viewFormEntrega():
         f'{PATH_URL}/registro_entrega.html',
         direcciones=direcciones
     )
+
+@app.route('/guardar-pedido', methods=['POST'])
+def guardar_pedido():
+    if 'conectado' not in session:  # Si el usuario no está conectado
+        return jsonify({"status": "error", "mensaje": "Debes iniciar sesión para realizar esta acción."})
+
+    try:
+        data = request.get_json()  # Obtener los datos del pedido
+        metodo_pago_id = data.get('metodo_pago_id')
+        tipo_entrega = data.get('tipo_entrega')
+        direccion_id = data.get('direccion_id')
+        users_id = session.get('users_id')  # Obtener el ID del usuario desde la sesión
+        total = data.get('total')  # Total del pedido
+
+        # Validar los datos
+        if not metodo_pago_id or not tipo_entrega or not users_id or not total:
+            return jsonify({"status": "error", "mensaje": "Faltan datos obligatorios."})
+
+        if tipo_entrega == 'Domicilio' and not direccion_id:
+            return jsonify({"status": "error", "mensaje": "Debes seleccionar una dirección para entrega a domicilio."})
+
+        # Crear la entrega
+        entrega_id = procesar_entrega(tipo_entrega, direccion_id)
+        if isinstance(entrega_id, str):  # Si hay un error
+            return jsonify({"status": "error", "mensaje": entrega_id})
+
+        # Crear el pedido
+        pedido_id = crear_pedido(users_id, metodo_pago_id, entrega_id, total)
+        if isinstance(pedido_id, str):  # Si hay un error
+            return jsonify({"status": "error", "mensaje": pedido_id})
+
+        return jsonify({"status": "success", "mensaje": "Pedido registrado con éxito.", "pedido_id": pedido_id})
+
+    except Exception as e:
+        return jsonify({"status": "error", "mensaje": f"Error al registrar el pedido: {str(e)}"})
+    
+
+def crear_pedido(users_id, metodo_pago_id, entrega_id, total):
+    """Crea un registro en la tabla 'pedido'."""
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                sql = """
+                    INSERT INTO pedido (
+                        fecha, estado, total, entrega_id, users_id, metodo_pago_id
+                    ) VALUES (NOW(), %s, %s, %s, %s, %s)
+                """
+                valores = (
+                    'Pendiente',  # Estado por defecto
+                    total,
+                    entrega_id,
+                    users_id,
+                    metodo_pago_id
+                )
+                cursor.execute(sql, valores)
+                conexion_MySQLdb.commit()
+                return cursor.lastrowid  # Devuelve el ID del pedido creado
+    except Exception as e:
+        return f"Error al crear el pedido: {str(e)}"

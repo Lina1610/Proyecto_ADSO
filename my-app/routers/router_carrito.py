@@ -65,35 +65,74 @@ def finalizar_compra():
     users_id = session.get('id')
     datos = request.json
     direccion_id = datos.get('direccion_id')
+    tipo_entrega = datos.get('tipo_entrega')  # 'Domicilio' o 'Presencial'
+    metodo_pago_id = datos.get('metodo_pago_id')  # ID del método de pago seleccionado
     
-    if not direccion_id:
-        return jsonify({'status': 'error', 'mensaje': 'Debes seleccionar una dirección de envío'})
+    if not tipo_entrega or not metodo_pago_id:
+        return jsonify({'status': 'error', 'mensaje': 'Faltan datos obligatorios (tipo de entrega o método de pago)'})
+    
+    if tipo_entrega == 'Domicilio' and not direccion_id:
+        return jsonify({'status': 'error', 'mensaje': 'Debes seleccionar una dirección de envío para entrega a domicilio'})
     
     # Obtener los productos del carrito
     carrito = obtener_carrito(users_id)
     if carrito['status'] != 'success':
         return jsonify({'status': 'error', 'mensaje': 'Error al obtener el carrito'})
     
+    # Calcular el total del carrito
+    total = sum(item['precio'] * item['cantidad'] for item in carrito['items'])
+    print(f"Total calculado: {total}")  # Depuración
+    
     # Crear el pedido en la base de datos
     try:
         conexion = connectionBD()
         cursor = conexion.cursor()
         
-        # Insertar el pedido en la tabla "pedidos"
-        sql_pedido = """
-            INSERT INTO pedidos (users_id, direccion_id, estado, fecha_creacion)
-            VALUES (%s, %s, 'pendiente', NOW())
+        # Insertar la entrega en la tabla "entrega"
+        sql_entrega = """
+            INSERT INTO entrega (tipo, estado, costo_domicilio, direccion_id, fecha_hora)
+            VALUES (%s, %s, %s, %s, NOW())
         """
-        cursor.execute(sql_pedido, (users_id, direccion_id))
+        valores_entrega = (
+            tipo_entrega,
+            'Pendiente',  # Estado por defecto
+            None if tipo_entrega == 'Presencial' else 0,  # Costo de domicilio (inicialmente 0 o NULL)
+            direccion_id if tipo_entrega == 'Domicilio' else None
+        )
+        cursor.execute(sql_entrega, valores_entrega)
+        entrega_id = cursor.lastrowid  # Obtener el ID de la entrega recién creada
+        
+        # Insertar el pedido en la tabla "pedido"
+        sql_pedido = """
+            INSERT INTO pedido (
+                fecha, estado, total, entrega_id, users_id, metodo_pago_id
+            ) VALUES (NOW(), %s, %s, %s, %s, %s)
+        """
+        valores_pedido = (
+            'Pendiente',  # Estado por defecto
+            total,  # Total del carrito
+            entrega_id,
+            users_id,
+            metodo_pago_id
+        )
+        cursor.execute(sql_pedido, valores_pedido)
         pedido_id = cursor.lastrowid  # Obtener el ID del pedido recién creado
         
-        # Insertar los productos del carrito en la tabla "detalles_pedido"
+        # Insertar los productos del carrito en la tabla "detalle_pedido"
         for item in carrito['items']:
+            total_item = item['precio'] * item['cantidad']  # Calcular el total para este producto
             sql_detalle = """
-                INSERT INTO detalles_pedido (pedido_id, producto_id, cantidad, precio_unitario)
-                VALUES (%s, %s, %s, %s)
+                INSERT INTO detalle_pedido (
+                    pedido_id, producto_id, cantidad, precio_unitario, total
+                ) VALUES (%s, %s, %s, %s, %s)
             """
-            cursor.execute(sql_detalle, (pedido_id, item['producto_id'], item['cantidad'], item['precio']))
+            cursor.execute(sql_detalle, (
+                pedido_id,
+                item['producto_id'],
+                item['cantidad'],
+                item['precio'],
+                total_item  # Total para este producto
+            ))
         
         # Vaciar el carrito después de crear el pedido
         vaciar_carrito(users_id)
@@ -102,7 +141,7 @@ def finalizar_compra():
         return jsonify({'status': 'success', 'mensaje': 'Pedido creado con éxito', 'pedido_id': pedido_id})
     except Exception as e:
         print(f"Error al finalizar la compra: {e}")
-        return jsonify({'status': 'error', 'mensaje': 'Error al finalizar la compra'})
+        return jsonify({'status': 'error', 'mensaje': str(e)})  # Mostrar el error específico
     finally:
         if conexion.is_connected():
             cursor.close()
