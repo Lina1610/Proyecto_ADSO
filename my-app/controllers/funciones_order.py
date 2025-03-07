@@ -190,7 +190,8 @@ def obtener_pedidos():
                 querySQL = """
                     SELECT p.id, p.fecha, p.fechaEntrega, p.horaEntrega, p.estado,
                            u.nombre AS usuario_nombre, pr.nombre AS producto_nombre,
-                           mp.metodo AS metodo_pago, e.tipo AS tipo_entrega
+                           mp.metodo AS metodo_pago, e.tipo AS tipo_entrega,
+                           COALESCE((SELECT SUM(dp.total) FROM detalle_pedido dp WHERE dp.pedido_id = p.id), 0) AS total
                     FROM pedido p
                     JOIN users u ON p.users_id = u.id
                     JOIN producto pr ON p.producto_id = pr.id

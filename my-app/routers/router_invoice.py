@@ -1,3 +1,4 @@
+
 from app import app
 from flask import render_template, request, flash, redirect, url_for, session, jsonify
 from mysql.connector.errors import Error
@@ -57,6 +58,13 @@ def viewFormFactura():
                 flash('Factura registrada correctamente.', 'success')
             else:
                 flash(resultado, 'error')  # Mostrar mensaje de error
+
+
+
+            return redirect(url_for('viewFormFactura'))
+
+            return redirect(url_for('registrar-factura'))
+
 
             return redirect(url_for('registrar-factura'))
 
@@ -151,7 +159,6 @@ def eliminar_factura_route(id):
         return jsonify({'success': False, 'message': 'Error al eliminar factura'})
     return jsonify({'success': False, 'message': 'Usuario no autenticado'}), 401
 
-# Ruta para ver detalles de una factura
 @app.route('/detalles-factura/<int:id>')
 def detalles_factura(id):
     if 'conectado' in session:
