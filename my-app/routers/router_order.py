@@ -83,13 +83,12 @@ def obtener_metodos_pago_tipos_entrega():
 @app.route('/lista-de-pedidos')
 def lista_pedidos():
     if 'conectado' in session:
-        pedidos = obtener_pedidos()
+        pedidos = obtener_pedidos()  # Asegúrate de que esta función devuelva el campo 'total'
         print("Pedidos enviados a la plantilla:", pedidos)  # Depuración
         return render_template('public/pedido/lista_pedidos.html', pedidos=pedidos)
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
-
 
 # Ruta para buscar pedidos
 @app.route("/buscando-pedido", methods=['POST'])
@@ -217,18 +216,15 @@ def viewEditarPedido(id):
     
 @app.route('/detalles-pedido/<int:id>')
 def detalles_pedido(id):
-    """
-    Muestra los detalles de un pedido específico por su ID.
-    Solo accesible si el usuario está conectado.
-    """
     if 'conectado' in session:
-        # Obtener el pedido por su ID
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Obtener información del pedido
                 cursor.execute("""
                     SELECT p.id, p.fecha, p.fechaEntrega, p.horaEntrega, p.estado,
                            u.nombre AS usuario_nombre, pr.nombre AS producto_nombre,
-                           mp.metodo AS metodo_pago, e.tipo AS tipo_entrega
+                           mp.metodo AS metodo_pago, e.tipo AS tipo_entrega,
+                           (SELECT SUM(dp.total) FROM detalle_pedido dp WHERE dp.pedido_id = p.id) AS total_pedido
                     FROM pedido p
                     JOIN users u ON p.users_id = u.id
                     JOIN producto pr ON p.producto_id = pr.id
@@ -238,13 +234,23 @@ def detalles_pedido(id):
                 """, (id,))
                 pedido = cursor.fetchone()
 
-        if pedido:
-            return render_template('public/pedido/detalles_pedido.html', pedido=pedido)
-        else:
-            flash('Pedido no encontrado', 'error')
-            return redirect(url_for('lista_pedidos'))
+                # Asegurarse de que total_pedido no sea None
+                if pedido['total_pedido'] is None:
+                    pedido['total_pedido'] = 0.0
+
+                # Obtener los detalles del pedido
+                cursor.execute("""
+                    SELECT dp.id, dp.precio_unitario, dp.total, dp.cantidad,
+                           pr.nombre AS producto_nombre
+                    FROM detalle_pedido dp
+                    JOIN producto pr ON dp.producto_id = pr.id
+                    WHERE dp.pedido_id = %s
+                """, (id,))
+                detalles_pedido = cursor.fetchall()
+
+        return render_template('public/pedido/detalles_pedido.html', 
+                             pedido=pedido, 
+                             detalles_pedido=detalles_pedido)
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
-    
-

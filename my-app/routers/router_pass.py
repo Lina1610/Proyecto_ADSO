@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 from app import app
 from flask import render_template, request, flash, redirect, url_for, session, jsonify
@@ -17,3 +18,5 @@ def viewFormAbono():
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
 >>>>>>> 681b12abedb72f4c61131d72236c8decfdee23f2
+=======
+>>>>>>> d381162e3ba3abb75bc852860d42f108aca98d60

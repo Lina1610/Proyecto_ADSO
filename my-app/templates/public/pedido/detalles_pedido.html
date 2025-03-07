@@ -23,6 +23,7 @@
   <div class="row justify-content-center mb-2">
     <div class="col-md-10">
       <div class="card-body">
+        <!-- Información del pedido -->
         <div class="row">
           <div class="col-md-6">
             <label for="fecha" class="form-label">
@@ -88,6 +89,61 @@
             </label>
             <br />
             {{ pedido.tipo_entrega }}
+          </div>
+        </div>
+
+        <!-- Total del Pedido -->
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="total_pedido" class="form-label">
+              Total del Pedido
+            </label>
+            <br />
+            ${{ "{:,.2f}".format(pedido.total_pedido) }}  <!-- Formateado como moneda -->
+          </div>
+        </div>
+
+        <!-- Detalles del pedido -->
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <h4>Detalles del Pedido</h4>
+            <hr />
+            {% for detalle in detalles_pedido %}
+            <div class="row mt-2">
+              <div class="col-md-6">
+                <label for="producto" class="form-label">
+                  Producto
+                </label>
+                <br />
+                {{ detalle.producto_nombre }}
+              </div>
+              <div class="col-md-6">
+                <label for="cantidad" class="form-label">
+                  Cantidad
+                </label>
+                <br />
+                {{ detalle.cantidad }}
+              </div>
+            </div>
+
+            <div class="row mt-2">
+              <div class="col-md-6">
+                <label for="precio_unitario" class="form-label">
+                  Precio Unitario
+                </label>
+                <br />
+                ${{ "{:,.2f}".format(detalle.precio_unitario) }}  <!-- Formateado como moneda -->
+              </div>
+              <div class="col-md-6">
+                <label for="total" class="form-label">
+                  Total
+                </label>
+                <br />
+                ${{ "{:,.2f}".format(detalle.total) }}  <!-- Formateado como moneda -->
+              </div>
+            </div>
+            <hr />
+            {% endfor %}
           </div>
         </div>
       </div>

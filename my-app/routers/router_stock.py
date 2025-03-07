@@ -8,7 +8,6 @@ from mysql.connector.errors import Error
 from controllers.funciones_stock import *
 
 
-
 PATH_URL = "public/stock"  
 # Ruta base para las plantillas de inventario
 @app.route ('/registrar-stock', methods=['GET', 'POST'])

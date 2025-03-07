@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session, jsonify
 from conexion.conexionBD import connectionBD
 from controllers.funciones_installment import procesar_abono
+from app import app
 
 from controllers.funciones_installment import obtener_abonos
 from controllers.funciones_installment import actualizar_abono
