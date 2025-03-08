@@ -96,7 +96,7 @@ def finalizar_compra():
         valores_entrega = (
             tipo_entrega,
             'Pendiente',  # Estado por defecto
-            None if tipo_entrega == 'Presencial' else 0,  # Costo de domicilio (inicialmente 0 o NULL)
+            0,  # Siempre establecer costo_domicilio en 0
             direccion_id if tipo_entrega == 'Domicilio' else None
         )
         cursor.execute(sql_entrega, valores_entrega)
@@ -105,15 +105,16 @@ def finalizar_compra():
         # Insertar el pedido en la tabla "pedido"
         sql_pedido = """
             INSERT INTO pedido (
-                fecha, estado, total, entrega_id, users_id, metodo_pago_id
-            ) VALUES (NOW(), %s, %s, %s, %s, %s)
+                fecha, estado, total, entrega_id, users_id, metodo_pago_id, producto_id
+            ) VALUES (NOW(), %s, %s, %s, %s, %s, %s)
         """
         valores_pedido = (
             'Pendiente',  # Estado por defecto
             total,  # Total del carrito
             entrega_id,
             users_id,
-            metodo_pago_id
+            metodo_pago_id,
+            carrito['items'][0]['producto_id']  # Usar el ID del primer producto en el carrito
         )
         cursor.execute(sql_pedido, valores_pedido)
         pedido_id = cursor.lastrowid  # Obtener el ID del pedido recién creado
@@ -146,7 +147,6 @@ def finalizar_compra():
         if conexion.is_connected():
             cursor.close()
             conexion.close()
-
 @carrito_bp.route('/eliminar', methods=['POST'])
 def eliminar_producto_carrito():
     """Ruta para eliminar un producto del carrito"""
