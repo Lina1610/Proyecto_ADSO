@@ -6,14 +6,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // 🟢 Exportar a Excel
   $btnExportarExcel.addEventListener("click", function () {
-    let tableExport = new TableExport($tabla, {
+    // Clonar la tabla para no modificar la original
+    const tablaClonada = $tabla.cloneNode(true);
+
+    // Eliminar la columna "Acción" del clon
+    tablaClonada.querySelectorAll("tr").forEach((fila) => {
+      const celdas = fila.querySelectorAll("td, th");
+      if (celdas.length > 6) { // Eliminar la última celda (Acción)
+        celdas[6].remove();
+      }
+    });
+
+    // Asignar un ID único al clon para evitar conflictos
+    tablaClonada.id = "tbl_productos_clonada";
+
+    // Agregar el clon al DOM temporalmente
+    document.body.appendChild(tablaClonada);
+
+    // Exportar el clon de la tabla
+    let tableExport = new TableExport(tablaClonada, {
+      formats: ["xlsx"], // Solo exportar a Excel
       exportButtons: false,
       filename: "Reporte_Productos",
       sheetname: "Productos",
     });
 
     let datos = tableExport.getExportData();
-    let preferenciasDocumento = datos.tbl_productos.xlsx;
+    let preferenciasDocumento = datos[tablaClonada.id].xlsx;
 
     tableExport.export2file(
       preferenciasDocumento.data,
@@ -24,6 +43,9 @@ document.addEventListener("DOMContentLoaded", function () {
       preferenciasDocumento.RTL,
       preferenciasDocumento.sheetname
     );
+
+    // Eliminar el clon del DOM después de exportar
+    document.body.removeChild(tablaClonada);
   });
 
   // 🔴 Exportar a PDF sin la columna "Acción"
@@ -38,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document
       .querySelectorAll("#tbl_productos thead th")
       .forEach((th, index) => {
-        if (index < 9) { // Evita la última columna (Acción)
+        if (index < 6) { // Evita la última columna (Acción)
           headers.push(th.innerText);
         }
       });
@@ -48,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("#tbl_productos tbody tr").forEach((row) => {
       const rowData = [];
       row.querySelectorAll("td").forEach((td, index) => {
-        if (index < 9) { // Evita la última columna (Acción)
+        if (index < 6) { // Evita la última columna (Acción)
           rowData.push(td.innerText);
         }
       });
@@ -89,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "th { background-color: #f4f4f4; font-weight: bold; }"
     );
     ventanaImpresion.document.write(
-      "th:nth-child(6), td:nth-child(6) { display: none; }"
+      "th:nth-child(7), td:nth-child(7) { display: none; }" // Ocultar columna "Acción"
     );
     ventanaImpresion.document.write(
       "body { font-family: Arial, sans-serif; font-size: 12px; }"

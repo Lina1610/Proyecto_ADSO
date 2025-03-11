@@ -66,7 +66,7 @@
                 <td>{{ pedido.producto_nombre }}</td>
                 <td>{{ pedido.metodo_pago }}</td>
                 <td>{{ pedido.tipo_entrega }}</td>
-                <td>{{ pedido.total | round(2) }}</td>  <!-- Mostrar el Total -->
+                <td>{{ pedido.total | round(2) }}</td>
                 <td>
                   <a href="/detalles-pedido/{{ pedido.id }}"
                      class="btn btn-info btn-sm"
@@ -96,11 +96,33 @@
             {% endif %}
           </tbody>
         </table>
+
+        <!-- Botones de exportación -->
+        <div class="botones-export mt-3">
+          <button id="btnExportarExcel" class="btn btn-success">
+            <i class="fas fa-file-excel"></i> Exportar a Excel
+          </button>
+          <button id="btnExportarPDF" class="btn btn-danger">
+            <i class="fas fa-file-pdf"></i> Exportar a PDF
+          </button>
+          <button id="btnImprimir" class="btn btn-info">
+            <i class="fas fa-print"></i> Imprimir
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Vincular el archivo JavaScript -->
-<script src="{{ url_for('static', filename='assets/customJS/buscar_pedido.js') }}"></script>
+<!-- Librerías necesarias -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.16.9/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saverjs@latest/FileSaver.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tableexport@5.2.0/dist/js/tableexport.min.js"></script>
+
+<script src="{{ url_for('static', filename='assets/js/reportOrder.js') }}"></script>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/report.css') }}">
+
 {% endblock %}

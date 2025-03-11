@@ -1,5 +1,9 @@
 {% extends 'public/base_cpanel.html' %}
+
+<!-- Cambiando el title -->
 {% block title %}Crud con Python 🐍 | Lista de Productos{% endblock %}
+
+<!-- Inicio del block -->
 {% block body %}
 
 <div class="card" style="border-radius: 0px !important">
@@ -13,7 +17,7 @@
     <div class="row justify-content-end">
       <div class="col-md-6 mt-4 py-2">
         <input
-          type="searchp"
+          type="search"
           id="search_producto"
           class="form-control border-0 shadow-none"
           placeholder="Buscar producto..."
@@ -32,7 +36,7 @@
           <thead>
             <tr>
               <th>#</th>
-              <th>codigo</th>
+              <th>Código</th>
               <th>Nombre</th>
               <th>Descripción</th>
               <th>Precio</th>
@@ -77,32 +81,35 @@
             {% endfor %}
           </tbody>
         </table>
+
+        <!-- Botones de exportación dentro del contenedor de la tabla -->
+        <div class="botones-export mt-3">
+          <button id="btnExportarExcel" class="btn btn-success">
+            <i class="fas fa-file-excel"></i> Exportar a Excel
+          </button>
+          <button id="btnExportarPDF" class="btn btn-danger">
+            <i class="fas fa-file-pdf"></i> Exportar a PDF
+          </button>
+          <button id="btnImprimir" class="btn btn-info">
+            <i class="fas fa-print"></i> Imprimir
+          </button>
+        </div>
       </div>
     </div>
   </div>
-  <div class="botones-export">
-    <button id="btnExportarExcel" class="btn btn-success">
-        <i class="fas fa-file-excel"></i> Exportar a Excel
-    </button>
-    <button id="btnExportarPDF" class="btn btn-danger">
-        <i class="fas fa-file-pdf"></i> Exportar a PDF
-    </button>
-    <button id="btnImprimir" class="btn btn-info">
-        <i class="fas fa-print"></i> Imprimir
-    </button>
-    
-  </div>
 </div>
 
-<!-- TableExport para Excel -->
-<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@5.2.0/dist/js/tableexport.min.js"></script>
-<!-- jsPDF y jspdf-autotable para PDF -->
+<!-- Librerías necesarias -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.24/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.16.9/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saverjs@latest/FileSaver.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tableexport@5.2.0/dist/js/tableexport.min.js"></script>
 
-<script src="/static/assets/js/reportProduct.js"></script>
-<link rel="stylesheet" href="/static/assets/css/report.css">
-<!-- Vincular el archivo JavaScript -->
-<script src="{{ url_for('static', filename='assets/customJS/buscar_producto.js') }}"></script>
+<!-- Script personalizado para exportación -->
+<script src="{{ url_for('static', filename='assets/js/reportProduct.js') }}"></script>
+
+<!-- Estilos CSS personalizados -->
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/report.css') }}">
 
 {% endblock %}

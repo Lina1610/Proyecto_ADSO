@@ -43,7 +43,7 @@ function buscarPedidoAjax() {
 // Función para eliminar un pedido
 function eliminarPedido(idPedido) {
     if (confirm("¿Estás seguro de que deseas eliminar este pedido?")) {
-        fetch(`/eliminar-pedido/${idPedido}`, {
+        fetch('/eliminar-pedido/${idPedido}', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ function eliminarPedido(idPedido) {
             .then(data => {
                 if (data.success) {
                     // Eliminar la fila de la tabla
-                    const fila = document.getElementById(`pedido_${idPedido}`);
+                    const fila = document.getElementById('pedido_${idPedido}');
                     if (fila) {
                         fila.remove();
                     }
@@ -67,4 +67,4 @@ function eliminarPedido(idPedido) {
                 alert("Hubo un error al intentar eliminar el pedido.");
             });
     }
-}
+}; 

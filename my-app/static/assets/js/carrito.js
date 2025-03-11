@@ -242,36 +242,52 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Función para finalizar la compra
-function finalizarCompra() {
-    const direccionSeleccionada = document.querySelector('input[name="direccion"]:checked');
-    
-    if (!direccionSeleccionada) {
-        mostrarNotificacion('Por favor, selecciona una dirección de envío.', 'error');
+async function finalizarCompra() {
+    const tipoEntrega = document.querySelector('input[name="tipo_entrega"]:checked')?.value;
+    const metodoPagoId = document.querySelector('input[name="metodo_pago"]:checked')?.value;
+    const direccionId = document.querySelector('input[name="direccion"]:checked')?.value;
+
+    if (!tipoEntrega || !metodoPagoId) {
+        mostrarNotificacion('Por favor, selecciona un método de pago y un tipo de entrega.', 'error');
         return;
     }
 
-    const direccionId = direccionSeleccionada.value;
+    if (tipoEntrega === 'Domicilio' && !direccionId) {
+        mostrarNotificacion('Por favor, selecciona una dirección de entrega.', 'error');
+        return;
+    }
 
-    fetch('/finalizar-compra', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ direccion_id: direccionId }),
-    })
-    .then(response => response.json())
-    .then(data => {
+    const pedidoData = {
+        tipo_entrega: tipoEntrega,
+        metodo_pago_id: metodoPagoId,
+        direccion_id: tipoEntrega === 'Domicilio' ? direccionId : null
+    };
+
+    try {
+        const response = await fetch('/carrito/finalizar-compra', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(pedidoData),
+        });
+
+        const data = await response.json();
+        console.log("Respuesta del servidor:", data);  // Depuración
+
         if (data.status === 'success') {
             mostrarNotificacion('Pedido creado con éxito.', 'success');
-            window.location.href = '/pedidos'; 
+            const modalProcesarPedido = bootstrap.Modal.getInstance(document.getElementById('modalProcesarPedido'));
+            modalProcesarPedido.hide();
+            carritoItems = [];
+            actualizarInterfazCarrito();
         } else {
-            mostrarNotificacion('Error al finalizar la compra: ' + data.mensaje, 'error');
+            mostrarNotificacion(data.mensaje || 'Error al crear el pedido.', 'error');
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Error:', error);
-        mostrarNotificacion('Ocurrió un error al finalizar la compra.', 'error');
-    });
+        mostrarNotificacion('Ocurrió un error al procesar el pedido.', 'error');
+    }
 }
 
 // Función para procesar el pedido y mostrar las direcciones
@@ -596,6 +612,63 @@ function animarIconoCarrito() {
     icono?.classList.add('carrito-animado');
     setTimeout(() => icono?.classList.remove('carrito-animado'), 500);
 }
+function calcularTotalCarrito() {
+    console.log("Productos en el carrito:", carritoItems);  // Depuración
+    let total = 0;
+    carritoItems.forEach(item => {
+        total += item.precio * item.cantidad;
+    });
+    console.log("Total calculado:", total);  // Depuración
+    return total;
+}
+async function confirmarPedido() {
+    const metodoPagoId = document.querySelector('input[name="metodo_pago"]:checked')?.value;
+    const tipoEntrega = document.querySelector('input[name="tipo_entrega"]:checked')?.value;
+    const direccionId = document.querySelector('input[name="direccion"]:checked')?.value;
+    const total = calcularTotalCarrito();  // Calcular el total del carrito
 
-// Mantener las demás funciones esenciales sin duplicados
-// ... (procesarPedido, mostrarDirecciones, confirmarPedido, etc)
+    if (!metodoPagoId || !tipoEntrega || !total) {
+        mostrarNotificacion('Por favor, completa todos los campos.', 'error');
+        return;
+    }
+
+    if (tipoEntrega === 'Domicilio' && !direccionId) {
+        mostrarNotificacion('Por favor, selecciona una dirección de entrega.', 'error');
+        return;
+    }
+
+    const pedidoData = {
+        metodo_pago_id: metodoPagoId,
+        tipo_entrega: tipoEntrega,
+        direccion_id: tipoEntrega === 'Domicilio' ? direccionId : null,
+        total: total  // Enviar el total al servidor
+    };
+
+    try {
+        const response = await fetch('/carrito/finalizar-compra', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(pedidoData),
+        });
+
+        const data = await response.json();
+        console.log("Respuesta del servidor:", data);  // Depuración
+
+        if (data.status === 'success') {
+            mostrarNotificacion('Pedido registrado con éxito.', 'success');
+            const modalProcesarPedido = bootstrap.Modal.getInstance(document.getElementById('modalProcesarPedido'));
+            modalProcesarPedido.hide();
+            carritoItems = [];
+            actualizarInterfazCarrito();
+        } else {
+            mostrarNotificacion(data.mensaje || 'Error al registrar el pedido.', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarNotificacion('Ocurrió un error al procesar el pedido.', 'error');
+    }
+}
+
+
