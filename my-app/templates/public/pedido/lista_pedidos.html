@@ -14,16 +14,29 @@
 
     <div id="contenedor-mensajes"></div>
 
-    <!-- Campo de búsqueda -->
+    <!-- Campo de búsqueda y menú desplegable -->
     <div class="row justify-content-end">
-      <div class="col-md-6 mt-4 py-2">
-        <input
-          type="search"
-          id="search_pedidos"
-          class="form-control border-0 shadow-none"
-          placeholder="Buscar pedido..."
-          onkeyup="buscarPedidoAjax()" />
-      </div>
+        <!-- Menú desplegable para elegir la columna -->
+        <div class="col-md-3 mt-4 py-2">
+            <select id="columna_filtro" class="form-select">
+                <option value="1">Estado</option>
+                <option value="2">Usuario</option>
+                <option value="3">Producto</option>
+                <option value="4">Método de Pago</option>
+                <option value="5">Tipo de Entrega</option>
+                <option value="6">Total</option>
+            </select>
+        </div>
+
+        <!-- Campo de búsqueda -->
+        <div class="col-md-3 mt-4 py-2">
+            <input
+                type="search"
+                id="search_pedidos"
+                class="form-control border-0 shadow-none"
+                placeholder="Buscar..."
+                onkeyup="buscarPedidoAjax()" />
+        </div>
     </div>
 
     <!-- Tabla de pedidos -->
@@ -121,8 +134,10 @@
 <script src="https://cdn.jsdelivr.net/npm/file-saverjs@latest/FileSaver.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tableexport@5.2.0/dist/js/tableexport.min.js"></script>
 
+<!-- Script personalizado para exportación -->
 <script src="{{ url_for('static', filename='assets/js/reportOrder.js') }}"></script>
 
+<!-- Estilos CSS personalizados -->
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/report.css') }}">
 
 {% endblock %}
