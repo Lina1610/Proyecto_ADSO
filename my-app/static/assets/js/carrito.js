@@ -213,6 +213,8 @@ function toggleCarrito() {
 
 // Función para mostrar notificaciones
 function mostrarNotificacion(mensaje, tipo) {
+    console.log("Notificación:", mensaje, "Tipo:", tipo); // Debug
+
     const notificacion = document.createElement('div');
     notificacion.className = `notificacion ${tipo}`;
     notificacion.textContent = mensaje;
@@ -220,16 +222,20 @@ function mostrarNotificacion(mensaje, tipo) {
     document.body.appendChild(notificacion);
 
     setTimeout(() => {
+        console.log("Mostrando notificación en pantalla...");
         notificacion.classList.add('mostrar');
     }, 100);
 
     setTimeout(() => {
+        console.log("Ocultando notificación...");
         notificacion.classList.remove('mostrar');
         setTimeout(() => {
+            console.log("Eliminando notificación del DOM...");
             document.body.removeChild(notificacion);
         }, 300);
     }, 3000);
 }
+
 
 // Cargar el carrito al cargar la página
 document.addEventListener('DOMContentLoaded', function() {
@@ -307,7 +313,7 @@ function procesarPedido() {
             // Mostrar métodos de pago
             const metodosPagoHTML = data.metodos_pago.map(metodo => `
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="metodo_pago" id="metodo_pago_${metodo.id}" value="${metodo.id}">
+                    <input class="form-check-input" type="radio" name="metodo_pago" id="metodo_pago_${metodo.id}" value="${metodo.id}" required>
                     <label class="form-check-label" for="metodo_pago_${metodo.id}">
                         ${metodo.metodo}
                     </label>
@@ -319,7 +325,7 @@ function procesarPedido() {
             // Mostrar tipos de entrega
             const tiposEntregaHTML = data.tipos_entrega.map(tipo => `
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="tipo_entrega" id="tipo_entrega_${tipo}" value="${tipo}" onchange="mostrarDirecciones('${tipo}')">
+                    <input class="form-check-input" type="radio" name="tipo_entrega" id="tipo_entrega_${tipo}" value="${tipo}" required>
                     <label class="form-check-label" for="tipo_entrega_${tipo}">
                         ${tipo}
                     </label>
@@ -327,6 +333,13 @@ function procesarPedido() {
             `).join('');
 
             modalBody.innerHTML += `<h5 class="mt-3">Tipos de Entrega</h5>${tiposEntregaHTML}`;
+
+            // Agregar botón de confirmar
+            modalBody.innerHTML += `
+                <div class="d-grid gap-2 mt-4">
+                    <button class="btn btn-primary" onclick="validarProcesarPedido()">Confirmar</button>
+                </div>
+            `;
 
             // Mostrar el modal de procesar pedido
             const modalProcesarPedido = new bootstrap.Modal(document.getElementById('modalProcesarPedido'));
@@ -336,6 +349,29 @@ function procesarPedido() {
             console.error('Error al obtener métodos de pago y tipos de entrega:', error);
             mostrarNotificacion('Error al cargar métodos de pago y tipos de entrega', 'error');
         });
+}
+
+function validarProcesarPedido() {
+    const metodoPago = document.querySelector('input[name="metodo_pago"]:checked');
+    const tipoEntrega = document.querySelector('input[name="tipo_entrega"]:checked');
+
+    if (!metodoPago) {
+        mostrarNotificacion('Por favor, selecciona un método de pago.', 'error');
+        return;
+    }
+
+    if (!tipoEntrega) {
+        mostrarNotificacion('Por favor, selecciona un tipo de entrega.', 'error');
+        return;
+    }
+
+    if (tipoEntrega.value === 'Domicilio') {
+        // Si el tipo de entrega es "Domicilio", mostrar el modal de direcciones
+        mostrarDirecciones('Domicilio');
+    } else {
+        // Si no es "Domicilio", proceder directamente a confirmar el pedido
+        confirmarPedido();
+    }
 }
 
 function mostrarDirecciones(tipoEntrega) {
@@ -357,7 +393,7 @@ function mostrarDirecciones(tipoEntrega) {
                         const item = document.createElement('label');
                         item.className = 'list-group-item';
                         item.innerHTML = `
-                            <input type="radio" name="direccion" value="${direccion.id}" class="form-check-input me-2">
+                            <input type="radio" name="direccion" value="${direccion.id}" class="form-check-input me-2" required>
                             <strong>${direccion.nombre_completo}</strong><br>
                             ${direccion.domicilio}, ${direccion.barrio}<br>
                             ${direccion.nombre_municipio}, ${direccion.nombre_departamento}<br>
@@ -384,15 +420,16 @@ function mostrarDirecciones(tipoEntrega) {
                 };
                 direccionesContainer.appendChild(botonAgregarDireccion);
 
+                // Agregar botón de confirmar
+                const botonConfirmar = document.createElement('button');
+                botonConfirmar.className = 'btn btn-success w-100 mt-3';
+                botonConfirmar.innerHTML = '<i class="fas fa-check"></i> Confirmar Pedido';
+                botonConfirmar.onclick = confirmarPedido;
+                direccionesContainer.appendChild(botonConfirmar);
+
                 // Mostrar el modal de direcciones
                 const modalDirecciones = new bootstrap.Modal(document.getElementById('modalDirecciones'));
                 modalDirecciones.show();
-
-                // Manejar el evento de cancelar en el modal de direcciones
-                document.getElementById('modalDirecciones').addEventListener('hidden.bs.modal', () => {
-                    // Volver a abrir el modal de procesar pedido
-                    modalProcesarPedido.show();
-                });
             })
             .catch(error => {
                 console.error('Error al obtener direcciones:', error);
@@ -506,13 +543,7 @@ function handleError(error) {
     mostrarNotificacion('Ocurrió un error inesperado', 'error');
 }
 
-function mostrarNotificacion(mensaje, tipo) {
-    const notificacion = document.createElement('div');
-    notificacion.className = `notificacion ${tipo}`;
-    notificacion.textContent = mensaje;
-    document.body.appendChild(notificacion);
-    setTimeout(() => notificacion.remove(), 3000);
-}
+
 
 // ==================== INICIALIZACIÓN ====================
 // Modificar la función de inicialización
@@ -625,10 +656,14 @@ async function confirmarPedido() {
     const metodoPagoId = document.querySelector('input[name="metodo_pago"]:checked')?.value;
     const tipoEntrega = document.querySelector('input[name="tipo_entrega"]:checked')?.value;
     const direccionId = document.querySelector('input[name="direccion"]:checked')?.value;
-    const total = calcularTotalCarrito();  // Calcular el total del carrito
 
-    if (!metodoPagoId || !tipoEntrega || !total) {
-        mostrarNotificacion('Por favor, completa todos los campos.', 'error');
+    if (!metodoPagoId) {
+        mostrarNotificacion('Por favor, selecciona un método de pago.', 'error');
+        return;
+    }
+
+    if (!tipoEntrega) {
+        mostrarNotificacion('Por favor, selecciona un tipo de entrega.', 'error');
         return;
     }
 
@@ -640,8 +675,7 @@ async function confirmarPedido() {
     const pedidoData = {
         metodo_pago_id: metodoPagoId,
         tipo_entrega: tipoEntrega,
-        direccion_id: tipoEntrega === 'Domicilio' ? direccionId : null,
-        total: total  // Enviar el total al servidor
+        direccion_id: tipoEntrega === 'Domicilio' ? direccionId : null
     };
 
     try {
@@ -654,12 +688,15 @@ async function confirmarPedido() {
         });
 
         const data = await response.json();
-        console.log("Respuesta del servidor:", data);  // Depuración
+        console.log("Respuesta del servidor:", data);
 
         if (data.status === 'success') {
             mostrarNotificacion('Pedido registrado con éxito.', 'success');
-            const modalProcesarPedido = bootstrap.Modal.getInstance(document.getElementById('modalProcesarPedido'));
-            modalProcesarPedido.hide();
+            
+            // Cerrar modal de direcciones
+            const modalDirecciones = bootstrap.Modal.getInstance(document.getElementById('modalDirecciones'));
+            if (modalDirecciones) modalDirecciones.hide();
+
             carritoItems = [];
             actualizarInterfazCarrito();
         } else {
@@ -670,5 +707,3 @@ async function confirmarPedido() {
         mostrarNotificacion('Ocurrió un error al procesar el pedido.', 'error');
     }
 }
-
-

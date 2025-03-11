@@ -38,8 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document
       .querySelectorAll("#tbl_productos thead th")
       .forEach((th, index) => {
-        if (index < 9) {
-          // Evita la última columna (Acción)
+        if (index < 9) { // Evita la última columna (Acción)
           headers.push(th.innerText);
         }
       });
@@ -49,8 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll("#tbl_productos tbody tr").forEach((row) => {
       const rowData = [];
       row.querySelectorAll("td").forEach((td, index) => {
-        if (index < 9) {
-          // Evita la última columna (Acción)
+        if (index < 9) { // Evita la última columna (Acción)
           rowData.push(td.innerText);
         }
       });
@@ -71,41 +69,39 @@ document.addEventListener("DOMContentLoaded", function () {
     doc.save("Reporte_Productos.pdf");
   });
 
+  // 🔵 Imprimir la tabla sin la columna "Acción"
+  $btnImprimir.addEventListener("click", function () {
+    const tablaHtml = document.querySelector("#tbl_productos");
+    const ventanaImpresion = window.open("", "", "height=800, width=1000");
 
-// 🔵 Imprimir la tabla sin la columna "Acción"
+    ventanaImpresion.document.write(
+      "<html><head><title>Imprimir Reporte</title>"
+    );
+    ventanaImpresion.document.write("<style>");
+    ventanaImpresion.document.write("@media print {");
+    ventanaImpresion.document.write(
+      "table { width: 100%; border-collapse: collapse; margin: 20px 0; }"
+    );
+    ventanaImpresion.document.write(
+      "th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }"
+    );
+    ventanaImpresion.document.write(
+      "th { background-color: #f4f4f4; font-weight: bold; }"
+    );
+    ventanaImpresion.document.write(
+      "th:nth-child(6), td:nth-child(6) { display: none; }"
+    );
+    ventanaImpresion.document.write(
+      "body { font-family: Arial, sans-serif; font-size: 12px; }"
+    );
+    ventanaImpresion.document.write("@page { margin: 20mm; }");
+    ventanaImpresion.document.write("}</style></head>");
+    ventanaImpresion.document.write("<body>");
+    ventanaImpresion.document.write("<h2>Reporte de Productos</h2>");
+    ventanaImpresion.document.write(tablaHtml.outerHTML);
+    ventanaImpresion.document.write("</body></html>");
 
-    $btnImprimir.addEventListener("click", function () {
-      const tablaHtml = document.querySelector("#tbl_productos");
-      const ventanaImpresion = window.open("", "", "height=800, width=1000");
-
-  ventanaImpresion.document.write(
-    "<html><head><title>Imprimir Reporte</title>"
-  );
-  ventanaImpresion.document.write("<style>");
-  ventanaImpresion.document.write("@media print {");
-  ventanaImpresion.document.write(
-    "table { width: 100%; border-collapse: collapse; margin: 20px 0; }"
-  );
-  ventanaImpresion.document.write(
-    "th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }"
-  );
-  ventanaImpresion.document.write(
-    "th { background-color: #f4f4f4; font-weight: bold; }"
-  );
-  ventanaImpresion.document.write(
-    "th:nth-child(6), td:nth-child(6) { display: none; }"
-  );
-  ventanaImpresion.document.write(
-    "body { font-family: Arial, sans-serif; font-size: 12px; }"
-  );
-  ventanaImpresion.document.write("@page { margin: 20mm; }");
-  ventanaImpresion.document.write("}</style></head>");
-  ventanaImpresion.document.write("<body>");
-  ventanaImpresion.document.write("<h2>Reporte de Productos</h2>");
-  ventanaImpresion.document.write(tablaHtml.outerHTML);
-  ventanaImpresion.document.write("</body></html>");
-
-  ventanaImpresion.document.close();
-  ventanaImpresion.print();
-});
+    ventanaImpresion.document.close();
+    ventanaImpresion.print();
+  });
 });

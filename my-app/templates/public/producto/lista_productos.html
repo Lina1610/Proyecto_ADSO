@@ -80,8 +80,28 @@
       </div>
     </div>
   </div>
+  <div class="botones-export">
+    <button id="btnExportarExcel" class="btn btn-success">
+        <i class="fas fa-file-excel"></i> Exportar a Excel
+    </button>
+    <button id="btnExportarPDF" class="btn btn-danger">
+        <i class="fas fa-file-pdf"></i> Exportar a PDF
+    </button>
+    <button id="btnImprimir" class="btn btn-info">
+        <i class="fas fa-print"></i> Imprimir
+    </button>
+    
+  </div>
 </div>
 
+<!-- TableExport para Excel -->
+<script src="https://cdn.jsdelivr.net/npm/tableexport.jquery.plugin@5.2.0/dist/js/tableexport.min.js"></script>
+<!-- jsPDF y jspdf-autotable para PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.24/jspdf.plugin.autotable.min.js"></script>
+
+<script src="/static/assets/js/reportProduct.js"></script>
+<link rel="stylesheet" href="/static/assets/css/report.css">
 <!-- Vincular el archivo JavaScript -->
 <script src="{{ url_for('static', filename='assets/customJS/buscar_producto.js') }}"></script>
 
