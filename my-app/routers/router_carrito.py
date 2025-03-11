@@ -68,6 +68,7 @@ def finalizar_compra():
     tipo_entrega = datos.get('tipo_entrega')  # 'Domicilio' o 'Presencial'
     metodo_pago_id = datos.get('metodo_pago_id')  # ID del método de pago seleccionado
     
+    # Validar que se hayan enviado los datos necesarios
     if not tipo_entrega or not metodo_pago_id:
         return jsonify({'status': 'error', 'mensaje': 'Faltan datos obligatorios (tipo de entrega o método de pago)'})
     
