@@ -179,6 +179,7 @@
         </div>
     </div>
 </div>
+
 <!-- Modal para agregar dirección -->
 <div class="modal fade" id="editarDireccionModal" tabindex="-1" aria-labelledby="editarDireccionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg"> <!-- Cambiado a modal-lg para mejor visualización -->
@@ -233,6 +234,29 @@
                         <button type="submit" class="btn btn-primary">Guardar Dirección</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para confirmar el pedido -->
+<div id="modalConfirmarPedido" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Pedido</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="modal-body-confirmar-pedido">
+                <!-- Aquí se mostrarán los productos del carrito -->
+                <div id="carrito-confirmacion-items"></div>
+                <div class="carrito-total-confirmacion">
+                    <h5><strong>Total:</strong> $<span id="total-confirmacion">0</span></h5>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="finalizarCompra()">Confirmar</button>
             </div>
         </div>
     </div>
