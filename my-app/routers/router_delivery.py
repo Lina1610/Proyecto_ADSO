@@ -232,3 +232,30 @@ def viewBuscarEntregaBD():
     except Exception as e:
         print(f"Error en viewBuscarEntregaBD: {e}")
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/obtener-pedidos-cliente')
+def obtener_pedidos_cliente():
+    if 'conectado' in session:
+        user_id = session['users_id']
+        try:
+            with connectionBD() as conexion_MySQLdb:
+                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                    querySQL = """
+                        SELECT p.id, p.fecha, p.fechaEntrega, p.horaEntrega, p.estado,
+                               pr.nombre AS producto_nombre, mp.metodo AS metodo_pago,
+                               e.tipo AS tipo_entrega, p.total
+                        FROM pedido p
+                        JOIN producto pr ON p.producto_id = pr.id
+                        JOIN metodo_pago mp ON p.metodo_pago_id = mp.id
+                        JOIN entrega e ON p.entrega_id = e.id
+                        WHERE p.users_id = %s
+                        ORDER BY p.id DESC
+                    """
+                    cursor.execute(querySQL, (user_id,))
+                    pedidos = cursor.fetchall()
+                    return jsonify(pedidos)
+        except Exception as e:
+            print(f"Error en obtener_pedidos_cliente: {e}")
+            return jsonify([])
+    else:
+        return jsonify({"error": "Usuario no autenticado"}), 401
