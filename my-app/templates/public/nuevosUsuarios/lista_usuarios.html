@@ -1,7 +1,12 @@
 {% extends 'public/base_cpanel.html' %}
 
+
 <!-- Cambiando el title -->
-{% block title %}Crud con Python 🐍 | Lista de Usuarios{% endblock %}
+{% block title %}Crud con Python 🐍 | Lista de Usuarios
+
+
+
+{% endblock %}
 
 <!-- Inicio del block -->
 {% block body %}
@@ -115,4 +120,6 @@
 </div>
 
 <script src="{{ url_for('static', filename='assets/customJS/buscar_usuario.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/listar_usuario.css') }}" />
+
 {% endblock %}

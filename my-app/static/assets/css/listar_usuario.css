@@ -1,0 +1,190 @@
+/* Estilos generales de la tabla */
+.table-container {
+    width: 95%;
+    margin: 20px auto;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    padding: 15px;
+}
+
+/* Título de la tabla */
+h3.text-center {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+/* Estilos para la tabla */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+    background-color: #fff;
+    border-radius: 8px;
+}
+
+/* Encabezados de la tabla */
+.table thead th {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: #ffffff;
+    font-weight: 600;
+    padding: 15px;
+    text-align: center;
+    border-bottom: 2px solid #1f2a36;
+}
+
+/* Celdas del cuerpo de la tabla */
+.table tbody td {
+    padding: 14px;
+    text-align: center;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    font-size: 1rem;
+}
+
+/* Efecto zebra para las filas */
+.table tbody tr:nth-child(odd) {
+    background-color: #f8f9fa;
+}
+
+/* Efecto hover en filas */
+.table tbody tr:hover {
+    background-color: #e8eaf6;
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Botones de acción */
+.btn {
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 6px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    margin: 3px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Botón de información (Detalles) */
+.btn-info {
+    background: #17a2b8;
+    color: #fff;
+    border: none;
+}
+
+.btn-info:hover {
+    background: #138496;
+}
+
+/* Botón de éxito (Actualizar) */
+.btn-success {
+    background: #28a745;
+    color: #fff;
+    border: none;
+}
+
+.btn-success:hover {
+    background: #218838;
+}
+
+/* Botón de peligro (Eliminar) */
+.btn-danger {
+    background: #dc3545;
+    color: #fff;
+    border: none;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+/* Botón de advertencia (Desactivar) */
+.btn-warning {
+    background: #ffc107;
+    color: #000;
+    border: none;
+}
+
+.btn-warning:hover {
+    background: #e0a800;
+}
+
+/* Estilos para los estados (Activo / Inactivo) */
+.badge {
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 20px;
+}
+
+.badge.bg-success {
+    background: #28a745;
+    color: white;
+}
+
+.badge.bg-danger {
+    background: #dc3545;
+    color: white;
+}
+
+/* Campo de búsqueda */
+#search_usuarios {
+    width: 60%;
+    max-width: 400px;
+    padding: 12px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+#search_usuarios:focus {
+    border-color: #2c3e50;
+    box-shadow: inset 0px 2px 4px rgba(44, 62, 80, 0.3);
+}
+
+/* Mensaje cuando no hay registros */
+.text-center {
+    font-size: 1.2rem;
+    color: #6c757d;
+    padding: 20px;
+}
+
+/* Celdas del cuerpo de la tabla */
+.table tbody td {
+    padding: 14px;
+    text-align: center;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    font-size: 1rem;
+}
+
+/* Estilos para la última columna (Acciones) */
+.table tbody td:last-child {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los botones se envuelvan a la siguiente línea */
+    justify-content: center; /* Centra los botones horizontalmente */
+    gap: 5px; /* Espacio entre botones */
+}
+
+/* Botones de acción */
+.btn {
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 6px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    margin: 3px;
+    /* display: inline-flex; */ /* Elimina esta propiedad */
+    /* align-items: center; */ /* Elimina esta propiedad */
+    /* justify-content: center; */ /* Elimina esta propiedad */
+}
