@@ -308,36 +308,27 @@ async function finalizarCompra() {
     const metodoPagoId = document.querySelector('input[name="metodo_pago"]:checked')?.value;
     const direccionId = document.querySelector('input[name="direccion"]:checked')?.value;
 
+    // Validar que se hayan enviado los datos necesarios
     if (!tipoEntrega || !metodoPagoId) {
         mostrarNotificacion('Por favor, selecciona un método de pago y un tipo de entrega.', 'error');
         return;
     }
 
+    // Validar la dirección si el tipo de entrega es "Domicilio"
     if (tipoEntrega === 'Domicilio' && !direccionId) {
         mostrarNotificacion('Por favor, selecciona una dirección de entrega.', 'error');
         return;
     }
 
+    // Crear el objeto con los datos del pedido
+    const pedidoData = {
+        tipo_entrega: tipoEntrega,
+        metodo_pago_id: metodoPagoId,
+        direccion_id: tipoEntrega === 'Domicilio' ? direccionId : null, // Usar NULL para "Presencial"
+        productos: carritoItems // Enviar los productos actualizados del carrito
+    };
+
     try {
-        // First, let's ensure we have the latest cart data from the server
-        const cartResponse = await fetch('/carrito/obtener');
-        const cartData = await cartResponse.json();
-        
-        if (cartData.status !== 'success') {
-            throw new Error('Error al obtener datos actualizados del carrito');
-        }
-        
-        // Use the server's cart data for the final purchase
-        const updatedCart = cartData.items || [];
-
-        // Create the object with order data
-        const pedidoData = {
-            tipo_entrega: tipoEntrega,
-            metodo_pago_id: metodoPagoId,
-            direccion_id: tipoEntrega === 'Domicilio' ? direccionId : null,
-            productos: updatedCart // Use the cart data from the server
-        };
-
         const response = await fetch('/carrito/finalizar-compra', {
             method: 'POST',
             headers: {
@@ -351,10 +342,12 @@ async function finalizarCompra() {
 
         if (data.status === 'success') {
             mostrarNotificacion('Pedido creado con éxito.', 'success');
+
+            // Cerrar el modal de confirmación
             const modalConfirmarPedido = bootstrap.Modal.getInstance(document.getElementById('modalConfirmarPedido'));
             modalConfirmarPedido.hide();
 
-            // Empty the cart after completing the purchase
+            // Vaciar el carrito después de finalizar la compra
             carritoItems = [];
             actualizarInterfazCarrito();
         } else {
@@ -434,6 +427,10 @@ function validarProcesarPedido() {
         return;
     }
 
+    // Cerrar el modal actual (Procesar Pedido)
+    const modalProcesarPedido = bootstrap.Modal.getInstance(document.getElementById('modalProcesarPedido'));
+    modalProcesarPedido.hide();
+
     if (tipoEntrega.value === 'Domicilio') {
         // Si el tipo de entrega es "Domicilio", mostrar el modal de direcciones
         mostrarDirecciones('Domicilio');
@@ -442,7 +439,6 @@ function validarProcesarPedido() {
         mostrarModalConfirmacion();
     }
 }
-
 function mostrarModalConfirmacion() {
     // Cerrar el Modal 3 (si está abierto)
     const modalDirecciones = bootstrap.Modal.getInstance(document.getElementById('modalDirecciones'));
