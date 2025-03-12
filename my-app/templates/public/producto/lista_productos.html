@@ -50,29 +50,19 @@
               <td>$ {{ '{:,.2f}'.format(producto.precio) }}</td>
               <td>{{ producto.cantidad }}</td>
               <td width="10px">
-                <a
-                  href="{{ url_for('detalles_producto', id=producto.id) }}"
-                  class="btn btn-info btn-sm"
-                  title="Ver detalles">
-                  <i class="bi bi-eye"></i>
-                  Ver detalles
-                </a>
-                <a
-                  href="{{ url_for('viewEditarProducto', id=producto.id) }}"
-                  class="btn btn-success btn-sm"
-                  title="Actualizar">
-                  <i class="bi bi-arrow-clockwise"></i>
-                  Actualizar
-                </a>
-                <a
-                  href="#"
-                  onclick="eliminarProducto('{{ producto.id }}');"
-                  class="btn btn-danger btn-sm"
-                  title="Eliminar">
-                  <i class="bi bi-trash3"></i>
-                  Eliminar
-                </a>
-              </td>
+                <div class="acciones">
+                    <a href="{{ url_for('detalles_producto', id=producto.id) }}" class="btn btn-info btn-sm" title="Ver detalles">
+                        <i class="bi bi-eye"></i> Ver detalles
+                    </a>
+                    <a href="{{ url_for('viewEditarProducto', id=producto.id) }}" class="btn btn-success btn-sm" title="Actualizar">
+                        <i class="bi bi-arrow-clockwise"></i> Actualizar
+                    </a>
+                    <a href="#" onclick="eliminarProducto('{{ producto.id }}');" class="btn btn-danger btn-sm" title="Eliminar">
+                        <i class="bi bi-trash3"></i> Eliminar
+                    </a>
+                </div>
+            </td>
+              
             </tr>
             {% endfor %}
           </tbody>
@@ -84,5 +74,7 @@
 
 <!-- Vincular el archivo JavaScript -->
 <script src="{{ url_for('static', filename='assets/customJS/buscar_producto.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/listar_producto.css') }}" />
+
 
 {% endblock %}
