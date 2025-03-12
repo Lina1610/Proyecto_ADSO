@@ -63,7 +63,6 @@ function agregarAlCarrito(producto_id, nombre, precio, imagen) {
         mostrarNotificacion('Error al agregar al carrito', 'error');
     });
 }
-
 // Función para actualizar la cantidad de un producto en el carrito
 function updateQuantity(carrito_id, change) {
     const itemIndex = carritoItems.findIndex(item => item.id === carrito_id);
@@ -106,8 +105,9 @@ function updateQuantity(carrito_id, change) {
     }
 }
 
-// Función para eliminar un producto del carrito
-function eliminarDelCarrito(carrito_id) {
+// Función para eliminar un producto del carrito....
+function eliminarDelCarritoConfirmacion(carrito_id) {
+    // Send the delete request to the server
     fetch('/carrito/eliminar', {
         method: 'POST',
         headers: {
@@ -120,8 +120,17 @@ function eliminarDelCarrito(carrito_id) {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            // Actualizar carrito sin mostrar notificación
+            // Update cart from server
             cargarCarrito();
+            
+            // Update the confirmation modal
+            setTimeout(() => {
+                const carritoConfirmacionItems = document.getElementById('carrito-confirmacion-items');
+                if (carritoConfirmacionItems) {
+                    carritoConfirmacionItems.innerHTML = generarHTMLCarritoConfirmacion();
+                    actualizarTotalConfirmacion();
+                }
+            }, 200);
         } else {
             mostrarNotificacion(data.mensaje, 'error');
         }
@@ -203,13 +212,59 @@ function actualizarInterfazCarrito() {
     carritoCount.textContent = totalItems;
 }
 
+
 // Función para mostrar/ocultar el carrito
 function toggleCarrito() {
     const carritoContainer = document.getElementById('carrito-container');
     carritoContainer.classList.toggle('visible');
 }
 
-
+function agregarProductoEnModal(producto_id, nombre, precio, imagen) {
+    // Verify if user is logged in
+    const isUserLoggedIn = document.querySelector('.user-info-container') !== null;
+    
+    if (!isUserLoggedIn) {
+        alert('Debe iniciar sesión para agregar productos al carrito');
+        window.location.href = '/login-cliente'; // Redirect to login
+        return;
+    }
+    
+    // Send the request to the server
+    fetch('/carrito/agregar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            producto_id: producto_id,
+            cantidad: 1
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // Update cart by loading from server instead of just local update
+            cargarCarrito();
+            
+            // After loading cart from server, update the confirmation modal
+            setTimeout(() => {
+                const carritoConfirmacionItems = document.getElementById('carrito-confirmacion-items');
+                if (carritoConfirmacionItems) {
+                    carritoConfirmacionItems.innerHTML = generarHTMLCarritoConfirmacion();
+                    actualizarTotalConfirmacion();
+                }
+            }, 200); // Small delay to ensure cargarCarrito completes
+            
+        } else {
+            // Show notification for errors
+            mostrarNotificacion(data.mensaje, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error al agregar al carrito:', error);
+        mostrarNotificacion('Error al agregar al carrito', 'error');
+    });
+}
 
 // Función para mostrar notificaciones
 function mostrarNotificacion(mensaje, tipo) {
@@ -263,14 +318,26 @@ async function finalizarCompra() {
         return;
     }
 
-    const pedidoData = {
-        tipo_entrega: tipoEntrega,
-        metodo_pago_id: metodoPagoId,
-        direccion_id: tipoEntrega === 'Domicilio' ? direccionId : null,
-        productos: carritoItems // Enviar los productos del carrito
-    };
-
     try {
+        // First, let's ensure we have the latest cart data from the server
+        const cartResponse = await fetch('/carrito/obtener');
+        const cartData = await cartResponse.json();
+        
+        if (cartData.status !== 'success') {
+            throw new Error('Error al obtener datos actualizados del carrito');
+        }
+        
+        // Use the server's cart data for the final purchase
+        const updatedCart = cartData.items || [];
+
+        // Create the object with order data
+        const pedidoData = {
+            tipo_entrega: tipoEntrega,
+            metodo_pago_id: metodoPagoId,
+            direccion_id: tipoEntrega === 'Domicilio' ? direccionId : null,
+            productos: updatedCart // Use the cart data from the server
+        };
+
         const response = await fetch('/carrito/finalizar-compra', {
             method: 'POST',
             headers: {
@@ -286,6 +353,8 @@ async function finalizarCompra() {
             mostrarNotificacion('Pedido creado con éxito.', 'success');
             const modalConfirmarPedido = bootstrap.Modal.getInstance(document.getElementById('modalConfirmarPedido'));
             modalConfirmarPedido.hide();
+
+            // Empty the cart after completing the purchase
             carritoItems = [];
             actualizarInterfazCarrito();
         } else {
@@ -375,18 +444,18 @@ function validarProcesarPedido() {
 }
 
 function mostrarModalConfirmacion() {
-    // Cerrar el modal de direcciones (si está abierto)
+    // Cerrar el Modal 3 (si está abierto)
     const modalDirecciones = bootstrap.Modal.getInstance(document.getElementById('modalDirecciones'));
     if (modalDirecciones) modalDirecciones.hide();
 
-    // Mostrar el contenido del carrito en el modal de confirmación
+    // Mostrar el contenido del carrito en el Modal 4
     const carritoConfirmacionItems = document.getElementById('carrito-confirmacion-items');
     carritoConfirmacionItems.innerHTML = generarHTMLCarritoConfirmacion();
 
-    // Actualizar el total en el modal de confirmación
+    // Actualizar el total en el Modal 4
     actualizarTotalConfirmacion();
 
-    // Mostrar el modal de confirmación
+    // Mostrar el Modal 4
     const modalConfirmarPedido = new bootstrap.Modal(document.getElementById('modalConfirmarPedido'));
     modalConfirmarPedido.show();
 }
@@ -424,47 +493,124 @@ function generarHTMLCarritoConfirmacion() {
     return html;
 }
 
-function actualizarCantidadConfirmacion(producto_id, change) {
-    // Buscar el producto en el carrito
-    const itemIndex = carritoItems.findIndex(item => item.id === producto_id);
-
+function actualizarCantidadConfirmacion(carrito_id, change) {
+    const itemIndex = carritoItems.findIndex(item => item.id === carrito_id);
+    
     if (itemIndex !== -1) {
-        // Calcular la nueva cantidad
         const nuevaCantidad = carritoItems[itemIndex].cantidad + change;
-
-        // No permitir cantidades menores a 1
+        
         if (nuevaCantidad < 1) {
-            eliminarDelCarritoConfirmacion(producto_id);
+            eliminarDelCarritoConfirmacion(carrito_id);
             return;
         }
-
-        // Actualizar la cantidad en el carrito
+        
+        // Update the local state first for responsiveness
         carritoItems[itemIndex].cantidad = nuevaCantidad;
-
-        // Actualizar la interfaz del modal de confirmación
-        const carritoConfirmacionItems = document.getElementById('carrito-confirmacion-items');
-        carritoConfirmacionItems.innerHTML = generarHTMLCarritoConfirmacion();
-
-        // Actualizar el total en el modal de confirmación
-        actualizarTotalConfirmacion();
-
-        // Actualizar el carrito principal
-        actualizarInterfazCarrito();
+        
+        // Send the update to the server
+        fetch('/carrito/actualizar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                carrito_id: carrito_id,
+                cantidad: nuevaCantidad
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Reload the cart from server to ensure synchronization
+                cargarCarrito();
+                
+                // Update the confirmation modal
+                const carritoConfirmacionItems = document.getElementById('carrito-confirmacion-items');
+                if (carritoConfirmacionItems) {
+                    carritoConfirmacionItems.innerHTML = generarHTMLCarritoConfirmacion();
+                    actualizarTotalConfirmacion();
+                }
+            } else {
+                mostrarNotificacion(data.mensaje, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error al actualizar cantidad:', error);
+            mostrarNotificacion('Error al actualizar cantidad', 'error');
+        });
     }
 }
+
+function eliminarDelCarritoConfirmacion(carrito_id) {
+    // Send the delete request to the server
+    fetch('/carrito/eliminar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            carrito_id: carrito_id
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // Update cart from server
+            cargarCarrito();
+            
+            // Update the confirmation modal
+            setTimeout(() => {
+                const carritoConfirmacionItems = document.getElementById('carrito-confirmacion-items');
+                if (carritoConfirmacionItems) {
+                    carritoConfirmacionItems.innerHTML = generarHTMLCarritoConfirmacion();
+                    actualizarTotalConfirmacion();
+                }
+            }, 200);
+        } else {
+            mostrarNotificacion(data.mensaje, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error al eliminar del carrito:', error);
+        mostrarNotificacion('Error al eliminar del carrito', 'error');
+    });
+}
 function eliminarDelCarritoConfirmacion(producto_id) {
-    // Eliminar el producto del carrito
-    carritoItems = carritoItems.filter(item => item.id !== producto_id);
+    // Enviar la solicitud al backend para eliminar el producto
+    fetch('/carrito/eliminar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            carrito_id: producto_id
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // Eliminar el producto del carrito principal
+            carritoItems = carritoItems.filter(item => item.id !== producto_id);
 
-    // Actualizar la interfaz del modal de confirmación
-    const carritoConfirmacionItems = document.getElementById('carrito-confirmacion-items');
-    carritoConfirmacionItems.innerHTML = generarHTMLCarritoConfirmacion();
+            // Actualizar la interfaz del carrito principal
+            actualizarInterfazCarrito();
 
-    // Actualizar el total en el modal de confirmación
-    actualizarTotalConfirmacion();
+            // Actualizar el Modal 4
+            const carritoConfirmacionItems = document.getElementById('carrito-confirmacion-items');
+            if (carritoConfirmacionItems) {
+                carritoConfirmacionItems.innerHTML = generarHTMLCarritoConfirmacion();
+                actualizarTotalConfirmacion();
+            }
 
-    // Actualizar el carrito principal
-    actualizarInterfazCarrito();
+            mostrarNotificacion('Producto eliminado del carrito.', 'success');
+        } else {
+            mostrarNotificacion(data.mensaje, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error al eliminar del carrito:', error);
+        mostrarNotificacion('Error al eliminar del carrito', 'error');
+    });
 }
 function actualizarTotalConfirmacion() {
     const total = carritoItems.reduce((sum, producto) => sum + producto.precio * producto.cantidad, 0);
