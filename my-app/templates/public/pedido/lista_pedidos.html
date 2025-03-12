@@ -25,6 +25,9 @@
                 <option value="4">Método de Pago</option>
                 <option value="5">Tipo de Entrega</option>
                 <option value="6">Total</option>
+                <option value="7">Fecha</option>
+                <option value="8">Fecha de entrega</option>
+                <option value="9">Hora de entrega</option>
             </select>
         </div>
 
@@ -62,7 +65,7 @@
           <tbody id="tabla_pedidos_body">
             {% if pedidos %}
               {% for pedido in pedidos %}
-              <tr id="pedido_{{ pedido.id }}">
+              <tr id="pedido_{{ pedido.id }}" data-fecha="{{ pedido.fecha }}" data-fecha-entrega="{{ pedido.fecha_entrega }}" data-hora-entrega="{{ pedido.hora_entrega }}">
                 <td>{{ loop.index }}</td>
                 <td>
                   {% if pedido.estado == 'Pendiente' %}

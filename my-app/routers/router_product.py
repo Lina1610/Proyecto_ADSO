@@ -22,7 +22,25 @@ def viewFormProducto():
             data_form = request.form  # Captura los datos del formulario
             imagen = request.files.get('imagen')  # Captura la imagen subida
 
-            resultado = procesar_producto(data_form, imagen)  # Procesa los datos del producto
+            # Asegúrate de que los campos "marca" y "unidad_medida" no sean obligatorios
+            marca = data_form.get('marca', None)  # Si no se proporciona, será None
+            unidad_medida = data_form.get('unidad_medida', None)  # Si no se proporciona, será None
+
+            # Crear un diccionario con los datos del formulario
+            data_form_dict = {
+                'codigo': data_form.get('codigo'),
+                'nombre': data_form.get('nombre'),
+                'descripcion': data_form.get('descripcion'),
+                'estado': data_form.get('estado'),
+                'precio': data_form.get('precio'),
+                'cantidad': data_form.get('cantidad'),
+                'total': data_form.get('total'),
+                'marca': marca,
+                'unidad_medida': unidad_medida,
+                'imagen': imagen
+            }
+
+            resultado = procesar_producto(data_form_dict, imagen)  # Procesa los datos del producto
 
             if isinstance(resultado, int) and resultado > 0:  # Si el registro fue exitoso
                 flash('Producto registrado con éxito', 'success')

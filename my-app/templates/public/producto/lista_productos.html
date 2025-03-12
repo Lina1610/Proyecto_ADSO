@@ -13,16 +13,30 @@
       <hr />
     </div>
 
-    <!-- Campo de búsqueda -->
+    <!-- Campo de búsqueda y menú desplegable -->
     <div class="row justify-content-end">
-      <div class="col-md-6 mt-4 py-2">
-        <input
-          type="search"
-          id="search_producto"
-          class="form-control border-0 shadow-none"
-          placeholder="Buscar producto..."
-          onkeyup="buscarProductoAjax()" />
-      </div>
+        <!-- Menú desplegable para elegir la columna -->
+        <div class="col-md-3 mt-4 py-2">
+            <select id="columna_filtro" class="form-select">
+                <option value="1">Código</option>
+                <option value="2">Estado</option>
+                <option value="3">Nombre</option>
+                <option value="4">Descripción</option>
+                <option value="5">Precio</option>
+                <option value="6">Cantidad</option>
+                <option value="7">Total</option>
+            </select>
+        </div>
+
+        <!-- Campo de búsqueda -->
+        <div class="col-md-3 mt-4 py-2">
+            <input
+                type="search"
+                id="search_productos"
+                class="form-control border-0 shadow-none"
+                placeholder="Buscar..."
+                onkeyup="buscarProductoAjax()" />
+        </div>
     </div>
 
     <!-- Tabla de productos -->
@@ -37,52 +51,58 @@
             <tr>
               <th>#</th>
               <th>Código</th>
+              <th>Estado</th>
               <th>Nombre</th>
               <th>Descripción</th>
               <th>Precio</th>
               <th>Cantidad</th>
-              <th>Acción</th>
+              <th>Total</th>
+              <th width="20%">Acción</th>
             </tr>
           </thead>
           <tbody id="tabla_productos_body">
-            {% for producto in productos %}
-            <tr id="producto_{{ producto.id }}">
-              <td>{{ loop.index }}</td>
-              <td>{{ producto.codigo }}</td>
-              <td>{{ producto.nombre }}</td>
-              <td>{{ producto.descripcion }}</td>
-              <td>$ {{ '{:,.2f}'.format(producto.precio) }}</td>
-              <td>{{ producto.cantidad }}</td>
-              <td width="10px">
-                <a
-                  href="{{ url_for('detalles_producto', id=producto.id) }}"
-                  class="btn btn-info btn-sm"
-                  title="Ver detalles">
-                  <i class="bi bi-eye"></i>
-                  Ver detalles
-                </a>
-                <a
-                  href="{{ url_for('viewEditarProducto', id=producto.id) }}"
-                  class="btn btn-success btn-sm"
-                  title="Actualizar">
-                  <i class="bi bi-arrow-clockwise"></i>
-                  Actualizar
-                </a>
-                <a
-                  href="#"
-                  onclick="eliminarProducto('{{ producto.id }}');"
-                  class="btn btn-danger btn-sm"
-                  title="Eliminar">
-                  <i class="bi bi-trash3"></i>
-                  Eliminar
-                </a>
+            {% if productos %}
+              {% for producto in productos %}
+              <tr id="producto_{{ producto.id }}">
+                <td>{{ loop.index }}</td>
+                <td>{{ producto.codigo }}</td>
+                <td>{{ producto.estado }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.descripcion }}</td>
+                <td>$ {{ '{:,.2f}'.format(producto.precio) }}</td>
+                <td>{{ producto.cantidad }}</td>
+                <td>{{ producto.total }}</td>
+                <td>
+                  <a href="/detalles-producto/{{ producto.id }}"
+                     class="btn btn-info btn-sm"
+                     title="Ver detalles">
+                     <i class="bi bi-eye"></i> Detalles
+                  </a>
+                  <a href="{{ url_for('viewEditarProducto', id=producto.id) }}"
+                     class="btn btn-success btn-sm"
+                     title="Actualizar">
+                     <i class="bi bi-arrow-clockwise"></i> Actualizar
+                  </a>
+                  <a href="#"
+                     onclick="eliminarProducto('{{ producto.id }}');"
+                     class="btn btn-danger btn-sm"
+                     title="Eliminar">
+                     <i class="bi bi-trash3"></i> Eliminar
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            {% else %}
+            <tr>
+              <td colspan="9" class="text-center">
+                <i class="bi bi-exclamation-circle"></i> No hay productos registrados.
               </td>
             </tr>
-            {% endfor %}
+            {% endif %}
           </tbody>
         </table>
 
-        <!-- Botones de exportación dentro del contenedor de la tabla -->
+        <!-- Botones de exportación -->
         <div class="botones-export mt-3">
           <button id="btnExportarExcel" class="btn btn-success">
             <i class="fas fa-file-excel"></i> Exportar a Excel
@@ -107,7 +127,7 @@
 <script src="https://cdn.jsdelivr.net/npm/tableexport@5.2.0/dist/js/tableexport.min.js"></script>
 
 <!-- Script personalizado para exportación -->
-<script src="{{ url_for('static', filename='assets/js/reportProduct.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/js/reportes.js') }}"></script>
 
 <!-- Estilos CSS personalizados -->
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/report.css') }}">
