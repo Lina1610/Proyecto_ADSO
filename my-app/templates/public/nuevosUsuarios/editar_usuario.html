@@ -116,6 +116,36 @@
           </button>
         </div>
       </form>
+
+      <!-- Formulario para cambiar la contraseña -->
+      <hr>
+      <h4 class="text-center mt-4 mb-3">Cambiar Contraseña</h4>
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="{{ url_for('cambiar_contrasena') }}"
+        autocomplete="off">
+        <input type="hidden" name="user_id" value="{{ usuario.id }}">
+
+        <div class="row">
+          <div class="col-md-12">
+            <label for="nueva_password" class="form-label">Nueva Contraseña</label>
+            <input
+              type="password"
+              name="nueva_password"
+              class="form-control"
+              placeholder="Ingrese la nueva contraseña"
+              required />
+          </div>
+        </div>
+
+        <div class="mb-3 mt-4 text-center">
+          <button type="submit" class="btn rounded-pill btn-warning">
+            Cambiar Contraseña
+            <i class="bi bi-key"></i>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

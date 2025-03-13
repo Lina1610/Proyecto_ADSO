@@ -94,3 +94,106 @@ def procesar_entrega(tipo_entrega, direccion_id=None):
                 return cursor.lastrowid  # Devuelve el ID de la entrega creada
     except Exception as e:
         return f"Error al crear la entrega: {str(e)}"
+    
+def obtener_entregas():
+    """Obtiene todas las entregas de la base de datos."""
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                cursor.execute("SELECT * FROM entrega")
+                entregas = cursor.fetchall()
+                return entregas
+    except MySQLError as err:
+        return f"Error de MySQL al obtener las entregas: {err}"
+
+def buscar_entrega_por_id(id):
+    """Busca una entrega por su ID."""
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                cursor.execute("SELECT * FROM entrega WHERE id = %s", (id,))
+                return cursor.fetchone()
+    except MySQLError as err:
+        return f"Error de MySQL al buscar la entrega: {err}"
+
+def actualizar_entrega(id, data_form):
+    """Actualiza una entrega existente."""
+    campos_requeridos = ['tipo', 'estado', 'costo_domicilio', 'direccion_id']
+    error = validar_campos_obligatorios(data_form, campos_requeridos)
+    if error:
+        return error
+
+    tipo = data_form['tipo']
+    estado = data_form['estado']
+    costo_domicilio_str = data_form['costo_domicilio']
+    direccion_id_str = data_form['direccion_id']
+
+    error = validar_tipo(tipo)
+    if error:
+        return error
+
+    error = validar_estado(estado)
+    if error:
+        return error
+
+    costo_domicilio, error = validar_costo_domicilio(costo_domicilio_str)
+    if error:
+        return error
+
+    direccion_id, error = validar_direccion_id(direccion_id_str)
+    if error:
+        return error
+
+    error = verificar_direccion_existe(direccion_id)
+    if error:
+        return error
+
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                sql = """
+                    UPDATE entrega
+                    SET tipo = %s, estado = %s, costo_domicilio = %s, direccion_id = %s
+                    WHERE id = %s
+                """
+                valores = (
+                    tipo,
+                    estado,
+                    costo_domicilio,
+                    direccion_id,
+                    id
+                )
+                cursor.execute(sql, valores)
+                conexion_MySQLdb.commit()
+                return cursor.rowcount  # Devuelve el número de filas afectadas
+    except MySQLError as err:
+        return f"Error de MySQL al actualizar la entrega: {err}"
+
+def eliminar_entrega(id):
+    """Elimina una entrega por su ID."""
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor() as cursor:
+                cursor.execute("DELETE FROM entrega WHERE id = %s", (id,))
+                conexion_MySQLdb.commit()
+                return cursor.rowcount  # Devuelve el número de filas afectadas
+    except MySQLError as err:
+        return f"Error de MySQL al eliminar la entrega: {err}" 
+    
+
+def buscar_entregaBD(search_query):
+    """Busca entregas en la base de datos según un término de búsqueda."""
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                querySQL = """
+                    SELECT * FROM entrega
+                    WHERE tipo LIKE %s OR estado LIKE %s OR direccion_id LIKE %s
+                    ORDER BY id DESC
+                """
+                search_pattern = f"%{search_query}%"
+                cursor.execute(querySQL, (search_pattern, search_pattern, search_pattern))
+                return cursor.fetchall()
+    except MySQLError as err:
+        print(f"Error en buscar_entregaBD: {err}")
+        return []

@@ -72,6 +72,7 @@ def finalizar_compra():
     if not tipo_entrega or not metodo_pago_id:
         return jsonify({'status': 'error', 'mensaje': 'Faltan datos obligatorios (tipo de entrega o método de pago)'})
     
+    # Validar dirección solo si el tipo de entrega es "Domicilio"
     if tipo_entrega == 'Domicilio' and not direccion_id:
         return jsonify({'status': 'error', 'mensaje': 'Debes seleccionar una dirección de envío para entrega a domicilio'})
     
@@ -80,9 +81,15 @@ def finalizar_compra():
     if carrito['status'] != 'success':
         return jsonify({'status': 'error', 'mensaje': 'Error al obtener el carrito'})
     
+    # Verificar si el carrito está vacío
+    if not carrito['items']:
+        return jsonify({'status': 'error', 'mensaje': 'El carrito está vacío'})
+    
+    # Obtener el ID del primer producto en el carrito para producto_id
+    producto_id = carrito['items'][0]['producto_id']  # Tomamos el ID del primer producto
+    
     # Calcular el total del carrito
     total = sum(item['precio'] * item['cantidad'] for item in carrito['items'])
-    print(f"Total calculado: {total}")  # Depuración
     
     # Crear el pedido en la base de datos
     try:
@@ -98,7 +105,7 @@ def finalizar_compra():
             tipo_entrega,
             'Pendiente',  # Estado por defecto
             0,  # Siempre establecer costo_domicilio en 0
-            direccion_id if tipo_entrega == 'Domicilio' else None
+            direccion_id if tipo_entrega == 'Domicilio' else None  # Usar NULL para "Presencial"
         )
         cursor.execute(sql_entrega, valores_entrega)
         entrega_id = cursor.lastrowid  # Obtener el ID de la entrega recién creada
@@ -115,7 +122,7 @@ def finalizar_compra():
             entrega_id,
             users_id,
             metodo_pago_id,
-            carrito['items'][0]['producto_id']  # Usar el ID del primer producto en el carrito
+            producto_id  # Incluimos el producto_id del primer producto
         )
         cursor.execute(sql_pedido, valores_pedido)
         pedido_id = cursor.lastrowid  # Obtener el ID del pedido recién creado
@@ -148,6 +155,7 @@ def finalizar_compra():
         if conexion.is_connected():
             cursor.close()
             conexion.close()
+
 @carrito_bp.route('/eliminar', methods=['POST'])
 def eliminar_producto_carrito():
     """Ruta para eliminar un producto del carrito"""

@@ -63,21 +63,20 @@ function agregarAlCarrito(producto_id, nombre, precio, imagen) {
         mostrarNotificacion('Error al agregar al carrito', 'error');
     });
 }
-
 // Función para actualizar la cantidad de un producto en el carrito
 function updateQuantity(carrito_id, change) {
-    // Buscar el producto en el carrito
     const itemIndex = carritoItems.findIndex(item => item.id === carrito_id);
     
     if (itemIndex !== -1) {
-        // Calcular la nueva cantidad
         const nuevaCantidad = carritoItems[itemIndex].cantidad + change;
         
-        // No permitir cantidades menores a 1
         if (nuevaCantidad < 1) {
             eliminarDelCarrito(carrito_id);
             return;
         }
+        
+        // Actualizar el estado local primero
+        carritoItems[itemIndex].cantidad = nuevaCantidad;
         
         // Enviar la actualización al servidor
         fetch('/carrito/actualizar', {
@@ -93,8 +92,8 @@ function updateQuantity(carrito_id, change) {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                // Actualizar directamente el carrito sin mostrar notificación
-                cargarCarrito();
+                // Actualizar la interfaz del carrito
+                actualizarInterfazCarrito();
             } else {
                 mostrarNotificacion(data.mensaje, 'error');
             }
@@ -106,8 +105,9 @@ function updateQuantity(carrito_id, change) {
     }
 }
 
-// Función para eliminar un producto del carrito
-function eliminarDelCarrito(carrito_id) {
+// Función para eliminar un producto del carrito....
+function eliminarDelCarritoConfirmacion(carrito_id) {
+    // Send the delete request to the server
     fetch('/carrito/eliminar', {
         method: 'POST',
         headers: {
@@ -120,8 +120,17 @@ function eliminarDelCarrito(carrito_id) {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            // Actualizar carrito sin mostrar notificación
+            // Update cart from server
             cargarCarrito();
+            
+            // Update the confirmation modal
+            setTimeout(() => {
+                const carritoConfirmacionItems = document.getElementById('carrito-confirmacion-items');
+                if (carritoConfirmacionItems) {
+                    carritoConfirmacionItems.innerHTML = generarHTMLCarritoConfirmacion();
+                    actualizarTotalConfirmacion();
+                }
+            }, 200);
         } else {
             mostrarNotificacion(data.mensaje, 'error');
         }
@@ -203,13 +212,59 @@ function actualizarInterfazCarrito() {
     carritoCount.textContent = totalItems;
 }
 
+
 // Función para mostrar/ocultar el carrito
 function toggleCarrito() {
     const carritoContainer = document.getElementById('carrito-container');
     carritoContainer.classList.toggle('visible');
 }
 
-
+function agregarProductoEnModal(producto_id, nombre, precio, imagen) {
+    // Verify if user is logged in
+    const isUserLoggedIn = document.querySelector('.user-info-container') !== null;
+    
+    if (!isUserLoggedIn) {
+        alert('Debe iniciar sesión para agregar productos al carrito');
+        window.location.href = '/login-cliente'; // Redirect to login
+        return;
+    }
+    
+    // Send the request to the server
+    fetch('/carrito/agregar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            producto_id: producto_id,
+            cantidad: 1
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // Update cart by loading from server instead of just local update
+            cargarCarrito();
+            
+            // After loading cart from server, update the confirmation modal
+            setTimeout(() => {
+                const carritoConfirmacionItems = document.getElementById('carrito-confirmacion-items');
+                if (carritoConfirmacionItems) {
+                    carritoConfirmacionItems.innerHTML = generarHTMLCarritoConfirmacion();
+                    actualizarTotalConfirmacion();
+                }
+            }, 200); // Small delay to ensure cargarCarrito completes
+            
+        } else {
+            // Show notification for errors
+            mostrarNotificacion(data.mensaje, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error al agregar al carrito:', error);
+        mostrarNotificacion('Error al agregar al carrito', 'error');
+    });
+}
 
 // Función para mostrar notificaciones
 function mostrarNotificacion(mensaje, tipo) {
@@ -253,20 +308,24 @@ async function finalizarCompra() {
     const metodoPagoId = document.querySelector('input[name="metodo_pago"]:checked')?.value;
     const direccionId = document.querySelector('input[name="direccion"]:checked')?.value;
 
+    // Validar que se hayan enviado los datos necesarios
     if (!tipoEntrega || !metodoPagoId) {
         mostrarNotificacion('Por favor, selecciona un método de pago y un tipo de entrega.', 'error');
         return;
     }
 
+    // Validar la dirección si el tipo de entrega es "Domicilio"
     if (tipoEntrega === 'Domicilio' && !direccionId) {
         mostrarNotificacion('Por favor, selecciona una dirección de entrega.', 'error');
         return;
     }
 
+    // Crear el objeto con los datos del pedido
     const pedidoData = {
         tipo_entrega: tipoEntrega,
         metodo_pago_id: metodoPagoId,
-        direccion_id: tipoEntrega === 'Domicilio' ? direccionId : null
+        direccion_id: tipoEntrega === 'Domicilio' ? direccionId : null, // Usar NULL para "Presencial"
+        productos: carritoItems // Enviar los productos actualizados del carrito
     };
 
     try {
@@ -279,12 +338,16 @@ async function finalizarCompra() {
         });
 
         const data = await response.json();
-        console.log("Respuesta del servidor:", data);  // Depuración
+        console.log("Respuesta del servidor:", data);
 
         if (data.status === 'success') {
             mostrarNotificacion('Pedido creado con éxito.', 'success');
-            const modalProcesarPedido = bootstrap.Modal.getInstance(document.getElementById('modalProcesarPedido'));
-            modalProcesarPedido.hide();
+
+            // Cerrar el modal de confirmación
+            const modalConfirmarPedido = bootstrap.Modal.getInstance(document.getElementById('modalConfirmarPedido'));
+            modalConfirmarPedido.hide();
+
+            // Vaciar el carrito después de finalizar la compra
             carritoItems = [];
             actualizarInterfazCarrito();
         } else {
@@ -295,7 +358,6 @@ async function finalizarCompra() {
         mostrarNotificacion('Ocurrió un error al procesar el pedido.', 'error');
     }
 }
-
 // Función para procesar el pedido y mostrar las direcciones
 function procesarPedido() {
     if (carritoItems.length === 0) {
@@ -365,13 +427,190 @@ function validarProcesarPedido() {
         return;
     }
 
+    // Cerrar el modal actual (Procesar Pedido)
+    const modalProcesarPedido = bootstrap.Modal.getInstance(document.getElementById('modalProcesarPedido'));
+    modalProcesarPedido.hide();
+
     if (tipoEntrega.value === 'Domicilio') {
         // Si el tipo de entrega es "Domicilio", mostrar el modal de direcciones
         mostrarDirecciones('Domicilio');
     } else {
-        // Si no es "Domicilio", proceder directamente a confirmar el pedido
-        confirmarPedido();
+        // Si no es "Domicilio", mostrar el modal de confirmación directamente
+        mostrarModalConfirmacion();
     }
+}
+function mostrarModalConfirmacion() {
+    // Cerrar el Modal 3 (si está abierto)
+    const modalDirecciones = bootstrap.Modal.getInstance(document.getElementById('modalDirecciones'));
+    if (modalDirecciones) modalDirecciones.hide();
+
+    // Mostrar el contenido del carrito en el Modal 4
+    const carritoConfirmacionItems = document.getElementById('carrito-confirmacion-items');
+    carritoConfirmacionItems.innerHTML = generarHTMLCarritoConfirmacion();
+
+    // Actualizar el total en el Modal 4
+    actualizarTotalConfirmacion();
+
+    // Mostrar el Modal 4
+    const modalConfirmarPedido = new bootstrap.Modal(document.getElementById('modalConfirmarPedido'));
+    modalConfirmarPedido.show();
+}
+
+function generarHTMLCarritoConfirmacion() {
+    let html = '';
+
+    carritoItems.forEach((producto) => {
+        const subtotal = producto.precio * producto.cantidad;
+
+        html += `
+            <div class="carrito-item">
+                <div class="item-info">
+                    <img src="${producto.imagen}" alt="${producto.nombre}">
+                    <div class="item-details">
+                        <h6>${producto.nombre}</h6>
+                        <p class="item-price">$${producto.precio.toLocaleString()}</p>
+                        <div class="quantity-control">
+                            <button class="quantity-btn" onclick="actualizarCantidadConfirmacion(${producto.id}, -1)">-</button>
+                            <span class="quantity">${producto.cantidad}</span>
+                            <button class="quantity-btn" onclick="actualizarCantidadConfirmacion(${producto.id}, 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="item-subtotal">
+                    <p>$${subtotal.toLocaleString()}</p>
+                    <button class="delete-btn" onclick="eliminarDelCarritoConfirmacion(${producto.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+
+    return html;
+}
+
+function actualizarCantidadConfirmacion(carrito_id, change) {
+    const itemIndex = carritoItems.findIndex(item => item.id === carrito_id);
+    
+    if (itemIndex !== -1) {
+        const nuevaCantidad = carritoItems[itemIndex].cantidad + change;
+        
+        if (nuevaCantidad < 1) {
+            eliminarDelCarritoConfirmacion(carrito_id);
+            return;
+        }
+        
+        // Update the local state first for responsiveness
+        carritoItems[itemIndex].cantidad = nuevaCantidad;
+        
+        // Send the update to the server
+        fetch('/carrito/actualizar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                carrito_id: carrito_id,
+                cantidad: nuevaCantidad
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Reload the cart from server to ensure synchronization
+                cargarCarrito();
+                
+                // Update the confirmation modal
+                const carritoConfirmacionItems = document.getElementById('carrito-confirmacion-items');
+                if (carritoConfirmacionItems) {
+                    carritoConfirmacionItems.innerHTML = generarHTMLCarritoConfirmacion();
+                    actualizarTotalConfirmacion();
+                }
+            } else {
+                mostrarNotificacion(data.mensaje, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error al actualizar cantidad:', error);
+            mostrarNotificacion('Error al actualizar cantidad', 'error');
+        });
+    }
+}
+
+function eliminarDelCarritoConfirmacion(carrito_id) {
+    // Send the delete request to the server
+    fetch('/carrito/eliminar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            carrito_id: carrito_id
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // Update cart from server
+            cargarCarrito();
+            
+            // Update the confirmation modal
+            setTimeout(() => {
+                const carritoConfirmacionItems = document.getElementById('carrito-confirmacion-items');
+                if (carritoConfirmacionItems) {
+                    carritoConfirmacionItems.innerHTML = generarHTMLCarritoConfirmacion();
+                    actualizarTotalConfirmacion();
+                }
+            }, 200);
+        } else {
+            mostrarNotificacion(data.mensaje, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error al eliminar del carrito:', error);
+        mostrarNotificacion('Error al eliminar del carrito', 'error');
+    });
+}
+function eliminarDelCarritoConfirmacion(producto_id) {
+    // Enviar la solicitud al backend para eliminar el producto
+    fetch('/carrito/eliminar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            carrito_id: producto_id
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // Eliminar el producto del carrito principal
+            carritoItems = carritoItems.filter(item => item.id !== producto_id);
+
+            // Actualizar la interfaz del carrito principal
+            actualizarInterfazCarrito();
+
+            // Actualizar el Modal 4
+            const carritoConfirmacionItems = document.getElementById('carrito-confirmacion-items');
+            if (carritoConfirmacionItems) {
+                carritoConfirmacionItems.innerHTML = generarHTMLCarritoConfirmacion();
+                actualizarTotalConfirmacion();
+            }
+
+            mostrarNotificacion('Producto eliminado del carrito.', 'success');
+        } else {
+            mostrarNotificacion(data.mensaje, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error al eliminar del carrito:', error);
+        mostrarNotificacion('Error al eliminar del carrito', 'error');
+    });
+}
+function actualizarTotalConfirmacion() {
+    const total = carritoItems.reduce((sum, producto) => sum + producto.precio * producto.cantidad, 0);
+    document.getElementById('total-confirmacion').textContent = total.toLocaleString();
 }
 
 function mostrarDirecciones(tipoEntrega) {
@@ -423,8 +662,16 @@ function mostrarDirecciones(tipoEntrega) {
                 // Agregar botón de confirmar
                 const botonConfirmar = document.createElement('button');
                 botonConfirmar.className = 'btn btn-success w-100 mt-3';
-                botonConfirmar.innerHTML = '<i class="fas fa-check"></i> Confirmar Pedido';
-                botonConfirmar.onclick = confirmarPedido;
+                botonConfirmar.innerHTML = '<i class="fas fa-check"></i> Confirmar Dirección';
+                botonConfirmar.onclick = () => {
+                    // Validar si se ha seleccionado una dirección
+                    const direccionSeleccionada = document.querySelector('input[name="direccion"]:checked');
+                    if (!direccionSeleccionada) {
+                        mostrarNotificacion('Por favor, selecciona una dirección.', 'error');
+                        return;
+                    }
+                    mostrarModalConfirmacion(); // Solo abrir el modal de confirmación si hay una dirección seleccionada
+                };
                 direccionesContainer.appendChild(botonConfirmar);
 
                 // Mostrar el modal de direcciones
@@ -581,11 +828,11 @@ function verificarAutenticacion() {
 function generarHTMLCarrito() {
     let totalCompra = 0;
     let html = '';
-    
+
     carritoItems.forEach(producto => {
         const subtotal = producto.precio * producto.cantidad;
         totalCompra += subtotal;
-        
+
         html += `
             <div class="carrito-item">
                 <div class="item-info">
@@ -594,9 +841,9 @@ function generarHTMLCarrito() {
                         <h6>${producto.nombre}</h6>
                         <p class="item-price">$${producto.precio.toLocaleString()}</p>
                         <div class="quantity-control">
-                            <button class="quantity-btn" onclick="actualizarCantidad(${producto.id}, -1)">-</button>
+                            <button class="quantity-btn" onclick="updateQuantity(${producto.id}, -1)">-</button>
                             <span class="quantity">${producto.cantidad}</span>
-                            <button class="quantity-btn" onclick="actualizarCantidad(${producto.id}, 1)">+</button>
+                            <button class="quantity-btn" onclick="updateQuantity(${producto.id}, 1)">+</button>
                         </div>
                     </div>
                 </div>
@@ -610,16 +857,12 @@ function generarHTMLCarrito() {
         `;
     });
 
-    return html + `
+    html += `
         <div class="carrito-total"><h5><strong>Total:</strong> $${totalCompra.toLocaleString()}</h5></div>
-        <div class="carrito-footer">
-            <button class="btn-procesar" onclick="procesarPedido()">
-                <i class="fas fa-check-circle"></i> Procesar Pedido
-            </button>
-        </div>
     `;
-}
 
+    return html;
+}
 function poblarSelect(data, selectId, tipo) {
     const select = document.getElementById(selectId);
     select.innerHTML = `<option value="">Seleccione un ${tipo}</option>`;
@@ -653,57 +896,54 @@ function calcularTotalCarrito() {
     return total;
 }
 async function confirmarPedido() {
-    const metodoPagoId = document.querySelector('input[name="metodo_pago"]:checked')?.value;
-    const tipoEntrega = document.querySelector('input[name="tipo_entrega"]:checked')?.value;
-    const direccionId = document.querySelector('input[name="direccion"]:checked')?.value;
+    // Cerrar el modal de confirmación
+    const modalConfirmarPedido = bootstrap.Modal.getInstance(document.getElementById('modalConfirmarPedido'));
+    modalConfirmarPedido.hide();
 
-    if (!metodoPagoId) {
-        mostrarNotificacion('Por favor, selecciona un método de pago.', 'error');
-        return;
-    }
+    // Obtener métodos de pago y tipos de entrega
+    fetch('/obtener-metodos-pago-tipos-entrega')
+        .then(response => response.json())
+        .then(data => {
+            const modalBody = document.getElementById('modal-body-procesar-pedido');
+            modalBody.innerHTML = '';
 
-    if (!tipoEntrega) {
-        mostrarNotificacion('Por favor, selecciona un tipo de entrega.', 'error');
-        return;
-    }
+            // Mostrar métodos de pago
+            const metodosPagoHTML = data.metodos_pago.map(metodo => `
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="metodo_pago" id="metodo_pago_${metodo.id}" value="${metodo.id}" required>
+                    <label class="form-check-label" for="metodo_pago_${metodo.id}">
+                        ${metodo.metodo}
+                    </label>
+                </div>
+            `).join('');
 
-    if (tipoEntrega === 'Domicilio' && !direccionId) {
-        mostrarNotificacion('Por favor, selecciona una dirección de entrega.', 'error');
-        return;
-    }
+            modalBody.innerHTML += `<h5>Métodos de Pago</h5>${metodosPagoHTML}`;
 
-    const pedidoData = {
-        metodo_pago_id: metodoPagoId,
-        tipo_entrega: tipoEntrega,
-        direccion_id: tipoEntrega === 'Domicilio' ? direccionId : null
-    };
+            // Mostrar tipos de entrega
+            const tiposEntregaHTML = data.tipos_entrega.map(tipo => `
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="tipo_entrega" id="tipo_entrega_${tipo}" value="${tipo}" required>
+                    <label class="form-check-label" for="tipo_entrega_${tipo}">
+                        ${tipo}
+                    </label>
+                </div>
+            `).join('');
 
-    try {
-        const response = await fetch('/carrito/finalizar-compra', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(pedidoData),
+            modalBody.innerHTML += `<h5 class="mt-3">Tipos de Entrega</h5>${tiposEntregaHTML}`;
+
+            // Agregar botón de confirmar
+            modalBody.innerHTML += `
+                <div class="d-grid gap-2 mt-4">
+                    <button class="btn btn-primary" onclick="validarProcesarPedido()">Confirmar</button>
+                </div>
+            `;
+
+            // Mostrar el modal de procesar pedido
+            const modalProcesarPedido = new bootstrap.Modal(document.getElementById('modalProcesarPedido'));
+            modalProcesarPedido.show();
+        })
+        .catch(error => {
+            console.error('Error al obtener métodos de pago y tipos de entrega:', error);
+            mostrarNotificacion('Error al cargar métodos de pago y tipos de entrega', 'error');
         });
-
-        const data = await response.json();
-        console.log("Respuesta del servidor:", data);
-
-        if (data.status === 'success') {
-            mostrarNotificacion('Pedido registrado con éxito.', 'success');
-            
-            // Cerrar modal de direcciones
-            const modalDirecciones = bootstrap.Modal.getInstance(document.getElementById('modalDirecciones'));
-            if (modalDirecciones) modalDirecciones.hide();
-
-            carritoItems = [];
-            actualizarInterfazCarrito();
-        } else {
-            mostrarNotificacion(data.mensaje || 'Error al registrar el pedido.', 'error');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        mostrarNotificacion('Ocurrió un error al procesar el pedido.', 'error');
-    }
 }

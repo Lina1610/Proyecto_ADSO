@@ -254,3 +254,4 @@ def detalles_pedido(id):
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
+    

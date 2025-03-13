@@ -1,9 +1,12 @@
 from app import app
-from flask import render_template, request, flash, redirect, url_for, session
+from flask import render_template, request, flash, redirect, url_for, jsonify, session
 from conexion.conexionBD import connectionBD
 from werkzeug.security import check_password_hash
+from datetime import datetime, timedelta
+
 from controllers.funciones_login import *
 from controllers.funciones_address import *
+from controllers.funciones_order import *
 
 PATH_URL_LOGIN = "public/login"
 
@@ -164,8 +167,63 @@ def actualizarPassword():
 def perfil_cliente():
     if 'conectado' in session:
         if session['rol'] == 'cliente':
-            # Redirigir a la ruta de direcciones del cliente en router_address.py
-            return redirect(url_for('cliente_direcciones'))
+            user_id = session['id']  # Obtener el ID del cliente desde la sesión
+
+            # Obtener información del perfil del cliente (incluyendo tipo_documento)
+            with connectionBD() as conexion_MySQLdb:
+                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                    cursor.execute("""
+                        SELECT nombre, apellido, documento, correo, telefono, 
+                               rol, estado, tipo_documento
+                        FROM users
+                        WHERE id = %s
+                    """, (user_id,))
+                    user_data = cursor.fetchone()
+            
+            # Crear el diccionario info_perfil_session con los datos completos
+            info_perfil_session = {
+                'nombre': user_data.get('nombre', session.get('nombre')),
+                'apellido': user_data.get('apellido', session.get('apellido')),
+                'documento': user_data.get('documento', session.get('documento')),
+                'correo': user_data.get('correo', session.get('correo')),
+                'telefono': user_data.get('telefono', session.get('telefono')),
+                'rol': user_data.get('rol', session.get('rol')),
+                'estado': user_data.get('estado', session.get('estado')),
+                'tipo_documento': user_data.get('tipo_documento')
+            }
+
+            # Obtener direcciones del cliente
+            with connectionBD() as conexion_MySQLdb:
+                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                    cursor.execute("""
+                        SELECT d.id, d.nombre_completo, d.barrio, d.domicilio, d.referencias, d.telefono,
+                               m.nombre AS nombre_municipio, dp.nombre AS nombre_departamento
+                        FROM direccion d
+                        JOIN municipio m ON d.municipio_id = m.id
+                        JOIN departamento dp ON d.departamento_id = dp.id
+                        WHERE d.users_id = %s
+                    """, (user_id,))
+                    direcciones = cursor.fetchall()
+
+            # Obtener pedidos del cliente
+            pedidos = obtener_pedidos(user_id)
+
+            # Obtener departamentos y municipios para los formularios
+            with connectionBD() as conexion_MySQLdb:
+                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                    cursor.execute("SELECT id, nombre FROM departamento ORDER BY nombre")
+                    departamentos = cursor.fetchall()
+                    cursor.execute("SELECT id, nombre, departamento_id FROM municipio ORDER BY nombre")
+                    municipios = cursor.fetchall()
+
+            return render_template(
+                'public/perfil/perfil_cliente.html',
+                info_perfil_session=info_perfil_session,
+                direcciones=direcciones,
+                pedidos=pedidos,
+                departamentos=departamentos,
+                municipios=municipios
+            )
         else:
             return redirect(url_for('perfil'))
     else:
@@ -238,3 +296,76 @@ def cerraSesion():
         else:
             flash('Recuerde, debe iniciar sesión.', 'error')
             return render_template(f'{PATH_URL_LOGIN}/base_login.html')
+        
+@app.route('/obtener-detalles-pedido/<int:pedido_id>', methods=['GET'])
+def obtener_detalles_pedido(pedido_id):
+    if 'conectado' in session:
+        try:
+            with connectionBD() as conexion_MySQLdb:
+                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                    # Obtener los datos del pedido con los campos correctos
+                    cursor.execute("""
+                        SELECT p.id, p.fecha, p.fechaEntrega, p.horaEntrega, p.estado, 
+                               p.total AS total_pedido,
+                               mp.metodo AS metodo_pago, 
+                               e.tipo AS tipo_entrega,
+                               e.costo_domicilio,
+                               e.estado AS estado_entrega,
+                               e.direccion_id,
+                               u.nombre AS usuario_nombre, u.apellido,
+                               pr.nombre AS producto_nombre
+                        FROM pedido p
+                        JOIN users u ON p.users_id = u.id
+                        JOIN producto pr ON p.producto_id = pr.id
+                        JOIN metodo_pago mp ON p.metodo_pago_id = mp.id
+                        JOIN entrega e ON p.entrega_id = e.id
+                        WHERE p.id = %s AND p.users_id = %s
+                    """, (pedido_id, session['id']))
+                    pedido = cursor.fetchone()
+                    
+                    if not pedido:
+                        return jsonify({'error': 'Pedido no encontrado'}), 404
+                    
+                    # Formatear fechas si no son nulas
+                    pedido['fechaEntrega'] = pedido['fechaEntrega'].strftime('%d/%m/%Y') if pedido['fechaEntrega'] else "No disponible"
+                    pedido['fecha'] = pedido['fecha'].strftime('%d/%m/%Y %H:%M')
+                    
+                    # Manejar la hora de entrega correctamente
+                    if isinstance(pedido['horaEntrega'], timedelta):
+                        horas, segundos = divmod(pedido['horaEntrega'].seconds, 3600)
+                        minutos = (segundos // 60)
+                        pedido['horaEntrega'] = f"{horas:02d}:{minutos:02d}"
+                    else:
+                        pedido['horaEntrega'] = pedido['horaEntrega'].strftime('%H:%M') if pedido['horaEntrega'] else "No disponible"
+                    
+                    # Agregar el nombre completo del usuario
+                    pedido['usuario_nombre'] = f"{pedido['usuario_nombre']} {pedido['apellido']}"
+                    
+                    # Obtener los detalles del pedido (líneas de pedido)
+                    cursor.execute("""
+                        SELECT dp.id, dp.cantidad, dp.precio_unitario, dp.total,
+                               p.nombre AS producto_nombre
+                        FROM detalle_pedido dp
+                        JOIN producto p ON dp.producto_id = p.id
+                        WHERE dp.pedido_id = %s
+                    """, (pedido_id,))
+                    detalles_pedido = cursor.fetchall()
+                    
+                    # Convertir valores numéricos a float para evitar errores en JS
+                    for detalle in detalles_pedido:
+                        detalle['precio_unitario'] = float(detalle['precio_unitario'])
+                        detalle['total'] = float(detalle['total'])
+                    
+                    pedido['total_pedido'] = float(pedido['total_pedido'])
+                    pedido['costo_domicilio'] = float(pedido['costo_domicilio']) if pedido['costo_domicilio'] else None
+                    
+                    return jsonify({
+                        'pedido': pedido,
+                        'detalles_pedido': detalles_pedido
+                    })
+                    
+        except Exception as e:
+            print(f"Error al obtener detalles del pedido: {e}")
+            return jsonify({'error': str(e)}), 500
+    else:
+        return jsonify({'error': 'Usuario no autorizado'}), 401

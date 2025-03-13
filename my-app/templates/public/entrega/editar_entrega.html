@@ -1,0 +1,91 @@
+{% extends 'public/base_cpanel.html' %}
+
+{% block title %}Crud con Python 🐍 | Editar Entrega{% endblock %}
+
+{% block body %}
+
+<div class="card" style="border-radius: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); border: none;">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-4" style="color: #34495e; font-weight: bold;">
+        <a href="/lista-de-entregas" style="color: #34495e; text-decoration: none; transition: color 0.3s;">
+          <i class="bi bi-arrow-left-circle" style="font-size: 1.5rem;"></i>
+        </a>
+        EDITAR ENTREGA
+      </h3>
+      <hr style="border-top: 2px solid #34495e; opacity: 0.7;" />
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-8">
+      <div class="card-body p-4" style="background-color: #f8f9fa; border-radius: 10px;">
+        <form action="{{ url_for('viewEditarEntrega', id=entrega.id) }}" method="POST">
+          <!-- Campo Tipo de Entrega -->
+          <div class="mb-4">
+            <label for="tipo" class="form-label" style="font-weight: 600; color: #2c3e50;">
+              <i class="bi bi-truck me-2"></i>Tipo de Entrega
+            </label>
+            <select class="form-select" id="tipo" name="tipo" required style="border-radius: 8px; border: 1px solid #ced4da;">
+              <option value="Domicilio" {% if entrega.tipo == 'Domicilio' %}selected{% endif %}>Domicilio</option>
+              <option value="Presencial" {% if entrega.tipo == 'Presencial' %}selected{% endif %}>Presencial</option>
+            </select>
+          </div>
+
+          <!-- Campo Estado de Entrega -->
+          <div class="mb-4">
+            <label for="estado" class="form-label" style="font-weight: 600; color: #2c3e50;">
+              <i class="bi bi-info-circle me-2"></i>Estado de la Entrega
+            </label>
+            <select class="form-select" id="estado" name="estado" required style="border-radius: 8px; border: 1px solid #ced4da;">
+              <option value="Pendiente" {% if entrega.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+              <option value="En Proceso" {% if entrega.estado == 'En Proceso' %}selected{% endif %}>En Proceso</option>
+              <option value="En camino" {% if entrega.estado == 'En camino' %}selected{% endif %}>En camino</option>
+              <option value="Entregado" {% if entrega.estado == 'Entregado' %}selected{% endif %}>Entregado</option>
+            </select>
+          </div>
+
+          <!-- Campo Costo de Domicilio -->
+          <div class="mb-4">
+            <label for="costo_domicilio" class="form-label" style="font-weight: 600; color: #2c3e50;">
+              <i class="bi bi-cash-coin me-2"></i>Costo de Domicilio
+            </label>
+            <input type="number" class="form-control" id="costo_domicilio" name="costo_domicilio" value="{{ entrega.costo_domicilio }}" step="0.01" style="border-radius: 8px; border: 1px solid #ced4da;">
+          </div>
+
+          <!-- Campo Dirección ID (No editable) -->
+          <div class="mb-4">
+            <label for="direccion_id" class="form-label" style="font-weight: 600; color: #2c3e50;">
+              <i class="bi bi-geo-alt me-2"></i>ID de Dirección
+            </label>
+            <input type="number" class="form-control" id="direccion_id" name="direccion_id" value="{{ entrega.direccion_id }}" readonly style="
+              border-radius: 8px;
+              border: 1px solid #ced4da;
+              background-color: #e9ecef; /* Fondo gris */
+              color: #495057; /* Texto oscuro */
+              cursor: not-allowed; /* Cursor de no permitido */
+            ">
+          </div>
+
+          <!-- Botones de Acción -->
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary btn-lg" style="
+              border-radius: 10px;
+              padding: 12px 30px;
+              background: linear-gradient(135deg, #6a11cb, #2575fc);
+              border: none;
+              color: white;
+              font-weight: 600;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+              transition: all 0.3s ease;
+            ">
+              <i class="bi bi-save me-2" style="font-size: 1.2rem;"></i>Guardar Cambios
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
