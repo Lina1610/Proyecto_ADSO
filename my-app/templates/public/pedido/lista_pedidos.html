@@ -14,16 +14,32 @@
 
     <div id="contenedor-mensajes"></div>
 
-    <!-- Campo de búsqueda -->
+    <!-- Campo de búsqueda y menú desplegable -->
     <div class="row justify-content-end">
-      <div class="col-md-6 mt-4 py-2">
-        <input
-          type="search"
-          id="search_pedidos"
-          class="form-control border-0 shadow-none"
-          placeholder="Buscar pedido..."
-          onkeyup="buscarPedidoAjax()" />
-      </div>
+        <!-- Menú desplegable para elegir la columna -->
+        <div class="col-md-3 mt-4 py-2">
+            <select id="columna_filtro" class="form-select">
+                <option value="1">Estado</option>
+                <option value="2">Usuario</option>
+                <option value="3">Producto</option>
+                <option value="4">Método de Pago</option>
+                <option value="5">Tipo de Entrega</option>
+                <option value="6">Total</option>
+                <option value="7">Fecha</option>
+                <option value="8">Fecha de entrega</option>
+                <option value="9">Hora de entrega</option>
+            </select>
+        </div>
+
+        <!-- Campo de búsqueda -->
+        <div class="col-md-3 mt-4 py-2">
+            <input
+                type="search"
+                id="search_pedidos"
+                class="form-control border-0 shadow-none"
+                placeholder="Buscar..."
+                onkeyup="buscarPedidoAjax()" />
+        </div>
     </div>
 
     <!-- Tabla de pedidos -->
@@ -49,7 +65,7 @@
           <tbody id="tabla_pedidos_body">
             {% if pedidos %}
               {% for pedido in pedidos %}
-              <tr id="pedido_{{ pedido.id }}">
+              <tr id="pedido_{{ pedido.id }}" data-fecha="{{ pedido.fecha }}" data-fecha-entrega="{{ pedido.fecha_entrega }}" data-hora-entrega="{{ pedido.hora_entrega }}">
                 <td>{{ loop.index }}</td>
                 <td>
                   {% if pedido.estado == 'Pendiente' %}
@@ -66,7 +82,7 @@
                 <td>{{ pedido.producto_nombre }}</td>
                 <td>{{ pedido.metodo_pago }}</td>
                 <td>{{ pedido.tipo_entrega }}</td>
-                <td>{{ pedido.total | round(2) }}</td>  <!-- Mostrar el Total -->
+                <td>{{ pedido.total | round(2) }}</td>
                 <td>
                   <a href="/detalles-pedido/{{ pedido.id }}"
                      class="btn btn-info btn-sm"
@@ -96,11 +112,35 @@
             {% endif %}
           </tbody>
         </table>
+
+        <!-- Botones de exportación -->
+        <div class="botones-export mt-3">
+          <button id="btnExportarExcel" class="btn btn-success">
+            <i class="fas fa-file-excel"></i> Exportar a Excel
+          </button>
+          <button id="btnExportarPDF" class="btn btn-danger">
+            <i class="fas fa-file-pdf"></i> Exportar a PDF
+          </button>
+          <button id="btnImprimir" class="btn btn-info">
+            <i class="fas fa-print"></i> Imprimir
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Vincular el archivo JavaScript -->
-<script src="{{ url_for('static', filename='assets/customJS/buscar_pedido.js') }}"></script>
+<!-- Librerías necesarias -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.16.9/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saverjs@latest/FileSaver.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tableexport@5.2.0/dist/js/tableexport.min.js"></script>
+
+<!-- Script personalizado para exportación -->
+<script src="{{ url_for('static', filename='assets/js/reportOrder.js') }}"></script>
+
+<!-- Estilos CSS personalizados -->
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/report.css') }}">
+
 {% endblock %}

@@ -195,3 +195,23 @@ def actualizar_datos_perfil():
             return jsonify({'success': True, 'reload': True})
         return jsonify({'success': False, 'message': 'Error al actualizar datos'})
     return jsonify({'success': False, 'message': 'Debes iniciar sesión'})
+
+@app.route('/cambiar-contrasena', methods=['POST'])
+@roles_required('administrador', 'superadmin')  # Solo administradores y superadmins pueden acceder
+def cambiar_contrasena():
+    if request.method == 'POST':
+        user_id = request.form['user_id']
+        nueva_password = request.form['nueva_password']
+
+        # Verificar que la nueva contraseña no esté vacía
+        if not nueva_password:
+            flash('La nueva contraseña no puede estar vacía.', 'error')
+            return redirect(url_for('lista_usuarios'))
+
+        # Actualizar la contraseña
+        if actualizar_password(user_id, nueva_password):
+            flash('Contraseña actualizada correctamente.', 'success')
+        else:
+            flash('Error al actualizar la contraseña.', 'error')
+
+        return redirect(url_for('lista_usuarios'))

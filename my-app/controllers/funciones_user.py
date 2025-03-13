@@ -208,3 +208,19 @@ def procesar_imagen_perfil(foto_perfil):
         return f"uploads/perfil/{filename}"
     
     return None  # Si no se sube una imagen, retornar None
+
+def actualizar_password(user_id, nueva_password):
+    try:
+        # Hashear la nueva contraseña
+        hashed_password = generate_password_hash(nueva_password, method='scrypt')
+
+        # Actualizar la contraseña en la base de datos
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor() as cursor:
+                query = "UPDATE users SET contrasena = %s WHERE id = %s"
+                cursor.execute(query, (hashed_password, user_id))
+                conexion_MySQLdb.commit()
+                return True
+    except Exception as e:
+        print(f"Error en actualizar_password: {e}")
+        return False

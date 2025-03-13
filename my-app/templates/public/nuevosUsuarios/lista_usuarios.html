@@ -14,17 +14,33 @@
 
     <div id="contenedor-mensajes"></div>
 
+    <!-- Campo de búsqueda y menú desplegable -->
     <div class="row justify-content-end">
-      <div class="col-md-6 mt-4 py-2">
-        <input
-          type="search"
-          id="search_usuarios"
-          class="form-control border-0 shadow-none"
-          placeholder="Buscar usuario..."
-          onkeyup="buscarUsuarioAjax()" />
-      </div>
+        <!-- Menú desplegable para elegir la columna -->
+        <div class="col-md-3 mt-4 py-2">
+            <select id="columna_filtro" class="form-select">
+                <option value="1">Nombre</option>
+                <option value="2">Apellido</option>
+                <option value="3">Tipo Documento</option>
+                <option value="4">Documento</option>
+                <option value="5">Teléfono</option>
+                <option value="6">Rol</option>
+                <option value="7">Estado</option>
+            </select>
+        </div>
+
+        <!-- Campo de búsqueda -->
+        <div class="col-md-3 mt-4 py-2">
+            <input
+                type="search"
+                id="search_usuarios"
+                class="form-control border-0 shadow-none"
+                placeholder="Buscar..."
+                onkeyup="buscarUsuarioAjax()" />
+        </div>
     </div>
 
+    <!-- Tabla de usuarios -->
     <div class="row justify-content-center mb-2">
       <div class="table-responsive text-nowrap table-hover">
         <table
@@ -37,10 +53,13 @@
               <th>#</th>
               <th>Nombre</th>
               <th>Apellido</th>
-              <th>Documento</th>             
+              <th>Tipo Documento</th>
+              <th>Documento</th>
+              <th>Teléfono</th>
+              <th>Rol</th>
               <th>Estado</th>
-              <th width="10%">Acción Estado</th> <!-- Reducir el ancho de esta columna -->
-              <th width="20%">Acciones</th> <!-- Ajustar el ancho de esta columna -->
+              <th width="10%">Acción Estado</th>
+              <th width="20%">Acciones</th>
             </tr>
           </thead>
           <tbody id="tabla_usuarios_body">
@@ -50,10 +69,10 @@
                 <td>{{ loop.index }}</td>
                 <td>{{ usuario.nombre }}</td>
                 <td>{{ usuario.apellido }}</td>
+                <td>{{ usuario.tipo_documento }}</td>
                 <td>{{ usuario.documento }}</td>
+                <td>{{ usuario.telefono }}</td>
                 <td>{{ usuario.rol }}</td>
-                
-                <!-- Columna de Estado -->
                 <td>
                   {% if usuario.estado == 'activo' %}
                     <span class="badge bg-success">Activo</span>
@@ -61,8 +80,6 @@
                     <span class="badge bg-danger">Inactivo</span>
                   {% endif %}
                 </td>
-
-                <!-- Columna de Activación/Desactivación -->
                 <td>
                   {% if usuario.estado == 'inactivo' %}
                     <a href="/activar-usuario/{{ usuario.id }}" 
@@ -78,8 +95,6 @@
                     </a>
                   {% endif %}
                 </td>
-
-                <!-- Columna de Acciones -->
                 <td>
                   <a href="/detalles-usuario/{{ usuario.id }}"
                      class="btn btn-info btn-sm"
@@ -102,17 +117,42 @@
               {% endfor %}
             {% else %}
             <tr>
-              <td colspan="7" class="text-center">  <!-- Cambiar de 8 a 7 -->
+              <td colspan="10" class="text-center">
                 <i class="bi bi-exclamation-circle"></i> No hay usuarios registrados.
               </td>
             </tr>
             {% endif %}
           </tbody>
         </table>
+
+        <!-- Botones de exportación -->
+        <div class="botones-export mt-3">
+          <button id="btnExportarExcel" class="btn btn-success">
+            <i class="fas fa-file-excel"></i> Exportar a Excel
+          </button>
+          <button id="btnExportarPDF" class="btn btn-danger">
+            <i class="fas fa-file-pdf"></i> Exportar a PDF
+          </button>
+          <button id="btnImprimir" class="btn btn-info">
+            <i class="fas fa-print"></i> Imprimir
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<script src="{{ url_for('static', filename='assets/customJS/buscar_usuario.js') }}"></script>
+<!-- Librerías necesarias -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.16.9/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saverjs@latest/FileSaver.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tableexport@5.2.0/dist/js/tableexport.min.js"></script>
+
+<!-- Script personalizado para exportación -->
+<script src="{{ url_for('static', filename='assets/js/reportUsers.js') }}"></script>
+
+<!-- Estilos CSS personalizados -->
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/report.css') }}">
+
 {% endblock %}

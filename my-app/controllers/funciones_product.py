@@ -26,12 +26,6 @@ def procesar_producto(dataForm, imagen):
         precio_sin_puntos = re.sub('[^0-9,\.]', '', dataForm['precio'])  # Limpiar cualquier carácter no numérico
         precio_decimal = float(precio_sin_puntos.replace(',', '.'))  # Reemplazar coma por punto para el decimal
 
-        # Convertir unidad de medida a float si es necesario
-        try:
-            unidad_medida_float = float(dataForm['unidad_medida'])  # Convertir unidad de medida a float
-        except ValueError:
-            return 'La unidad de medida debe ser un número válido.'
-
         # Convertir el total a decimal (float) para asegurar su formato adecuado
         try:
             total_decimal = float(dataForm['total'])  # Convertir total a float (decimal)
@@ -54,6 +48,10 @@ def procesar_producto(dataForm, imagen):
         else:
             ruta_imagen_db = None  # Si no se sube una imagen
 
+        # Obtener los campos opcionales (marca y unidad_medida)
+        marca = dataForm.get('marca', None)  # Si no se proporciona, será None
+        unidad_medida = dataForm.get('unidad_medida', None)  # Si no se proporciona, será None
+
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                 # SQL para insertar el producto
@@ -70,9 +68,9 @@ def procesar_producto(dataForm, imagen):
                     dataForm['descripcion'], 
                     precio_decimal,  # Usar el precio decimal procesado
                     dataForm['estado'], 
-                    unidad_medida_float,  # Usar la unidad de medida como float
+                    unidad_medida,  # Usar la unidad de medida (puede ser NULL)
                     dataForm['cantidad'], 
-                    dataForm['marca'], 
+                    marca,  # Usar la marca (puede ser NULL)
                     total_decimal,  # Usar el total como decimal
                     ruta_imagen_db  # Ruta de la imagen
                 )
@@ -84,7 +82,6 @@ def procesar_producto(dataForm, imagen):
 
     except Exception as e:
         return f'Se produjo un error en procesar_producto: {str(e)}'
-
 
 def obtener_productos():
     try:
