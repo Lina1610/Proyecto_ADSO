@@ -32,8 +32,8 @@ img{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 8%; /* Aumentar padding horizontal */
-  background: transparent;
+  padding: 10px 5% !important; /* Reducción vertical */
+  background: rgba(0, 0, 0, 0.85) !important; /* Negro con 85% opacidad */
   transition: all 0.3s ease;
   z-index: 1000;
 }
@@ -51,11 +51,12 @@ img{
   color: white;
   text-decoration: none;
 }
-nav {
-  width: 100%;
-  background-color: black; /* Asegura que el fondo sea negro */
-  padding: 10px 0; /* Ajusta según necesites */
+/* MENÚ EN SCROLL - MANTENER CONTRASTE */
+.menu.scrolled {
+  background: rgba(0,0,0,0.95) !important; /* Negro con transparencia mínima */
+  backdrop-filter: blur(5px); /* Efecto vidrio */
 }
+
 
 /* --- Contenedor principal del menú --- */
 .navbar {
@@ -100,13 +101,7 @@ nav {
   gap: 10px;
 }
 
-/* --- Corrección del badge del carrito --- */
-.carrito-icono {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  padding: 0 15px !important;
-}
+
 
 /* --- Eliminar floats residuales --- */
 .menu .navbar ul li a {
@@ -149,22 +144,8 @@ nav {
   gap: 10px;
 }
 
-.carrito-icono {
-  position: relative;
-  color: white;
-  font-size: 22px;
-}
 
-.badge {
-  background-color: red;
-  color: white;
-  border-radius: 50%;
-  padding: 5px 8px;
-  position: absolute;
-  top: -5px;
-  right: -10px;
-  font-size: 12px;
-}
+
 
 
 
@@ -257,15 +238,12 @@ body {
 }
 
 /* ALINEACIÓN PERFECTA DEL MENÚ */
-.navbar > ul {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
 
+.navbar ul {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
 .nav-item {
   display: flex;
   align-items: center;
@@ -311,13 +289,22 @@ body {
   margin-top: 20px;
 }
 
-/* Botones de usuario */
+
 .user-options {
   display: flex;
-  align-items: center;
-  gap: 15px;
-  height: 100%;
-  margin-left: 10px;
+  gap: 25px;
+  border-left: 1px solid rgba(255,255,255,0.2);
+  padding-left: 20px;
+}
+.user-options .menu-link {
+  text-decoration: none !important; /* Elimina subrayado */
+  color: #FFFDFC; /* Color normal */
+  transition: color 0.3s ease !important;
+}
+
+ .menu-link:hover {
+  color: #CE967B !important; /* Color hover */
+  transform: translateY(-1px);
 }
 
 .user-options .btn {
@@ -327,15 +314,7 @@ body {
   padding: 0 20px;
 }
 
-/* Icono carrito */
-.carrito-icono {
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin-left: 10px;
-  height: 100%;
-  padding: 0 15px;
-}
+
 
 .fa-shopping-cart {
   font-size: 1.6rem !important;
@@ -346,22 +325,6 @@ body {
   transform: scale(1.1);
 }
 
-/* Badge del carrito */
-.badge {
-  position: absolute;
-  top: 12px;
-  right: 2px;
-  background: #9BCE21;
-  color: white;
-  font-size: 0.75rem;
-  min-width: 22px;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 11px;
-  border: 2px solid white;
-}
 
 /* Efectos hover */
 .nav-item:hover {
@@ -444,7 +407,8 @@ body {
   display: block;
 }
 .menu .navbar ul li a:hover{
-  color: chocolate;
+  color: #CE967B
+  
 }
 #menu{
   display: none;
@@ -545,10 +509,47 @@ span{
     transition: all 0.3s ease;
     position: relative;
   }
-  
+
+
+/* Línea para Cerrar Sesión */
+.user-options .logout:hover::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: #CE967B;
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  transition: all 0.3s ease;
+}
   .logout {
-    color: #ff6b6b !important;
-  }
+    color: #ff6b6b !important; /* Rojo suave */
+}
+.logout:hover{
+  color: #ff6b6b !important; 
+
+}
+.menu-link:hover {
+  color: #CE967B;
+  transform: translateY(-1px);
+}
+
+.menu-link:hover::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: #CE967B;
+}
+.logout-link {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
 /* ESTILOS MEJORADOS PARA PRODUCTOS */
 .producto-container {
   background: white !important; /* Fondo blanco sólido */
@@ -690,6 +691,11 @@ span{
   left: 120%;
 }
 
+
+
+
+
+
 /* Efecto de borde animado */
 .producto-card::before {
   content: '';
@@ -777,6 +783,7 @@ span{
         gap: 15px !important;
     }
 }
+
 
 /* ESTILOS PARA FOOTER */
 .footer {
@@ -998,3 +1005,349 @@ span{
     .whatsapp-btn:hover::before {
         opacity: 1;
     }
+/* Estilos para el modal procesar pedido */
+#modalProcesarPedido .modal-content {
+  border-radius: 15px;
+  border: none;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #f0f4f8, #e8eaf6);
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#modalProcesarPedido .modal-header {
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 25px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+#modalProcesarPedido .modal-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+#modalProcesarPedido .btn-close {
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+#modalProcesarPedido .btn-close:hover {
+  opacity: 1;
+}
+
+#modalProcesarPedido .modal-body {
+  padding: 30px;
+  font-size: 1.1rem;
+  color: #333;
+  line-height: 1.7;
+}
+
+#modalProcesarPedido .modal-footer {
+  border-top: 1px solid #e0e0e0;
+  padding: 20px 30px;
+  background-color: transparent;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+#modalProcesarPedido .btn {
+  padding: 12px 25px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin-left: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  cursor: pointer; /* Cursor de puntero para indicar que es interactivo */
+}
+
+#modalProcesarPedido .btn-secondary {
+  background-color: #78909c;
+  border: none;
+  color: white;
+}
+
+#modalProcesarPedido .btn-secondary:hover {
+  background-color: #607d8b;
+  transform: translateY(-2px);
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.2);
+}
+
+#modalProcesarPedido .btn-primary {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+}
+
+#modalProcesarPedido .btn-primary:hover {
+  background-color: #388E3C;
+  transform: translateY(-2px);
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos para los radio buttons */
+#modalProcesarPedido .modal-body .form-check {
+  margin-bottom: 15px;
+}
+
+#modalProcesarPedido .modal-body .form-check-label {
+  font-size: 1.1rem;
+  color: #333;
+  cursor: pointer;
+}
+
+/* Animación de entrada del modal */
+@keyframes modalEntrance {
+  from {
+      opacity: 0;
+      transform: translateY(-20px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+#modalProcesarPedido .modal-content {
+  animation: modalEntrance 0.3s ease-out;
+}
+
+/* Estilos para el modal de agregar dirección (manteniendo los tuyos con ligeros ajustes) */
+#editarDireccionModal .modal-content {
+  border-radius: 15px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(145deg, #ffffff, #f9f9f9);
+  overflow: hidden;
+}
+
+#editarDireccionModal .modal-header {
+  background: linear-gradient(145deg, #4CAF50, #45a049);
+  color: white;
+  border-bottom: none;
+  padding: 20px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+#editarDireccionModal .modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+#editarDireccionModal .btn-close {
+  filter: invert(1);
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+#editarDireccionModal .btn-close:hover {
+  opacity: 1;
+}
+
+#editarDireccionModal .modal-body {
+  padding: 20px;
+  font-size: 1rem;
+  color: #333;
+}
+
+#editarDireccionModal .form-label {
+  font-weight: 500;
+  color: #555;
+}
+
+#editarDireccionModal .form-control, #editarDireccionModal .form-select {
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#editarDireccionModal .form-control:focus, #editarDireccionModal .form-select:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+  outline: none;
+}
+
+#editarDireccionModal .modal-footer {
+  border-top: 1px solid #eee;
+  padding: 15px 20px;
+  background-color: #f9f9f9;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+#editarDireccionModal .btn-secondary {
+  background-color: #6c757d;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#editarDireccionModal .btn-secondary:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+}
+
+#editarDireccionModal .btn-primary {
+  background-color: #4CAF50;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#editarDireccionModal .btn-primary:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+
+/* Animación de entrada del modal */
+@keyframes modalEntrance {
+  from {
+      opacity: 0;
+      transform: translateY(-20px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+/* Estilos para el modal de agregar dirección */
+#editarDireccionModal .modal-content {
+  border-radius: 15px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(145deg, #ffffff, #f9f9f9);
+  overflow: hidden;
+}
+
+#editarDireccionModal .modal-header {
+  background: linear-gradient(145deg, #4CAF50, #45a049);
+  color: white;
+  border-bottom: none;
+  padding: 20px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+#editarDireccionModal .modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+#editarDireccionModal .btn-close {
+  filter: invert(1);
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+#editarDireccionModal .btn-close:hover {
+  opacity: 1;
+}
+
+#editarDireccionModal .modal-body {
+  padding: 20px;
+  font-size: 1rem;
+  color: #333;
+}
+
+#editarDireccionModal .form-label {
+  font-weight: 500;
+  color: #555;
+}
+
+#editarDireccionModal .form-control, #editarDireccionModal .form-select {
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#editarDireccionModal .form-control:focus, #editarDireccionModal .form-select:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+  outline: none;
+}
+
+#editarDireccionModal .modal-footer {
+  border-top: 1px solid #eee;
+  padding: 15px 20px;
+  background-color: #f9f9f9;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+#editarDireccionModal .btn-secondary {
+  background-color: #6c757d;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#editarDireccionModal .btn-secondary:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+}
+
+#editarDireccionModal .btn-primary {
+  background-color: #4CAF50;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#editarDireccionModal .btn-primary:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+
+/* Animación de entrada del modal */
+@keyframes modalEntrance {
+  from {
+      opacity: 0;
+      transform: translateY(-20px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+#editarDireccionModal .modal-content {
+  animation: modalEntrance 0.3s ease-out;
+}
+
+/* Efecto hover en botones */
+#editarDireccionModal .btn {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#editarDireccionModal .btn:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}

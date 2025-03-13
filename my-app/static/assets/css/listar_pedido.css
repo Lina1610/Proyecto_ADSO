@@ -1,0 +1,232 @@
+/* Estilos generales para la tabla */
+.table-container {
+    width: 95%;
+    margin: 20px auto;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    padding: 15px;
+}
+
+/* Título de la tabla */
+h3.text-center {
+    font-family: 'Poppins', sans-serif; /* Usar la fuente Poppins */
+    font-size: 2rem; /* Tamaño grande para el título */
+    font-weight: 700; /* Peso de la fuente (negrita) */
+    color: #2c3e50; /* Color oscuro para el texto */
+    margin-bottom: 20px;
+    text-transform: uppercase; /* Texto en mayúsculas */
+    letter-spacing: 1px; /* Espaciado entre letras */
+    text-align: center;
+}
+
+/* Estilos para la tabla */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+    background-color: #fff;
+    border-radius: 8px;
+}
+
+/* Encabezados de la tabla */
+.table thead th {
+    background: linear-gradient(135deg, #2c3e50, #34495e); /* Fondo oscuro */
+    color: #ffffff; /* Color blanco para los encabezados */
+    font-weight: 600; /* Peso de la fuente */
+    padding: 12px; /* Reducir el padding */
+    text-align: center;
+    border-bottom: 2px solid #1f2a36;
+}
+
+/* Celdas del cuerpo de la tabla */
+.table tbody td {
+    padding: 8px; /* Reducir el padding */
+    text-align: center;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.9rem; /* Reducir el tamaño de la fuente */
+}
+
+/* Reducir el ancho de la columna de descripción */
+.table tbody td:nth-child(4) { /* Columna de descripción */
+    max-width: 150px; /* Ancho máximo reducido */
+    white-space: nowrap; /* Evitar que el texto se divida en varias líneas */
+    overflow: hidden; /* Ocultar el texto que exceda el ancho */
+    text-overflow: ellipsis; /* Mostrar puntos suspensivos (...) si el texto es muy largo */
+}
+
+/* Efecto zebra para las filas */
+.table tbody tr:nth-child(odd) {
+    background-color: #f8f9fa;
+}
+
+/* Efecto hover en filas */
+.table tbody tr:hover {
+    background-color: #e8eaf6;
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Botones de acción */
+.btn {
+    padding: 6px 10px; /* Ajustar el padding */
+    font-size: 0.8rem; /* Ajustar el tamaño de la fuente */
+    font-weight: 500; /* Ajustar el peso de la fuente */
+    border-radius: 8px; /* Ajustar el radio del borde */
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    margin: 3px; /* Ajustar el margen entre botones */
+    display: inline-flex; /* Mostrar los botones en línea */
+    align-items: center;
+    justify-content: center;
+    min-width: 80px; /* Ajustar el ancho mínimo */
+    height: 32px; /* Ajustar la altura */
+}
+
+/* Botón de información (Detalles) */
+.btn-info {
+    background: #17a2b8;
+    color: #fff;
+    border: none;
+}
+
+
+
+/* Botón de peligro (Eliminar) */
+.btn-danger {
+    background: #dc3545;
+    color: #fff;
+    border: none;
+}
+
+/* Botón de advertencia (Desactivar) */
+.btn-warning {
+    background: #ffc107;
+    color: #000;
+    border: none;
+}
+
+.btn-warning:hover {
+    background: #e0a800;
+}
+
+/* Estilos para los estados (Activo / Inactivo) */
+.badge {
+    padding: 6px 12px; /* Reducir el padding */
+    font-size: 0.8rem; /* Reducir el tamaño de la fuente */
+    font-weight: bold;
+    border-radius: 20px;
+}
+
+.badge.bg-warning {
+    background: #ffc107;
+    color: #000;
+}
+
+.badge.bg-info {
+    background: #17a2b8;
+    color: #fff;
+}
+
+.badge.bg-primary {
+    background: #007bff;
+    color: #fff;
+}
+
+.badge.bg-success {
+    background: #28a745;
+    color: #fff;
+}
+
+/* Campo de búsqueda */
+#search_pedidos {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 18px; /* Reducir el padding */
+    border: 2px solid #2c3e50;
+    border-radius: 30px;
+    font-size: 0.9rem; /* Reducir el tamaño de la fuente */
+    color: #2c3e50;
+    background-color: #f8f9fa;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    margin-bottom: 20px;
+}
+
+#search_pedidos:focus {
+    border-color: #17a2b8;
+    box-shadow: 0px 4px 15px rgba(23, 162, 184, 0.3);
+    background-color: #ffffff;
+    outline: none;
+}
+
+/* Placeholder del input */
+#search_pedidos::placeholder {
+    color: #6c757d;
+    opacity: 0.8;
+}
+
+/* Icono de búsqueda (opcional) */
+#search_pedidos {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%232c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>');
+    background-repeat: no-repeat;
+    background-position: 95% center;
+    background-size: 20px 20px;
+    padding-right: 50px;
+}
+/* Ajustar la última columna (Acción) */
+.table tbody td:last-child {
+    width: 200px; /* Ancho fijo para la columna de acciones */
+    max-width: 200px; /* Limitar el ancho máximo */
+    padding: 5px; /* Reducir el padding */
+    text-align: center; /* Centrar el contenido */
+}
+
+/* Contenedor de botones de acción */
+.table tbody td:last-child .acciones {
+    display: flex;
+    flex-wrap: wrap; /* Permitir que los botones se envuelvan si no caben */
+    gap: 5px; /* Espacio entre botones */
+    justify-content: center; /* Centrar los botones horizontalmente */
+    align-items: center; /* Centrar los botones verticalmente */
+}
+
+/* Ajustes específicos para los botones dentro de la columna de acciones */
+.table tbody td:last-child .btn {
+    flex: 1 1 auto;
+    min-width: 80px; /* Reducir el ancho mínimo de los botones */
+    text-align: center;
+    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+}
+
+/* Estilos específicos para los botones */
+.btn-info {
+    background: #17a2b8;
+    color: #fff;
+    border: none;
+}
+
+.btn-success {
+    background: #28a745;
+    color: #fff;
+    border: none;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: #fff;
+    border: none;
+}
+
+.btn-info:hover {
+    background: #138496;
+}
+
+.btn-success:hover {
+    background: #218838;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
