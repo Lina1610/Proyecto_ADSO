@@ -183,7 +183,7 @@ def procesar_pedido(dataForm):
         print(f"Error en procesar_pedido: {e}")  # Debug
         return f"Se produjo un error en procesar_pedido: {str(e)}"
 
-def obtener_pedidos():
+def obtener_pedidos(user_id=None):
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
@@ -197,16 +197,21 @@ def obtener_pedidos():
                     JOIN producto pr ON p.producto_id = pr.id
                     JOIN metodo_pago mp ON p.metodo_pago_id = mp.id
                     JOIN entrega e ON p.entrega_id = e.id
-                    ORDER BY p.id DESC
                 """
-                cursor.execute(querySQL)
+                # Si se proporciona un user_id, filtrar por ese cliente
+                if user_id:
+                    querySQL += " WHERE p.users_id = %s"
+                    querySQL += " ORDER BY p.id DESC"
+                    cursor.execute(querySQL, (user_id,))
+                else:
+                    querySQL += " ORDER BY p.id DESC"
+                    cursor.execute(querySQL)
+
                 pedidos = cursor.fetchall()
-                print("Pedidos obtenidos:", pedidos)  # Depuración
                 return pedidos
     except Exception as e:
         print(f"Error en obtener_pedidos: {e}")
         return []
-
 
 def buscarPedidoBD(search):
     try:
@@ -297,3 +302,5 @@ def actualizar_pedido(id, data_form):
     except Exception as e:
         print(f"Error en actualizar_pedido: {e}")  # Depuración
         return f"Se produjo un error al actualizar el pedido: {str(e)}"
+    
+

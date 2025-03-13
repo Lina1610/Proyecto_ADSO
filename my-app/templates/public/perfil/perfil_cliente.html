@@ -81,97 +81,97 @@
                 </div>
 
                 <!-- Sección de Información Personal -->
-                <div class="card mb-3">
-                    <div class="card-header section-header" data-bs-toggle="collapse" href="#infoPersonal">
-                        <div class="d-flex align-items-center">
-                            <i class="fas fa-user-circle fa-2x me-3 text-primary"></i>
-                            <div>
-                                <h5 class="mb-0">Tu Información</h5>
-                                <small class="text-muted">Datos personales y de contacto</small>
-                            </div>
-                        </div>
+<div class="card mb-3">
+    <div class="card-header section-header" data-bs-toggle="collapse" href="#infoPersonal">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-user-circle fa-2x me-3 text-primary"></i>
+            <div>
+                <h5 class="mb-0">Tu Información</h5>
+                <small class="text-muted">Datos personales y de contacto</small>
+            </div>
+        </div>
+    </div>
+    <div class="collapse" id="infoPersonal">
+        <div class="card-body">
+            <form method="POST" id="formInfoPersonal" action="/actualizar-datos-perfil">
+                <div class="row g-3">
+                    <!-- Campos no editables -->
+                    <div class="col-md-6">
+                        <label class="form-label">Tipo de Documento</label>
+                        <input type="text" class="form-control bg-light" 
+                               value="{{ info_perfil_session.tipo_documento }}" readonly>
                     </div>
-                    <div class="collapse " id="infoPersonal">
-                        <div class="card-body">
-                            <form method="POST" id="formInfoPersonal" action="/actualizar-datos-perfil">
-                                <div class="row g-3">
-                                    <!-- Campos no editables -->
-                                    <div class="col-md-6">
-                                        <label class="form-label">Tipo de Documento</label>
-                                        <input type="text" class="form-control bg-light" 
-                                               value="{{ info_perfil_session['tipo_documento'] }}" readonly>
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-                                        <label class="form-label">Documento</label>
-                                        <input type="text" class="form-control bg-light" 
-                                               value="{{ info_perfil_session['documento'] }}" readonly>
-                                    </div>
+                    
+                    <div class="col-md-6">
+                        <label class="form-label">Documento</label>
+                        <input type="text" class="form-control bg-light" 
+                               value="{{ info_perfil_session.documento }}" readonly>
+                    </div>
 
-                                    <!-- Campos editables -->
-                                    <div class="col-md-6">
-                                        <label class="form-label">Nombre</label>
-                                        <input type="text" name="nombre" class="form-control" 
-                                               value="{{ info_perfil_session['nombre'] }}" required>
-                                    </div>
+                    <!-- Campos editables -->
+                    <div class="col-md-6">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" name="nombre" class="form-control" 
+                               value="{{ info_perfil_session.nombre }}" required>
+                    </div>
 
-                                    <div class="col-md-6">
-                                        <label class="form-label">Apellido</label>
-                                        <input type="text" name="apellido" class="form-control" 
-                                               value="{{ info_perfil_session['apellido'] }}" required>
-                                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Apellido</label>
+                        <input type="text" name="apellido" class="form-control" 
+                               value="{{ info_perfil_session.apellido }}" required>
+                    </div>
 
-                                    <div class="col-md-6">
-                                        <label class="form-label">Teléfono</label>
-                                        <input type="text" name="telefono" class="form-control" 
-                                               value="{{ info_perfil_session['telefono'] }}" required>
-                                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Teléfono</label>
+                        <input type="text" name="telefono" class="form-control" 
+                               value="{{ info_perfil_session.telefono }}" required>
+                    </div>
 
-                                    <!-- Campos no editables -->
-                                    <div class="col-md-6">
-                                        <label class="form-label">Correo</label>
-                                        <input type="email" class="form-control bg-light" 
-                                               value="{{ info_perfil_session['correo'] }}" readonly>
-                                    </div>
+                    <!-- Campos no editables -->
+                    <div class="col-md-6">
+                        <label class="form-label">Correo</label>
+                        <input type="email" class="form-control bg-light" 
+                               value="{{ info_perfil_session.correo }}" readonly>
+                    </div>
 
-                                    <div class="col-md-6">
-                                        <label class="form-label">Rol</label>
-                                        <input type="text" class="form-control bg-light" 
-                                               value="{{ info_perfil_session['rol'] }}" readonly>
-                                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Rol</label>
+                        <input type="text" class="form-control bg-light" 
+                               value="{{ info_perfil_session.rol }}" readonly>
+                    </div>
 
-                                    <div class="col-md-6">
-                                        <label class="form-label">Estado</label>
-                                        <input type="text" class="form-control bg-light" 
-                                               value="{{ info_perfil_session['estado'] }}" readonly>
-                                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Estado</label>
+                        <input type="text" class="form-control bg-light" 
+                               value="{{ info_perfil_session.estado }}" readonly>
+                    </div>
 
-                                    <!-- Campo Contraseña para actualización -->
-                                    <div class="col-md-12 mt-4">
-                                        <label class="form-label">Confirmar con Contraseña Actual</label>
-                                        <div class="input-group input-group-merge">
-                                            <input type="password" 
-                                                   class="form-control" 
-                                                   name="pass_actual"
-                                                   placeholder="Ingrese su contraseña para confirmar cambios"
-                                                   required>
-                                            <span class="input-group-text cursor-pointer">
-                                                <i class="bx bx-hide" onclick="togglePassword(this)"></i>
-                                            </span>
-                                        </div>
-                                        <small class="text-muted">Debe ingresar su contraseña actual para guardar los cambios</small>
-                                    </div>
-
-                                    <div class="col-12 text-center mt-4">
-                                        <button type="submit" class="btn btn-primary px-4">
-                                            <i class="fas fa-save me-2"></i>Guardar Cambios
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
+                    <!-- Campo Contraseña para actualización -->
+                    <div class="col-md-12 mt-4">
+                        <label class="form-label">Confirmar con Contraseña Actual</label>
+                        <div class="input-group input-group-merge">
+                            <input type="password" 
+                                   class="form-control" 
+                                   name="pass_actual"
+                                   placeholder="Ingrese su contraseña para confirmar cambios"
+                                   required>
+                            <span class="input-group-text cursor-pointer">
+                                <i class="bx bx-hide" onclick="togglePassword(this)"></i>
+                            </span>
                         </div>
+                        <small class="text-muted">Debe ingresar su contraseña actual para guardar los cambios</small>
+                    </div>
+
+                    <div class="col-12 text-center mt-4">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fas fa-save me-2"></i>Guardar Cambios
+                        </button>
                     </div>
                 </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <!-- Direcciones -->
 <div class="card mb-4">
@@ -244,17 +244,11 @@
             </div>
         </div>
     </div>
-    <div class="collapse show" id="seccionPedidos">
+    <div class="collapse " id="seccionPedidos">
         <div class="card-body">
             <!-- Campo de búsqueda -->
             <div class="row justify-content-end">
-                <div class="col-md-6 mt-4 py-2">
-                    <input
-                        type="search"
-                        id="search_pedidos"
-                        class="form-control border-0 shadow-none"
-                        placeholder="Buscar pedido..."
-                        onkeyup="buscarPedidoAjax()" />
+                <div class="col-md-6 mt-4 py-2">                    
                 </div>
             </div>
 
@@ -298,11 +292,13 @@
                                     <td>{{ pedido.tipo_entrega }}</td>
                                     <td>{{ pedido.total | round(2) }}</td>
                                     <td>
-                                        <a href="/detalles-pedido/{{ pedido.id }}"
-                                           class="btn btn-info btn-sm"
-                                           title="Ver detalles">
-                                           <i class="bi bi-eye"></i> Detalles
-                                        </a>
+                                        <button onclick="cargarDetallesPedido({{ pedido.id }})" 
+                                                class="btn btn-info btn-sm" 
+                                                title="Ver detalles"
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#modalDetallesPedido">
+                                            <i class="bi bi-eye"></i> Detalles
+                                        </button>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -543,6 +539,26 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <button id="confirmarEliminar" class="btn btn-danger">Eliminar</button>
 
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal para Detalles del Pedido -->
+<div class="modal fade" id="modalDetallesPedido" tabindex="-1" aria-labelledby="modalDetallesPedidoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDetallesPedidoLabel">Detalles del Pedido</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Aquí se cargarán los detalles del pedido -->
+                <div id="detallesPedidoContent">
+                    <!-- Los detalles se cargarán dinámicamente aquí -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
