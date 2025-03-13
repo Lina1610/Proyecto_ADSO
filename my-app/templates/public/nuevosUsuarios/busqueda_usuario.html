@@ -1,55 +1,169 @@
-{% for usuario in dataBusqueda %}
-<tr id="usuario_{{ usuario.id }}">
-  <td>{{ loop.index }}</td>
-  <td>{{ usuario.nombre }}</td>
-  <td>{{ usuario.apellido }}</td>
-  <td>{{ usuario.documento }}</td>
-  <!-- Columna de Estado -->
-  <td>
-    {% if usuario.estado == 'activo' %}
-      <span class="badge bg-success">Activo</span>
+<!-- Reemplaza tu tabla de usuarios actual con este código -->
+<table id="tbl_usuarios" class="table table-striped table-bordered" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Nombre</th>
+      <th>Apellido</th>
+      <th>Tipo Documento</th>
+      <th>Documento</th>
+      <th>Teléfono</th>
+      <th>Rol</th>
+      <th>Estado</th>
+      <th width="10%">Acción Estado</th>
+      <th width="20%">Acciones</th>
+    </tr>
+  </thead>
+  <tbody id="tabla_usuarios_body">
+    {% if dataBusqueda and dataBusqueda|length > 0 %}
+      {% for usuario in dataBusqueda %}
+      <tr id="usuario_{{ usuario.id }}" class="fila-datos">
+        <td>{{ loop.index }}</td>
+        <td>{{ usuario.nombre }}</td>
+        <td>{{ usuario.apellido }}</td>
+        <td>{{ usuario.tipo_documento }}</td>
+        <td>{{ usuario.documento }}</td>
+        <td>{{ usuario.telefono }}</td>
+        <td>{{ usuario.rol }}</td>
+        <td>
+          {% if usuario.estado == 'activo' %}
+            <span class="badge bg-success">Activo</span>
+          {% else %}
+            <span class="badge bg-danger">Inactivo</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if usuario.estado == 'inactivo' %}
+            <a href="/activar-usuario/{{ usuario.id }}" class="btn btn-sm btn-success">
+              <i class="bi bi-check-circle"></i> Activar
+            </a>
+          {% else %}
+            <a href="/desactivar-usuario/{{ usuario.id }}" class="btn btn-sm btn-warning">
+              <i class="bi bi-x-circle"></i> Desactivar
+            </a>
+          {% endif %}
+        </td>
+        <td>
+          <a href="/detalles-usuario/{{ usuario.id }}" class="btn btn-info btn-sm">
+            <i class="bi bi-eye"></i> Detalles
+          </a>
+          <a href="{{ url_for('viewEditarUsuario', id=usuario.id) }}" class="btn btn-success btn-sm">
+            <i class="bi bi-arrow-clockwise"></i> Actualizar
+          </a>
+          <a href="#" onclick="eliminarUsuario('{{ usuario.id }}');" class="btn btn-danger btn-sm">
+            <i class="bi bi-trash3"></i> Eliminar
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
     {% else %}
-      <span class="badge bg-danger">Inactivo</span>
+      <tr id="no-resultados-row">
+        <td colspan="10" class="text-center">
+          <div class="alert alert-warning w-100">
+            <i class="bi bi-exclamation-circle"></i> 
+            <strong>No resultados para la búsqueda:</strong> 
+            {% if terminoBusqueda %}{{ terminoBusqueda }}{% else %}No hay datos disponibles{% endif %}
+          </div>
+        </td>
+      </tr>
     {% endif %}
-  </td>
-  <!-- Columna de Activación/Desactivación -->
-  <td>
-    {% if usuario.estado == 'inactivo' %}
-      <a href="/activar-usuario/{{ usuario.id }}" 
-         class="btn btn-sm btn-success"
-         title="Activar usuario">
-         <i class="bi bi-check-circle"></i> Activar
-      </a>
-    {% else %}
-      <a href="/desactivar-usuario/{{ usuario.id }}" 
-         class="btn btn-sm btn-warning"
-         title="Desactivar usuario">
-         <i class="bi bi-x-circle"></i> Desactivar
-      </a>
-    {% endif %}
-  </td>
-  <!-- Columna de Acciones -->
-  <td>
-    <a href="/detalles-usuario/{{ usuario.id }}"
-       class="btn btn-info btn-sm"
-       title="Ver detalles">
-       <i class="bi bi-eye"></i> Detalles
-    </a>
-    <a href="{{ url_for('viewEditarUsuario', id=usuario.id) }}"
-       class="btn btn-success btn-sm"
-       title="Actualizar">
-       <i class="bi bi-arrow-clockwise"></i> Actualizar
-    </a>
-    <a href="#"
-       onclick="eliminarUsuario('{{ usuario.id }}');"
-       class="btn btn-danger btn-sm"
-       title="Eliminar">
-       <i class="bi bi-trash3"></i> Eliminar
-    </a>
-  </td>
-</tr>
-{% else %}
-<tr>
-  <td colspan="7" class="text-center">No se encontraron resultados.</td>
-</tr>
-{% endfor %}
+  </tbody>
+</table>
+
+// Añade este código a tu archivo buscar_usuario.js
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Referencias a elementos DOM
+  const buscadorGeneral = document.getElementById('buscador_general');
+  const btnBuscarGeneral = document.getElementById('btn_buscar_general');
+  const tablaUsuarios = document.getElementById('tbl_usuarios');
+  const tbody = document.getElementById('tabla_usuarios_body');
+  
+  // Función principal de búsqueda
+  function buscarGeneral() {
+    const textoBusqueda = buscadorGeneral.value.trim().toLowerCase();
+    const filas = document.querySelectorAll('.fila-datos');
+    let encontrado = false;
+    
+    // Remover fila de "no resultados" si existe
+    const noResultadosRow = document.getElementById('no-resultados-row');
+    if (noResultadosRow) {
+      noResultadosRow.remove();
+    }
+    
+    // Si no hay texto de búsqueda, mostrar todas las filas
+    if (textoBusqueda === '') {
+      filas.forEach(fila => {
+        fila.style.display = '';
+      });
+      actualizarContadorRegistros();
+      return;
+    }
+    
+    // Filtrar las filas
+    filas.forEach(fila => {
+      const celdas = fila.querySelectorAll('td');
+      let filaEncontrada = false;
+      
+      celdas.forEach(celda => {
+        if (celda.textContent.toLowerCase().includes(textoBusqueda)) {
+          filaEncontrada = true;
+        }
+      });
+      
+      if (filaEncontrada) {
+        fila.style.display = '';
+        encontrado = true;
+      } else {
+        fila.style.display = 'none';
+      }
+    });
+    
+    // Si no se encontró ninguna coincidencia, mostrar mensaje
+    if (!encontrado) {
+      const nuevaFila = document.createElement('tr');
+      nuevaFila.id = 'no-resultados-row';
+      nuevaFila.innerHTML = `
+        <td colspan="10" class="text-center">
+          <div class="alert alert-warning w-100">
+            <i class="bi bi-exclamation-circle"></i> 
+            <strong>No resultados para la búsqueda:</strong> 
+            ${textoBusqueda}
+          </div>
+        </td>
+      `;
+      tbody.appendChild(nuevaFila);
+    }
+    
+    actualizarContadorRegistros();
+  }
+  
+  // Función para actualizar contador de registros
+  function actualizarContadorRegistros() {
+    const filasVisibles = document.querySelectorAll('.fila-datos:not([style*="display: none"])').length;
+    const filasTotal = document.querySelectorAll('.fila-datos').length;
+    
+    // Actualizar el texto del contador
+    document.getElementById('filas-mostradas').textContent = filasVisibles;
+    document.getElementById('filas-totales').textContent = filasTotal;
+  }
+  
+  // Evento para botón de búsqueda
+  if (btnBuscarGeneral) {
+    btnBuscarGeneral.addEventListener('click', buscarGeneral);
+  }
+  
+  // Evento para búsqueda con tecla Enter
+  if (buscadorGeneral) {
+    buscadorGeneral.addEventListener('keyup', function(e) {
+      if (e.key === 'Enter') {
+        buscarGeneral();
+      }
+      // Búsqueda en tiempo real (opcional)
+      // buscarGeneral();
+    });
+  }
+  
+  // Inicializar contador
+  actualizarContadorRegistros();
+});
