@@ -20,7 +20,8 @@ def viewFormAbono():
                 'numero_abonos': request.form.get('numero_abonos'),
                 'estado': request.form.get('estado'),
                 'monto': request.form.get('monto'),
-                'pedido_id': request.form.get('pedido_id')
+                'pedido_id': request.form.get('pedido_id'),
+                'abono_final': request.form.get('abono_final')  # Campo no obligatorio
             }
 
             resultado = procesar_abono(dataForm)
@@ -69,6 +70,7 @@ def detalles_abono(id):
                         abono.estado AS estado_abono,
                         abono.monto,
                         abono.pedido_id,
+                        abono.abono_final,  -- Este es el campo agregado
                         pedido.id AS pedido_id,
                         pedido.fecha AS fecha_pedido,
                         pedido.fechaEntrega,

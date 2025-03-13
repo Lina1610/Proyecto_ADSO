@@ -20,7 +20,7 @@
 
   <div class="row justify-content-center mb-2">
     <div class="col-md-10">
-        <form
+      <form
         class="form-horizontal mx-auto"
         method="POST"
         action="{{ url_for('viewEditarAbono', id=abono.id) }}"
@@ -62,6 +62,18 @@
               class="form-control"
               value="{{ abono.pedido_id }}"
               required />
+          </div>
+        </div>
+
+        <!-- Nuevo campo: abono_final -->
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <label for="abono_final" class="form-label">Abono Final</label>
+            <input
+              type="text"
+              name="abono_final"
+              class="form-control"
+              value="{{ abono.abono_final if abono.abono_final else '' }}" />
           </div>
         </div>
 

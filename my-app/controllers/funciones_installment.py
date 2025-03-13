@@ -31,6 +31,8 @@ def procesar_abono(dataForm):
         except ValueError:
             return "Datos numéricos inválidos. Asegúrate de que el ID del pedido sea un número válido"
 
+        abono_final = dataForm.get('abono_final', '').strip()  # Campo no obligatorio
+
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                 cursor.execute("SELECT id FROM pedido WHERE id = %s", (pedido_id,))
@@ -43,14 +45,16 @@ def procesar_abono(dataForm):
                         numero_abonos,
                         estado,
                         monto,
-                        pedido_id
-                    ) VALUES (%s, %s, %s, %s)
+                        pedido_id,
+                        abono_final
+                    ) VALUES (%s, %s, %s, %s, %s)
                 """
                 valores = (
                     numero_abonos,
                     estado,
                     monto,
-                    pedido_id
+                    pedido_id,
+                    abono_final if abono_final else None  # Si no se proporciona, se inserta NULL
                 )
 
                 cursor.execute(sql, valores)
@@ -71,7 +75,7 @@ def obtener_abonos():
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                 cursor.execute("""
-                    SELECT id, numero_abonos, estado, monto, pedido_id
+                    SELECT id, numero_abonos, estado, monto, pedido_id, abono_final
                     FROM abono
                 """)
                 abonos = cursor.fetchall()
@@ -109,6 +113,8 @@ def actualizar_abono(id, data_form):
         except ValueError:
             return "Datos numéricos inválidos. Asegúrate de que el ID del pedido sea un número válido"
 
+        abono_final = data_form.get('abono_final', '').strip()  # Campo no obligatorio
+
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor() as cursor:
                 sql = """
@@ -116,7 +122,8 @@ def actualizar_abono(id, data_form):
                     SET numero_abonos = %s,
                         estado = %s,
                         monto = %s,
-                        pedido_id = %s
+                        pedido_id = %s,
+                        abono_final = %s
                     WHERE id = %s
                 """
                 valores = (
@@ -124,6 +131,7 @@ def actualizar_abono(id, data_form):
                     estado,
                     monto,
                     pedido_id,
+                    abono_final if abono_final else None,  # Si no se proporciona, se actualiza a NULL
                     id
                 )
 
@@ -152,6 +160,7 @@ def buscarAbonoBD(search_query):
                         abono.estado,
                         abono.monto,
                         abono.pedido_id,
+                        abono.abono_final,
                         pedido.fecha AS fecha_pedido,
                         users.nombre AS nombre_usuario
                     FROM 
@@ -164,11 +173,12 @@ def buscarAbonoBD(search_query):
                         abono.numero_abonos LIKE %s OR
                         abono.estado LIKE %s OR
                         abono.monto LIKE %s OR
+                        abono.abono_final LIKE %s OR
                         pedido.fecha LIKE %s OR
                         users.nombre LIKE %s
                 """
                 search_pattern = f"%{search_query}%"
-                cursor.execute(querySQL, (search_pattern, search_pattern, search_pattern, search_pattern, search_pattern))
+                cursor.execute(querySQL, (search_pattern, search_pattern, search_pattern, search_pattern, search_pattern, search_pattern))
                 return cursor.fetchall()
     except Exception as e:
         print(f"Error en buscarAbonoBD: {e}")

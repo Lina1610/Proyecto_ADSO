@@ -253,11 +253,10 @@ def eliminar_pedido(id):
 def actualizar_pedido(id, data_form):
     try:
         with connectionBD() as conexion_MySQLdb:
-            # Usar un cursor con buffered=True
             with conexion_MySQLdb.cursor(dictionary=True, buffered=True) as cursor:
                 # Validar que los campos no estén vacíos
                 campos_requeridos = [
-                    'fecha', 'fechaEntrega', 'horaEntrega', 'estado',
+                    'fechaEntrega', 'horaEntrega', 'estado',
                     'users_id', 'producto_id', 'metodo_pago', 'tipo_entrega'
                 ]
                 for campo in campos_requeridos:
@@ -276,12 +275,11 @@ def actualizar_pedido(id, data_form):
                 # Actualizar el pedido en la base de datos
                 sql = """
                     UPDATE pedido 
-                    SET fecha = %s, fechaEntrega = %s, horaEntrega = %s, estado = %s,
+                    SET fechaEntrega = %s, horaEntrega = %s, estado = %s,
                         users_id = %s, producto_id = %s, metodo_pago_id = %s, entrega_id = %s
                     WHERE id = %s
                 """
                 valores = (
-                    data_form['fecha'],
                     data_form['fechaEntrega'],
                     data_form['horaEntrega'],
                     data_form['estado'],
@@ -302,5 +300,3 @@ def actualizar_pedido(id, data_form):
     except Exception as e:
         print(f"Error en actualizar_pedido: {e}")  # Depuración
         return f"Se produjo un error al actualizar el pedido: {str(e)}"
-    
-

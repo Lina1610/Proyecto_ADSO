@@ -6,6 +6,7 @@
 <!---->
 {% block customCSS %}
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/file.css') }}" />
+
 {% endblock %}
 
 <!-- Inicio del block -->
@@ -119,7 +120,12 @@
 </div>
 {% endblock %}
 
+
+
+
 {% block customJS %}
+
+
 <script>
   // Función para mostrar/ocultar la contraseña
   document.getElementById("togglePassword").addEventListener("click", function () {

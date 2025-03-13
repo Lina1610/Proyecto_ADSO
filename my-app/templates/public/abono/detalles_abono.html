@@ -46,37 +46,42 @@
                 <p>$ {{ '{:,.0f}'.format(abono_pedido.monto).replace(',', '.') if abono_pedido.monto is not none else 'No disponible' }}</p>
               </div>
             </div>
+            <!-- Nuevo campo: abono_final -->
             <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label" style="font-weight: bold;">Abono Final</label>
+                <p>{{ abono_pedido.abono_final if abono_pedido.abono_final else 'No disponible' }}</p>
+              </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label" style="font-weight: bold;">ID del Pedido</label>
                 <p>{{ abono_pedido.pedido_id }}</p>
               </div>
+            </div>
+            <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label" style="font-weight: bold;">Fecha del Pedido</label>
                 <p>{{ abono_pedido.fecha_pedido }}</p>
               </div>
-            </div>
-            <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label" style="font-weight: bold;">Fecha de Entrega</label>
                 <p>{{ abono_pedido.fechaEntrega }}</p>
               </div>
+            </div>
+            <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label" style="font-weight: bold;">Hora de Entrega</label>
                 <p>{{ abono_pedido.horaEntrega }}</p>
               </div>
-            </div>
-            <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label" style="font-weight: bold;">Estado del Pedido</label>
                 <p>{{ abono_pedido.estado_pedido }}</p>
               </div>
+            </div>
+            <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label" style="font-weight: bold;">Total del Pedido</label>
                 <p>$ {{ '{:,.0f}'.format(abono_pedido.total).replace(',', '.') if abono_pedido.total is not none else 'No disponible' }}</p>
               </div>
-            </div>
-            <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label" style="font-weight: bold;">Nombre del Usuario</label>
                 <p>{{ abono_pedido.nombre_usuario }}</p>

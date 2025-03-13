@@ -323,7 +323,9 @@ def obtener_direccion_por_id(id):
                         d.created_at,
                         u.documento AS usuario_documento,
                         m.nombre AS municipio_nombre,
-                        dep.nombre AS departamento_nombre
+                        dep.nombre AS departamento_nombre,
+                        d.departamento_id,  -- Asegúrate de incluir estos campos
+                        d.municipio_id
                     FROM direccion d
                     LEFT JOIN users u ON d.users_id = u.id
                     LEFT JOIN municipio m ON d.municipio_id = m.id

@@ -15,28 +15,28 @@
 
     <!-- Campo de búsqueda y menú desplegable -->
     <div class="row justify-content-end">
-        <!-- Menú desplegable para elegir la columna -->
-        <div class="col-md-3 mt-4 py-2">
-            <select id="columna_filtro" class="form-select">
-                <option value="1">Código</option>
-                <option value="2">Estado</option>
-                <option value="3">Nombre</option>
-                <option value="4">Descripción</option>
-                <option value="5">Precio</option>
-                <option value="6">Cantidad</option>
-                <option value="7">Total</option>
-            </select>
-        </div>
+      <!-- Menú desplegable para elegir la columna -->
+      <div class="col-md-3 mt-4 py-2">
+        <select id="columna_filtro" class="form-select">
+          <option value="1">Código</option>
+          <option value="2">Estado</option>
+          <option value="3">Nombre</option>
+          <option value="4">Descripción</option>
+          <option value="5">Precio</option>
+          <option value="6">Cantidad</option>
+          <option value="7">Total</option>
+        </select>
+      </div>
 
-        <!-- Campo de búsqueda -->
-        <div class="col-md-3 mt-4 py-2">
-            <input
-                type="search"
-                id="search_productos"
-                class="form-control border-0 shadow-none"
-                placeholder="Buscar..."
-                onkeyup="buscarProductoAjax()" />
-        </div>
+      <!-- Campo de búsqueda -->
+      <div class="col-md-3 mt-4 py-2">
+        <input
+          type="search"
+          id="search_productos"
+          class="form-control border-0 shadow-none"
+          placeholder="Buscar..."
+          onkeyup="buscarProductoAjax()" />
+      </div>
     </div>
 
     <!-- Tabla de productos -->
@@ -93,11 +93,11 @@
               </tr>
               {% endfor %}
             {% else %}
-            <tr>
-              <td colspan="9" class="text-center">
-                <i class="bi bi-exclamation-circle"></i> No hay productos registrados.
-              </td>
-            </tr>
+              <tr>
+                <td colspan="9" class="text-center">
+                  <i class="bi bi-exclamation-circle"></i> No hay productos registrados.
+                </td>
+              </tr>
             {% endif %}
           </tbody>
         </table>

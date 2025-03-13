@@ -32,7 +32,7 @@ def procesar_factura(dataForm):
                 if not pedido:
                     return "El pedido seleccionado no existe"
 
-                # SQL para insertar la factura (sin users_id)
+                # SQL para insertar la factura (sin fecha, ya que es TIMESTAMP)
                 sql = """
                     INSERT INTO factura (
                         estado,
