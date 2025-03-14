@@ -1,5 +1,5 @@
 async function buscarUsuarioAjax() {
-  const search = document.getElementById("search_usuarios").value;
+  const search = document.getElementById("search_usuario").value;
   const url = "/buscando-usuario";
   const dataPeticion = { busqueda: search };
 
@@ -34,7 +34,6 @@ async function buscarUsuarioAjax() {
       console.error("Error:", error);
   }
 }
-
 
   
   function eliminarUsuario(id) {

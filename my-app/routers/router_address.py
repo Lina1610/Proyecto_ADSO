@@ -535,7 +535,7 @@ def viewBuscarDireccionBD():
                     <td>{direccion['nombre_completo']}</td>
                     <td>{direccion['municipio_nombre']}</td>
                     <td>{direccion['departamento_nombre']}</td>
-                    <td>{direccion['usuario_documento']}</td>
+                    <td>{direccion['usuario_nombre']}</td>
 
                     <!-- Columna de Estado -->
                     <td>

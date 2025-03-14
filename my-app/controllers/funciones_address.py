@@ -150,7 +150,7 @@ def obtener_direccion(user_id=None):
                         d.estado,
                         d.costo_domicilio,
                         d.created_at,
-                        u.documento AS usuario_documento,
+                        u.nombre AS usuario_nombre,
                         m.nombre AS municipio_nombre,
                         dep.nombre AS departamento_nombre
                     FROM direccion d
@@ -277,7 +277,7 @@ def buscar_direccionBD(search):
                         d.estado,
                         d.costo_domicilio,
                         d.created_at,
-                        u.documento AS usuario_documento,
+                        u.nombre AS usuario_nombre,
                         m.nombre AS municipio_nombre,
                         dep.nombre AS departamento_nombre
                     FROM direccion d
@@ -288,7 +288,7 @@ def buscar_direccionBD(search):
                        OR d.barrio LIKE %s 
                        OR d.domicilio LIKE %s 
                        OR d.telefono LIKE %s 
-                       OR u.documento LIKE %s 
+                       OR u.nombre LIKE %s 
                        OR m.nombre LIKE %s 
                        OR dep.nombre LIKE %s
                 """
@@ -321,7 +321,7 @@ def obtener_direccion_por_id(id):
                         d.estado,
                         d.costo_domicilio,
                         d.created_at,
-                        u.documento AS usuario_documento,
+                        u.nombre AS usuario_nombre,
                         m.nombre AS municipio_nombre,
                         dep.nombre AS departamento_nombre,
                         d.departamento_id,  -- Asegúrate de incluir estos campos
@@ -335,7 +335,7 @@ def obtener_direccion_por_id(id):
                 print("Ejecutando consulta SQL:", sql)  # Depuración
                 cursor.execute(sql, (id,))
                 direccion = cursor.fetchone()
-                print("Datos de la dirección obtenidos:", direccion)  # Depuración
+                print("Datos de la dirección obtenidos:", direccion)  # Depuraciónw
                 return direccion
     except Exception as e:
         print(f"Error en obtener_direccion_por_id: {e}")  # Depuración
@@ -360,7 +360,7 @@ def obtener_direccion():
                         d.estado,
                         d.costo_domicilio,
                         d.created_at,
-                        u.documento AS usuario_documento,
+                        u.nombre AS usuario_nombre,
                         m.nombre AS municipio_nombre,
                         dep.nombre AS departamento_nombre
                     FROM direccion d
