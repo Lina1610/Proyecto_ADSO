@@ -18,12 +18,6 @@
           <div class="row">
             <!-- Columna izquierda -->
             <div class="col-md-6">
-              <!-- Fecha -->
-              <div class="mb-3">
-                <label for="fecha" class="form-label">Fecha</label>
-                <input type="date" class="form-control" name="fecha" value="{{ pedido.fecha }}" required>
-              </div>
-
               <!-- Fecha Entrega -->
               <div class="mb-3">
                 <label for="fechaEntrega" class="form-label">Fecha Entrega</label>
@@ -50,14 +44,16 @@
 
             <!-- Columna derecha -->
             <div class="col-md-6">
-              <!-- Usuario -->
+              <!-- Usuario (No editable) -->
               <div class="mb-3">
                 <label for="users_id" class="form-label">Usuario</label>
-                <select class="form-select" name="users_id" required>
-                  {% for usuario in usuarios %}
-                    <option value="{{ usuario.id }}" {% if usuario.id == pedido.users_id %}selected{% endif %}>{{ usuario.nombre }}</option>
-                  {% endfor %}
-                </select>
+                <input type="text" class="form-control" id="users_id" name="users_id" value="{{ pedido.users_id }}" readonly style="
+                  border-radius: 8px;
+                  border: 1px solid #ced4da;
+                  background-color: #e9ecef; /* Fondo gris */
+                  color: #495057; /* Texto oscuro */
+                  cursor: not-allowed; /* Cursor de no permitido */
+                ">
               </div>
 
               <!-- Producto -->

@@ -44,14 +44,10 @@
                 </div>
                 <div class="mb-3">
                   <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
-                    <i class="bi bi-geo-alt me-2"></i>ID de Dirección
+                    <i class="bi bi-clipboard-check me-2"></i>Estado de la Entrega
                   </label>
-                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.direccion_id }}</p>
+                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.estado }}</p>
                 </div>
-              </div>
-
-              <!-- Columna 2 -->
-              <div class="col-md-6">
                 <div class="mb-3">
                   <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
                     <i class="bi bi-cash-coin me-2"></i>Costo de Domicilio
@@ -64,11 +60,45 @@
                     {% endif %}
                   </p>
                 </div>
+              </div>
+
+              <!-- Columna 2 -->
+              <div class="col-md-6">
                 <div class="mb-3">
                   <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
-                    <i class="bi bi-clipboard-check me-2"></i>Estado de la Entrega
+                    <i class="bi bi-person me-2"></i>Usuario
                   </label>
-                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.estado }}</p>
+                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.nombre_usuario }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
+                    <i class="bi bi-person me-2"></i>Nombre Completo
+                  </label>
+                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.nombre_completo }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
+                    <i class="bi bi-telephone me-2"></i>Teléfono
+                  </label>
+                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.telefono }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
+                    <i class="bi bi-geo-alt me-2"></i>Domicilio
+                  </label>
+                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.domicilio }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
+                    <i class="bi bi-building me-2"></i>Municipio
+                  </label>
+                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.municipio }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
+                    <i class="bi bi-globe me-2"></i>Departamento
+                  </label>
+                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.departamento }}</p>
                 </div>
               </div>
             </div>

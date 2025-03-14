@@ -35,44 +35,45 @@
               <th>Tipo</th>
               <th>Estado</th>
               <th>Costo Domicilio</th>
-              <th>Dirección ID</th>
+              <th>Nombre Completo</th>
+              <th>Domicilio</th>
+              <th>Teléfono</th>
+              <th>Municipio</th>
+              <th>Departamento</th>
               <th>Acción</th>
             </tr>
           </thead>
           <tbody id="tabla_entregas_body">
-            {% for entrega in entregas %}
-            <tr id="entrega_{{ entrega.id }}">
-              <td>{{ loop.index }}</td>
-              <td>{{ entrega.tipo }}</td>
-              <td>{{ entrega.estado }}</td>
-              <td>{{ entrega.costo_domicilio }}</td>
-              <td>{{ entrega.direccion_id }}</td>
-              <td width="10px">
-                <a
-                  href="{{ url_for('detalles_entrega', id=entrega.id) }}"
-                  class="btn btn-info btn-sm"
-                  title="Ver detalles">
-                  <i class="bi bi-eye"></i>
-                  Ver detalles
-                </a>
-                <a
-                  href="{{ url_for('viewEditarEntrega', id=entrega.id) }}"
-                  class="btn btn-success btn-sm"
-                  title="Actualizar">
-                  <i class="bi bi-arrow-clockwise"></i>
-                  Actualizar
-                </a>
-                <a
-                  href="#"
-                  onclick="eliminarEntrega('{{ entrega.id }}');"
-                  class="btn btn-danger btn-sm"
-                  title="Eliminar">
-                  <i class="bi bi-trash3"></i>
-                  Eliminar
-                </a>
-              </td>
-            </tr>
-            {% endfor %}
+            {% if entregas %}
+              {% for entrega in entregas %}
+              <tr id="entrega_{{ entrega.id }}">
+                <td>{{ loop.index }}</td>
+                <td>{{ entrega.tipo }}</td>
+                <td>{{ entrega.estado }}</td>
+                <td>{{ entrega.costo_domicilio }}</td>
+                <td>{{ entrega.nombre_completo }}</td>
+                <td>{{ entrega.domicilio }}</td>
+                <td>{{ entrega.telefono }}</td>
+                <td>{{ entrega.municipio }}</td>
+                <td>{{ entrega.departamento }}</td>
+                <td width="10px">
+                  <a href="{{ url_for('detalles_entrega', id=entrega.id) }}" class="btn btn-info btn-sm" title="Ver detalles">
+                    <i class="bi bi-eye"></i> Ver detalles
+                  </a>
+                  <a href="{{ url_for('viewEditarEntrega', id=entrega.id) }}" class="btn btn-success btn-sm" title="Actualizar">
+                    <i class="bi bi-arrow-clockwise"></i> Actualizar
+                  </a>
+                  <a href="#" onclick="eliminarEntrega('{{ entrega.id }}');" class="btn btn-danger btn-sm" title="Eliminar">
+                    <i class="bi bi-trash3"></i> Eliminar
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="10" class="text-center">No hay entregas disponibles.</td>
+              </tr>
+            {% endif %}
           </tbody>
         </table>
       </div>

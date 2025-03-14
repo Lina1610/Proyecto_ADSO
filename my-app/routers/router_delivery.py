@@ -120,7 +120,12 @@ def crear_pedido(users_id, metodo_pago_id, entrega_id, total):
 def lista_entregas():
     if 'conectado' in session:
         entregas = obtener_entregas()
-        return render_template('public/entrega/lista_entregas.html', entregas=entregas)
+        print("Datos enviados a la plantilla:", entregas)  # Depuración
+        if isinstance(entregas, list):  # Asegúrate de que entregas sea una lista
+            return render_template('public/entrega/lista_entregas.html', entregas=entregas)
+        else:
+            flash("Error al obtener las entregas.", 'error')
+            return redirect(url_for('inicio'))
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
@@ -203,7 +208,8 @@ def viewBuscarEntregaBD():
                     <td>{{ entrega.tipo }}</td>
                     <td>{{ entrega.estado }}</td>
                     <td>{{ entrega.costo_domicilio }}</td>
-                    <td>{{ entrega.direccion_id }}</td>
+                    <td>{{ entrega.direccion_completa }}</td>
+                    <td>{{ entrega.nombre_usuario }}</td>
                     <td width="10px">
                         <a href="/detalles-entrega/{{ entrega.id }}" class="btn btn-info btn-sm" title="Ver detalles">
                             <i class="bi bi-eye"></i> Ver detalles
@@ -222,7 +228,7 @@ def viewBuscarEntregaBD():
         else:
             mensaje_html = f"""
             <tr>
-                <td colspan="5" style="text-align:center;color: red;font-weight: bold;">
+                <td colspan="7" style="text-align:center;color: red;font-weight: bold;">
                     No resultados para la búsqueda: <strong style="color: #222;">{search_query}</strong>
                 </td>
             </tr>

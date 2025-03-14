@@ -53,18 +53,47 @@
             <input type="number" class="form-control" id="costo_domicilio" name="costo_domicilio" value="{{ entrega.costo_domicilio }}" step="0.01" style="border-radius: 8px; border: 1px solid #ced4da;">
           </div>
 
-          <!-- Campo Dirección ID (No editable) -->
+          <!-- Campo Usuario (No editable) -->
           <div class="mb-4">
-            <label for="direccion_id" class="form-label" style="font-weight: 600; color: #2c3e50;">
-              <i class="bi bi-geo-alt me-2"></i>ID de Dirección
+            <label for="nombre_usuario" class="form-label" style="font-weight: 600; color: #2c3e50;">
+              <i class="bi bi-person me-2"></i>Usuario
             </label>
-            <input type="number" class="form-control" id="direccion_id" name="direccion_id" value="{{ entrega.direccion_id }}" readonly style="
-              border-radius: 8px;
-              border: 1px solid #ced4da;
-              background-color: #e9ecef; /* Fondo gris */
-              color: #495057; /* Texto oscuro */
-              cursor: not-allowed; /* Cursor de no permitido */
-            ">
+            <input 
+              type="text" 
+              class="form-control" 
+              id="nombre_usuario" 
+              name="nombre_usuario" 
+              value="{{ entrega.nombre_usuario }}" 
+              readonly 
+              style="
+                border-radius: 8px;
+                border: 1px solid #ced4da;
+                background-color: #e9ecef; /* Fondo gris */
+                color: #495057; /* Texto oscuro */
+                cursor: not-allowed; /* Cursor de no permitido */
+              ">
+          </div>
+
+          <!-- Campo Dirección (No editable) -->
+          <div class="mb-4">
+            <label for="direccion_completa" class="form-label" style="font-weight: 600; color: #2c3e50;">
+              <i class="bi bi-geo-alt me-2"></i>Dirección Completa
+            </label>
+            <textarea 
+              class="form-control" 
+              id="direccion_completa" 
+              name="direccion_completa" 
+              readonly 
+              style="
+                border-radius: 8px;
+                border: 1px solid #ced4da;
+                background-color: #e9ecef; /* Fondo gris */
+                color: #495057; /* Texto oscuro */
+                cursor: not-allowed; /* Cursor de no permitido */
+                resize: none; /* Evita que el usuario redimensione el campo */
+              ">
+              {{ entrega.nombre_completo }} - {{ entrega.domicilio }} - Teléfono: {{ entrega.telefono }} - {{ entrega.municipio }}, {{ entrega.departamento }}
+            </textarea>
           </div>
 
           <!-- Botones de Acción -->
