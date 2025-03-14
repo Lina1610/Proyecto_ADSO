@@ -3,8 +3,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const $btnExportarExcel = document.querySelector("#btnExportarExcel"),
           $btnExportarPDF = document.querySelector("#btnExportarPDF"),
           $btnImprimir = document.querySelector("#btnImprimir"),
-          $tabla = document.querySelector("#tbl_pedidos"),
-          $tablaBody = document.querySelector("#tabla_pedidos_body"),
+          $tabla = document.querySelector("#tbl_direcciones"),
+          $tablaBody = document.querySelector("#tabla_direcciones_body"),
           $toggleFiltros = document.querySelector("#toggleFiltros"),
           $panelFiltros = document.querySelector("#panelFiltros"),
           $limpiarFiltros = document.querySelector("#limpiarFiltros"),
@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const filaMensaje = document.createElement("tr");
             filaMensaje.classList.add("mensaje-no-resultados");
             filaMensaje.innerHTML = `
-                <td colspan="9" style="text-align:center;color: red;font-weight: bold;">
+                <td colspan="8" style="text-align:center;color: red;font-weight: bold;">
                     No se encontraron resultados con los filtros aplicados.
                 </td>
             `;
@@ -197,27 +197,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 filasAExportar.forEach((fila) => {
                     const filaClonada = fila.cloneNode(true); // Clonar la fila
-                    // Eliminar la última celda (columna "Acciones")
+                    // Eliminar las últimas dos columnas (Acción Estado y Acciones)
                     const celdas = filaClonada.querySelectorAll("td");
-                    if (celdas.length > 8) { // Verificar que haya más de 8 columnas
-                        celdas[celdas.length - 1].remove(); // Eliminar la última celda
+                    if (celdas.length > 6) { // Verificar que haya más de 6 columnas
+                        celdas[celdas.length - 1].remove(); // Eliminar la última celda (Acciones)
+                        celdas[celdas.length - 2].remove(); // Eliminar la penúltima celda (Acción Estado)
                     }
                     tbodyClonado.appendChild(filaClonada); // Agregar la fila clonada al tbody
                 });
 
-                // Eliminar la última columna del encabezado
+                // Eliminar las últimas dos columnas del encabezado
                 const theadClonado = tablaClonada.querySelector("thead");
                 const filaEncabezado = theadClonado.querySelector("tr");
                 const celdasEncabezado = filaEncabezado.querySelectorAll("th");
-                if (celdasEncabezado.length > 8) { // Verificar que haya más de 8 columnas
-                    celdasEncabezado[celdasEncabezado.length - 1].remove(); // Eliminar la última celda
+                if (celdasEncabezado.length > 6) { // Verificar que haya más de 6 columnas
+                    celdasEncabezado[celdasEncabezado.length - 1].remove(); // Eliminar la última celda (Acciones)
+                    celdasEncabezado[celdasEncabezado.length - 2].remove(); // Eliminar la penúltima celda (Acción Estado)
                 }
 
                 // Exportar el clon de la tabla
                 let tableExport = new TableExport(tablaClonada, {
                     exportButtons: false,
-                    filename: "Reporte_Pedidos" + (hayFiltrosActivos ? "_Filtrado" : ""),
-                    sheetname: "Pedidos",
+                    filename: "Reporte_Direcciones" + (hayFiltrosActivos ? "_Filtrado" : ""),
+                    sheetname: "Direcciones",
                 });
 
                 let datos = tableExport.getExportData();
@@ -249,22 +251,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 const doc = new jsPDF();
 
                 // Título del documento
-                doc.text("Reporte de Pedidos" + (hayFiltrosActivos ? " Filtrado" : ""), 14, 15);
+                doc.text("Reporte de Direcciones" + (hayFiltrosActivos ? " Filtrado" : ""), 14, 15);
                 
                 // Fecha y hora de generación
                 const fechaActual = new Date();
                 doc.setFontSize(10);
                 doc.text(`Fecha de generación: ${fechaActual.toLocaleDateString()} ${fechaActual.toLocaleTimeString()}`, 14, 22);
 
-                // Obtener encabezados sin la última columna
+                // Obtener encabezados sin las últimas dos columnas
                 const headers = [];
-                document.querySelectorAll("#tbl_pedidos thead th").forEach((th, index) => {
-                    if (index < 8) { // Evitar la última columna (Acciones)
+                document.querySelectorAll("#tbl_direcciones thead th").forEach((th, index) => {
+                    if (index < 6) { // Evitar las últimas dos columnas (Acción Estado y Acciones)
                         headers.push(th.innerText);
                     }
                 });
 
-                // Obtener filas sin la última columna
+                // Obtener filas sin las últimas dos columnas
                 const data = [];
                 const filasAExportar = hayFiltrosActivos 
                     ? filasFiltradas 
@@ -273,7 +275,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 filasAExportar.forEach((fila) => {
                     const rowData = [];
                     fila.querySelectorAll("td").forEach((td, index) => {
-                        if (index < 8) { // Evitar la última columna (Acciones)
+                        if (index < 6) { // Evitar las últimas dos columnas (Acción Estado y Acciones)
                             rowData.push(td.innerText);
                         }
                     });
@@ -301,7 +303,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 });
 
-                doc.save("Reporte_Pedidos" + (hayFiltrosActivos ? "_Filtrado" : "") + ".pdf");
+                doc.save("Reporte_Direcciones" + (hayFiltrosActivos ? "_Filtrado" : "") + ".pdf");
                 mostrarMensaje("Archivo PDF generado correctamente", "success");
             } catch (error) {
                 console.error("Error al exportar a PDF:", error);
@@ -327,20 +329,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 filasAImprimir.forEach((fila) => {
                     const filaClonada = fila.cloneNode(true); // Clonar la fila
-                    // Eliminar la última celda (columna "Acciones")
+                    // Eliminar las últimas dos columnas (Acción Estado y Acciones)
                     const celdas = filaClonada.querySelectorAll("td");
-                    if (celdas.length > 8) { // Verificar que haya más de 8 columnas
-                        celdas[celdas.length - 1].remove(); // Eliminar la última celda
+                    if (celdas.length > 6) { // Verificar que haya más de 6 columnas
+                        celdas[celdas.length - 1].remove(); // Eliminar la última celda (Acciones)
+                        celdas[celdas.length - 2].remove(); // Eliminar la penúltima celda (Acción Estado)
                     }
                     tbodyClonado.appendChild(filaClonada); // Agregar la fila clonada al tbody
                 });
 
-                // Eliminar la última columna del encabezado
+                // Eliminar las últimas dos columnas del encabezado
                 const theadClonado = tablaHtml.querySelector("thead");
                 const filaEncabezado = theadClonado.querySelector("tr");
                 const celdasEncabezado = filaEncabezado.querySelectorAll("th");
-                if (celdasEncabezado.length > 8) { // Verificar que haya más de 8 columnas
-                    celdasEncabezado[celdasEncabezado.length - 1].remove(); // Eliminar la última celda
+                if (celdasEncabezado.length > 6) { // Verificar que haya más de 6 columnas
+                    celdasEncabezado[celdasEncabezado.length - 1].remove(); // Eliminar la última celda (Acciones)
+                    celdasEncabezado[celdasEncabezado.length - 2].remove(); // Eliminar la penúltima celda (Acción Estado)
                 }
 
                 // Abrir una ventana de impresión
@@ -348,7 +352,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 ventanaImpresion.document.write(`
                     <html>
                         <head>
-                            <title>Imprimir Reporte de Pedidos${hayFiltrosActivos ? " Filtrado" : ""}</title>
+                            <title>Imprimir Reporte de Direcciones${hayFiltrosActivos ? " Filtrado" : ""}</title>
                             <style>
                                 @media print {
                                     table { width: 100%; border-collapse: collapse; margin: 20px 0; }
@@ -361,7 +365,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             </style>
                         </head>
                         <body>
-                            <h2>Reporte de Pedidos${hayFiltrosActivos ? " Filtrado" : ""}</h2>
+                            <h2>Reporte de Direcciones${hayFiltrosActivos ? " Filtrado" : ""}</h2>
                             <div class="fecha-generacion">
                                 Fecha de generación: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}
                             </div>

@@ -3,8 +3,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const $btnExportarExcel = document.querySelector("#btnExportarExcel"),
           $btnExportarPDF = document.querySelector("#btnExportarPDF"),
           $btnImprimir = document.querySelector("#btnImprimir"),
-          $tabla = document.querySelector("#tbl_pedidos"),
-          $tablaBody = document.querySelector("#tabla_pedidos_body"),
+          $tabla = document.querySelector("#tbl_facturas"),
+          $tablaBody = document.querySelector("#tabla_facturas_body"),
           $toggleFiltros = document.querySelector("#toggleFiltros"),
           $panelFiltros = document.querySelector("#panelFiltros"),
           $limpiarFiltros = document.querySelector("#limpiarFiltros"),
@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const filaMensaje = document.createElement("tr");
             filaMensaje.classList.add("mensaje-no-resultados");
             filaMensaje.innerHTML = `
-                <td colspan="9" style="text-align:center;color: red;font-weight: bold;">
+                <td colspan="5" style="text-align:center;color: red;font-weight: bold;">
                     No se encontraron resultados con los filtros aplicados.
                 </td>
             `;
@@ -197,10 +197,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 filasAExportar.forEach((fila) => {
                     const filaClonada = fila.cloneNode(true); // Clonar la fila
-                    // Eliminar la última celda (columna "Acciones")
+                    // Eliminar la última columna (Acción)
                     const celdas = filaClonada.querySelectorAll("td");
-                    if (celdas.length > 8) { // Verificar que haya más de 8 columnas
-                        celdas[celdas.length - 1].remove(); // Eliminar la última celda
+                    if (celdas.length > 4) { // Verificar que haya más de 4 columnas
+                        celdas[celdas.length - 1].remove(); // Eliminar la última celda (Acción)
                     }
                     tbodyClonado.appendChild(filaClonada); // Agregar la fila clonada al tbody
                 });
@@ -209,15 +209,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 const theadClonado = tablaClonada.querySelector("thead");
                 const filaEncabezado = theadClonado.querySelector("tr");
                 const celdasEncabezado = filaEncabezado.querySelectorAll("th");
-                if (celdasEncabezado.length > 8) { // Verificar que haya más de 8 columnas
-                    celdasEncabezado[celdasEncabezado.length - 1].remove(); // Eliminar la última celda
+                if (celdasEncabezado.length > 4) { // Verificar que haya más de 4 columnas
+                    celdasEncabezado[celdasEncabezado.length - 1].remove(); // Eliminar la última celda (Acción)
                 }
 
                 // Exportar el clon de la tabla
                 let tableExport = new TableExport(tablaClonada, {
                     exportButtons: false,
-                    filename: "Reporte_Pedidos" + (hayFiltrosActivos ? "_Filtrado" : ""),
-                    sheetname: "Pedidos",
+                    filename: "Reporte_Facturas" + (hayFiltrosActivos ? "_Filtrado" : ""),
+                    sheetname: "Facturas",
                 });
 
                 let datos = tableExport.getExportData();
@@ -249,7 +249,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const doc = new jsPDF();
 
                 // Título del documento
-                doc.text("Reporte de Pedidos" + (hayFiltrosActivos ? " Filtrado" : ""), 14, 15);
+                doc.text("Reporte de Facturas" + (hayFiltrosActivos ? " Filtrado" : ""), 14, 15);
                 
                 // Fecha y hora de generación
                 const fechaActual = new Date();
@@ -258,8 +258,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // Obtener encabezados sin la última columna
                 const headers = [];
-                document.querySelectorAll("#tbl_pedidos thead th").forEach((th, index) => {
-                    if (index < 8) { // Evitar la última columna (Acciones)
+                document.querySelectorAll("#tbl_facturas thead th").forEach((th, index) => {
+                    if (index < 4) { // Evitar la última columna (Acción)
                         headers.push(th.innerText);
                     }
                 });
@@ -273,7 +273,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 filasAExportar.forEach((fila) => {
                     const rowData = [];
                     fila.querySelectorAll("td").forEach((td, index) => {
-                        if (index < 8) { // Evitar la última columna (Acciones)
+                        if (index < 4) { // Evitar la última columna (Acción)
                             rowData.push(td.innerText);
                         }
                     });
@@ -301,7 +301,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 });
 
-                doc.save("Reporte_Pedidos" + (hayFiltrosActivos ? "_Filtrado" : "") + ".pdf");
+                doc.save("Reporte_Facturas" + (hayFiltrosActivos ? "_Filtrado" : "") + ".pdf");
                 mostrarMensaje("Archivo PDF generado correctamente", "success");
             } catch (error) {
                 console.error("Error al exportar a PDF:", error);
@@ -327,10 +327,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 filasAImprimir.forEach((fila) => {
                     const filaClonada = fila.cloneNode(true); // Clonar la fila
-                    // Eliminar la última celda (columna "Acciones")
+                    // Eliminar la última columna (Acción)
                     const celdas = filaClonada.querySelectorAll("td");
-                    if (celdas.length > 8) { // Verificar que haya más de 8 columnas
-                        celdas[celdas.length - 1].remove(); // Eliminar la última celda
+                    if (celdas.length > 4) { // Verificar que haya más de 4 columnas
+                        celdas[celdas.length - 1].remove(); // Eliminar la última celda (Acción)
                     }
                     tbodyClonado.appendChild(filaClonada); // Agregar la fila clonada al tbody
                 });
@@ -339,8 +339,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 const theadClonado = tablaHtml.querySelector("thead");
                 const filaEncabezado = theadClonado.querySelector("tr");
                 const celdasEncabezado = filaEncabezado.querySelectorAll("th");
-                if (celdasEncabezado.length > 8) { // Verificar que haya más de 8 columnas
-                    celdasEncabezado[celdasEncabezado.length - 1].remove(); // Eliminar la última celda
+                if (celdasEncabezado.length > 4) { // Verificar que haya más de 4 columnas
+                    celdasEncabezado[celdasEncabezado.length - 1].remove(); // Eliminar la última celda (Acción)
                 }
 
                 // Abrir una ventana de impresión
@@ -348,7 +348,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 ventanaImpresion.document.write(`
                     <html>
                         <head>
-                            <title>Imprimir Reporte de Pedidos${hayFiltrosActivos ? " Filtrado" : ""}</title>
+                            <title>Imprimir Reporte de Facturas${hayFiltrosActivos ? " Filtrado" : ""}</title>
                             <style>
                                 @media print {
                                     table { width: 100%; border-collapse: collapse; margin: 20px 0; }
@@ -361,7 +361,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             </style>
                         </head>
                         <body>
-                            <h2>Reporte de Pedidos${hayFiltrosActivos ? " Filtrado" : ""}</h2>
+                            <h2>Reporte de Facturas${hayFiltrosActivos ? " Filtrado" : ""}</h2>
                             <div class="fecha-generacion">
                                 Fecha de generación: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}
                             </div>
