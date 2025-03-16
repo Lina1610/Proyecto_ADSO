@@ -80,8 +80,28 @@
     </div>
   </div>
 </div>
-
+<!-- Modal de confirmación para eliminar entrega -->
+<div id="confirmModalEntrega" class="modal fade" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmar eliminación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de eliminar esta entrega?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteEntregaButton">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- Vincular el archivo JavaScript -->
+{% block customJS %}
 <script src="{{ url_for('static', filename='assets/customJS/buscar_entrega.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/customJS/modal_eliminar_entrega.js') }}"></script>
+{% endblock %}
 
 {% endblock %}

@@ -180,11 +180,19 @@ def viewBuscarAbonoBD():
         print(f"Error en viewBuscarAbonoBD: {e}")  # Log de depuración
         return jsonify({'error': str(e)}), 500  # Manejo de errores
     
-@app.route('/eliminar-abono/<int:id>', methods=['DELETE'])
+@app.route('/eliminar-abono/<int:id>', methods=['GET'])
 def eliminar_abono_route(id):
-    if 'conectado' in session:
-        resultado = eliminar_abono(id)
-        if resultado and resultado > 0:
-            return jsonify({'success': True, 'message': 'Abono eliminado correctamente'})
-        return jsonify({'success': False, 'message': 'Error al eliminar abono'})
-    return jsonify({'success': False, 'message': 'Usuario no autenticado'}), 401
+    if 'conectado' in session:  # Verifica si el usuario está autenticado
+        resultado = eliminar_abono(id)  # Llama a la función para eliminar el abono
+        print(f"Resultado de eliminar_abono: {resultado}, tipo: {type(resultado)}")  # Depuración
+
+        if resultado == True:  # Comprobación explícita
+            flash('Abono eliminado correctamente.', 'success')
+        else:
+            flash('Error al eliminar el abono', 'error')
+
+        # Redireccionar a la lista de abonos
+        return redirect(url_for('lista_abonos'))  # Ajusta 'lista_abonos' a tu ruta correcta
+    else:
+        flash('Usuario no autenticado', 'error')
+        return redirect(url_for('inicio'))  # Redirigir al inicio si no está autenticado

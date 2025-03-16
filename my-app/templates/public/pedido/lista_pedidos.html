@@ -218,7 +218,24 @@
     </div>
   </div>
 </div>
-
+<!-- Modal de confirmación para eliminar pedido -->
+<div id="confirmModalPedido" class="modal fade" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmar eliminación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de eliminar este pedido?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="confirmDeletePedidoButton">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- Librerías necesarias -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -231,6 +248,8 @@
 
 <!-- Estilos CSS personalizados -->
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/report.css') }}">
+{% block customJS %}
 <script src="{{ url_for('static', filename='assets/customJS/buscar_pedido.js') }}"></script>
-
+<script src="{{ url_for('static', filename='assets/customJS/modal_eliminar_pedido.js') }}"></script>
+{% endblock %}
 {% endblock %}

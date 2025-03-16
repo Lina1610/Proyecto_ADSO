@@ -116,15 +116,18 @@ def actualizarUsuario():
     return redirect(url_for('lista_usuarios'))
 
 @app.route('/eliminar-usuario/<int:id>', methods=['GET'])
-@roles_required('administrador','superadmin')  # Decorador aplicado
+@roles_required('administrador', 'superadmin')
 def eliminarUsuario(id):
     resultado = eliminar_usuario(id)
+    print(f"Resultado de eliminar_usuario: {resultado}")
+    
     if resultado:
         flash('Usuario eliminado correctamente.', 'success')
-        return jsonify({"success": True})
-    flash('Error al eliminar el usuario', 'error')
-    return jsonify({"success": False})
-
+    else:
+        flash('Error al eliminar el usuario', 'error')
+    
+    # Redireccionar a la lista de usuarios
+    return redirect(url_for('lista_usuarios'))  # Ajusta 'lista_usuarios' a tu ruta correcta
 # ============================================== RUTAS PÚBLICAS ==============================================
 
 @app.route("/buscando-usuario", methods=['POST'])

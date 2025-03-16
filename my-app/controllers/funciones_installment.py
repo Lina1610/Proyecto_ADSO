@@ -185,14 +185,28 @@ def buscarAbonoBD(search_query):
         return None
     
 def eliminar_abono(id):
+    """Elimina un abono por su ID."""
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor() as cursor:
-                querySQL = "DELETE FROM abono WHERE id = %s"
-                cursor.execute(querySQL, (id,))
+                # Verificar si el abono existe antes de eliminar
+                cursor.execute("SELECT id FROM abono WHERE id = %s", (id,))
+                existe_antes = cursor.fetchone() is not None
+
+                if not existe_antes:
+                    return False  # El abono no existía para empezar
+
+                # Intentar eliminar
+                cursor.execute("DELETE FROM abono WHERE id = %s", (id,))
                 conexion_MySQLdb.commit()
-                return cursor.rowcount  # Retorna el número de filas afectadas
+
+                # Verificar si el abono ya no existe
+                cursor.execute("SELECT id FROM abono WHERE id = %s", (id,))
+                existe_despues = cursor.fetchone() is not None
+
+                # Si ya no existe, la eliminación fue exitosa
+                return existe_antes and not existe_despues
     except Exception as e:
-        print(f"Error en eliminar_abono: {e}")       
-        return f"Se produjo un error en procesar_abono: {str(e)}"
+        print(f"Error en eliminar_abono: {e}")
+        return False
 

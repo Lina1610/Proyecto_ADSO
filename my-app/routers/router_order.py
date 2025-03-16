@@ -142,15 +142,22 @@ def viewBuscarPedidoBD():
         return jsonify({'error': str(e)}), 500
 
 
-# Ruta para eliminar un pedido
-@app.route('/eliminar-pedido/<int:id>', methods=['DELETE'])
+@app.route('/eliminar-pedido/<int:id>', methods=['GET'])
 def eliminar_pedido_route(id):
     if 'conectado' in session:
         resultado = eliminar_pedido(id)
-        if resultado and resultado > 0:
-            return {'success': True, 'message': 'Pedido eliminado correctamente'}
-        return {'success': False, 'message': 'Error al eliminar pedido'}
-    return {'success': False, 'message': 'Usuario no autenticado'}, 401
+        print(f"Resultado de eliminar_pedido: {resultado}, tipo: {type(resultado)}")  # Mejor depuración
+        
+        if resultado == True:  # Comprobación explícita
+            flash('Pedido eliminado correctamente.', 'success')
+        else:
+            flash('Error al eliminar el pedido', 'error')
+        
+        # Redireccionar a la lista de pedidos
+        return redirect(url_for('lista_pedidos'))  # Asegúrate de que 'lista_pedidos' es la ruta correcta
+    else:
+        flash('Usuario no autenticado', 'error')
+        return redirect(url_for('inicio'))  # Redirigir al inicio si no está autenticado
 
 
 

@@ -150,14 +150,22 @@ def viewBuscarFacturaBD():
         return jsonify({'error': str(e)}), 500  # Manejo de errores
 
 # Ruta para eliminar una factura
-@app.route('/eliminar-factura/<int:id>', methods=['DELETE'])
+@app.route('/eliminar-factura/<int:id>', methods=['GET'])
 def eliminar_factura_route(id):
-    if 'conectado' in session:
-        resultado = eliminar_factura(id)
-        if resultado and resultado > 0:
-            return jsonify({'success': True, 'message': 'Factura eliminada correctamente'})
-        return jsonify({'success': False, 'message': 'Error al eliminar factura'})
-    return jsonify({'success': False, 'message': 'Usuario no autenticado'}), 401
+    if 'conectado' in session:  # Verifica si el usuario está autenticado
+        resultado = eliminar_factura(id)  # Llama a la función para eliminar la factura
+        print(f"Resultado de eliminar_factura: {resultado}, tipo: {type(resultado)}")  # Depuración
+
+        if resultado == True:  # Comprobación explícita
+            flash('Factura eliminada correctamente.', 'success')
+        else:
+            flash('Error al eliminar la factura', 'error')
+
+        # Redireccionar a la lista de facturas
+        return redirect(url_for('lista_facturas'))  # Ajusta 'lista_facturas' a tu ruta correcta
+    else:
+        flash('Usuario no autenticado', 'error')
+        return redirect(url_for('inicio'))  # Redirigir al inicio si no está autenticado
 
 @app.route('/detalles-factura/<int:id>')
 def detalles_factura(id):

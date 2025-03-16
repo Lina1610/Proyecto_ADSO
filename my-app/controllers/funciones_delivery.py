@@ -252,11 +252,26 @@ def eliminar_entrega(id):
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor() as cursor:
+                # Verificar si la entrega existe antes de eliminar
+                cursor.execute("SELECT id FROM entrega WHERE id = %s", (id,))
+                existe_antes = cursor.fetchone() is not None
+
+                if not existe_antes:
+                    return False  # La entrega no existía para empezar
+
+                # Intentar eliminar
                 cursor.execute("DELETE FROM entrega WHERE id = %s", (id,))
                 conexion_MySQLdb.commit()
-                return cursor.rowcount  # Devuelve el número de filas afectadas
-    except MySQLError as err:
-        return f"Error de MySQL al eliminar la entrega: {err}" 
+
+                # Verificar si la entrega ya no existe
+                cursor.execute("SELECT id FROM entrega WHERE id = %s", (id,))
+                existe_despues = cursor.fetchone() is not None
+
+                # Si ya no existe, la eliminación fue exitosa
+                return existe_antes and not existe_despues
+    except Exception as e:
+        print(f"Error en eliminar_entrega: {e}")
+        return False
     
 
 def buscar_entregaBD(search_query):

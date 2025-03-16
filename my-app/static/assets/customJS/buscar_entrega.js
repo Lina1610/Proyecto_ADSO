@@ -59,32 +59,3 @@ async function buscarEntregaAjax() {
         console.error("Error:", error);
     }
 }
-function eliminarEntrega(id) {
-    if (confirm("¿Estás seguro de que deseas eliminar esta entrega?")) {
-        fetch(`/eliminar-entrega/${id}`, {
-            method: 'DELETE',  // Usar el método DELETE
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json();  // Parsear la respuesta JSON
-            } else {
-                throw new Error('Error al eliminar la entrega');
-            }
-        })
-        .then(data => {
-            if (data.success) {
-                alert(data.message);  // Mostrar mensaje de éxito
-                window.location.reload();  // Recargar la página para actualizar la tabla
-            } else {
-                alert(data.message);  // Mostrar mensaje de error
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Hubo un error al eliminar la entrega');
-        });
-    }
-}

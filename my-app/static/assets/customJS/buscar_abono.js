@@ -38,31 +38,3 @@ function buscarAbonoAjax() {
             alert("Hubo un error al realizar la búsqueda.");
         });
 }
-
-function eliminarAbono(idAbono) {
-    if (confirm("¿Estás seguro de que deseas eliminar este abono?")) {
-        fetch(`/eliminar-abono/${idAbono}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Eliminar la fila de la tabla
-                    const fila = document.getElementById(`abono_${idAbono}`);
-                    if (fila) {
-                        fila.remove();
-                    }
-                    alert("Abono eliminado correctamente.");
-                } else {
-                    alert("Error al eliminar el abono.");
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert("Hubo un error al intentar eliminar el abono.");
-            });
-    }
-}

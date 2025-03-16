@@ -494,26 +494,22 @@ def eliminar_direccion(id):
 
 from flask import jsonify, request, session
 
-@app.route('/eliminar-direccion/<int:id>', methods=['DELETE'])
+@app.route('/eliminar-direccion/<int:id>', methods=['GET'])
 def eliminar_direccion_route(id):
-    """
-    Elimina una dirección específica por su ID.
-    Devuelve una respuesta JSON para manejarla en JavaScript.
-    """
-    if 'conectado' not in session:
-        return jsonify({'error': 'Primero debes iniciar sesión.'}), 403
+    if 'conectado' in session:  # Verifica si el usuario está autenticado
+        resultado = eliminar_direccion(id)  # Llama a la función para eliminar la dirección
+        print(f"Resultado de eliminar_direccion: {resultado}, tipo: {type(resultado)}")  # Depuración
 
-    try:
-        with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                sql = "DELETE FROM direccion WHERE id = %s"
-                cursor.execute(sql, (id,))
-                conexion_MySQLdb.commit()
+        if resultado == True:  # Comprobación explícita
+            flash('Dirección eliminada correctamente.', 'success')
+        else:
+            flash('Error al eliminar la dirección', 'error')
 
-        return jsonify({'mensaje': 'Dirección eliminada correctamente.'}), 200
-    except Exception as e:
-        print(f"Error al eliminar la dirección: {e}")
-        return jsonify({'error': 'Error al eliminar la dirección.'}), 500
+        # Redireccionar a la lista de direcciones
+        return redirect(url_for('lista_direcciones'))  # Ajusta 'lista_direcciones' a tu ruta correcta
+    else:
+        flash('Usuario no autenticado', 'error')
+        return redirect(url_for('inicio'))  # Redirigir al inicio si no está autenticado
 
 
 @app.route("/buscando-direccion", methods=['POST'])

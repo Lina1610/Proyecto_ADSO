@@ -87,15 +87,30 @@ def buscarFacturaBD(search_query):
         return []
 
 def eliminar_factura(id):
+    """Elimina una factura por su ID."""
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor() as cursor:
+                # Verificar si la factura existe antes de eliminar
+                cursor.execute("SELECT id FROM factura WHERE id = %s", (id,))
+                existe_antes = cursor.fetchone() is not None
+
+                if not existe_antes:
+                    return False  # La factura no existía para empezar
+
+                # Intentar eliminar
                 cursor.execute("DELETE FROM factura WHERE id = %s", (id,))
                 conexion_MySQLdb.commit()
-                return cursor.rowcount
+
+                # Verificar si la factura ya no existe
+                cursor.execute("SELECT id FROM factura WHERE id = %s", (id,))
+                existe_despues = cursor.fetchone() is not None
+
+                # Si ya no existe, la eliminación fue exitosa
+                return existe_antes and not existe_despues
     except Exception as e:
         print(f"Error en eliminar_factura: {e}")
-        return 0
+        return False
     
 
 def actualizar_factura(id, data_form):

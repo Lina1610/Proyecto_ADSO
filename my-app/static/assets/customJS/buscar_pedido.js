@@ -39,32 +39,3 @@ function buscarPedidoAjax() {
             alert("Hubo un error al realizar la búsqueda.");
         });
 }
-
-// Función para eliminar un pedido
-function eliminarPedido(idPedido) {
-    if (confirm("¿Estás seguro de que deseas eliminar este pedido?")) {
-        fetch('/eliminar-pedido/${idPedido}', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Eliminar la fila de la tabla
-                    const fila = document.getElementById('pedido_${idPedido}');
-                    if (fila) {
-                        fila.remove();
-                    }
-                    alert("Pedido eliminado correctamente.");
-                } else {
-                    alert("Error al eliminar el pedido.");
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert("Hubo un error al intentar eliminar el pedido.");
-            });
-    }
-}; 

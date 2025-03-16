@@ -106,15 +106,23 @@ def detalles_producto(id):
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
     
-# funcio para poder eliminar los productos
-@app.route('/eliminar-producto/<int:id>', methods=['DELETE'])
+# Ruta para eliminar producto
+@app.route('/eliminar-producto/<int:id>', methods=['GET'])
 def eliminar_producto_route(id):
     if 'conectado' in session:
         resultado = eliminar_producto(id)
-        if resultado and resultado > 0:
-            return {'success': True, 'message': 'Producto eliminado correctamente'}
-        return {'success': False, 'message': 'Error al eliminar producto'}
-    return {'success': False, 'message': 'Usuario no autenticado'}, 401
+        print(f"Resultado de eliminar_producto: {resultado}, tipo: {type(resultado)}")  # Mejor depuración
+        
+        if resultado == True:  # Comprobación explícita
+            flash('Producto eliminado correctamente.', 'success')
+        else:
+            flash('Error al eliminar el producto', 'error')
+        
+        # Redireccionar a la lista de productos
+        return redirect(url_for('lista_productos'))  # Ajusta 'lista_productos' a tu ruta correcta
+    else:
+        flash('Usuario no autenticado', 'error')
+        return redirect(url_for('inicio'))  # Redirigir al inicio si no está autenticado
 
 @app.route("/buscando-producto", methods=['POST'])
 def viewBuscarProductoBD():

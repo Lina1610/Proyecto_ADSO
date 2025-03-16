@@ -1,9 +1,4 @@
            
-function eliminarDireccion(id) {
-  if (confirm("¿Estás seguro de que deseas eliminar esta dirección?")) {
-      window.location.href = `/eliminar-direccion/${id}`;
-  }
-}
 async function buscarDireccionAjax() {
     const search = document.getElementById("search_direccion").value.trim();
     console.log("Término de búsqueda:", search);  // 🛠️ Depuración

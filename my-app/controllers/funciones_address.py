@@ -211,23 +211,30 @@ def actualizar_direccion(data_form, id_direccion):
 
 
 def eliminar_direccion(id_direccion):
-    """
-    Elimina una dirección de la base de datos.
-    """
+    """Elimina una dirección por su ID."""
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                # Consulta SQL para eliminar una dirección
-                sql = "DELETE FROM direcciones WHERE id = %s"
-                cursor.execute(sql, (id_direccion,))
+                # Verificar si la dirección existe antes de eliminar
+                cursor.execute("SELECT id FROM direcciones WHERE id = %s", (id_direccion,))
+                existe_antes = cursor.fetchone() is not None
+
+                if not existe_antes:
+                    return False  # La dirección no existía para empezar
+
+                # Intentar eliminar
+                cursor.execute("DELETE FROM direcciones WHERE id = %s", (id_direccion,))
                 conexion_MySQLdb.commit()
-                return True  # Retorna True si la eliminación fue exitosa
+
+                # Verificar si la dirección ya no existe
+                cursor.execute("SELECT id FROM direcciones WHERE id = %s", (id_direccion,))
+                existe_despues = cursor.fetchone() is not None
+
+                # Si ya no existe, la eliminación fue exitosa
+                return existe_antes and not existe_despues
     except Exception as e:
         print(f"Error en eliminar_direccion: {e}")
         return False
-
-        print(f"❌ Error en procesar_direccion: {e}")  # Debug
-        return f"Se produjo un error en procesar_direccion: {str(e)}"
 
 
 

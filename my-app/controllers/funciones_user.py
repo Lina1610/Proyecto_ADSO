@@ -110,14 +110,27 @@ def eliminar_usuario(id):
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Primero verificar si el usuario existe
+                cursor.execute("SELECT id FROM users WHERE id = %s", (id,))
+                existe_antes = cursor.fetchone() is not None
+                
+                if not existe_antes:
+                    return False  # El usuario no existía para empezar
+                
+                # Intentar eliminar
                 querySQL = "DELETE FROM users WHERE id = %s"
                 cursor.execute(querySQL, (id,))
                 conexion_MySQLdb.commit()
-                resultado_eliminar = cursor.rowcount
-                return resultado_eliminar
+                
+                # Verificar si aún existe
+                cursor.execute("SELECT id FROM users WHERE id = %s", (id,))
+                existe_despues = cursor.fetchone() is not None
+                
+                # Si ya no existe, la eliminación fue exitosa
+                return existe_antes and not existe_despues
     except Exception as e:
         print(f"Error en eliminar_usuario: {e}")
-        return None
+        return False
 
 def obtener_usuario_por_id(id):
     try:

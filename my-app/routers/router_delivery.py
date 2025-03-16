@@ -177,14 +177,22 @@ def viewEditarEntrega(id):
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
 
-@app.route('/eliminar-entrega/<int:id>', methods=['DELETE'])
+@app.route('/eliminar-entrega/<int:id>', methods=['GET'])
 def eliminar_entrega_route(id):
     if 'conectado' in session:  # Verifica si el usuario está autenticado
         resultado = eliminar_entrega(id)  # Llama a la función para eliminar la entrega
-        if resultado and resultado > 0:
-            return jsonify({'success': True, 'message': 'Entrega eliminada correctamente'})
-        return jsonify({'success': False, 'message': 'Error al eliminar entrega'})
-    return jsonify({'success': False, 'message': 'Usuario no autenticado'}), 401
+        print(f"Resultado de eliminar_entrega: {resultado}, tipo: {type(resultado)}")  # Depuración
+
+        if resultado == True:  # Comprobación explícita
+            flash('Entrega eliminada correctamente.', 'success')
+        else:
+            flash('Error al eliminar la entrega', 'error')
+
+        # Redireccionar a la lista de entregas
+        return redirect(url_for('lista_entregas'))  # Ajusta 'lista_entregas' a tu ruta correcta
+    else:
+        flash('Usuario no autenticado', 'error')
+        return redirect(url_for('inicio'))  # Redirigir al inicio si no está autenticado
 
 from flask import render_template_string
 
