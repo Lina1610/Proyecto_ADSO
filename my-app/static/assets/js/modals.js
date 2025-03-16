@@ -47,7 +47,6 @@ function validarFormulario(form) {
     });
     return valido;
 }
-
 // Función para cargar municipios en el formulario de edición
 function cargarMunicipiosEditar(departamentoId, municipioId) {
     const municipioSelect = document.getElementById('editarMunicipioId');
@@ -69,6 +68,31 @@ function cargarMunicipiosEditar(departamentoId, municipioId) {
             municipioSelect.innerHTML = '<option value="">Error al cargar</option>';
         });
 }
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('registrarDepartamentoId').addEventListener('change', function() {
+        const departamentoId = this.value;
+        const municipioSelect = document.getElementById('registrarMunicipioId');
+
+        if (departamentoId) {
+            municipioSelect.innerHTML = '<option value="">Cargando municipios...</option>';
+
+            fetch(`/obtener_municipios?departamento_id=${departamentoId}`)
+                .then(response => response.json())
+                .then(data => {
+                    municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+                    data.forEach(municipio => {
+                        municipioSelect.innerHTML += `<option value="${municipio.id}">${municipio.nombre}</option>`;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al cargar municipios:', error);
+                    municipioSelect.innerHTML = '<option value="">Error al cargar municipios</option>';
+                });
+        } else {
+            municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+        }
+    });
+});
 
 // Cambio de departamento en el formulario de edición
 document.getElementById('editarDepartamentoId').addEventListener('change', function() {
@@ -77,6 +101,64 @@ document.getElementById('editarDepartamentoId').addEventListener('change', funct
         cargarMunicipiosEditar(departamentoId);
     } else {
         document.getElementById('editarMunicipioId').innerHTML = '<option value="">Seleccione un municipio</option>';
+    }
+});
+// Función para cargar municipios dinámicamente
+function cargarMunicipios(departamentoId, municipioSelectId) {
+    const municipioSelect = document.getElementById(municipioSelectId);
+
+    if (departamentoId) {
+        municipioSelect.innerHTML = '<option value="">Cargando municipios...</option>';
+
+        fetch(`/obtener_municipios?departamento_id=${departamentoId}`)
+            .then(response => response.json())
+            .then(data => {
+                municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+                data.forEach(municipio => {
+                    municipioSelect.innerHTML += `<option value="${municipio.id}">${municipio.nombre}</option>`;
+                });
+            })
+            .catch(error => {
+                console.error('Error al cargar municipios:', error);
+                municipioSelect.innerHTML = '<option value="">Error al cargar municipios</option>';
+            });
+    } else {
+        municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+    }
+}
+
+// Escuchar cambios en el campo de departamento para todos los roles
+document.addEventListener('DOMContentLoaded', function() {
+    // Cliente
+    const departamentoCliente = document.getElementById('departamentoIdCliente');
+    if (departamentoCliente) {
+        departamentoCliente.addEventListener('change', function() {
+            cargarMunicipios(this.value, 'municipioIdCliente');
+        });
+    }
+
+    // Administrador
+    const departamentoAdmin = document.getElementById('departamentoIdAdmin');
+    if (departamentoAdmin) {
+        departamentoAdmin.addEventListener('change', function() {
+            cargarMunicipios(this.value, 'municipioIdAdmin');
+        });
+    }
+
+    // Superadmin
+    const departamentoSuperadmin = document.getElementById('departamentoIdSuperadmin');
+    if (departamentoSuperadmin) {
+        departamentoSuperadmin.addEventListener('change', function() {
+            cargarMunicipios(this.value, 'municipioIdSuperadmin');
+        });
+    }
+
+    // Empleado
+    const departamentoEmpleado = document.getElementById('departamentoIdEmpleado');
+    if (departamentoEmpleado) {
+        departamentoEmpleado.addEventListener('change', function() {
+            cargarMunicipios(this.value, 'municipioIdEmpleado');
+        });
     }
 });
 

@@ -65,28 +65,31 @@
                 <li class="nav-item"><a class="nav-link" href="{{ url_for('pedido.pedido') }}">Pedidos</a></li>
         
                 {% if session.conectado %}
-                <div class="user-menu">
-                  <!-- Contenedor principal -->
-                  <div class="user-container">
-                      <!-- Avatar + Nombre -->
-                      <div class="avatar-name-group">
-                          <div class="user-avatar">
-                              <i class="fas fa-user-circle"></i>
-                          </div>
-                          <span class="user-name">{{ session.nombre }}</span>
-                      </div>
-                      
-                      <!-- Opciones alineadas -->
-                      <div class="user-options">
-                          <a href="{{ url_for('perfil_cliente') }}" class="menu-link">MI Perfil</a>
-                          <a href="{{ url_for('cerraSesion') }}" class="menu-link logout">Cerrar Sesión</a>
-                      </div>
-                  </div>
-              </div>
-                {% else %}
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}">Registrarse</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('loginCliente') }}">Iniciar sesión</a></li>
+    <div class="user-menu">
+        <!-- Contenedor principal -->
+        <div class="user-container">
+            <!-- Avatar + Nombre -->
+            <div class="avatar-name-group">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <span class="user-name">{{ session.nombre }}</span>
+            </div>
+            
+            <!-- Opciones alineadas -->
+            <div class="user-options">
+                <a href="{{ url_for('perfil_cliente') }}" class="menu-link">MI Perfil</a>
+                {% if session['rol'] in ['administrador', 'superadmin', 'empleado'] %}
+                    <a href="{{ url_for('perfil_aplicativo') }}" class="menu-link">Ir al Aplicativo</a>
                 {% endif %}
+                <a href="{{ url_for('cerraSesion') }}" class="menu-link logout">Cerrar Sesión</a>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}">Registrarse</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('loginCliente') }}">Iniciar sesión</a></li>
+{% endif %}
             </ul>
         </nav>
                 

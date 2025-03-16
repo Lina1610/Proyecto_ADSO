@@ -165,7 +165,7 @@
         </div>
     </div>
 </div>
-
+{% if session.rol == 'cliente' %}
 <!-- Direcciones -->
 <div class="card mb-4">
     <div class="card-header section-header" data-bs-toggle="collapse" href="#seccionDirecciones">
@@ -226,6 +226,9 @@
         </div>
     </div>
 </div>
+{% endif %}
+
+{% if session.rol == 'cliente' %}
  <!-- Sección de Pedidos -->
 <div class="card mb-4">
     <div class="card-header section-header" data-bs-toggle="collapse" href="#seccionPedidos">
@@ -309,6 +312,7 @@
         </div>
     </div>
 </div>
+{% endif %}
 
 
 
@@ -415,8 +419,8 @@
                         </div>
                         <div class="col-md-6">
                             <label for="departamento_id" class="form-label">Departamento</label>
-                            <select class="form-select" name="departamento_id" id="departamento_id">
-                                <option selected>Seleccione</option>
+                            <select class="form-select" name="departamento_id" id="registrarDepartamentoId">
+                                <option value="">Seleccione un departamento</option>
                                 {% for departamento in departamentos %}
                                     <option value="{{ departamento.id }}">{{ departamento.nombre }}</option>
                                 {% endfor %}
@@ -424,11 +428,8 @@
                         </div>
                         <div class="col-md-6">
                             <label for="municipio_id" class="form-label">Municipio</label>
-                            <select class="form-select" name="municipio_id" id="municipio_id">
-                                <option selected>Seleccione</option>
-                                {% for municipio in municipios %}
-                                    <option value="{{ municipio.id }}">{{ municipio.nombre }}</option>
-                                {% endfor %}
+                            <select class="form-select" name="municipio_id" id="registrarMunicipioId">
+                                <option value="">Seleccione un municipio</option>
                             </select>
                         </div>
                         <div class="col-md-12">

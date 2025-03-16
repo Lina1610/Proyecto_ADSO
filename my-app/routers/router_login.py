@@ -23,43 +23,44 @@ def perfil():
         user_id = session.get('id')
         rol = session.get('rol')
 
-        # Redirigir a perfil de cliente si aplica
-        if rol == 'cliente':
-            return redirect(url_for('perfil_cliente'))
-
         # Obtener información del perfil
         info_perfil = info_perfil_session()
 
         # Obtener direcciones del usuario
-        direcciones = obtener_direcciones_usuario(user_id) if user_id else []
+        direcciones = obtener_direcciones_usuario(user_id)
 
-        # Obtener departamentos y municipios
-        try:
-            with connectionBD() as conexion_MySQLdb:
-                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                    cursor.execute("SELECT id, nombre FROM departamento")
-                    departamentos = cursor.fetchall()
+        # Obtener pedidos del usuario
+        pedidos = obtener_pedidos(user_id)
 
-                    cursor.execute("SELECT id, nombre FROM municipio")
-                    municipios = cursor.fetchall()
-        except Exception as e:
-            print(f"Error al obtener departamentos y municipios: {e}")
-            departamentos = []
-            municipios = []
-
-        # Renderizar la plantilla con la información
-        if info_perfil:
-            return render_template(
-                'public/perfil/perfil.html',
-                info_perfil_session=info_perfil,
-                departamentos=departamentos,
-                municipios=municipios,
-                direcciones=direcciones
-            )
-        else:
-            flash('No se pudieron cargar los datos del perfil.', 'error')
-            return redirect(url_for('inicio'))
+        # Redirigir a todos los roles al perfil del sitio web
+        return render_template(
+            'public/perfil/perfil_cliente.html',
+            info_perfil_session=info_perfil,
+            direcciones=direcciones,
+            pedidos=pedidos
+        )
+    else:
+        flash('Primero debes iniciar sesión.', 'error')
+        return redirect(url_for('inicio'))
     
+@app.route('/perfil-aplicativo', methods=['GET'])
+def perfil_aplicativo():
+    if 'conectado' in session:
+        user_id = session.get('id')
+        rol = session.get('rol')
+
+        # Verificar que el rol sea válido para acceder al aplicativo
+        if rol not in ['administrador', 'superadmin', 'empleado']:
+            flash('Acceso denegado.', 'error')
+            return redirect(url_for('inicio'))
+
+        # Obtener información del perfil
+        info_perfil = info_perfil_session()
+
+        return render_template(
+            'public/perfil/perfil_aplicativo.html',  # Ruta de la plantilla
+            info_perfil_session=info_perfil
+        )
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
@@ -266,8 +267,8 @@ def loginCliente():
                     # 🔥 Redirigir según el rol 🔥
                     if session['rol'] == 'cliente':
                         return redirect(url_for('home'))  # Cliente va a index.html
-                    else:
-                        return redirect(url_for('perfil'))  # Admin/empleado a base_cpanel.html
+                    elif session['rol'] in ['administrador', 'superadmin', 'empleado']:
+                        return redirect(url_for('perfil_aplicativo'))  # Admin/empleado va al aplicativo
                 else:
                     flash('Contraseña incorrecta', 'error')
                     return render_template(f'{PATH_URL_LOGIN}/base_login.html')

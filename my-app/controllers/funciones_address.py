@@ -124,8 +124,6 @@ def procesar_direccion(dataForm):
                     return "No se pudo insertar la dirección en la base de datos."
 
     except Exception as e:
-
-
         print(f"Error en procesar_form_direccion: {e}")  # Debug
         return f"Se produjo un error en procesar_form_direccion: {str(e)}"
     
@@ -175,39 +173,68 @@ def obtener_direccion(user_id=None):
     
     
     
-def actualizar_direccion(data_form, id_direccion):
+def actualizar_direccion(id, dataForm):
     """
     Actualiza una dirección existente en la base de datos.
+    Retorna un mensaje de éxito o error.
     """
     try:
+        # Validar que los campos obligatorios no estén vacíos
+        campos_requeridos = [
+            'nombre_completo', 'barrio', 'domicilio', 'telefono', 
+            'departamento_id', 'municipio_id'
+        ]
+        for campo in campos_requeridos:
+            if campo not in dataForm or not str(dataForm[campo]).strip():
+                return f"El campo {campo} es obligatorio."
+
+        # Validar claves foráneas
+        error_validacion = validar_claves_foraneas(
+            dataForm.get('users_id', session.get('id')), 
+            dataForm['departamento_id'], 
+            dataForm['municipio_id']
+        )
+        if error_validacion:
+            return error_validacion
+
         with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                # Consulta SQL para actualizar una dirección
+            with conexion_MySQLdb.cursor() as cursor:
                 sql = """
-                    UPDATE direcciones
-                    SET nombre_completo = %s, barrio = %s, domicilio = %s, referencias = %s,
-                        telefono = %s, estado = %s, costo_domicilio = %s, departamento_id = %s, municipio_id = %s, users_id = %s
+                    UPDATE direccion SET 
+                        nombre_completo = %s,
+                        barrio = %s,
+                        domicilio = %s,
+                        referencias = %s,
+                        telefono = %s,
+                        estado = %s,
+                        costo_domicilio = %s,
+                        departamento_id = %s,
+                        municipio_id = %s
                     WHERE id = %s
                 """
                 valores = (
-                    data_form['nombre_completo'],
-                    data_form['barrio'],
-                    data_form['domicilio'],
-                    data_form['referencias'],
-                    data_form['telefono'],
-                    data_form['estado'],
-                    data_form['costo_domicilio'],
-                    data_form['departamento_id'],
-                    data_form['municipio_id'],
-                    data_form['users_id'],
-                    id_direccion
+                    dataForm.get('nombre_completo'),
+                    dataForm.get('barrio'),
+                    dataForm.get('domicilio'),
+                    dataForm.get('referencias', ''),  # Campo opcional
+                    dataForm.get('telefono'),
+                    dataForm.get('estado', 'Activo'),
+                    int(dataForm.get('costo_domicilio', 0)),
+                    dataForm.get('departamento_id'),
+                    dataForm.get('municipio_id'),
+                    id
                 )
                 cursor.execute(sql, valores)
                 conexion_MySQLdb.commit()
-                return True  # Retorna True si la actualización fue exitosa
+
+                if cursor.rowcount > 0:
+                    return "Dirección actualizada correctamente."
+                else:
+                    return "No se encontró la dirección o no se realizaron cambios."
+
     except Exception as e:
-        print(f"Error en actualizar_direccion: {e}")
-        return False
+        print(f"Error en actualizar_direccion: {e}")  # Depuración
+        return f"Se produjo un error al actualizar la dirección: {str(e)}"
 
 
 def eliminar_direccion(id_direccion):
@@ -216,18 +243,18 @@ def eliminar_direccion(id_direccion):
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                 # Verificar si la dirección existe antes de eliminar
-                cursor.execute("SELECT id FROM direcciones WHERE id = %s", (id_direccion,))
+                cursor.execute("SELECT id FROM direccion WHERE id = %s", (id_direccion,))
                 existe_antes = cursor.fetchone() is not None
 
                 if not existe_antes:
                     return False  # La dirección no existía para empezar
 
                 # Intentar eliminar
-                cursor.execute("DELETE FROM direcciones WHERE id = %s", (id_direccion,))
+                cursor.execute("DELETE FROM direccion WHERE id = %s", (id_direccion,))
                 conexion_MySQLdb.commit()
 
                 # Verificar si la dirección ya no existe
-                cursor.execute("SELECT id FROM direcciones WHERE id = %s", (id_direccion,))
+                cursor.execute("SELECT id FROM direccion WHERE id = %s", (id_direccion,))
                 existe_despues = cursor.fetchone() is not None
 
                 # Si ya no existe, la eliminación fue exitosa

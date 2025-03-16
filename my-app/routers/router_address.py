@@ -17,18 +17,16 @@ PATH_URL = "public/direccion"
 
 
 
-# Ruta para mostrar las direcciones del cliente
 @app.route('/cliente-direcciones', methods=['GET'])
 def cliente_direcciones():
     if 'conectado' in session:
-        if session['rol'] == 'cliente':
+        # Permitir múltiples roles
+        if session['rol'] in ['cliente', 'administrador', 'superadmin', 'empleado']:
             user_id = session.get('id')
 
-            # Obtener las direcciones del cliente
             direcciones = obtener_direcciones_usuario(user_id)
-            print("Direcciones obtenidas:", direcciones)  # Depuración
+            print("Direcciones obtenidas:", direcciones)
 
-            # Obtener departamentos y municipios para el formulario
             with connectionBD() as conexion_MySQLdb:
                 with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                     cursor.execute("SELECT id, nombre FROM departamento")
@@ -37,8 +35,9 @@ def cliente_direcciones():
                     cursor.execute("SELECT id, nombre FROM municipio")
                     municipios = cursor.fetchall()
 
+            # Verifica si el template soporta todos los roles o usa uno diferente
             return render_template(
-                'public/perfil/perfil_cliente.html',
+                'public/perfil/perfil_cliente.html',  # Asegúrate que este template sea adecuado para todos los roles
                 info_perfil_session=info_perfil_session(),
                 departamentos=departamentos,
                 municipios=municipios,
@@ -122,10 +121,6 @@ def obtener_departamentos():
 # Ruta para obtener municipios según departamento
 @app.route('/obtener_municipios', methods=['GET'])
 def obtener_municipios():
-    """
-    Obtiene los municipios asociados a un departamento específico.
-    Retorna un JSON con los municipios o un mensaje de error.
-    """
     departamento_id = request.args.get('departamento_id')
     if not departamento_id or not departamento_id.isdigit():
         return jsonify({"error": "ID de departamento inválido"}), 400
@@ -497,19 +492,34 @@ from flask import jsonify, request, session
 @app.route('/eliminar-direccion/<int:id>', methods=['GET'])
 def eliminar_direccion_route(id):
     if 'conectado' in session:  # Verifica si el usuario está autenticado
-        resultado = eliminar_direccion(id)  # Llama a la función para eliminar la dirección
-        print(f"Resultado de eliminar_direccion: {resultado}, tipo: {type(resultado)}")  # Depuración
-
-        if resultado == True:  # Comprobación explícita
-            flash('Dirección eliminada correctamente.', 'success')
-        else:
-            flash('Error al eliminar la dirección', 'error')
-
-        # Redireccionar a la lista de direcciones
-        return redirect(url_for('lista_direcciones'))  # Ajusta 'lista_direcciones' a tu ruta correcta
+        try:
+            with connectionBD() as conexion_MySQLdb:
+                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                    # Verificar si la dirección existe antes de eliminar
+                    cursor.execute("SELECT id FROM direccion WHERE id = %s", (id,))
+                    if cursor.fetchone() is None:
+                        flash('La dirección no existe.', 'error')
+                        return redirect(url_for('lista_direcciones'))
+                    
+                    # Eliminar la dirección
+                    cursor.execute("DELETE FROM direccion WHERE id = %s", (id,))
+                    conexion_MySQLdb.commit()
+                    
+                    flash('Dirección eliminada correctamente.', 'success')
+            
+            # Redireccionar según el rol del usuario
+            if session.get('rol') == 'cliente':
+                return redirect(url_for('cliente_direcciones'))
+            else:
+                return redirect(url_for('lista_direcciones'))
+                
+        except Exception as e:
+            print(f"Error al eliminar la dirección: {e}")
+            flash('Error al eliminar la dirección.', 'error')
+            return redirect(url_for('lista_direcciones'))
     else:
         flash('Usuario no autenticado', 'error')
-        return redirect(url_for('inicio'))  # Redirigir al inicio si no está autenticado
+        return redirect(url_for('inicio'))
 
 
 @app.route("/buscando-direccion", methods=['POST'])
