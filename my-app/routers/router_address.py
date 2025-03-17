@@ -465,7 +465,8 @@ def desactivar_direccion(id):
     return redirect(url_for('lista_direcciones'))
 
 
-@app.route('/eliminar-direccion/<int:id>', methods=['GET'])
+
+@app.route('/eliminar-direccion/<int:id>', methods=['DELETE'])
 def eliminar_direccion(id):
     """
     Elimina una dirección específica por su ID.
@@ -475,51 +476,22 @@ def eliminar_direccion(id):
         try:
             with connectionBD() as conexion_MySQLdb:
                 with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                    sql = "DELETE FROM direccion WHERE id = %s"
-                    cursor.execute(sql, (id,))
-                    conexion_MySQLdb.commit()
-
-            flash('Dirección eliminada correctamente.', 'success')
-        except Exception as e:
-            print(f"Error al eliminar la dirección: {e}")
-            flash('Error al eliminar la dirección.', 'error')
-    else:
-        flash('Primero debes iniciar sesión.', 'error')
-    return redirect(url_for('lista_direcciones'))
-
-from flask import jsonify, request, session
-
-@app.route('/eliminar-direccion/<int:id>', methods=['GET'])
-def eliminar_direccion_route(id):
-    if 'conectado' in session:  # Verifica si el usuario está autenticado
-        try:
-            with connectionBD() as conexion_MySQLdb:
-                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                     # Verificar si la dirección existe antes de eliminar
                     cursor.execute("SELECT id FROM direccion WHERE id = %s", (id,))
                     if cursor.fetchone() is None:
-                        flash('La dirección no existe.', 'error')
-                        return redirect(url_for('lista_direcciones'))
+                        return jsonify({'status': 'error', 'message': 'La dirección no existe.'}), 404
                     
                     # Eliminar la dirección
                     cursor.execute("DELETE FROM direccion WHERE id = %s", (id,))
                     conexion_MySQLdb.commit()
                     
-                    flash('Dirección eliminada correctamente.', 'success')
-            
-            # Redireccionar según el rol del usuario
-            if session.get('rol') == 'cliente':
-                return redirect(url_for('cliente_direcciones'))
-            else:
-                return redirect(url_for('lista_direcciones'))
+                    return jsonify({'status': 'success', 'message': 'Dirección eliminada correctamente.'}), 200
                 
         except Exception as e:
             print(f"Error al eliminar la dirección: {e}")
-            flash('Error al eliminar la dirección.', 'error')
-            return redirect(url_for('lista_direcciones'))
+            return jsonify({'status': 'error', 'message': 'Error al eliminar la dirección.'}), 500
     else:
-        flash('Usuario no autenticado', 'error')
-        return redirect(url_for('inicio'))
+        return jsonify({'status': 'error', 'message': 'Usuario no autenticado.'}), 401
 
 
 @app.route("/buscando-direccion", methods=['POST'])

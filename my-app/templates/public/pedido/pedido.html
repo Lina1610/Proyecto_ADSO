@@ -51,7 +51,13 @@
                                                                  
                       <!-- Opciones alineadas -->
                       <div class="user-options">
+                        {% if session['rol'] == 'cliente' %}
                         <a href="{{ url_for('perfil_cliente') }}" class="menu-link">MI Perfil</a>
+                        {% endif %}
+                        {% if session['rol'] in ['administrador', 'superadmin', 'empleado'] %}
+                        <a href="{{ url_for('perfil_aplicativo') }}" class="menu-link">Ir al Aplicativo</a>
+                    {% endif %}
+
                         <a href="{{ url_for('cerraSesion') }}" class="menu-link logout">Cerrar Sesión</a>
                     </div>
                 </div>
@@ -175,19 +181,17 @@
         </div>
     </div>
 </div>
-
 <!-- Modal para agregar dirección -->
 <div class="modal fade" id="editarDireccionModal" tabindex="-1" aria-labelledby="editarDireccionModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg"> <!-- Cambiado a modal-lg para mejor visualización -->
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="editarDireccionModalLabel">Agregar Nueva Dirección</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="/registrar-direccion">
+                <form id="formRegistrarDireccion" method="POST" onsubmit="guardarDireccion(event)">
                     <div class="row">
-                        
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="nombre_completo" class="form-label">Nombre Completo</label>
@@ -234,7 +238,6 @@
         </div>
     </div>
 </div>
-
 <!-- Modal para confirmar el pedido -->
 <div id="modalConfirmarPedido" class="modal fade" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">

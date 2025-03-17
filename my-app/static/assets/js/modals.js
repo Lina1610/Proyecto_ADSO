@@ -33,8 +33,174 @@ function editarDireccion(id) {
             alert('Error al cargar los datos de la dirección');
         });
 }
+// Función para manejar el registro de una nueva dirección
+// Función para manejar el registro de una nueva dirección
+function registrarDireccion(event) {
+    event.preventDefault();
+    
+    const form = document.getElementById('formRegistrarDireccion');
+    if (!validarFormulario(form)) return;
+    
+    const formData = new FormData(form);
+    
+    fetch('/registrar-direccion', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Cerrar el modal
+        let modalElement = document.getElementById('registrarDireccionModal');
+        let modal = bootstrap.Modal.getInstance(modalElement);
+        if (modal) modal.hide();
+        
+        if (data.success) {
+            // Mostrar notificación de éxito
+            mostrarNotificacion(data.message || 'Dirección agregada correctamente', 'success');
+            // Recargar la página después de mostrar la notificación
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            mostrarNotificacion(data.error || 'Error al agregar la dirección', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarNotificacion('Error al agregar la dirección', 'error');
+    });
+}
 
-// Función para validar el formulario antes de enviarlo
+// Función para actualizar información del perfil
+function actualizarPerfil(event) {
+    event.preventDefault();
+    console.log("Formulario de perfil enviado"); // Debug
+    
+    const form = document.getElementById('formEditarPerfil');
+    if (!validarFormulario(form)) {
+        console.log("Formulario no válido"); // Debug
+        return;
+    }
+    
+    const formData = new FormData(form);
+    console.log("Datos del formulario:", formData); // Debug
+    
+    fetch('/actualizar-perfil', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        console.log("Respuesta del servidor:", response); // Debug
+        return response.json();
+    })
+    .then(data => {
+        console.log("Datos de respuesta:", data); // Debug
+        if (data.success) {
+            console.log("Mostrando notificación de éxito"); // Debug
+            mostrarNotificacion(data.message || 'Perfil actualizado correctamente', 'success');
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            console.log("Mostrando notificación de error"); // Debug
+            mostrarNotificacion(data.error || 'Error al actualizar el perfil', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarNotificacion('Error al actualizar el perfil', 'error');
+    });
+}
+
+// Función para actualizar datos personales
+function actualizarDatosPersonales(event) {
+    event.preventDefault();
+    
+    const form = document.getElementById('formDatosPersonales');
+    if (!validarFormulario(form)) return;
+    
+    const formData = new FormData(form);
+    
+    fetch('/actualizar-datos-personales', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Mostrar notificación de éxito
+            mostrarNotificacion(data.message || 'Datos personales actualizados correctamente', 'success');
+            // Opcional: recargar la página después de mostrar la notificación
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            mostrarNotificacion(data.error || 'Error al actualizar los datos personales', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarNotificacion('Error al actualizar los datos personales', 'error');
+    });
+}
+
+// Agregar el evento al formulario de datos personales
+document.addEventListener('DOMContentLoaded', function() {
+    const formDatosPersonales = document.getElementById('formDatosPersonales');
+    if (formDatosPersonales) {
+        formDatosPersonales.addEventListener('submit', actualizarDatosPersonales);
+    }
+});
+
+// Función para cambiar contraseña
+function cambiarContrasena(event) {
+    event.preventDefault();
+    
+    const form = document.getElementById('formCambiarContrasena');
+    if (!validarFormulario(form)) return;
+    
+    // Verificar que las contraseñas coincidan
+    const nuevaContrasena = document.getElementById('nuevaContrasena').value;
+    const confirmarContrasena = document.getElementById('confirmarContrasena').value;
+    
+    if (nuevaContrasena !== confirmarContrasena) {
+        mostrarNotificacion('Las contraseñas no coinciden', 'error');
+        return;
+    }
+    
+    const formData = new FormData(form);
+    
+    fetch('/cambiar-contrasena', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Mostrar notificación de éxito
+            mostrarNotificacion(data.message || 'Contraseña actualizada correctamente', 'success');
+            // Limpiar el formulario
+            form.reset();
+        } else {
+            mostrarNotificacion(data.error || 'Error al actualizar la contraseña', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarNotificacion('Error al actualizar la contraseña', 'error');
+    });
+}
+// Agregar el evento al formulario de cambio de contraseña
+document.addEventListener('DOMContentLoaded', function() {
+    const formCambiarContrasena = document.getElementById('formCambiarContrasena');
+    if (formCambiarContrasena) {
+        formCambiarContrasena.addEventListener('submit', cambiarContrasena);
+    }
+});
+
+// Agregar el evento al formulario de registro
+document.addEventListener('DOMContentLoaded', function() {
+    const formRegistrar = document.getElementById('formRegistrarDireccion');
+    if (formRegistrar) {
+        formRegistrar.addEventListener('submit', registrarDireccion);
+    }
+});
+
+// Función para validar el formulario con notificaciones visuales
 function validarFormulario(form) {
     let valido = true;
     form.querySelectorAll("input[required], select[required]").forEach(input => {
@@ -45,6 +211,11 @@ function validarFormulario(form) {
             input.classList.remove("is-invalid");
         }
     });
+    
+    if (!valido) {
+        mostrarNotificacion('Por favor, complete todos los campos requeridos', 'error');
+    }
+    
     return valido;
 }
 // Función para cargar municipios en el formulario de edición
@@ -173,14 +344,15 @@ function confirmarEliminar(id) {
 }
 
 // Evento para eliminar la dirección cuando se confirme
+// Evento para eliminar la dirección cuando se confirme
 document.getElementById('confirmarEliminar').addEventListener('click', function () {
     if (direccionIdAEliminar) {
         fetch(`/eliminar-direccion/${direccionIdAEliminar}`, { method: 'DELETE' })
             .then(response => response.json())
             .then(data => {
-                console.log("📩 Respuesta:", data);
+                console.log("📩 Respuesta del servidor:", data);
 
-                // 🔥 Cerrar el modal correctamente
+                // Cerrar el modal correctamente
                 document.activeElement.blur(); // Quitar el foco del botón
                 let modalElement = document.getElementById('eliminarDireccionModal');
                 let modalEliminar = bootstrap.Modal.getInstance(modalElement);
@@ -190,56 +362,62 @@ document.getElementById('confirmarEliminar').addEventListener('click', function 
                 document.body.classList.remove('modal-open');
                 document.querySelector('.modal-backdrop')?.remove();
 
-                console.log("✅ Modal cerrado correctamente.");
-
-                // 🚀 Recargar la página para reflejar los cambios
-                setTimeout(() => location.reload(), 500);
+                // Verificar si la operación fue exitosa
+                if (data.success) {
+                    // Mostrar notificación de éxito 
+                    mostrarNotificacion(data.message || 'Dirección eliminada correctamente', 'success');
+                    // Recargar la página después de mostrar la notificación
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    // Mostrar notificación de error
+                    mostrarNotificacion(data.error || 'No se puede eliminar la dirección porque tiene pedidos asociados', 'error');
+                }
             })
-            .catch(error => console.error("❌ Error al eliminar:", error));
+            .catch(error => {
+                console.error("❌ Error al eliminar:", error);
+                
+                // Cerrar el modal incluso si hay un error
+                let modalElement = document.getElementById('eliminarDireccionModal');
+                let modalEliminar = bootstrap.Modal.getInstance(modalElement);
+                if (modalEliminar) modalEliminar.hide();
+                
+                modalElement.classList.remove('show');
+                document.body.classList.remove('modal-open');
+                document.querySelector('.modal-backdrop')?.remove();
+                
+                // Mostrar mensaje de error
+                mostrarNotificacion('Error al procesar la solicitud', 'error');
+            });
     } else {
         console.error("⚠️ No hay dirección seleccionada para eliminar.");
+        mostrarNotificacion("No hay dirección seleccionada para eliminar", 'error');
     }
 });
+function mostrarNotificacion(mensaje, tipo) {
+    console.log("Notificación:", mensaje, "Tipo:", tipo); // Debug
 
+    const notificacion = document.createElement('div');
+    notificacion.className = `notificacion ${tipo}`;
+    notificacion.textContent = mensaje;
 
-// Función para actualizar dirección en el aplicativo
-function actualizarDireccionAPI(event) {
-    event.preventDefault();
-    
-    const form = document.getElementById('formEditarDireccionAPI');
-    if (!validarFormulario(form)) return;
-    
-    const formData = new FormData(form);
-    fetch('/actualizar-direccion-api', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.message || 'Dirección actualizada correctamente');
-            location.reload();
-        } else {
-            alert(data.error || 'Error al actualizar la dirección');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error al actualizar la dirección');
-    });
+    document.body.appendChild(notificacion);
+
+    setTimeout(() => {
+        console.log("Mostrando notificación en pantalla...");
+        notificacion.classList.add('mostrar');
+    }, 100);
+
+    setTimeout(() => {
+        console.log("Ocultando notificación...");
+        notificacion.classList.remove('mostrar');
+        setTimeout(() => {
+            console.log("Eliminando notificación del DOM...");
+            document.body.removeChild(notificacion);
+        }, 300);
+    }, 3000);
 }
 
-// Manejar el envío del formulario de edición en la web
-document.getElementById('formEditarDireccion').addEventListener('submit', actualizarDireccionWeb);
-
-document.getElementById('formEditarDireccionAPI').addEventListener('submit', actualizarDireccionAPI);
-
-// Función para confirmar la eliminación de una dirección
-
-// Función para confirmar eliminación y mostrar modal
-// Variable global para almacenar el ID de la dirección a eliminar
-
-
+// Función para actualizar dirección en la web
 function actualizarDireccionWeb(event) {
     event.preventDefault(); // Evita el envío automático del formulario
 
@@ -249,12 +427,12 @@ function actualizarDireccionWeb(event) {
     let data = {
         id: direccionId,
         nombre_completo: document.getElementById("editarNombreCompleto").value,
-        barrio: document.getElementById("editarBarrio").value,  // ⚠️ ¿Este campo está en el formulario?
+        barrio: document.getElementById("editarBarrio").value,
         domicilio: document.getElementById("editarDomicilio").value,
         referencias: document.getElementById("editarReferencias").value,
         telefono: document.getElementById("editarTelefono").value,
-        estado: "Activo",  // ⚠️ Agrega este campo si tu API lo espera
-        costo_domicilio: 5000,  // ⚠️ Ajusta si es necesario
+        estado: "Activo",
+        costo_domicilio: 5000,
         municipio_id: document.getElementById("editarMunicipioId").value,
         departamento_id: document.getElementById("editarDepartamentoId").value
     };
@@ -272,14 +450,122 @@ function actualizarDireccionWeb(event) {
     .then(responseData => {
         console.log("📩 Datos de respuesta:", responseData);
     
+        // Cerrar el modal correctamente
+        let modalElement = document.getElementById('editarDireccionModal');
+        let modal = bootstrap.Modal.getInstance(modalElement);
+        if (modal) modal.hide();
+        
+        // Usar notificación personalizada en lugar de alert
         if (responseData.mensaje) { 
-            alert(responseData.mensaje);
-            location.reload();
+            mostrarNotificacion(responseData.mensaje, 'success');
+            setTimeout(() => location.reload(), 1500);
         } else {
-            alert("⚠️ Error: " + (responseData.error || "Respuesta inesperada"));
+            mostrarNotificacion("Error: " + (responseData.error || "Respuesta inesperada"), 'error');
         }
     })
-    .catch(error => console.error("❌ Error en fetch:", error));
+    .catch(error => {
+        console.error("❌ Error en fetch:", error);
+        mostrarNotificacion("Error al actualizar la dirección", 'error');
+    });
+}
+
+// Función para actualizar dirección en el aplicativo
+function actualizarDireccionAPI(event) {
+    event.preventDefault();
+    
+    const form = document.getElementById('formEditarDireccionAPI');
+    if (!validarFormulario(form)) {
+        mostrarNotificacion('Por favor, complete todos los campos requeridos', 'error');
+        return;
+    }
+    
+    const formData = new FormData(form);
+    fetch('/actualizar-direccion-api', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Cerrar el modal correspondiente
+        let modalElement = document.getElementById('editarDireccionModalAPI');
+        let modal = bootstrap.Modal.getInstance(modalElement);
+        if (modal) modal.hide();
+        
+        if (data.success) {
+            mostrarNotificacion(data.message || 'Dirección actualizada correctamente', 'success');
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            mostrarNotificacion(data.error || 'Error al actualizar la dirección', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarNotificacion('Error al actualizar la dirección', 'error');
+    });
+}
+
+
+// Manejar el envío del formulario de edición en la web
+document.getElementById('formEditarDireccion').addEventListener('submit', actualizarDireccionWeb);
+
+document.getElementById('formEditarDireccionAPI').addEventListener('submit', actualizarDireccionAPI);
+
+// Función para confirmar la eliminación de una dirección
+
+// Función para confirmar eliminación y mostrar modal
+// Variable global para almacenar el ID de la dirección a eliminar
+
+
+// Función para actualizar dirección en la web
+function actualizarDireccionWeb(event) {
+    event.preventDefault(); // Evita el envío automático del formulario
+
+    console.log("🚀 Ejecutando actualizarDireccionWeb()");
+
+    let direccionId = document.getElementById("editarDireccionId").value; 
+    let data = {
+        id: direccionId,
+        nombre_completo: document.getElementById("editarNombreCompleto").value,
+        barrio: document.getElementById("editarBarrio").value,
+        domicilio: document.getElementById("editarDomicilio").value,
+        referencias: document.getElementById("editarReferencias").value,
+        telefono: document.getElementById("editarTelefono").value,
+        estado: "Activo",
+        costo_domicilio: 5000,
+        municipio_id: document.getElementById("editarMunicipioId").value,
+        departamento_id: document.getElementById("editarDepartamentoId").value
+    };
+
+    console.log("📩 Datos enviados:", JSON.stringify(data));
+
+    fetch("/actualizar-direccion-web", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())  
+    .then(responseData => {
+        console.log("📩 Datos de respuesta:", responseData);
+    
+        // Cerrar el modal correctamente
+        let modalElement = document.getElementById('editarDireccionModal');
+        let modal = bootstrap.Modal.getInstance(modalElement);
+        if (modal) modal.hide();
+        
+        // Usar notificación personalizada en lugar de alert
+        if (responseData.mensaje) { 
+            mostrarNotificacion(responseData.mensaje, 'success');
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            mostrarNotificacion("Error: " + (responseData.error || "Respuesta inesperada"), 'error');
+        }
+    })
+    .catch(error => {
+        console.error("❌ Error en fetch:", error);
+        mostrarNotificacion("Error al actualizar la dirección", 'error');
+    });
 }
 
 function cargarDetallesPedido(pedidoId) {

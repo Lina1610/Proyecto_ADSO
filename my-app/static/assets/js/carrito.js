@@ -687,8 +687,8 @@ function mostrarDirecciones(tipoEntrega) {
 
 // ==================== FUNCIONES DE DIRECCIONES ====================
 async function guardarDireccion(event) {
-    event.preventDefault();
-    
+    event.preventDefault(); // Evitar el envío tradicional del formulario
+
     // Validar sesión
     if (!verificarAutenticacion()) return;
 
@@ -703,7 +703,7 @@ async function guardarDireccion(event) {
         municipio_id: document.getElementById('registrarMunicipioId').value
     };
 
-    // Validación básica
+    // Validar campos del formulario
     if (!validarCamposDireccion(formData)) return;
 
     try {
@@ -719,15 +719,29 @@ async function guardarDireccion(event) {
         const data = await response.json();
 
         if (!response.ok) throw new Error(data.error || "Error desconocido");
-        
+
+        // Mostrar notificación de éxito
         mostrarNotificacion('¡Dirección guardada exitosamente!', 'success');
-        $('#editarDireccionModal').modal('hide');
+
+        // Cerrar el modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editarDireccionModal'));
+        modal.hide();
+
+        // Actualizar la lista de direcciones
         mostrarDirecciones('Domicilio');
-        
+
     } catch (error) {
         console.error('Error:', error);
         mostrarNotificacion(error.message || 'Error al guardar la dirección', 'error');
     }
+}
+function validarCamposDireccion(formData) {
+    // Validar que todos los campos obligatorios estén llenos
+    if (!formData.nombre_completo || !formData.barrio || !formData.domicilio || !formData.telefono || !formData.departamento_id || !formData.municipio_id) {
+        mostrarNotificacion('Todos los campos son obligatorios.', 'error');
+        return false; // Retorna false si falta algún campo
+    }
+    return true; // Retorna true si todos los campos están llenos
 }
 // Función para cargar los departamentos en el modal
 function cargarDepartamentos() {

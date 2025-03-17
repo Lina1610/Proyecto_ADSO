@@ -7,7 +7,42 @@
     text-decoration: none;
     list-style: none;
 }
+.notificacion {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 25px;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
+.notificacion.mostrar {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.notificacion.success {
+  background-color: #28a745;
+}
+
+.notificacion.error {
+  background-color: #dc3545;
+}
+
+.notificacion.info {
+  background-color: #17a2b8;
+}
+
+.notificacion.warning {
+  background-color: #ffc107;
+  color: #212529;
+}
 body {
 
         display: flex;

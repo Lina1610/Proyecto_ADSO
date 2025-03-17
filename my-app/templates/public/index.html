@@ -78,7 +78,9 @@
             
             <!-- Opciones alineadas -->
             <div class="user-options">
+              {% if session['rol'] == 'cliente' %}
                 <a href="{{ url_for('perfil_cliente') }}" class="menu-link">MI Perfil</a>
+                {% endif %}
                 {% if session['rol'] in ['administrador', 'superadmin', 'empleado'] %}
                     <a href="{{ url_for('perfil_aplicativo') }}" class="menu-link">Ir al Aplicativo</a>
                 {% endif %}

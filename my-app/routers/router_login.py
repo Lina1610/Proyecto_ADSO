@@ -32,9 +32,9 @@ def perfil():
         # Obtener pedidos del usuario
         pedidos = obtener_pedidos(user_id)
 
-        # Redirigir a todos los roles al perfil del sitio web
+        # Siempre redirigir al perfil del sitio web (perfil.html)
         return render_template(
-            'public/perfil/perfil_cliente.html',
+            'public/perfil/perfil.html',  # Ruta de la plantilla del perfil del sitio web
             info_perfil_session=info_perfil,
             direcciones=direcciones,
             pedidos=pedidos
@@ -46,7 +46,6 @@ def perfil():
 @app.route('/perfil-aplicativo', methods=['GET'])
 def perfil_aplicativo():
     if 'conectado' in session:
-        user_id = session.get('id')
         rol = session.get('rol')
 
         # Verificar que el rol sea válido para acceder al aplicativo
