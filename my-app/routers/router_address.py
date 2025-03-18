@@ -50,6 +50,36 @@ def cliente_direcciones():
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
 # Ruta para registrar una dirección 
+
+
+# Ruta para el sitio web (API JSON)
+@app.route('/api/registrar-direccion', methods=['POST'])
+def api_registrar_direccion():
+    if 'conectado' not in session or 'id' not in session:
+        response = jsonify({"success": False, "error": "Primero debes iniciar sesión."})
+        response.headers.add('Content-Type', 'application/json')
+        return response, 401
+    
+    try:
+        resultado = procesar_direccion(request.form)
+        
+        print(f"Resultado de procesar_direccion: {resultado}, tipo: {type(resultado)}")
+        
+        if isinstance(resultado, int) and resultado > 0:
+            response = jsonify({"success": True, "message": "Dirección registrada con éxito"})
+            response.headers.add('Content-Type', 'application/json')
+            return response, 200
+        else:
+            response = jsonify({"success": False, "error": str(resultado)})
+            response.headers.add('Content-Type', 'application/json')
+            return response, 400
+    except Exception as e:
+        print(f"Error al procesar la dirección: {e}")
+        response = jsonify({"success": False, "error": "Error interno del servidor"})
+        response.headers.add('Content-Type', 'application/json')
+        return response, 500
+
+# Ruta para el aplicativo (Interfaz web)
 @app.route('/registrar-direccion', methods=['GET', 'POST'])
 def viewFormDireccion():
     """
@@ -57,24 +87,22 @@ def viewFormDireccion():
     Solo accesible si el usuario está conectado.
     """
     print("🔍 Sesión en viewFormDireccion:", session)  # 🛠 Depuración
-
     # Verificar si el usuario está conectado y tiene un ID válido
     if 'conectado' not in session or 'id' not in session:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
-
+    
     # Obtener el rol del usuario
     rol_usuario = session.get('rol', '')
     print(f"🔍 Rol del usuario: {rol_usuario}")  # 🛠 Depuración
-
+    
     if request.method == 'POST':
         print("🔍 Datos del formulario recibidos:", request.form)  # 🛠 Depuración
         resultado = procesar_direccion(request.form)
-
+        
         if isinstance(resultado, int) and resultado > 0:
             flash('Dirección registrada con éxito', 'success')
             print("🔍 Sesión DESPUÉS de registrar la dirección:", session)  # 🛠 Depuración
-
             # Redirigir según el rol del usuario
             if rol_usuario == 'cliente':
                 return redirect(url_for('cliente_direcciones'))
@@ -83,19 +111,17 @@ def viewFormDireccion():
         else:
             flash(f'Error al registrar dirección: {resultado}', 'error')
             return redirect(url_for('cliente_direcciones' if rol_usuario == 'cliente' else 'lista_direcciones'))
-
+    
     # Obtener datos de departamento, municipios y usuarios
     with connectionBD() as conexion_MySQLdb:
         with conexion_MySQLdb.cursor(dictionary=True) as cursor:
             cursor.execute("SELECT id, nombre FROM departamento")
             departamentos = cursor.fetchall()
-
             cursor.execute("SELECT id, nombre FROM municipio")
             municipios = cursor.fetchall()
-
             cursor.execute("SELECT id, nombre FROM users")
             users = cursor.fetchall()
-
+    
     return render_template(
         f'{PATH_URL}/registro_direccion.html',
         departamentos=departamentos,
@@ -466,7 +492,7 @@ def desactivar_direccion(id):
 
 
 
-@app.route('/eliminar-direccion/<int:id>', methods=['DELETE'])
+@app.route('/eliminar-direccion/<int:id>', methods=['GET'])
 def eliminar_direccion(id):
     """
     Elimina una dirección específica por su ID.
@@ -476,22 +502,41 @@ def eliminar_direccion(id):
         try:
             with connectionBD() as conexion_MySQLdb:
                 with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                    # Verificar si la dirección existe antes de eliminar
-                    cursor.execute("SELECT id FROM direccion WHERE id = %s", (id,))
-                    if cursor.fetchone() is None:
-                        return jsonify({'status': 'error', 'message': 'La dirección no existe.'}), 404
-                    
-                    # Eliminar la dirección
-                    cursor.execute("DELETE FROM direccion WHERE id = %s", (id,))
+                    sql = "DELETE FROM direccion WHERE id = %s"
+                    cursor.execute(sql, (id,))
                     conexion_MySQLdb.commit()
-                    
-                    return jsonify({'status': 'success', 'message': 'Dirección eliminada correctamente.'}), 200
-                
+
+            flash('Dirección eliminada correctamente.', 'success')
         except Exception as e:
             print(f"Error al eliminar la dirección: {e}")
-            return jsonify({'status': 'error', 'message': 'Error al eliminar la dirección.'}), 500
+            flash('Error al eliminar la dirección.', 'error')
     else:
-        return jsonify({'status': 'error', 'message': 'Usuario no autenticado.'}), 401
+        flash('Primero debes iniciar sesión.', 'error')
+    return redirect(url_for('lista_direcciones'))
+
+from flask import jsonify, request, session
+
+@app.route('/eliminar-direccion/<int:id>', methods=['DELETE'])
+def eliminar_direccion_route(id):
+    """
+    Elimina una dirección específica por su ID.
+    Devuelve una respuesta JSON para manejarla en JavaScript.
+    """
+    if 'conectado' not in session:
+        return jsonify({'success': False, 'error': 'Primero debes iniciar sesión.'}), 403
+
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                sql = "DELETE FROM direccion WHERE id = %s"
+                cursor.execute(sql, (id,))
+                conexion_MySQLdb.commit()
+
+        return jsonify({'success': True, 'message': 'Dirección eliminada correctamente.'}), 200
+    except Exception as e:
+        print(f"Error al eliminar la dirección: {e}")
+        return jsonify({'success': False, 'error': 'Error al eliminar la dirección.'}), 500
+
 
 
 @app.route("/buscando-direccion", methods=['POST'])
@@ -556,4 +601,3 @@ def viewBuscarDireccionBD():
     except Exception as e:
         print(f"Error en viewBuscarDireccionBD: {e}")  # Log de depuración
         return jsonify({'error': str(e)}), 500  # Manejo de errores
-    

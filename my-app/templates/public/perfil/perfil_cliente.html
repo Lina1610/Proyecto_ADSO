@@ -63,6 +63,7 @@
             </div>
         </div>
     </nav>
+    
     <!-- Main Content -->
     <main class="main-content">
         <section class="page-section" id="perfil">
@@ -86,7 +87,7 @@
     </div>
     <div class="collapse" id="infoPersonal">
         <div class="card-body">
-            <form method="POST" id="formInfoPersonal" action="/actualizar-datos-perfil">
+            <form method="POST" id="formEditarPerfil">
                 <div class="row g-3">
                     <!-- Campos no editables -->
                     <div class="col-md-6">
@@ -330,7 +331,7 @@
                     </div>
                     <div class="collapse" id="cambiarClave">
                         <div class="card-body">
-                            <form method="POST" action="/actualizar-password">
+                            <form method="POST" id="formCambiarContrasena">
                                 <div class="row g-3">
                                     <div class="col-md-12">
                                         <label class="form-label">Contraseña Actual</label>
@@ -395,44 +396,44 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="/registrar-direccion">
+                <form id="formRegistrarDireccion" method="POST">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3">
                             <label for="nombre_completo" class="form-label">Nombre Completo</label>
                             <input type="text" name="nombre_completo" class="form-control" required />
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3">
                             <label for="barrio" class="form-label">Barrio</label>
                             <input class="form-control" type="text" name="barrio" required />
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3">
                             <label for="domicilio" class="form-label">Domicilio</label>
                             <input class="form-control" type="text" name="domicilio" required />
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3">
                             <label for="referencias" class="form-label">Referencias</label>
                             <input class="form-control" type="text" name="referencias" />
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3">
                             <label for="telefono" class="form-label">Teléfono</label>
                             <input class="form-control" type="text" name="telefono" required />
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3">
                             <label for="departamento_id" class="form-label">Departamento</label>
-                            <select class="form-select" name="departamento_id" id="registrarDepartamentoId">
+                            <select class="form-select" name="departamento_id" id="registrarDepartamentoId" required>
                                 <option value="">Seleccione un departamento</option>
                                 {% for departamento in departamentos %}
                                     <option value="{{ departamento.id }}">{{ departamento.nombre }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-3">
                             <label for="municipio_id" class="form-label">Municipio</label>
-                            <select class="form-select" name="municipio_id" id="registrarMunicipioId">
+                            <select class="form-select" name="municipio_id" id="registrarMunicipioId" required>
                                 <option value="">Seleccione un municipio</option>
                             </select>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-12 mb-3">
                             <label class="form-label">Confirmar con Contraseña Actual</label>
                             <div class="input-group input-group-merge">
                                 <input type="password" class="form-control" name="pass_actual" required>
@@ -454,6 +455,8 @@
         </div>
     </div>
 </div>
+
+
 
 
 <!-- Modal para editar dirección -->
@@ -531,7 +534,10 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button id="confirmarEliminar" class="btn btn-danger">Eliminar</button>
+                <button type="button" class="btn btn-danger btn-sm" id="confirmarEliminar">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+                
 
             </div>
         </div>

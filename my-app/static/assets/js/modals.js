@@ -33,7 +33,7 @@ function editarDireccion(id) {
             alert('Error al cargar los datos de la dirección');
         });
 }
-// Función para manejar el registro de una nueva dirección
+
 // Función para manejar el registro de una nueva dirección
 function registrarDireccion(event) {
     event.preventDefault();
@@ -43,7 +43,7 @@ function registrarDireccion(event) {
     
     const formData = new FormData(form);
     
-    fetch('/registrar-direccion', {
+    fetch('/api/registrar-direccion', {
         method: 'POST',
         body: formData
     })
@@ -58,7 +58,7 @@ function registrarDireccion(event) {
             // Mostrar notificación de éxito
             mostrarNotificacion(data.message || 'Dirección agregada correctamente', 'success');
             // Recargar la página después de mostrar la notificación
-            setTimeout(() => location.reload(), 1500);
+            setTimeout(() => location.reload(), 950);
         } else {
             mostrarNotificacion(data.error || 'Error al agregar la dirección', 'error');
         }
@@ -69,9 +69,8 @@ function registrarDireccion(event) {
     });
 }
 
-// Función para actualizar información del perfil
 function actualizarPerfil(event) {
-    event.preventDefault();
+    event.preventDefault(); // Prevenir el comportamiento predeterminado
     console.log("Formulario de perfil enviado"); // Debug
     
     const form = document.getElementById('formEditarPerfil');
@@ -83,22 +82,17 @@ function actualizarPerfil(event) {
     const formData = new FormData(form);
     console.log("Datos del formulario:", formData); // Debug
     
-    fetch('/actualizar-perfil', {
+    fetch('/actualizar-datos-perfil', {
         method: 'POST',
         body: formData
     })
-    .then(response => {
-        console.log("Respuesta del servidor:", response); // Debug
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
         console.log("Datos de respuesta:", data); // Debug
         if (data.success) {
-            console.log("Mostrando notificación de éxito"); // Debug
             mostrarNotificacion(data.message || 'Perfil actualizado correctamente', 'success');
-            setTimeout(() => location.reload(), 1500);
+            setTimeout(() => location.reload(), 800);
         } else {
-            console.log("Mostrando notificación de error"); // Debug
             mostrarNotificacion(data.error || 'Error al actualizar el perfil', 'error');
         }
     })
@@ -108,63 +102,31 @@ function actualizarPerfil(event) {
     });
 }
 
-// Función para actualizar datos personales
-function actualizarDatosPersonales(event) {
-    event.preventDefault();
-    
-    const form = document.getElementById('formDatosPersonales');
-    if (!validarFormulario(form)) return;
-    
-    const formData = new FormData(form);
-    
-    fetch('/actualizar-datos-personales', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Mostrar notificación de éxito
-            mostrarNotificacion(data.message || 'Datos personales actualizados correctamente', 'success');
-            // Opcional: recargar la página después de mostrar la notificación
-            setTimeout(() => location.reload(), 1500);
-        } else {
-            mostrarNotificacion(data.error || 'Error al actualizar los datos personales', 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        mostrarNotificacion('Error al actualizar los datos personales', 'error');
-    });
-}
-
-// Agregar el evento al formulario de datos personales
-document.addEventListener('DOMContentLoaded', function() {
-    const formDatosPersonales = document.getElementById('formDatosPersonales');
-    if (formDatosPersonales) {
-        formDatosPersonales.addEventListener('submit', actualizarDatosPersonales);
-    }
-});
-
-// Función para cambiar contraseña
+// Función para cambiar la contraseña
 function cambiarContrasena(event) {
-    event.preventDefault();
-    
+    event.preventDefault(); // Prevenir el envío del formulario
+
     const form = document.getElementById('formCambiarContrasena');
-    if (!validarFormulario(form)) return;
-    
-    // Verificar que las contraseñas coincidan
-    const nuevaContrasena = document.getElementById('nuevaContrasena').value;
-    const confirmarContrasena = document.getElementById('confirmarContrasena').value;
-    
-    if (nuevaContrasena !== confirmarContrasena) {
-        mostrarNotificacion('Las contraseñas no coinciden', 'error');
+    if (!validarFormulario(form)) {
+        mostrarNotificacion('Por favor, complete todos los campos requeridos.', 'error');
         return;
     }
-    
+
+    // Obtener los valores de los campos
+    const nuevaContrasena = document.getElementById('new_pass_user').value;
+    const confirmarContrasena = document.getElementById('repetir_pass_user').value;
+
+    // Validar que las contraseñas coincidan
+    if (nuevaContrasena !== confirmarContrasena) {
+        mostrarNotificacion('Las contraseñas no coinciden.', 'error');
+        return;
+    }
+
+    // Crear FormData con los datos del formulario
     const formData = new FormData(form);
-    
-    fetch('/cambiar-contrasena', {
+
+    // Enviar la solicitud al servidor
+    fetch('/actualizar-password', {
         method: 'POST',
         body: formData
     })
@@ -172,18 +134,48 @@ function cambiarContrasena(event) {
     .then(data => {
         if (data.success) {
             // Mostrar notificación de éxito
-            mostrarNotificacion(data.message || 'Contraseña actualizada correctamente', 'success');
+            mostrarNotificacion(data.message || 'Contraseña actualizada correctamente.', 'success');
             // Limpiar el formulario
             form.reset();
         } else {
-            mostrarNotificacion(data.error || 'Error al actualizar la contraseña', 'error');
+            // Mostrar notificación de error
+            mostrarNotificacion(data.error || 'Error al actualizar la contraseña.', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        mostrarNotificacion('Error al actualizar la contraseña', 'error');
+        mostrarNotificacion('Error al procesar la solicitud.', 'error');
     });
 }
+
+// Función para validar el formulario
+function validarFormulario(form) {
+    let valido = true;
+    form.querySelectorAll("input[required]").forEach(input => {
+        if (!input.value.trim()) {
+            valido = false;
+            input.classList.add("is-invalid");
+        } else {
+            input.classList.remove("is-invalid");
+        }
+    });
+    return valido;
+}
+
+// Función para mostrar/ocultar la contraseña
+function togglePassword(icon) {
+    const input = icon.previousElementSibling;
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("bx-hide");
+        icon.classList.add("bx-show");
+    } else {
+        input.type = "password";
+        icon.classList.remove("bx-show");
+        icon.classList.add("bx-hide");
+    }
+}
+
 // Agregar el evento al formulario de cambio de contraseña
 document.addEventListener('DOMContentLoaded', function() {
     const formCambiarContrasena = document.getElementById('formCambiarContrasena');
@@ -192,11 +184,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Agregar el evento al formulario de registro
 document.addEventListener('DOMContentLoaded', function() {
-    const formRegistrar = document.getElementById('formRegistrarDireccion');
-    if (formRegistrar) {
-        formRegistrar.addEventListener('submit', registrarDireccion);
+    const formEditarPerfil = document.getElementById('formEditarPerfil');
+    if (formEditarPerfil) {
+        formEditarPerfil.addEventListener('submit', actualizarPerfil);
+    }
+
+    const formCambiarContrasena = document.getElementById('formCambiarContrasena');
+    if (formCambiarContrasena) {
+        formCambiarContrasena.addEventListener('submit', cambiarContrasena);
+    }
+});
+
+
+
+// Asegúrate de que el evento se asigne correctamente
+document.addEventListener('DOMContentLoaded', function() {
+    const formRegistrarDireccion = document.getElementById('formRegistrarDireccion');
+    if (formRegistrarDireccion) {
+        formRegistrarDireccion.addEventListener('submit', registrarDireccion);
     }
 });
 
@@ -339,84 +345,94 @@ let direccionIdAEliminar = null;
 
 // Función para asignar el ID de la dirección al botón de confirmación
 function confirmarEliminar(id) {
-    direccionIdAEliminar = id;
-    console.log("📌 ID seleccionado para eliminar:", direccionIdAEliminar);
+    // Almacenar el ID en el campo oculto del modal
+    document.getElementById('direccionIdAEliminar').value = id;
+    console.log("📌 ID seleccionado para eliminar:", id);
+    
+    // Mostrar el modal (si no lo estás haciendo con un atributo data-bs-toggle)
+    const modal = new bootstrap.Modal(document.getElementById('eliminarDireccionModal'));
+    modal.show();
 }
 
-// Evento para eliminar la dirección cuando se confirme
-// Evento para eliminar la dirección cuando se confirme
-document.getElementById('confirmarEliminar').addEventListener('click', function () {
-    if (direccionIdAEliminar) {
-        fetch(`/eliminar-direccion/${direccionIdAEliminar}`, { method: 'DELETE' })
-            .then(response => response.json())
-            .then(data => {
-                console.log("📩 Respuesta del servidor:", data);
+// Exponer la función en el ámbito global
+window.confirmarEliminar = confirmarEliminar;
 
-                // Cerrar el modal correctamente
-                document.activeElement.blur(); // Quitar el foco del botón
-                let modalElement = document.getElementById('eliminarDireccionModal');
-                let modalEliminar = bootstrap.Modal.getInstance(modalElement);
-                if (modalEliminar) modalEliminar.hide();
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('confirmarEliminar').addEventListener('click', function () {
+        // Obtener el ID del campo oculto
+        const direccionIdAEliminar = document.getElementById('direccionIdAEliminar').value;
+        
+        if (direccionIdAEliminar) {
+            // Usar comillas invertidas (backticks) correctamente para la URL
+            fetch(`/eliminar-direccion/${direccionIdAEliminar}`, { method: 'DELETE' })
 
-                modalElement.classList.remove('show');
-                document.body.classList.remove('modal-open');
-                document.querySelector('.modal-backdrop')?.remove();
-
-                // Verificar si la operación fue exitosa
-                if (data.success) {
-                    // Mostrar notificación de éxito 
-                    mostrarNotificacion(data.message || 'Dirección eliminada correctamente', 'success');
-                    // Recargar la página después de mostrar la notificación
-                    setTimeout(() => location.reload(), 1500);
-                } else {
-                    // Mostrar notificación de error
-                    mostrarNotificacion(data.error || 'No se puede eliminar la dirección porque tiene pedidos asociados', 'error');
-                }
-            })
-            .catch(error => {
-                console.error("❌ Error al eliminar:", error);
-                
-                // Cerrar el modal incluso si hay un error
-                let modalElement = document.getElementById('eliminarDireccionModal');
-                let modalEliminar = bootstrap.Modal.getInstance(modalElement);
-                if (modalEliminar) modalEliminar.hide();
-                
-                modalElement.classList.remove('show');
-                document.body.classList.remove('modal-open');
-                document.querySelector('.modal-backdrop')?.remove();
-                
-                // Mostrar mensaje de error
-                mostrarNotificacion('Error al procesar la solicitud', 'error');
-            });
-    } else {
-        console.error("⚠️ No hay dirección seleccionada para eliminar.");
-        mostrarNotificacion("No hay dirección seleccionada para eliminar", 'error');
-    }
+                .then(response => response.json())
+                .then(data => {
+                    console.log("📩 Respuesta del servidor:", data);
+    
+                    // Cerrar el modal correctamente
+                    const modalElement = document.getElementById('eliminarDireccionModal');
+                    const modalEliminar = bootstrap.Modal.getInstance(modalElement);
+                    if (modalEliminar) modalEliminar.hide();
+    
+                    // Verificar si la operación fue exitosa
+                    if (data.success) {
+                        // Mostrar notificación de éxito 
+                        mostrarNotificacion(data.message || 'Dirección eliminada correctamente', 'success');
+                        // Recargar la página después de mostrar la notificación
+                        setTimeout(() => location.reload(), 950);
+                    } else {
+                        // Mostrar notificación de error
+                        mostrarNotificacion(data.error || 'Error al eliminar la dirección', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error("❌ Error al eliminar:", error);
+                    
+                    // Cerrar el modal incluso si hay un error
+                    const modalElement = document.getElementById('eliminarDireccionModal');
+                    const modalEliminar = bootstrap.Modal.getInstance(modalElement);
+                    if (modalEliminar) modalEliminar.hide();
+                    
+                    // Mostrar mensaje de error
+                    mostrarNotificacion('Error al procesar la solicitud', 'error');
+                });
+        } else {
+            console.error("⚠️ No hay dirección seleccionada para eliminar.");
+            mostrarNotificacion("No hay dirección seleccionada para eliminar", 'error');
+        }
+    });
 });
+
 function mostrarNotificacion(mensaje, tipo) {
     console.log("Notificación:", mensaje, "Tipo:", tipo); // Debug
 
+    // Crear el elemento de notificación
     const notificacion = document.createElement('div');
     notificacion.className = `notificacion ${tipo}`;
     notificacion.textContent = mensaje;
 
+    // Añadir la notificación al cuerpo del documento
     document.body.appendChild(notificacion);
 
+    // Mostrar la notificación después de un breve retraso
     setTimeout(() => {
         console.log("Mostrando notificación en pantalla...");
         notificacion.classList.add('mostrar');
     }, 100);
 
+    // Ocultar y eliminar la notificación después de 3 segundos
     setTimeout(() => {
         console.log("Ocultando notificación...");
         notificacion.classList.remove('mostrar');
+
+        // Eliminar la notificación del DOM después de la animación
         setTimeout(() => {
             console.log("Eliminando notificación del DOM...");
             document.body.removeChild(notificacion);
-        }, 300);
-    }, 3000);
+        }, 300); // Tiempo para la animación de desvanecimiento
+    }, 3000); // Tiempo que la notificación permanece visible
 }
-
 // Función para actualizar dirección en la web
 function actualizarDireccionWeb(event) {
     event.preventDefault(); // Evita el envío automático del formulario
@@ -509,11 +525,6 @@ function actualizarDireccionAPI(event) {
 document.getElementById('formEditarDireccion').addEventListener('submit', actualizarDireccionWeb);
 
 document.getElementById('formEditarDireccionAPI').addEventListener('submit', actualizarDireccionAPI);
-
-// Función para confirmar la eliminación de una dirección
-
-// Función para confirmar eliminación y mostrar modal
-// Variable global para almacenar el ID de la dirección a eliminar
 
 
 // Función para actualizar dirección en la web

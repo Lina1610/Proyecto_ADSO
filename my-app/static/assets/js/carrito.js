@@ -24,8 +24,13 @@ function agregarAlCarrito(producto_id, nombre, precio, imagen) {
     const isUserLoggedIn = document.querySelector('.user-info-container') !== null;
     
     if (!isUserLoggedIn) {
-        alert('Debe iniciar sesión para agregar productos al carrito');
-        window.location.href = '/login-cliente'; // Redirigir al login
+        // Mostrar notificación en lugar de alert
+        mostrarNotificacion('Debe iniciar sesión para agregar productos al carrito', 'error');
+        
+        // Retrasar la redirección para que la notificación se muestre
+        setTimeout(() => {
+            window.location.href = '/login-cliente'; // Redirigir al login después de 3 segundos
+        }, 3000); // 3000 ms = 3 segundos
         return;
     }
     
@@ -54,7 +59,7 @@ function agregarAlCarrito(producto_id, nombre, precio, imagen) {
                 }, 500);
             }
         } else {
-            // Solo mostrar notificación para errores
+            // Mostrar notificación para errores
             mostrarNotificacion(data.mensaje, 'error');
         }
     })
@@ -220,16 +225,21 @@ function toggleCarrito() {
 }
 
 function agregarProductoEnModal(producto_id, nombre, precio, imagen) {
-    // Verify if user is logged in
+    // Verificar si el usuario está conectado
     const isUserLoggedIn = document.querySelector('.user-info-container') !== null;
     
     if (!isUserLoggedIn) {
-        alert('Debe iniciar sesión para agregar productos al carrito');
-        window.location.href = '/login-cliente'; // Redirect to login
+        // Mostrar notificación en lugar de alert
+        mostrarNotificacion('Debe iniciar sesión para agregar productos al carrito', 'error');
+        
+        // Retrasar la redirección para que la notificación se muestre
+        setTimeout(() => {
+            window.location.href = '/login-cliente'; // Redirigir al login después de 3 segundos
+        }, 3000); // 3000 ms = 3 segundos
         return;
     }
     
-    // Send the request to the server
+    // Enviar la solicitud al servidor
     fetch('/carrito/agregar', {
         method: 'POST',
         headers: {
@@ -243,20 +253,19 @@ function agregarProductoEnModal(producto_id, nombre, precio, imagen) {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            // Update cart by loading from server instead of just local update
+            // Actualizar carrito cargando desde el servidor
             cargarCarrito();
             
-            // After loading cart from server, update the confirmation modal
+            // Después de cargar el carrito, actualizar el modal de confirmación
             setTimeout(() => {
                 const carritoConfirmacionItems = document.getElementById('carrito-confirmacion-items');
                 if (carritoConfirmacionItems) {
                     carritoConfirmacionItems.innerHTML = generarHTMLCarritoConfirmacion();
                     actualizarTotalConfirmacion();
                 }
-            }, 200); // Small delay to ensure cargarCarrito completes
-            
+            }, 200); // Pequeño retraso para asegurar que cargarCarrito se complete
         } else {
-            // Show notification for errors
+            // Mostrar notificación para errores
             mostrarNotificacion(data.mensaje, 'error');
         }
     })

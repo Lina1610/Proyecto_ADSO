@@ -112,55 +112,39 @@ def cpanelResgisterUserBD():
         print("Método HTTP incorrecto o faltan campos en el formulario.")  # Depuración
         return redirect(url_for('inicio'))
 
-# Actualizar datos de mi perfil
 @app.route("/actualizar-datos-perfil", methods=['POST'])
 def actualizarPerfil():
     if 'conectado' in session:
         respuesta = procesar_update_perfil(request.form)
         if respuesta == 1:
-            flash('Los datos fueron actualizados correctamente.', 'success')
+            return jsonify({"success": True, "message": "Los datos fueron actualizados correctamente."}), 200
         elif respuesta == 0:
-            flash('La contraseña actual es incorrecta.', 'error')
+            return jsonify({"success": False, "error": "La contraseña actual es incorrecta."}), 400
         elif respuesta == 2:
-            flash('Las contraseñas no coinciden.', 'error')
+            return jsonify({"success": False, "error": "Las contraseñas no coinciden."}), 400
         elif respuesta == 3:
-            flash('La contraseña actual es obligatoria.', 'error')
+            return jsonify({"success": False, "error": "La contraseña actual es obligatoria."}), 400
         else:
-            flash('Error al actualizar los datos.', 'error')
-        
-        # Redirigir según el rol del usuario
-        if session.get('rol') == 'cliente':
-            return redirect(url_for('perfil_cliente'))
-        else:
-            return redirect(url_for('perfil'))
+            return jsonify({"success": False, "error": "Error al actualizar los datos."}), 500
     else:
-        flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('inicio'))
+        return jsonify({"success": False, "error": "Primero debes iniciar sesión."}), 401
 
-# Actualizar contraseña
 @app.route("/actualizar-password", methods=['POST'])
 def actualizarPassword():
     if 'conectado' in session:
         respuesta = procesar_update_password(request.form)
         if respuesta == 1:
-            flash('Contraseña actualizada correctamente.', 'success')
+            return jsonify({"success": True, "message": "Contraseña actualizada correctamente."}), 200
         elif respuesta == 0:
-            flash('Contraseña actual incorrecta.', 'error')
+            return jsonify({"success": False, "error": "Contraseña actual incorrecta."}), 400
         elif respuesta == 2:
-            flash('Las contraseñas no coinciden.', 'error')
+            return jsonify({"success": False, "error": "Las contraseñas no coinciden."}), 400
         elif respuesta == 3:
-            flash('Debes ingresar tu contraseña actual.', 'error')
+            return jsonify({"success": False, "error": "Debes ingresar tu contraseña actual."}), 400
         else:
-            flash('Error al actualizar.', 'error')
-        
-        # Redirigir según el rol del usuario
-        if session.get('rol') == 'cliente':
-            return redirect(url_for('perfil_cliente'))
-        else:
-            return redirect(url_for('perfil'))
+            return jsonify({"success": False, "error": "Error al actualizar."}), 500
     else:
-        flash('Inicia sesión primero.', 'error')
-        return redirect(url_for('inicio'))
+        return jsonify({"success": False, "error": "Inicia sesión primero."}), 401
 
 # Perfil del cliente
 @app.route('/cliente-perfil')
