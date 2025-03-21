@@ -158,6 +158,27 @@
       </ul>
     </li>
 
+    <!-- Sección de Copias de Seguridad 
+<li class="menu-item menu-item-submenu {% if request.path in ['/hacer_backup', '/restaurar_backup'] %} active open {% endif %}" data-menu="menu-backup">
+  <a href="javascript:void(0);" class="menu-link menu-toggle">
+    <i class="menu-icon bi bi-database"></i> 
+    <div>Copias de Seguridad</div>
+  </a>
+  <ul class="menu-sub">
+    Opción para crear copia de seguridad 
+    <li class="menu-item {% if request.path == '/hacer_backup' %} active {% endif %}">
+      <a href="{{ url_for('hacer_backup') }}" class="menu-link">
+        <div>Crear Copia de Seguridad</div>
+      </a>
+    </li>
+    Opción para restaurar copia de seguridad 
+    <li class="menu-item {% if request.path == '/restaurar_backup' %} active {% endif %}">
+      <a href="{{ url_for('restaurar_backup') }}" class="menu-link">
+        <div>Restaurar Copia de Seguridad</div>
+      </a>
+    </li>
+  </ul>
+</li>-->
     <!-- Sección de Direcciones -->
     <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-direccion', '/lista-de-direccion'] %} active open {% endif %}" data-menu="menu-direccion">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -179,10 +200,10 @@
     </li>
 
 
-    <!-- Sección de stock -->
+    <!-- Sección de stock 
     <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-stock', '/lista-de-stock'] %} active open {% endif %}" data-menu="menu-stock">
 
-    <!--Sección de Inventario-->
+   
     <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-inventario', '/lista-de-inventario'] %} active open {% endif %}" data-menu="menu-inventario">
 
       <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -202,6 +223,14 @@
         </li>
       </ul>
     </li>
+    -->
+    <!-- 
+    <form action="{{ url_for('hacer_backup') }}" method="POST">
+      <button type="submit" class="menu-link" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; display: flex; align-items: center;">
+          <i class="menu-icon bi bi-database"></i>
+          <div>Hacer Copia de Seguridad</div>
+      </button>
+  </form>-->
 
     <!-- Sección de Mi Perfil -->
     <li class="menu-item {% if request.path == '/mi-perfil' %} active {% endif %}">
