@@ -57,42 +57,22 @@
               <td>{{ backup.fecha_creacion }}</td>
               <td>{{ backup.tamaño }} MB</td>
               <td>
-                <!-- Botón para restaurar -->
                 <a href="{{ url_for('restaurar_backup', nombre_archivo=backup.nombre) }}" 
-                   class="btn btn-warning btn-sm"
-                   title="Restaurar esta copia">
-                   <i class="bi bi-arrow-counterclockwise"></i> Restaurar
-                </a>
-                <!-- Botón para descargar -->
-                <a href="{{ url_for('descargar_backup', nombre_archivo=backup.nombre) }}" 
-                   class="btn btn-success btn-sm"
-                   title="Descargar esta copia">
-                   <i class="bi bi-download"></i> Descargar
+                class="btn btn-warning btn-sm"
+                title="Restaurar esta copia">
+                <i class="bi bi-arrow-counterclockwise"></i> Restaurar
+             </a>
+                <!-- Botón para eliminar -->
+                <a href="{{ url_for('eliminar_backup', nombre_archivo=backup.nombre) }}" 
+                   class="btn btn-danger btn-sm"
+                   title="Eliminar esta copia">
+                   <i class="bi bi-trash"></i> Eliminar
                 </a>
               </td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal de confirmación para restaurar -->
-<div id="confirmModalRestaurar" class="modal fade" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Confirmar Restauración</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        ¿Estás seguro de restaurar esta copia de seguridad? Esto sobrescribirá los datos actuales.
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-warning" id="confirmRestaurarButton">Restaurar</button>
       </div>
     </div>
   </div>

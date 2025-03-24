@@ -158,27 +158,26 @@
       </ul>
     </li>
 
-    <!-- Sección de Copias de Seguridad 
-<li class="menu-item menu-item-submenu {% if request.path in ['/hacer_backup', '/restaurar_backup'] %} active open {% endif %}" data-menu="menu-backup">
-  <a href="javascript:void(0);" class="menu-link menu-toggle">
-    <i class="menu-icon bi bi-database"></i> 
-    <div>Copias de Seguridad</div>
-  </a>
-  <ul class="menu-sub">
-    Opción para crear copia de seguridad 
-    <li class="menu-item {% if request.path == '/hacer_backup' %} active {% endif %}">
-      <a href="{{ url_for('hacer_backup') }}" class="menu-link">
-        <div>Crear Copia de Seguridad</div>
+    <li class="menu-item menu-item-submenu {% if request.path in ['/hacer_backup', '/restaurar_backup'] %} active open {% endif %}" data-menu="menu-backup">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon bi bi-database"></i> 
+        <div>Copias de Seguridad</div>
       </a>
+      <ul class="menu-sub">
+        <!-- Opción para crear copia de seguridad -->
+        <li class="menu-item {% if request.path == '/hacer_backup' %} active {% endif %}">
+          <a href="{{ url_for('hacer_backup') }}" class="menu-link">
+            <div>Crear Copia de Seguridad</div>
+          </a>
+        </li>
+        <!-- Opción para restaurar copia de seguridad -->
+        <li class="menu-item {% if request.path == '/restaurar_backup' %} active {% endif %}">
+          <a href="{{ url_for('lista_backups') }}" class="menu-link">
+            <div>Restaurar Copia de Seguridad</div>
+          </a>
+        </li>
+      </ul>
     </li>
-    Opción para restaurar copia de seguridad 
-    <li class="menu-item {% if request.path == '/restaurar_backup' %} active {% endif %}">
-      <a href="{{ url_for('restaurar_backup') }}" class="menu-link">
-        <div>Restaurar Copia de Seguridad</div>
-      </a>
-    </li>
-  </ul>
-</li>-->
     <!-- Sección de Direcciones -->
     <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-direccion', '/lista-de-direccion'] %} active open {% endif %}" data-menu="menu-direccion">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
