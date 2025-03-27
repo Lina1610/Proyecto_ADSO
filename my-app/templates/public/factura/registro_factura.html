@@ -6,6 +6,11 @@
 <!-- Custom CSS -->
 {% block customCSS %}
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/file.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/footer.css') }}" />
+ <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}" />
+ <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/formularioUsuario.css') }}" />
+ <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
+
 {% endblock %}
 
 <!-- Contenido del body -->
@@ -82,6 +87,8 @@
 
 <!-- Custom JS -->
 {% block customJS %}
+<script src="/static/assets/js/sienna.js"></script>
+<script src="/static/assets/js/custom.js"></script>
 <script>
   // Actualizar el campo oculto users_id cuando se selecciona un pedido
   document.getElementById('pedido_id').addEventListener('change', function() {

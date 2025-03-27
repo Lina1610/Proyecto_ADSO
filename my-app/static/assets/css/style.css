@@ -35,6 +35,42 @@ html {
   display: flex;
   align-items: center;
 }
+/* MEDIA QUERIES PARA RESPONSIVIDAD */
+
+/* Para pantallas más pequeñas (tablets) */
+@media (max-width: 768px) {
+  header {
+      padding: 80px 20px;
+  }
+
+  #animated-text {
+      font-size: 2.5rem;
+  }
+
+  header p {
+      font-size: 1rem;
+  }
+}
+
+/* Para pantallas aún más pequeñas (móviles) */
+@media (max-width: 480px) {
+  header {
+      padding: 60px 15px;
+  }
+
+  #animated-text {
+      font-size: 2rem;
+  }
+
+  header p {
+      font-size: 0.9rem;
+  }
+
+  .btn-1 {
+      padding: 10px 25px;
+      font-size: 14px;
+  }
+}
 /* Menu */
 .menu {
   position: fixed;
@@ -55,8 +91,11 @@ html {
   font-size: 28px;
   font-weight: 700;
   text-transform: uppercase;
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  height: 100%; /* Asegura que ocupe toda la altura del contenedor */
 }
-
 .navbar {
   display: flex;
   gap: 30px;
@@ -113,6 +152,150 @@ html {
   cursor: pointer;
   display: none;
 }
+/* MENÚ HAMBURGUESA FUNCIONAL - SOLO CSS */
+
+/* 1. Estilos del icono hamburguesa (sin modificar HTML) */
+.menu label[for="menu"] {
+  display: none; /* Oculto por defecto */
+  cursor: pointer;
+  padding: 15px;
+  position: relative;
+  z-index: 1001;
+}
+
+/* Crear las 3 líneas del menú usando pseudo-elementos */
+.menu label[for="menu"]::before,
+.menu label[for="menu"]::after,
+.menu label[for="menu"] .hamburger-line {
+  content: '';
+  display: block;
+  width: 25px;
+  height: 3px;
+  background: #FFF;
+  margin: 5px 0;
+  transition: all 0.3s ease;
+}
+
+/* 2. Estilos cuando el menú está abierto */
+#menu:checked ~ .navbar {
+  transform: translateX(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Animación a "X" cuando está activo */
+#menu:checked ~ label[for="menu"]::before {
+  transform: translateY(8px) rotate(45deg);
+}
+
+#menu:checked ~ label[for="menu"]::after {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+#menu:checked ~ label[for="menu"] .hamburger-line {
+  opacity: 0;
+}
+
+/* 3. Estilos responsive del menú */
+@media (max-width: 991px) {
+  /* Mostrar botón hamburguesa */
+  .menu label[for="menu"] {
+    display: block;
+  }
+  
+  /* Ocultar menú inicialmente */
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background: #000000e6;
+    flex-direction: column;
+    padding: 80px 20px 20px;
+    transform: translateX(-100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+  }
+  
+  /* Estilos para los items del menú */
+  .navbar ul {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .navbar ul li {
+    width: 100%;
+  }
+  
+  .navbar ul li a {
+    padding: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: block;
+  }
+  
+  /* Overlay para cerrar al hacer clic fuera */
+  #menu:checked ~ .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    display: block;
+  }
+  
+  /* Ajustar contenido del header */
+  .header-content {
+    padding-top: 80px;
+  }
+  
+  .header-content h1 {
+    font-size: 2.5rem !important;
+  }
+}
+
+/* 3. Estilos responsive del menú */
+@media (max-width: 991px) {
+  /* ... (otros estilos) ... */
+
+  .user-menu-container {
+      flex-direction: column; /* Cambiar a columna */
+      align-items: flex-start; /* Alinear a la izquierda */
+  }
+
+  .user-menu {
+      flex-direction: column; /* Cambiar a columna */
+      align-items: flex-start; /* Alinear a la izquierda */
+  }
+
+  .avatar-name-group {
+      width: 100%; /* Ocupar todo el ancho */
+      margin-bottom: 20px; /* Espacio debajo del nombre */
+  }
+
+  .user-options {
+      flex-direction: column; /* Cambiar a columna */
+      width: 100%; /* Ocupar todo el ancho */
+      border-left: none; /* Eliminar borde izquierdo */
+      padding-left: 0; /* Eliminar padding izquierdo */
+      margin-top: 10px; /* Espacio encima de las opciones */
+  }
+
+  .menu-link {
+      padding: 10px 0; /* Ajustar padding */
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Añadir separador */
+      display: block; /* Asegurar que ocupe todo el ancho */
+  }
+}
+
+
+
+
 
 .header-content{
   text-align: center;
@@ -140,6 +323,7 @@ html {
   color: #F9FAFC;
   text-transform: uppercase;
 }
+
 .coffee{
   padding: 100px 0;
   background-color: #E1E2E6;
@@ -184,6 +368,57 @@ html {
   height: 120px;
   top: 0;
   right: 0;
+}
+
+/* Pantallas pequeñas (móviles, hasta 768px) */
+@media (max-width: 768px) {
+  .coffee {
+    padding: 40px 0;
+  }
+  
+  .coffee-content h2 {
+    font-size: 1.8rem !important;
+    padding: 0 20px;
+  }
+  
+  .txt-p {
+    font-size: 1rem;
+    padding: 0 20px;
+    margin-bottom: 30px;
+  }
+  
+  .coffee-group {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .coffee-1 {
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 0;
+  }
+  
+  .coffee-1 img {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .coffee-1 h3 {
+    font-size: 1.3rem;
+  }
+}
+
+/* Pantallas muy pequeñas (móviles pequeños) */
+@media (max-width: 480px) {
+  .coffee-content h2 {
+    font-size: 1.6rem !important;
+  }
+  
+  .btn-1 {
+    padding: 10px 25px;
+    font-size: 0.9rem;
+  }
 }
 /* Añade estas transiciones al CSS existente */
 [data-aos] {
@@ -265,6 +500,51 @@ html {
   font-size: 1.125rem; /* 18px/16px = 1.125rem */
 }
 
+/* Estilos para pantallas pequeñas (hasta 768px) */
+@media (max-width: 768px) {
+  .services-content h2 {
+    font-size: 1.8rem !important; /* Reducir el tamaño de la fuente */
+    padding: 0 20px; /* Reducir el padding */
+  }
+
+  .services-group {
+    flex-direction: column; /* Cambiar a columna */
+    align-items: center; /* Centrar los elementos */
+  }
+
+  .services-1 {
+    margin-bottom: 30px; /* Añadir margen inferior para separar los elementos */
+    text-align: center; /* Centrar el texto */
+  }
+
+  .services-content p {
+    padding: 0 20px; /* Reducir el padding */
+  }
+}
+
+/* Estilos para pantallas medianas (769px a 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .services-content h2 {
+    font-size: 2rem !important; /* Reducir el tamaño de la fuente */
+    padding: 0 50px; /* Reducir el padding */
+  }
+
+  .services-group {
+    justify-content: space-around; /* Espaciar los elementos */
+  }
+
+  .services-content p {
+    padding: 0 50px; /* Reducir el padding */
+  }
+}
+
+/* Estilos para pantallas grandes (más de 1024px) */
+@media (min-width: 1025px) {
+  .services-group {
+    justify-content: space-between; /* Espaciar los elementos */
+  }
+}
+
 .general {
   display: flex;
   
@@ -306,11 +586,93 @@ p {
   color: #414247;
   margin: 25px 0 45px 0;
 }
+
+/* MEDIA QUERIES PARA RESPONSIVE */
+
+/* Tabletas (768px - 1024px) */
+@media (max-width: 1024px) {
+  .general-1 {
+      padding: 30px; /* Reducir el padding para evitar que el texto se salga */
+  }
+  
+  .general-1 h2 {
+      font-size: 1.8rem; /* Reducir el tamaño del título */
+  }
+  
+  .general-1 p {
+      font-size: 0.95rem; /* Reducir el tamaño del párrafo */
+      max-width: 100%; /* Asegurar que el párrafo no exceda el ancho del contenedor */
+  }
+}
+
+/* Móviles (hasta 767px) */
+@media (max-width: 767px) {
+  .general {
+      flex-direction: column;
+      min-height: auto;
+  }
+  
+  /* Invierte el orden en la segunda sección para móviles */
+  .general:nth-child(2) {
+      flex-direction: column-reverse;
+  }
+  
+  .general-1, .general-2, .general-3 {
+      width: 100%;
+      min-height: 300px;
+  }
+  
+  .general-1 {
+      padding: 30px 20px;
+      text-align: center;
+  }
+  
+  .general-1 h2 {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+  }
+  
+  .general-1 p {
+      font-size: 0.95rem;
+      max-width: 100%;
+  }
+  
+  .general-2, .general-3 {
+      min-height: 250px;
+  }
+}
+
+/* Pantallas muy pequeñas (hasta 480px) */
+@media (max-width: 480px) {
+  .general-1 h2 {
+      font-size: 1.6rem;
+  }
+  
+  .general-1 p {
+      font-size: 0.9rem;
+  }
+}
+
+/* ANIMACIONES AOS */
+[data-aos] {
+  transition: all 0.8s ease;
+}
+
+[data-aos="fade-right"] {
+  transform: translateX(-50px);
+  opacity: 0;
+}
+
+[data-aos].aos-animate {
+  transform: translateX(0);
+  opacity: 1;
+}
+
 /* BLOG MEJORADO */
 .blog {
   padding: 100px 15px; /* Padding lateral para móviles */
-  
 }
+
 /* Contenedor del botón */
 .button-container {
   width: 100%;
@@ -323,6 +685,7 @@ p {
   margin: 0 auto;
   display: inline-block; /* Mantener esto para que funcione text-align */
 }
+
 /* CENTRAR ELEMENTOS DEL BLOG */
 .blog.container {
   text-align: center;
@@ -335,6 +698,8 @@ p {
   width: 100%;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 60px; /* Aumentar el margen inferior del título */
+
 }
 
 .blog > p {
@@ -344,30 +709,78 @@ p {
 
 .blog-content {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 60px;
-  max-width: 1200px;
+  grid-template-columns: repeat(4, 1fr); /* 4 columnas de igual ancho */
+  gap: 40px; /* Reducir el gap para más espacio */
+  max-width: 1700px;
   margin: 0 auto;
 }
 
+/* MEDIA QUERIES */
 
-/* Añade esta regla para forzar una sola fila en pantallas grandes */
-@media (min-width: 1024px) { /* Ajusta el ancho según necesites */
+/* Tabletas (768px - 1024px) */
+@media (max-width: 1024px) {
   .blog-content {
-      grid-template-columns: repeat(4, 1fr); /* 4 columnas de igual ancho */
+      grid-template-columns: repeat(2, 1fr); /* 2 columnas en tabletas */
+      gap: 15px;
+  }
+
+  .blog h2 {
+      font-size: 1.6rem;
+  }
+
+  .blog-1 img,
+  .blog-1 video {
+      height: 160px;
+  }
+
+  .blog-1 h2 {
+      font-size: 1rem;
+  }
+
+  .blog-1 p {
+      font-size: 0.85rem;
   }
 }
 
-/* Responsive para móviles */
-@media (max-width: 768px) {
-  .blog-content {
-      grid-template-columns: 1fr;
+/* Móviles (hasta 767px) */
+@media (max-width: 767px) {
+  .blog {
+      padding: 25px 10px;
   }
-  
+
+  .blog h2 {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+  }
+
+  .blog-content {
+      grid-template-columns: 1fr; /* 1 columna en móviles */
+      max-width: 400px;
+      margin: 0 auto 20px;
+  }
+
   .blog-1 {
-      margin: 0 10px;
+      margin-bottom: 0;
+  }
+
+  .btn-1 {
+      padding: 8px 20px;
+      font-size: 0.85rem;
   }
 }
+
+/* ANIMACIONES */
+[data-aos="fade-down"] {
+  transform: translateY(-30px);
+  opacity: 0;
+  transition: all 0.6s ease;
+}
+
+[data-aos].aos-animate {
+  transform: translateY(0);
+  opacity: 1;
+}
+
 .btn-1 {
   display: inline-block;
   padding: 12px 35px;
@@ -399,7 +812,7 @@ p {
   left: 50%;
   width: 300%;
   height: 300%;
-  background: radial-gradient(circle, rgba(255,255,255,0.4) 10%, transparent 10%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 10%, transparent 10%);
   transition: all 0.6s ease-out;
   transform: translate(-50%, -50%) scale(0);
 }
@@ -409,15 +822,13 @@ p {
   opacity: 0;
 }
 
-
-
 .blog-1 {
   width: 100%;
   background: white;
   border-radius: 15px;
   overflow: hidden;
   transition: transform 0.3s ease;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .blog-1:hover {
@@ -439,32 +850,22 @@ p {
 }
 
 .blog-1 h2 {
-  font-size: 1.5rem; /* Tamaño de fuente */
-  color: #323337; /* Color del texto */
-  margin-bottom: 15px; /* Margen inferior */
-  padding: 0 20px; /* Padding horizontal */
-  text-align: center; /* Alineación del texto */
-  line-height: 1.4; /* Altura de línea */
-  font-weight: 600; /* Grosor de la fuente */
+  font-size: 1.5rem;
+  color: #323337;
+  margin-bottom: 15px;
+  padding: 0 20px;
+  text-align: center;
+  line-height: 1.4;
+  font-weight: 600;
 }
 
 .blog-1 p {
   padding: 0 20px 20px;
   line-height: 1.6;
   color: #555;
-  min-height: 120px; /* Altura uniforme para textos */
+  min-height: 120px;
 }
 
-/* Responsive para móviles */
-@media (max-width: 768px) {
-  .blog-content {
-    grid-template-columns: 1fr;
-  }
-  
-  .blog-1 {
-    margin: 0 10px;
-  }
-}
 .whatsapp-btn {
   position: fixed;
   bottom: 15px; /* Ajusta para que quede bien en la esquina */
@@ -554,8 +955,7 @@ p {
 .whatsapp-btn {
   bottom: 100px !important;
 }
-
-/* Modal de Ayuda */
+/* Modal de Ayuda Mejorado */
 .help-modal {
   display: none;
   position: fixed;
@@ -563,97 +963,9 @@ p {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
-  z-index: 9999;
-}
-
-.help-modal-content {
-  position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  width: 90%;
-  max-width: 500px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-.help-modal-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid #eee;
-}
-
-.help-modal-header h3 {
-  margin: 0;
-  color: #2c3e50;
-  font-size: 1.25rem;
-}
-
-.help-modal-body {
-  padding: 1.5rem;
-}
-
-.user-info {
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.logout-link {
-  color: #e74c3c;
-  font-size: 0.9rem;
-  text-decoration: none;
-}
-
-.help-links {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.help-link {
-  display: flex;
-  align-items: center;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  text-decoration: none;
-  color: #34495e;
-  transition: all 0.3s ease;
-}
-
-.help-link i {
-  margin-right: 1rem;
-  color: #3498db;
-  font-size: 1.2rem;
-}
-
-.help-link:hover {
-  background: #e9ecef;
-  transform: translateX(5px);
-}
-
-.help-modal-footer {
-  padding: 1rem;
-  text-align: center;
-  border-top: 1px solid #eee;
-  color: #7f8c8d;
-  font-size: 0.9rem;
-}
-/* ESTILOS DEL FORMULARIO  */
-/* Estilos modernos para el modal */
-.help-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.6); /* Ligero ajuste en la opacidad */
   z-index: 1000;
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(5px); /* Mayor desenfoque para un look más moderno */
   animation: modalFadeIn 0.3s ease;
 }
 
@@ -662,36 +974,37 @@ p {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: white;
+  background: #fff; /* Blanco puro para mayor claridad */
   width: 90%;
-  max-width: 500px;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  max-width: 550px; /* Ligero aumento en el ancho máximo */
+  border-radius: 20px; /* Bordes más redondeados */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); /* Sombra más definida */
   overflow: hidden;
 }
 
 .help-modal-header {
-  padding: 1.5rem;
-  background: linear-gradient(135deg, #3498db, #2980b9);
+  padding: 2rem; /* Mayor padding para el encabezado */
+  background: linear-gradient(135deg, #4CAF50, #2E7D32); /* Verde para un look fresco */
   color: white;
   position: relative;
 }
 
 .modal-title {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.7rem; /* Tamaño de fuente más grande */
   font-weight: 600;
+  letter-spacing: 0.5px; /* Ligero espaciado entre letras */
 }
 
 .close-modal {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(255,255,255,0.1);
+  top: 1.2rem;
+  right: 1.2rem;
+  background: rgba(255, 255, 255, 0.2); /* Mayor opacidad */
   border: none;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  width: 36px; /* Botón más grande */
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -701,59 +1014,61 @@ p {
 
 .close-modal svg {
   fill: white;
-  width: 18px;
-  height: 18px;
+  width: 20px; /* Icono más grande */
+  height: 20px;
 }
 
 .close-modal:hover {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.3); /* Mayor opacidad al pasar el mouse */
   transform: rotate(90deg);
 }
 
 .help-modal-body {
-  padding: 1.5rem;
-  background: #f8f9fa;
+  padding: 2rem; /* Mayor padding para el cuerpo */
+  background: #f9f9f9; /* Ligero gris para mayor contraste */
 }
 
-.modern-input, .modern-textarea {
+.modern-input,
+.modern-textarea {
   width: 100%;
-  padding: 0.8rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
+  padding: 1rem; /* Mayor padding para los inputs */
+  border: 2px solid #ddd; /* Ligero ajuste en el color del borde */
+  border-radius: 10px; /* Bordes más redondeados */
+  font-size: 1.1rem; /* Tamaño de fuente más grande */
   transition: all 0.3s ease;
+  margin-bottom: 1.5rem; /* Mayor margen inferior */
 }
 
-.modern-input:focus, .modern-textarea:focus {
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
+.modern-input:focus,
+.modern-textarea:focus {
+  border-color: #4CAF50; /* Verde al enfocar */
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2); /* Sombra más definida */
   outline: none;
-}
-
-.custom-select {
-  position: relative;
 }
 
 .custom-select select {
   appearance: none;
   width: 100%;
-  padding: 0.8rem;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233498db'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 0.8rem center/16px 16px;
+  padding: 1rem; /* Mayor padding */
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234CAF50'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 1rem center/18px 18px; /* Icono más grande */
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
 }
 
 .modern-checkbox {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.8rem; /* Mayor espacio entre el checkbox y el texto */
+  margin-bottom: 1.5rem;
 }
 
 .checkmark {
-  width: 20px;
-  height: 20px;
-  border: 2px solid #3498db;
-  border-radius: 4px;
+  width: 24px; /* Checkbox más grande */
+  height: 24px;
+  border: 2px solid #4CAF50;
+  border-radius: 6px;
   position: relative;
 }
 
@@ -764,14 +1079,14 @@ p {
   top: 50%;
   transform: translate(-50%, -50%);
   color: white;
-  font-size: 14px;
+  font-size: 16px;
   opacity: 0;
   transition: opacity 0.2s ease;
 }
 
 .checkbox-container input:checked ~ .checkmark {
-  background: #3498db;
-  border-color: #3498db;
+  background: #4CAF50;
+  border-color: #4CAF50;
 }
 
 .checkbox-container input:checked ~ .checkmark:after {
@@ -780,69 +1095,87 @@ p {
 
 .form-buttons {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem; /* Mayor espacio entre los botones */
   justify-content: flex-end;
-  margin-top: 2rem;
+  margin-top: 2.5rem; /* Mayor margen superior */
 }
 
 .btn-submit {
-  background: #3498db;
+  background: #4CAF50;
   color: white;
-  padding: 0.8rem 2rem;
+  padding: 1rem 2.5rem; /* Botones más grandes */
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 500;
+  font-size: 1.1rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.8rem;
   transition: all 0.3s ease;
 }
 
 .btn-submit:hover {
-  background: #2980b9;
-  transform: translateY(-1px);
+  background: #2E7D32;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .btn-cancel {
   background: #e0e0e0;
   color: #555;
-  padding: 0.8rem 2rem;
+  padding: 1rem 2.5rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 500;
+  font-size: 1.1rem;
   transition: all 0.3s ease;
 }
 
 .btn-cancel:hover {
   background: #d0d0d0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .loading-dots {
   display: none;
-  gap: 0.3rem;
+  gap: 0.5rem;
 }
 
 .loading-dots .dot {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   background: white;
   border-radius: 50%;
   animation: dotPulse 1.4s infinite ease-in-out;
 }
 
-.loading-dots .dot:nth-child(2) { animation-delay: 0.2s; }
-.loading-dots .dot:nth-child(3) { animation-delay: 0.4s; }
+.loading-dots .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dots .dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
 
 @keyframes modalFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+      opacity: 0;
+  }
+  to {
+      opacity: 1;
+  }
 }
 
 @keyframes dotPulse {
-  0%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-4px); }
+  0%,
+  80%,
+  100% {
+      transform: translateY(0);
+  }
+  40% {
+      transform: translateY(-6px);
+  }
 }
-
 /* ESTILOS PARA FOOTER */
 .footer {
   background: #2c3e50;
@@ -983,25 +1316,43 @@ p {
   grid-column: 1 / -1;
 }
 
-/* RESPONSIVE */
+/* MEDIA QUERIES PARA VERSIÓN MÓVIL */
 @media (max-width: 768px) {
-  .footer-container {
-      grid-template-columns: 1fr;
-  }
-  
-  .business-hours {
-      border-left: none;
-      padding-left: 0;
-      padding-top: 2rem;
-      border-top: 1px solid #34495e;
-  }
-  
-  .footer-link {
-      margin: 0.8rem 0;
-  }
-  
   .footer {
-      padding: 3rem 0 1.5rem;
+    padding: 25px 0 10px;
+  }
+  
+  .footer-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  
+  .footer-right {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 20px 0 10px;
+    font-size: 0.8rem;
+  }
+  
+  .footer-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .footer-brand h3 {
+    font-size: 1.1rem;
+  }
+  
+  .social-icons {
+    margin-bottom: 15px;
+  }
+  
+  .footer-bottom {
+    font-size: 0.65rem;
+    padding-top: 10px;
   }
 }
 /* Estilos alineados con el menú */

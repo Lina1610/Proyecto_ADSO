@@ -3,18 +3,18 @@
 {% block title %}Crud con Python 🐍 | Detalles de Entrega{% endblock %}
 
 {% block body %}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/detalles.css') }}" />
 
 {% if entrega %}
-<div class="card" style="border-radius: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); border: none;">
   <div class="row justify-content-center mb-2">
     <div class="col-md-12">
-      <h3 class="text-center mt-5 mb-4" style="color: #34495e; font-weight: bold;">
-        <a href="/lista-de-entregas" style="color: #34495e; text-decoration: none; transition: color 0.3s;">
+      <h3 class="text-center mt-5 mb-4" >
+        <a href="/lista-de-entregas">
           <i class="bi bi-arrow-left-circle" style="font-size: 1.5rem;"></i>
         </a>
         DETALLES DE LA ENTREGA
       </h3>
-      <hr style="border-top: 2px solid #34495e; opacity: 0.7;" />
+      <hr />
     </div>
   </div>
 
@@ -22,8 +22,8 @@
     <div class="col-md-10">
       <div class="card-body">
         <!-- Tarjeta de Información General -->
-        <div class="card mb-4" style="border: none; background-color: #f8f9fa; border-radius: 10px;">
-          <div class="card-header" style="background-color: #2c3e50; color: white; font-weight: bold; border-radius: 10px 10px 0 0;">
+        <div class="card mb-4" >
+          <div class="card-header" >
             <i class="bi bi-info-circle me-2"></i>Información General
           </div>
           <div class="card-body">
@@ -31,28 +31,28 @@
               <!-- Columna 1 -->
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
+                  <label class="form-label" >
                     <i class="bi bi-truck me-2"></i>Tipo de Entrega
                   </label>
-                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.tipo }}</p>
+                  <p>{{ entrega.tipo }}</p>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
+                  <label class="form-label">
                     <i class="bi bi-calendar-event me-2"></i>Fecha y Hora
                   </label>
-                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.fecha_hora }}</p>
+                  <p>{{ entrega.fecha_hora }}</p>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
+                  <label class="form-label">
                     <i class="bi bi-clipboard-check me-2"></i>Estado de la Entrega
                   </label>
-                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.estado }}</p>
+                  <p >{{ entrega.estado }}</p>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
+                  <label class="form-label">
                     <i class="bi bi-cash-coin me-2"></i>Costo de Domicilio
                   </label>
-                  <p style="font-size: 0.95rem; color: #495057;">
+                  <p >
                     {% if entrega.costo_domicilio is not none %}
                       $ {{ '{:,.0f}'.format(entrega.costo_domicilio).replace(',', '.') }}
                     {% else %}
@@ -65,40 +65,40 @@
               <!-- Columna 2 -->
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
+                  <label class="form-label">
                     <i class="bi bi-person me-2"></i>Usuario
                   </label>
-                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.nombre_usuario }}</p>
+                  <p>{{ entrega.nombre_usuario }}</p>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
+                  <label class="form-label">
                     <i class="bi bi-person me-2"></i>Nombre Completo
                   </label>
-                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.nombre_completo }}</p>
+                  <p>{{ entrega.nombre_completo }}</p>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
+                  <label class="form-label">
                     <i class="bi bi-telephone me-2"></i>Teléfono
                   </label>
-                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.telefono }}</p>
+                  <p>{{ entrega.telefono }}</p>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
+                  <label class="form-label">
                     <i class="bi bi-geo-alt me-2"></i>Domicilio
                   </label>
-                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.domicilio }}</p>
+                  <p >{{ entrega.domicilio }}</p>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
+                  <label class="form-label">
                     <i class="bi bi-building me-2"></i>Municipio
                   </label>
-                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.municipio }}</p>
+                  <p>{{ entrega.municipio }}</p>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label" style="font-weight: bold; font-size: 1rem; color: #2c3e50;">
+                  <label class="form-label">
                     <i class="bi bi-globe me-2"></i>Departamento
                   </label>
-                  <p style="font-size: 0.95rem; color: #495057;">{{ entrega.departamento }}</p>
+                  <p>{{ entrega.departamento }}</p>
                 </div>
               </div>
             </div>

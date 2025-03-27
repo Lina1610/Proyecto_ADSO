@@ -5,6 +5,9 @@
 
 <!-- Inicio del block -->
 {% block body %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/detalles.css') }}" />
+
 <!---->
 {% if direccion %}
 <div class="card" style="border-radius: 0px !important">

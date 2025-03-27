@@ -22,21 +22,146 @@ img{
   align-items: center;
   background-color: #eff3f4;
   padding: 130px 0 0 0;
+  z-index: 1000;
 }
-/* Estilos del menú */
+/* ========== HEADER CONTENT ========== */
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 40px 0;
+  gap: 30px; /* Espacio controlado entre texto e imagen */
+}
+
+.header-txt {
+  flex: 1;
+  max-width: 600px;
+}
+
+.header-txt span {
+  font-size: 1.5rem;
+  color: #CE967B;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.header-txt h2 {
+  font-size: 3rem;
+  color: white;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.header-txt p {
+  color: #FFFDFC;
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.header-img {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Alineación arriba */
+  margin-top: -20px; /* Levanta la imagen */
+}
+
+.header-img img {
+  max-width: 150%;
+  height: auto;
+  max-height: 700px; /* Altura reducida */
+  object-fit: contain;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+
+/* ========== MEDIA QUERIES ========== */
+
+/* Tabletas (768px - 992px) */
+@media (max-width: 992px) {
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+    padding: 30px 0;
+    gap: 20px; /* Espacio reducido */
+  }
+  
+  .header-txt {
+    margin-bottom: 20px; /* Menos espacio abajo */
+  }
+  
+  .header-img {
+    margin-top: 0;
+    align-items: center;
+  }
+  
+  .header-img img {
+    max-height: 350px;
+  }
+}
+
+/* Móviles grandes (576px - 768px) */
+@media (max-width: 768px) {
+  .header-content {
+    gap: 15px; /* Espacio mínimo */
+    padding: 20px 0;
+  }
+  
+  .header-img img {
+    max-height: 300px;
+  }
+}
+
+/* Móviles pequeños (hasta 576px) */
+@media (max-width: 576px) {
+  .header-content {
+    padding: 15px 0;
+  }
+  
+  .header-img img {
+    max-height: 250px;
+    margin-top: 10px; /* Ajuste fino para móviles */
+  }
+}
+
+/* MENÚ HAMBURGUESA - LADO DERECHO */
 .menu {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 10px 5% !important; /* Reducción vertical */
-  background: rgba(0, 0, 0, 0.85) !important; /* Negro con 85% opacidad */
-  transition: all 0.3s ease;
-  z-index: 1000;
+  align-items: center;
+  padding: 15px 5%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 1000; /* Already set, but confirming */
 }
+/* Icono hamburguesa - lado derecho */
+.menu-toggle {
+  order: 2; /* Mueve el toggle al final (derecha) */
+  display: none; /* Oculto en desktop */
+  cursor: pointer;
+  z-index: 1001;
+}
+/* Estilos de las líneas del menú */
+.hamburger-line {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background: #FFF;
+  margin: 5px 0;
+  transition: all 0.3s ease;
+}
+
 .menu-content {
   display: flex;
   justify-content: space-between;
@@ -44,13 +169,7 @@ img{
   width: 100%;
   padding: 15px 50px; /* Padding horizontal para el contenido */
 }
-/* Logo */
-.logo {
-  font-size: 24px;
-  font-weight: bold;
-  color: white;
-  text-decoration: none;
-}
+
 /* MENÚ EN SCROLL - MANTENER CONTRASTE */
 .menu.scrolled {
   background: rgba(0,0,0,0.95) !important; /* Negro con transparencia mínima */
@@ -64,14 +183,10 @@ img{
   display: flex;
   justify-content: flex-end; /* Alinear a la derecha */
 }
-
-/* --- Lista de elementos --- */
 .navbar ul {
   display: flex;
-  gap: 40px; /* Espacio aumentado entre elementos */
+  gap: 25px;
   align-items: center;
-  margin: 0;
-  padding: 0;
 }
 
 /* --- Elementos individuales --- */
@@ -144,11 +259,6 @@ img{
   gap: 10px;
 }
 
-
-
-
-
-
 /* Estado al hacer scroll */
 .menu.scrolled {
   background: #000000eb;
@@ -180,85 +290,232 @@ img{
     padding: 0 20px;
 }
 
-/* Ajuste para el contenido debajo del menú */
-body {
+
+/* MENÚ HAMBURGUESA FUNCIONAL - SOLO CSS */
+
+/* Estilos del icono hamburguesa */
+.menu label[for="menu"] {
+  display: none; /* Hidden by default on desktop */
+  cursor: pointer;
+  padding: 15px;
+  z-index: 1002; /* Higher than the .menu z-index (1000) */
+  position: absolute; /* Use absolute positioning to place it above the menu */
+  right: 20px;
+  top: 15px; /* Adjust this to align vertically with your menu bar */
+}
+
+/* Crear las 3 líneas del menú usando pseudo-elementos */
+.menu label[for="menu"]::before,
+.menu label[for="menu"]::after,
+.menu label[for="menu"] .hamburger-line {
+  content: '';
+  display: block;
+  width: 25px;
+  height: 3px;
+  background: #FFF;
+  margin: 5px 0;
+  transition: all 0.3s ease;
+}
+
+/* Estilos cuando el menú está abierto */
+#menu:checked ~ .navbar {
+  transform: translateX(0);
+  opacity: 1;
+  visibility: visible;
+  right: 0; /* Desliza desde la derecha */
+
+}
+
+/* Animación a "X" cuando está activo */
+#menu:checked ~ label[for="menu"]::before {
+  transform: translateY(8px) rotate(45deg);
+}
+
+#menu:checked ~ label[for="menu"]::after {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+#menu:checked ~ label[for="menu"] .hamburger-line {
+  opacity: 0;
+}
+
+/* Media Query para pantallas de hasta 991px (tablets y móviles) */
+@media (max-width: 991px) {
+  .menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 5% !important;
+    background: rgba(0, 0, 0, 0.85) !important;
+    z-index: 1000;
+  }
+   /* Mover el botón hamburguesa al lado derecho */
+   .menu label[for="menu"] {
+    display: block;
+    position: absolute; /* Posición absoluta relativa al .menu */
+    right: 20px;
+    top: 15px; /* Ajusta este valor para alinearlo verticalmente en el menú */
+    z-index: 1002; /* Asegura que esté por encima del menú (z-index: 1000) */
+  }
+  
+  /* Mover el menú desde la izquierda a la derecha */
+  .navbar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background: #000000e6;
+    flex-direction: column;
+    padding: 80px 20px 20px;
+    transform: translateX(100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1001; /* Slightly higher than the menu bar, but below the hamburger icon */
+  }
+
+  /* El logo se ajusta */
+  .logo-corner {
+    position: static;
+    display: flex;
+    align-items: center;
+  }
+
+  .logo-corner img {
+    height: 40px;
+    width: auto;
+    filter: brightness(0) invert(1);
+  }
+
+  /* El menú se desplaza desde la derecha */
+  /* Ajustar el contenedor del menú */
+  .navbar {
+    position: fixed;
+    top: 0;
+    right: 0; /* Asegura que el menú se deslice desde la derecha */
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background: #000000e6;
+    flex-direction: column;
+    padding: 20px; /* Reducimos el padding superior para que los elementos queden más arriba */
+    transform: translateX(100%); /* Desliza desde la derecha */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    display: flex; /* Usamos flex para alinear los elementos */
+    justify-content: flex-start; /* Alinea los elementos al inicio (arriba) */
+  }
+
+  /* Estilos para los enlaces del menú */
+  .navbar ul li a:hover {
+    background-color: rgba(206, 150, 123, 0.2);
+  }
+
+  .navbar ul {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 30px;
+    width: 100%;
+  }
+
+  .navbar ul li {
+    width: 100%;
+  }
+
+  .navbar ul li a {
+    display: block;
+    padding: 12px 15px;
+    width: 100%;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background-color 0.3s ease;
+  }
+
+  /* Mostrar el menú al hacer clic en el icono hamburguesa */
+  #menu:checked ~ .navbar {
+    transform: translateX(0); /* Se desplaza a la vista */
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Overlay para cerrar el menú al hacer clic fuera */
+  #menu:checked ~ .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: block;
+  }
+
+  /* Ajustes para el contenido del header */
+  .header-content {
     padding-top: 80px;
-}
+  }
 
-/* Color de los elementos del menú */
-.logo {
-    color: #fff !important;
-    font-size: 28px;
-    font-weight: 700;
-}
+  .header-content h1 {
+    font-size: 2.5rem !important;
+  }
 
-.nav-link {
+  /* Estilos responsive para el menú de usuario */
+  .user-menu-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .user-menu {
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .avatar-name-group {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .user-options {
+    flex-direction: column;
+    border-left: none;
+    padding-left: 0;
+    gap: 15px;
+  }
+
+  .menu-link {
+    display: block;
+    width: 100%;
+    padding: 10px 15px;
+  }
+
+  /* Ajuste para el contenido debajo del menú */
+  body {
+    padding-top: 80px;
+  }
+
+  .nav-link {
     color: #fff !important;
     font-size: 16px;
     padding: 10px 20px !important;
     transition: all 0.3s ease;
-}
+  }
 
-.nav-link:hover {
+  .nav-link:hover {
     color: #CE967B !important;
     transform: translateY(-2px);
+  }
 }
 
-/* Versión móvil */
-@media (max-width: 992px) {
-    .menu-fixed {
-        padding: 10px 0;
-    }
-    
-    .navbar {
-        position: fixed;
-        top: 70px;
-        left: -100%;
-        width: 100%;
-        height: calc(100vh - 70px);
-        background: #000;
-        transition: 0.3s;
-        padding: 20px;
-    }
-    
-    .navbar.active {
-        left: 0;
-    }
-    
-    .nav-item {
-        margin: 15px 0;
-    }
-    
-    .menu-toggle {
-        display: block !important;
-        color: #fff;
-        font-size: 24px;
-        cursor: pointer;
-    }
-}
 
-/* ALINEACIÓN PERFECTA DEL MENÚ */
-
-.navbar ul {
-  display: flex;
-  gap: 25px;
-  align-items: center;
-}
-.nav-item {
-  display: flex;
-  align-items: center;
-  position: relative;
-  height: 60px; /* Altura igual a la barra de navegación */
-  padding: 0 15px;
-  transition: all 0.3s ease;
-}
-
-.nav-link {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  padding: 0 10px !important;
-}
 
 /* Contenedor usuario y carrito */
 .user-container {
@@ -331,102 +588,14 @@ body {
   background: rgba(206, 150, 123, 0.1);
 }
 
-/* Versión móvil */
-@media (max-width: 992px) {
-  .navbar ul {
-      flex-direction: column;
-      height: auto;
-      padding: 15px 0;
-  }
-  
-  .nav-item {
-      height: auto;
-      width: 100%;
-      padding: 12px 20px;
-  }
-  
-  .user-container {
-      flex-direction: column;
-      gap: 15px;
-      width: 100%;
-      padding: 15px 0;
-  }
-  
-  .carrito-icono {
-      justify-content: center;
-      margin-left: 0;
-      padding: 15px 0;
-  }
-  
-  .user-options {
-      flex-direction: column;
-      width: 100%;
-      margin-left: 0;
-  }
-  
-  .user-options .btn {
-      width: 100%;
-      justify-content: center;
-  }
-}
-
-/* Scroll styles */
-.menu.scrolled {
-  height: 70px;
-}
-
-.menu.scrolled .nav-item {
-  height: 70px;
-}
-
-.menu.scrolled .badge {
-  top: 10px;
-}
 
 
 
-.menu.scrolled .navbar ul li a:hover {
-  color: #CE967B !important;
-}
-.logo{
-  font-size: 25px;
-  color: #CE967B;
-  text-transform: uppercase;
-  font-weight: 800;
-
-}
-.menu .navbar ul li{
-  position: relative;
-  float: left;
-
-}
-.menu .navbar ul li a{
-  font-size: 18px;
-  padding: 20px;
-  color: #111419;
-  display: block;
-}
-.menu .navbar ul li a:hover{
-  color: #CE967B
-  
-}
 #menu{
   display: none;
 }
-.menu-icon{
-  width: 25px;
-}
-.menu label{
-  cursor: pointer;
-  display: none;
-}
 
-.header-content{
-  display:flex;
-  justify-content: space-between;
-  align-items: center;
-  
-}
+
 .header-txt{
   flex-basis: 50%;
   margin-right: 25%;
@@ -510,7 +679,33 @@ span{
     position: relative;
   }
 
+/* Estilo para el logo en esquina */
+.logo-corner {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1000;
+}
 
+.logo-corner img {
+  height: 40px; /* Tamaño reducido */
+  width: auto;
+  filter: brightness(0) invert(1); /* Hace el logo blanco */
+  transition: all 0.3s ease;
+}
+
+/* Efecto hover opcional */
+.logo-corner img:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+/* Versión responsive */
+@media (max-width: 768px) {
+  .logo-corner img {
+      height: 30px; /* Más pequeño en móviles */
+  }
+}
 /* Línea para Cerrar Sesión */
 .user-options .logout:hover::after {
   content: '';
@@ -550,86 +745,95 @@ span{
   text-decoration: none;
 }
 
-/* ESTILOS MEJORADOS PARA PRODUCTOS */
+/* ========== CONTENEDOR PRINCIPAL ========== */
 .producto-container {
-  background: white !important; /* Fondo blanco sólido */
-  padding: 4rem 0;
+  background: white;
+  padding: 4rem 1rem;
+  margin-top: 3rem;
   border-radius: 30px;
-  margin-top: 3rem !important;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.05); /* Sombra suave para profundidad */
+  box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+  
 }
+
+/* Título de sección */
 .producto-container h2 {
   font-family: 'Montserrat', sans-serif;
-  font-size: 2.8rem !important; /* Tamaño aumentado */
-  font-weight: 800 !important;
+  font-size: 2.2rem;
+  font-weight: 800;
   color: #2c3e50;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 3rem;
   position: relative;
   padding-bottom: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-top: -1.5rem !important; /* Sube el título */
-  margin-bottom: 3rem !important;
-  animation: titleFloat 3s ease-in-out infinite;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
-@keyframes titleFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
+
 .producto-container h2::after {
   content: '';
   position: absolute;
-  bottom: -5px;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 120px;
   height: 4px;
   background: linear-gradient(90deg, #CE967B 0%, #9BCE21 100%);
   border-radius: 2px;
-  animation: linePulse 2s ease-in-out infinite;
-}
-@keyframes linePulse {
-  0%, 100% { width: 120px; }
-  50% { width: 140px; }
 }
 
+/* Contenedor de tarjetas */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+/* Tarjetas de producto */
 .producto-card {
-  border: none !important;
-  border-radius: 20px !important;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  background: rgba(255, 255, 255, 0.9) !important;
-  backdrop-filter: blur(10px);
+  flex: 1 1 300px;
+  max-width: 350px;
+  border: none;
+  border-radius: 20px;
   overflow: hidden;
-  position: relative;
+  transition: all 0.3s ease;
+  background: white;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  margin-bottom: 1.5rem;
 }
 
 .producto-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
 }
 
+/* Imagen del producto */
 .producto-card .card-img-top {
-  height: 250px;
+  width: 100%;
+  height: 220px;
   object-fit: cover;
   transition: all 0.3s ease;
-  border-radius: 20px 20px 0 0;
 }
 
 .producto-card:hover .card-img-top {
   transform: scale(1.05);
 }
 
+/* Cuerpo de la tarjeta */
 .card-body {
-  padding: 1.5rem !important;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 220px);
 }
 
 .card-title {
-  font-size: 1.4rem !important;
-  font-weight: 700 !important;
-  color: #2c3e50 !important;
-  margin-bottom: 1rem !important;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.8rem;
   position: relative;
-  padding-left: 20px;
+  padding-left: 15px;
 }
 
 .card-title::before {
@@ -638,89 +842,117 @@ span{
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 8px;
+  width: 6px;
   height: 80%;
   background: #CE967B;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .card-text {
-  color: #7f8c8d !important;
+  color: #7f8c8d;
   line-height: 1.6;
-  min-height: 60px;
+  margin-bottom: 1.2rem;
+  flex-grow: 1;
 }
 
+/* Precio */
 .card-text strong {
   color: #2c3e50;
+  font-size: 1.1rem;
 }
 
+/* Botón */
 .btn-agregar-carrito {
-  background: linear-gradient(135deg, #CE967B 0%, #9BCE21 100%) !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 15px !important;
-  padding: 12px 25px !important;
-  font-weight: 600 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 1px !important;
-  transition: all 0.3s ease !important;
-  position: relative !important;
-  overflow: hidden !important;
-  width: 100% !important;
-  box-shadow: 0 4px 15px rgba(206, 150, 123, 0.3) !important;
+  background: linear-gradient(135deg, #CE967B 0%, #9BCE21 100%);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  padding: 12px 20px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  width: 100%;
+  cursor: pointer;
 }
 
 .btn-agregar-carrito:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 20px rgba(206, 150, 123, 0.4) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(206, 150, 123, 0.4);
 }
 
-.btn-agregar-carrito::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: rgba(255,255,255,0.1);
-  transform: rotate(45deg);
-  transition: all 0.5s;
+/* ========== MEDIA QUERIES ========== */
+
+/* Tabletas medianas (768px - 992px) */
+@media (max-width: 992px) {
+  .producto-container {
+    padding: 3rem 1rem;
+  }
+  
+  .producto-container h2 {
+    font-size: 2rem;
+  }
+  
+  .row {
+    gap: 1.5rem;
+  }
+  
+  .producto-card {
+    flex: 1 1 280px;
+  }
 }
 
-.btn-agregar-carrito:hover::after {
-  left: 120%;
+/* Tabletas pequeñas (576px - 768px) */
+@media (max-width: 768px) {
+  .producto-container {
+    padding: 2.5rem 1rem;
+    margin-top: 2rem;
+    border-radius: 20px;
+  }
+  
+  .producto-container h2 {
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+  
+  .producto-card {
+    flex: 1 1 250px;
+  }
+  
+  .producto-card .card-img-top {
+    height: 200px;
+  }
 }
 
-
-
-
-
-
-/* Efecto de borde animado */
-.producto-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 20px;
-  padding: 2px;
-  background: linear-gradient(45deg, #CE967B, #9BCE21);
-  -webkit-mask: 
-      linear-gradient(#fff 0 0) content-box, 
-      linear-gradient(#fff 0 0);
-  mask: 
-      linear-gradient(#fff 0 0) content-box, 
-      linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.producto-card:hover::before {
-  opacity: 1;
+/* Móviles (hasta 576px) */
+@media (max-width: 576px) {
+  .producto-container {
+    padding: 2rem 1rem;
+    border-radius: 15px;
+  }
+  
+  .producto-container h2 {
+    font-size: 1.6rem;
+    letter-spacing: 1px;
+  }
+  
+  .producto-container h2::after {
+    width: 100px;
+  }
+  
+  .row {
+    gap: 1rem;
+  }
+  
+  .producto-card {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+  
+  .btn-agregar-carrito {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
 }
 
   /* Responsive */
@@ -925,25 +1157,43 @@ span{
   grid-column: 1 / -1;
 }
 
-/* RESPONSIVE */
+/* MEDIA QUERIES PARA VERSIÓN MÓVIL */
 @media (max-width: 768px) {
-  .footer-container {
-      grid-template-columns: 1fr;
-  }
-  
-  .business-hours {
-      border-left: none;
-      padding-left: 0;
-      padding-top: 2rem;
-      border-top: 1px solid #34495e;
-  }
-  
-  .footer-link {
-      margin: 0.8rem 0;
-  }
-  
   .footer {
-      padding: 3rem 0 1.5rem;
+    padding: 25px 0 10px;
+  }
+  
+  .footer-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  
+  .footer-right {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding: 20px 0 10px;
+    font-size: 0.8rem;
+  }
+  
+  .footer-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .footer-brand h3 {
+    font-size: 1.1rem;
+  }
+  
+  .social-icons {
+    margin-bottom: 15px;
+  }
+  
+  .footer-bottom {
+    font-size: 0.65rem;
+    padding-top: 10px;
   }
 }
 /* Botón de WhatsApp - Versión corregida */
