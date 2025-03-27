@@ -64,71 +64,23 @@ def lista_backups():
     return render_template('public/backup/lista_backup.html', backups=backups)
 
 # Ruta para restaurar una copia de seguridad
+from utils.backup_manager import ejecutar_restauracion
+
 @app.route('/restaurar_backup/<nombre_archivo>')
-def restaurar_backup(nombre_archivo):
+def restaurar_backup_route(nombre_archivo):
     backup_dir = os.path.join(os.getcwd(), 'backups')
     ruta_backup = os.path.join(backup_dir, nombre_archivo)
     
-    try:
-        # Leer el contenido del archivo de backup
-        with open(ruta_backup, 'r', encoding='utf-8') as archivo:
-            sql_script = archivo.read()
-        
-        # Verificar si el contenido es válido
-        if not sql_script.strip():
-            flash("El archivo de backup está vacío.", "danger")
-            return redirect(url_for('lista_backups'))
-        
-        # Conectar a la base de datos
-        conexion = pymysql.connect(
-            host=os.getenv('DB_HOST'),
-            user=os.getenv('DB_USER'),
-            password=os.getenv('DB_PASSWORD'),
-            database=os.getenv('DB_NAME')
-        )
-        
-        with conexion.cursor() as cursor:
-            # 1. Desactivar temporalmente las restricciones de clave foránea
-            cursor.execute("SET FOREIGN_KEY_CHECKS = 0")
-            
-            # 2. Obtener todas las tablas de la base de datos
-            cursor.execute("SHOW TABLES")
-            tablas = [tabla[0] for tabla in cursor.fetchall()]
-            
-            # 3. Vaciar todas las tablas existentes
-            for tabla in tablas:
-                try:
-                    cursor.execute(f"TRUNCATE TABLE {tabla}")
-                    print(f"Tabla {tabla} vaciada correctamente")
-                except pymysql.Error as e:
-                    print(f"Error al vaciar la tabla {tabla}: {str(e)}")
-            
-            # 4. Ejecutar sentencias del backup
-            for sentencia in sql_script.split(';'):
-                sentencia = sentencia.strip()
-                if sentencia:
-                    try:
-                        if sentencia.upper().startswith("CREATE TABLE"):
-                            # Ignorar sentencias CREATE TABLE
-                            continue
-                        else:
-                            cursor.execute(sentencia)
-                    except pymysql.Error as e:
-                        print(f"Error al ejecutar sentencia: {str(e)}")
-            
-            # 5. Reactivar las restricciones de clave foránea
-            cursor.execute("SET FOREIGN_KEY_CHECKS = 1")
-            
-            conexion.commit()
-        
-        flash(f"Backup {nombre_archivo} restaurado con éxito. La base de datos ha sido restablecida al estado del backup.", "success")
+    if not os.path.exists(ruta_backup):
+        flash(f"Archivo de backup no encontrado: {nombre_archivo}", "danger")
+        return redirect(url_for('lista_backups'))
     
-    except Exception as e:
-        flash(f"Error al restaurar el backup: {str(e)}", "danger")
+    resultado = ejecutar_restauracion(ruta_backup)
     
-    finally:
-        if 'conexion' in locals() and conexion:
-            conexion.close()
+    if resultado['success']:
+        flash(resultado['message'], "success")
+    else:
+        flash(resultado['message'], "danger")
     
     return redirect(url_for('lista_backups'))
 
