@@ -4,14 +4,12 @@ CREATE TABLE `abono` (
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `estado` enum('Abono Pendiente','Abono confirmado') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `monto` decimal(10,0) NOT NULL,
+  `abono_final` decimal(10,0) DEFAULT NULL,
   `pedido_id` bigint unsigned NOT NULL,
-  `abono_final` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_abono_pedido1_idx` (`pedido_id`),
   CONSTRAINT `fk_abono_pedido1` FOREIGN KEY (`pedido_id`) REFERENCES `pedido` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-INSERT INTO `abono` (`id`, `numero_abonos`, `fecha`, `estado`, `monto`, `pedido_id`, `abono_final`) VALUES (1, 'Pago inicial', '2025-03-27 09:49:57', 'Abono Pendiente', 343243, 1, NULL);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `carrito_compras` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -24,7 +22,7 @@ CREATE TABLE `carrito_compras` (
   KEY `fk_carrito_compras_users1_idx` (`users_id`),
   CONSTRAINT `fk_carrito_compras_producto1` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`),
   CONSTRAINT `fk_carrito_compras_users1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `departamento` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -80,10 +78,14 @@ CREATE TABLE `detalle_pedido` (
   KEY `fk_detalle_pedido_producto1_idx` (`producto_id`),
   CONSTRAINT `fk_detalle_pedido_pedido1` FOREIGN KEY (`pedido_id`) REFERENCES `pedido` (`id`),
   CONSTRAINT `fk_detalle_pedido_producto1` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=176 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (18, 2.00, 14.00, 7, 18, 22);
-INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (19, 130.00, 1950.00, 15, 1, 41);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (170, 1200.00, 4800.00, 4, 135, 55);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (171, 800.00, 2400.00, 3, 136, 50);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (172, 1200.00, 3600.00, 3, 137, 55);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (173, 180.00, 540.00, 3, 137, 53);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (174, 123.00, 369.00, 3, 1, 59);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (175, 123.00, 246.00, 2, 2, 59);
 
 CREATE TABLE `direccion` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -107,22 +109,24 @@ CREATE TABLE `direccion` (
   CONSTRAINT `fk_direccion_users1_idx` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `direccion` (`id`, `nombre_completo`, `barrio`, `domicilio`, `referencias`, `telefono`, `estado`, `costo_domicilio`, `users_id`, `municipio_id`, `departamento_id`, `created_at`) VALUES (2, 'david cubides', 'la esprenza', 'casa azul', 'dfgdfg', '23213123', 'Activo', NULL, 10, 147, 2, '2025-03-27 09:47:06');
-INSERT INTO `direccion` (`id`, `nombre_completo`, `barrio`, `domicilio`, `referencias`, `telefono`, `estado`, `costo_domicilio`, `users_id`, `municipio_id`, `departamento_id`, `created_at`) VALUES (3, 'dsfds', 'fsdfsd', 'fsdfsdf', 'sdfs', '546546', 'Activo', 435435, 10, 726, 15, '2025-03-27 09:49:23');
+INSERT INTO `direccion` (`id`, `nombre_completo`, `barrio`, `domicilio`, `referencias`, `telefono`, `estado`, `costo_domicilio`, `users_id`, `municipio_id`, `departamento_id`, `created_at`) VALUES (1, 'perrto', '12', '1212', 'xczczx', '12', 'Activo', 5000, 2, 654, 31, '2025-03-23 22:31:51');
+INSERT INTO `direccion` (`id`, `nombre_completo`, `barrio`, `domicilio`, `referencias`, `telefono`, `estado`, `costo_domicilio`, `users_id`, `municipio_id`, `departamento_id`, `created_at`) VALUES (2, 'totio', '12', '1212', 'xczczx', '12', 'Activo', 0, 2, 481, 12, '2025-03-23 22:35:09');
+INSERT INTO `direccion` (`id`, `nombre_completo`, `barrio`, `domicilio`, `referencias`, `telefono`, `estado`, `costo_domicilio`, `users_id`, `municipio_id`, `departamento_id`, `created_at`) VALUES (3, 'perrto', '12', '1212', 'sdfsdf', '12', 'Activo', NULL, 1, 217, 5, '2025-03-26 19:53:13');
 
 CREATE TABLE `entrega` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `tipo` enum('Domicilio','Presencial') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `fecha_hora` datetime NOT NULL,
+  `fecha_hora` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `estado` enum('Pendiente','En Proceso','En camino','Entregado') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `costo_domicilio` decimal(10,2) DEFAULT NULL,
-  `direccion_id` bigint unsigned NOT NULL,
+  `costo_domicilio` decimal(10,2) NOT NULL,
+  `direccion_id` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_entrega_direccion1_idx` (`direccion_id`),
   CONSTRAINT `fk_entrega_direccion1` FOREIGN KEY (`direccion_id`) REFERENCES `direccion` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`) VALUES (1, 'Domicilio', '2025-03-27 09:47:11', 'Pendiente', 0.00, 2);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`) VALUES (1, 'Domicilio', '2025-03-23 22:31:54', 'Pendiente', 0.00, 1);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`) VALUES (2, 'Domicilio', '2025-03-24 12:49:08', 'Pendiente', 0.00, 2);
 
 CREATE TABLE `factura` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -132,10 +136,7 @@ CREATE TABLE `factura` (
   PRIMARY KEY (`id`),
   KEY `fk_factura_pedido1_idx` (`pedido_id`) USING BTREE,
   CONSTRAINT `fk_factura_pedido1` FOREIGN KEY (`pedido_id`) REFERENCES `pedido` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-INSERT INTO `factura` (`id`, `estado`, `fecha`, `pedido_id`) VALUES (1, 'Pendiente', '2025-03-27 09:49:42', 1);
-INSERT INTO `factura` (`id`, `estado`, `fecha`, `pedido_id`) VALUES (2, 'Pendiente', '2025-03-27 09:49:46', 1);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `metodo_pago` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -1284,11 +1285,11 @@ INSERT INTO `municipio` (`id`, `codigo`, `nombre`, `departamento_id`, `estado`) 
 
 CREATE TABLE `pedido` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `fecha` timestamp NULL DEFAULT NULL,
   `fechaEntrega` date DEFAULT NULL,
   `horaEntrega` time DEFAULT NULL,
   `estado` enum('Pendiente','En Proceso','En camino','Entregado') NOT NULL,
-  `total` decimal(10,0) DEFAULT NULL,
+  `total` decimal(10,2) unsigned NOT NULL,
   `entrega_id` bigint unsigned NOT NULL,
   `users_id` bigint unsigned NOT NULL,
   `producto_id` bigint unsigned NOT NULL,
@@ -1302,9 +1303,10 @@ CREATE TABLE `pedido` (
   CONSTRAINT `fk_pedido_metodo_pago1` FOREIGN KEY (`metodo_pago_id`) REFERENCES `metodo_pago` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_pedido_producto1` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_pedido_users1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (1, '2025-03-27 09:47:11', NULL, NULL, 'Pendiente', 1950, 1, 10, 41, 3);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (1, '2025-03-23 22:31:54', NULL, NULL, 'Pendiente', 369.00, 1, 2, 59, 3);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (2, '2025-03-24 12:49:08', NULL, NULL, 'Pendiente', 246.00, 2, 2, 59, 4);
 
 CREATE TABLE `producto` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -1319,20 +1321,22 @@ CREATE TABLE `producto` (
   `total` decimal(10,2) NOT NULL,
   `imagen` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (22, 0, 'freimar', 'jojass', 2.00, 'Disponible', 2.00, 2, 'lina', 4.00, NULL);
-INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (31, 1, 'tamal agropecuario', 'es un tamal para todos los campesinos', 9500.00, 'Disponible', 23.00, 23, 'doña maria', 218500.00, '/static/assets/img/productos/4544b55d-4415-4b54-887f-cc6940be24cf.jpeg');
-INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (33, 1001, 'Laptop Gamer', 'Laptop de alto rendimiento para juegos', 3500.00, 'Disponible', 1.00, 10, 'ASUS', 35000.00, 'laptop.jpg');
-INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (34, 1002, 'Mouse Inalámbrico', 'Mouse ergonómico con conexión Bluetooth', 45.00, 'Disponible', 1.00, 25, 'Logitech', 1125.00, 'mouse.jpg');
-INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (35, 1003, 'Teclado Mecánico', 'Teclado con switches mecánicos RGB', 120.00, 'Disponible', 1.00, 15, 'Corsair', 1800.00, 'teclado.jpg');
-INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (36, 1004, 'Monitor 24"', 'Monitor Full HD con panel IPS', 220.00, 'Disponible', 1.00, 8, 'LG', 1760.00, 'monitor.jpg');
-INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (37, 1005, 'Silla Gamer', 'Silla ergonómica con soporte lumbar', 280.00, 'Disponible', 1.00, 5, 'Cougar', 1400.00, 'silla.jpg');
-INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (38, 1006, 'Disco SSD 1TB', 'Unidad de estado sólido NVMe de alta velocidad', 150.00, 'Disponible', 1.00, 20, 'Samsung', 3000.00, 'ssd.jpg');
-INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (39, 1007, 'Memoria RAM 16GB', 'Módulo DDR4 de 3200MHz', 80.00, 'Disponible', 1.00, 30, 'Kingston', 2400.00, 'ram.jpg');
-INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (40, 1008, 'Tarjeta Gráfica RTX 3060', 'GPU con 12GB de VRAM', 500.00, 'Disponible', 1.00, 12, 'NVIDIA', 6000.00, 'gpu.jpg');
-INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (41, 1009, 'Fuente de Poder 750W', 'Fuente certificada 80 Plus Gold', 130.00, 'Disponible', 1.00, 10, 'EVGA', 1300.00, 'fuente.jpg');
-INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (42, 1010, 'Gabinete Gaming', 'Gabinete ATX con iluminación RGB', 100.00, 'Disponible', 1.00, 7, 'Cooler Master', 700.00, 'gabinete.jpg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (50, 1004, 'Monitor Samsung', 'Monitor LED 24 pulgadas Full HD', 800.00, 'Disponible', 1.00, 8, 'Samsung', 6400.00, 'imagenes/monitor_samsung.jpg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (53, 1007, 'Memoria RAM 16GB', 'Memoria RAM DDR4 de 16GB 3200MHz', 180.00, 'Disponible', 1.00, 20, 'Corsair', 3600.00, 'imagenes/ram_16gb.jpg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (55, 1009, 'Tablet Samsung', 'Tablet Samsung Galaxy con pantalla de 10 pulgadas', 1200.00, 'Disponible', 1.00, 7, 'Samsung', 8400.00, 'imagenes/tablet_samsung.jpg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (59, 1005, 'vdvd', 'sdfsdf', 123.00, 'Disponible', 123.00, 123, 'sdfsdf', 15129.00, '/static/assets/img/productos/6d1509c6-c0d9-46ea-bbb4-8055c5a060e2.png');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (60, 101, 'Laptop Lenovo', 'Laptop Lenovo 14 pulgadas, 8GB RAM', 2500000.00, 'Disponible', 1.00, 10, 'Lenovo', 25000000.00, 'laptop_lenovo.jpg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (61, 102, 'Mouse Logitech', 'Mouse inalámbrico Logitech', 120000.00, 'Disponible', 1.00, 20, 'Logitech', 2400000.00, 'mouse_logitech.jpg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (62, 103, 'Teclado Mecánico', 'Teclado mecánico retroiluminado', 350000.00, 'No disponible', 1.00, 5, 'Redragon', 1750000.00, 'teclado_mecanico.jpg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (63, 104, 'Monitor Samsung', 'Monitor 24 pulgadas Full HD', 800000.00, 'Disponible', 1.00, 8, 'Samsung', 6400000.00, 'monitor_samsung.jpg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (64, 105, 'Silla Gamer', 'Silla ergonómica para gaming', 1100000.00, 'Disponible', 1.00, 4, 'DXRacer', 4400000.00, 'silla_gamer.jpg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (65, 106, 'Auriculares Sony', 'Auriculares Bluetooth con cancelación de ruido', 600000.00, 'Disponible', 1.00, 12, 'Sony', 7200000.00, 'auriculares_sony.jpg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (66, 107, 'Impresora HP', 'Impresora multifuncional con WiFi', 700000.00, 'No disponible', 1.00, 3, 'HP', 2100000.00, 'impresora_hp.jpg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (67, 108, 'Disco SSD 1TB', 'Unidad de estado sólido 1TB', 450000.00, 'Disponible', 1.00, 15, 'Kingston', 6750000.00, 'ssd_1tb.jpg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (68, 109, 'Tarjeta Gráfica RTX 3060', 'Tarjeta gráfica NVIDIA RTX 3060 12GB', 2500000.00, 'Disponible', 1.00, 2, 'NVIDIA', 5000000.00, 'rtx_3060.jpg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (69, 110, 'Router TP-Link', 'Router WiFi de doble banda', 200000.00, 'Disponible', 1.00, 7, 'TP-Link', 1400000.00, 'router_tplink.jpg');
 
 CREATE TABLE `stock` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -1374,12 +1378,16 @@ CREATE TABLE `users` (
   `estado` enum('activo','inactivo') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `created_user` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (8, 'Cedula ciudadania', 100000008, 'Daniela', 'López', 3108901234, 'daniela.lopez@gmail.com', 'clave222', 'administrador', 'activo', '2025-03-27 09:24:56');
-INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (10, 'Cedula ciudadania', 12, 'Super', 'Admin', 3000000000, 'superadmin@example.com', 'scrypt:32768:8:1$JpfU9KlWknbFdxQV$cb7fd968d75bb81a115c74d7b72b203d7deb254aef3f3343e14525e0ab280400daa16724325d716a76ebf20a68efaab63173d85755a96584d7364ae90d4f28f5', 'superadmin', 'activo', '2025-03-27 09:27:41');
-INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (15, 'Cedula ciudadania', 100000006, 'Elena', 'Fernández', 3206789012, 'elena.fernandez@gmail.com', 'clave987', 'empleado', 'activo', '2025-03-27 09:34:04');
-INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (16, 'Tarjeta identidad', 100000007, 'Ricardo', 'García', 3007890123, 'ricardo.garcia@gmail.com', 'clave111', 'cliente', 'activo', '2025-03-27 09:34:04');
-INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (17, 'Cedula ciudadania', 100000008, 'Daniela', 'López', 3108901234, 'daniela.lopez@gmail.com', 'clave222', 'administrador', 'activo', '2025-03-27 09:34:04');
-INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (18, 'Cedula extranjeria', 100000010, 'Valeria', 'Rodríguez', 3009123456, 'valeria.rodriguez@gmail.com', 'clave444', 'proveedor', 'activo', '2025-03-27 09:34:04');
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (1, 'Cedula ciudadania', 12, 'Super', 'Admin', 3000000000, 'superadmin@example.com', 'scrypt:32768:8:1$cKdN0gZz6kciTzsG$556b37103d43a7d8ff4aa4d0cd5f3585f464ed4f12ef945bcc099efb3de65bd2f2f4adbb3c5643df6cd552970379ddb4ac6d873806c6a6a17af9769f797697b4', 'superadmin', 'activo', '2025-03-23 22:30:39');
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (2, 'Cedula ciudadania', 1048847249, 'lesly', 'mita', 321, 'lesly@gamil.com', 'scrypt:32768:8:1$rEI8fR2epCzHbWwC$5f8364e34bf1a39b7abe01c13b9f964f1e8e246355eeea57e52d63335afcaa99b44fca6f88242de6f76607e16be780f510ae775f297b67d642ce22f3a353d068', 'cliente', 'activo', '2025-03-23 22:31:14');
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (3, 'Cedula ciudadania', 100000001, 'Juan', 'Pérez', 3001234567, 'juan.perez@example.com', '123456', 'cliente', 'activo', '2025-03-27 10:05:30');
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (4, 'Cedula ciudadania', 100000002, 'Maria', 'Gonzalez', 3109876543, 'maria.gonzalez@example.com', '123456', 'proveedor', 'activo', '2025-03-27 10:05:30');
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (5, 'Tarjeta identidad', 100000003, 'Carlos', 'Rodriguez', 3201112233, 'carlos.rodriguez@example.com', '123456', 'empleado', 'activo', '2025-03-27 10:05:30');
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (6, 'Cedula ciudadania', 100000004, 'Ana', 'Martinez', 3014567890, 'ana.martinez@example.com', '123456', 'cliente', 'inactivo', '2025-03-27 10:05:30');
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (7, 'Cedula ciudadania', 100000006, 'Laura', 'Ramirez', 3045678901, 'laura.ramirez@example.com', '123456', 'cliente', 'activo', '2025-03-27 10:05:30');
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (8, 'Tarjeta identidad', 100000007, 'Javier', 'Lopez', 3056789012, 'javier.lopez@example.com', '123456', 'empleado', 'activo', '2025-03-27 10:05:30');
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (9, 'Cedula ciudadania', 100000008, 'Camila', 'Diaz', 3067890123, 'camila.diaz@example.com', '123456', 'proveedor', 'inactivo', '2025-03-27 10:05:30');
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (10, 'Cedula extranjeria', 100000009, 'Sofia', 'Hernandez', 3078901234, 'sofia.hernandez@example.com', '123456', 'cliente', 'activo', '2025-03-27 10:05:30');
 
