@@ -9,7 +9,7 @@ CREATE TABLE `abono` (
   PRIMARY KEY (`id`),
   KEY `fk_abono_pedido1_idx` (`pedido_id`),
   CONSTRAINT `fk_abono_pedido1` FOREIGN KEY (`pedido_id`) REFERENCES `pedido` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `carrito_compras` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -22,7 +22,7 @@ CREATE TABLE `carrito_compras` (
   KEY `fk_carrito_compras_users1_idx` (`users_id`),
   CONSTRAINT `fk_carrito_compras_producto1` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`),
   CONSTRAINT `fk_carrito_compras_users1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=198 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `departamento` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -78,10 +78,12 @@ CREATE TABLE `detalle_pedido` (
   KEY `fk_detalle_pedido_producto1_idx` (`producto_id`),
   CONSTRAINT `fk_detalle_pedido_pedido1` FOREIGN KEY (`pedido_id`) REFERENCES `pedido` (`id`),
   CONSTRAINT `fk_detalle_pedido_producto1` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=172 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=174 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (170, 1200.00, 4800.00, 4, 135, 55);
 INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (171, 800.00, 2400.00, 3, 136, 50);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (172, 1200.00, 3600.00, 3, 137, 55);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (173, 180.00, 540.00, 3, 137, 53);
 
 CREATE TABLE `direccion` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -103,10 +105,7 @@ CREATE TABLE `direccion` (
   CONSTRAINT `fk_direccion_departamento1_idx` FOREIGN KEY (`departamento_id`) REFERENCES `departamento` (`id`),
   CONSTRAINT `fk_direccion_municipio1` FOREIGN KEY (`municipio_id`) REFERENCES `municipio` (`id`),
   CONSTRAINT `fk_direccion_users1_idx` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-INSERT INTO `direccion` (`id`, `nombre_completo`, `barrio`, `domicilio`, `referencias`, `telefono`, `estado`, `costo_domicilio`, `users_id`, `municipio_id`, `departamento_id`, `created_at`) VALUES (43, 'david cubides', 'la esprenza', 'casa azul', '12', '23213123', 'Activo', 0, 44, 148, 2, 2025-03-16 15:24:42);
-INSERT INTO `direccion` (`id`, `nombre_completo`, `barrio`, `domicilio`, `referencias`, `telefono`, `estado`, `costo_domicilio`, `users_id`, `municipio_id`, `departamento_id`, `created_at`) VALUES (110, 'david cubides', 'la esprenza', 'casa azul', 'nada', '12', 'Activo', 5000, 45, 541, 11, 2025-03-18 11:00:31);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `entrega` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -118,10 +117,7 @@ CREATE TABLE `entrega` (
   PRIMARY KEY (`id`),
   KEY `fk_entrega_direccion1_idx` (`direccion_id`),
   CONSTRAINT `fk_entrega_direccion1` FOREIGN KEY (`direccion_id`) REFERENCES `direccion` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=168 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`) VALUES (166, 'Domicilio', 2025-03-18 11:32:42, 'Pendiente', 0.00, 110);
-INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`) VALUES (167, 'Domicilio', 2025-03-18 11:33:40, 'Pendiente', 0.00, 110);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `factura` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -131,7 +127,7 @@ CREATE TABLE `factura` (
   PRIMARY KEY (`id`),
   KEY `fk_factura_pedido1_idx` (`pedido_id`) USING BTREE,
   CONSTRAINT `fk_factura_pedido1` FOREIGN KEY (`pedido_id`) REFERENCES `pedido` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `metodo_pago` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -1298,10 +1294,7 @@ CREATE TABLE `pedido` (
   CONSTRAINT `fk_pedido_metodo_pago1` FOREIGN KEY (`metodo_pago_id`) REFERENCES `metodo_pago` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_pedido_producto1` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_pedido_users1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=137 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (135, 2025-03-18 11:32:42, NULL, NULL, 'Pendiente', 4800.00, 166, 45, 55, 2);
-INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (136, 2025-03-18 11:33:40, NULL, NULL, 'Pendiente', 2400.00, 167, 45, 50, 2);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `producto` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -1316,17 +1309,17 @@ CREATE TABLE `producto` (
   `total` decimal(10,2) NOT NULL,
   `imagen` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (33, 23, '23', '23', 23.00, 'Disponible', 23.00, 23, '23', 529.00, '/static/assets/img/productos/ab9dc33c-c496-404e-a5d0-226b4dd75aab.PNG');
 INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (34, 12, '12', '12', 12.00, 'Disponible', 12.00, 12, '12', 144.00, '/static/assets/img/productos/473e272a-3e86-4ee7-abcf-0a93fa94d2ee.PNG');
-INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (47, 1001, 'Laptop HP', 'Laptop HP con procesador Intel i5 y 8GB RAM', 2500.00, 'Disponible', 1.00, 10, 'HP', 25000.00, 'imagenes/laptop_hp.jpg');
-INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (48, 1002, 'Mouse Logitech', 'Mouse inalámbrico Logitech', 50.00, 'Disponible', 1.00, 30, 'Logitech', 1500.00, 'imagenes/mouse_logitech.jpg');
 INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (49, 1003, 'Teclado mecánico', 'Teclado mecánico RGB con switches azules', 120.00, 'Disponible', 1.00, 15, 'Redragon', 1800.00, 'imagenes/teclado_mecanico.jpg');
 INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (50, 1004, 'Monitor Samsung', 'Monitor LED 24 pulgadas Full HD', 800.00, 'Disponible', 1.00, 8, 'Samsung', 6400.00, 'imagenes/monitor_samsung.jpg');
 INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (53, 1007, 'Memoria RAM 16GB', 'Memoria RAM DDR4 de 16GB 3200MHz', 180.00, 'Disponible', 1.00, 20, 'Corsair', 3600.00, 'imagenes/ram_16gb.jpg');
 INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (54, 1008, 'Silla Gamer', 'Silla ergonómica para gaming con reposabrazos ajustable', 950.00, 'No disponible', 1.00, 3, 'Cougar', 2850.00, 'imagenes/silla_gamer.jpg');
 INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (55, 1009, 'Tablet Samsung', 'Tablet Samsung Galaxy con pantalla de 10 pulgadas', 1200.00, 'Disponible', 1.00, 7, 'Samsung', 8400.00, 'imagenes/tablet_samsung.jpg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (58, 2005, 'vdvd', 'sdfsdf', 123.00, 'Disponible', 123.00, 123, 'sdfsdf', 15129.00, '/static/assets/img/productos/e2302d09-ecf4-4eec-beb3-9e44ff911421.png');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (59, 1005, 'vdvd', 'sdfsdf', 123.00, 'Disponible', 123.00, 123, 'sdfsdf', 15129.00, '/static/assets/img/productos/6d1509c6-c0d9-46ea-bbb4-8055c5a060e2.png');
 
 CREATE TABLE `stock` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -1339,9 +1332,7 @@ CREATE TABLE `stock` (
   KEY `fk_stock_users1_idx` (`users_id`),
   CONSTRAINT `fk_stock_producto1` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_stock_users1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-INSERT INTO `stock` (`id`, `cantidad_disponible`, `fecha_registro`, `producto_id`, `users_id`) VALUES (9, 12, 2025-03-12 18:56:50, 33, 44);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `tbl_empleados` (
   `id_empleado` int NOT NULL AUTO_INCREMENT,
@@ -1355,12 +1346,7 @@ CREATE TABLE `tbl_empleados` (
   `salario_empleado` bigint DEFAULT NULL,
   `fecha_registro` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_empleado`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-INSERT INTO `tbl_empleados` (`id_empleado`, `nombre_empleado`, `apellido_empleado`, `sexo_empleado`, `telefono_empleado`, `email_empleado`, `profesion_empleado`, `foto_empleado`, `salario_empleado`, `fecha_registro`) VALUES (5, 'Brenda', 'Viera', 2, '323543543', 'brenda@gmail.com', 'Dev', '22c055aeec314572a0046ec50b84f21719270dac6ea34c91b8380ac289fff9e5.png', 1200000, 2023-08-23 12:05:34);
-INSERT INTO `tbl_empleados` (`id_empleado`, `nombre_empleado`, `apellido_empleado`, `sexo_empleado`, `telefono_empleado`, `email_empleado`, `profesion_empleado`, `foto_empleado`, `salario_empleado`, `fecha_registro`) VALUES (6, 'Alejandro', 'Torres', 1, '324242342', 'alejandro@gmail.com', 'Tecnico', '7b84aceb56534d27aa2e8b727a245dca9f60156a070a47c491ff2d21da1742e5.png', 2100, 2023-08-23 12:06:13);
-INSERT INTO `tbl_empleados` (`id_empleado`, `nombre_empleado`, `apellido_empleado`, `sexo_empleado`, `telefono_empleado`, `email_empleado`, `profesion_empleado`, `foto_empleado`, `salario_empleado`, `fecha_registro`) VALUES (7, 'Karla', 'Ramos', 2, '345678', 'karla@gmail.com', 'Ingeniera', '248cc9c38cfb494bb2300d7cbf4a3b317522f295338b4639a8e025e6b203291c.png', 2300, 2023-08-23 12:07:28);
-INSERT INTO `tbl_empleados` (`id_empleado`, `nombre_empleado`, `apellido_empleado`, `sexo_empleado`, `telefono_empleado`, `email_empleado`, `profesion_empleado`, `foto_empleado`, `salario_empleado`, `fecha_registro`) VALUES (8, 'hojas', 'Ramos', 2, '345678', 'karla@gmail.com', 'Ingeniera', '248cc9c38cfb494bb2300d7cbf4a3b317522f295338b4639a8e025e6b203291c.png', 2300, 2023-08-23 12:07:28);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `users` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -1375,8 +1361,8 @@ CREATE TABLE `users` (
   `estado` enum('activo','inactivo') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `created_user` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=102 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (44, 'Cedula ciudadania', 1048847249, 'Super ', 'Admin', 3000000000, 'davidcubides05@gmail.com', 'scrypt:32768:8:1$dfn6HmNgxEsDF8J3$beeb029497c1f7b7d8667b4143f0be1593ea47fa20365c95df582aa26a99f9a057d08907791ffe20d4f41c9a58d90ce8ce6503380165f316742ba753b1957da2', 'administrador', 'activo', 2025-03-12 18:55:55);
-INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (45, 'Tarjeta identidad', 12, 'ma', 'mento', 1288, '12@gmail.com', 'scrypt:32768:8:1$cop3a4pZcMBTcafJ$7cd3067f4224964e8566ed2d97d952fea39b1371a7a03ec27b4302fd69a1f0c1d1cb183623e71549c0d5116adf096c11e89633c162a7eaa3a120a9df52e1d56b', 'cliente', 'activo', 2025-03-12 19:01:21);
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (1, 'Cedula ciudadania', 11, 'Super', 'Admin', 3000000000, 'superadmin@example.com', 'scrypt:32768:8:1$wqTiUpdgAIno63R4$6549ab42bfdc01ded55d893087f5cab22244a9e3ea7d5bbf9e31aeff013f48384834356e6c3a72dd0cde046ef34580225958614ca58f59d1c5be7f8fe3e14dbe', 'superadmin', 'activo', 2025-03-23 22:26:41);
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (2, 'Cedula ciudadania', 234234, 'dsfsdfsdf', 'dsafdsf', 2737482, 'lajdklas9823479823@gmail.com', 'scrypt:32768:8:1$RJzEgf4NCsMKQaIm$e3cde162874ac0c061d8164a6a0c1401bf07d5dc26accddd2ddb62865d3644a77178b9eb07b1f9e58192692c59c9f640352264cf4e7e0d1a4c30818e17db73ae', 'cliente', 'inactivo', 2025-03-23 22:27:51);
 
