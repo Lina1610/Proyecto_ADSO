@@ -103,51 +103,71 @@
           class="table table-striped table-bordered"
           cellspacing="0"
           width="100%">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Tipo</th>
-              <th>Estado</th>
-              <th>Costo Domicilio</th>
-              <th>Dirección ID</th>
-              <th>Acción</th>
-            </tr>
-          </thead>
-          <tbody id="tabla_entregas_body">
-            {% for entrega in entregas %}
-            <tr id="entrega_{{ entrega.id }}" class="fila-datos">
-              <td>{{ loop.index }}</td>
-              <td>{{ entrega.tipo }}</td>
-              <td>{{ entrega.estado }}</td>
-              <td>{{ entrega.costo_domicilio }}</td>
-              <td>{{ entrega.direccion_id }}</td>
-              <td width="10px">
-                <a
-                  href="{{ url_for('detalles_entrega', id=entrega.id) }}"
-                  class="btn btn-info btn-sm"
-                  title="Ver detalles">
-                  <i class="bi bi-eye"></i>
-                  Ver detalles
-                </a>
-                <a
-                  href="{{ url_for('viewEditarEntrega', id=entrega.id) }}"
-                  class="btn btn-success btn-sm"
-                  title="Actualizar">
-                  <i class="bi bi-arrow-clockwise"></i>
-                  Actualizar
-                </a>
-                <a
-                  href="#"
-                  onclick="eliminarEntrega('{{ entrega.id }}');"
-                  class="btn btn-danger btn-sm"
-                  title="Eliminar">
-                  <i class="bi bi-trash3"></i>
-                  Eliminar
-                </a>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
+          <!-- En la sección de la tabla, modificar las columnas -->
+           <!-- En la sección de la tabla -->
+<thead>
+  <tr>
+      <th>#</th>
+      <th>Tipo</th>
+      <th>Estado</th>
+      <th>Costo Domicilio</th>
+      <th>Usuario</th>
+      <th>Dirección Completa</th>
+      <th>Municipio/Depto</th>
+      <th width="10px">Acción</th>  <!-- Ancho fijo como en tu versión original -->
+  </tr>
+</thead>
+<tbody id="tabla_entregas_body">
+  {% for entrega in entregas %}
+  <tr id="entrega_{{ entrega.id }}" class="fila-datos">
+      <td>{{ loop.index }}</td>
+      <td>{{ entrega.tipo }}</td>
+      <td>{{ entrega.estado }}</td>  <!-- Sin el badge para mantener el estilo original -->
+      <td>
+          {% if entrega.costo_domicilio %}
+              ${{ "{:,.0f}".format(entrega.costo_domicilio) }}
+          {% else %}
+              N/A
+          {% endif %}
+      </td>
+      <td>{{ entrega.nombre_usuario or 'N/A' }}</td>
+      <td>
+          {% if entrega.direccion_completa %}
+              {{ entrega.direccion_completa }}
+          {% else %}
+              Establecimiento físico
+          {% endif %}
+      </td>
+      <td>
+          {% if entrega.municipio %}
+              {{ entrega.municipio }}, {{ entrega.departamento }}
+          {% else %}
+              N/A
+          {% endif %}
+      </td>
+      <td width="10px">
+          <!-- Botones de acción IDÉNTICOS a tu versión original -->
+          <a href="/detalles-entrega/{{ entrega.id }}" 
+             class="btn btn-info btn-sm" 
+             title="Ver detalles">
+              <i class="bi bi-eye"></i> Ver detalles
+          </a>
+          <a href="/editar-entrega/{{ entrega.id }}" 
+             class="btn btn-success btn-sm" 
+             title="Actualizar">
+              <i class="bi bi-arrow-clockwise"></i> Actualizar
+          </a>
+          <a href="#" 
+             onclick="eliminarEntrega('{{ entrega.id }}');" 
+             class="btn btn-danger btn-sm" 
+             title="Eliminar">
+              <i class="bi bi-trash3"></i> Eliminar
+          </a>
+      </td>
+  </tr>
+  {% endfor %}
+</tbody>
+
         </table>
 
         <!-- Información de paginación -->

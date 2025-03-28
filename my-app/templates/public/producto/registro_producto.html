@@ -4,6 +4,11 @@
 <!---->
 {% block customCSS %}
 <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/file.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/footer.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/formularioUsuario.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
+
 {% endblock %}
 
 <!--Inicio del block-->
@@ -87,6 +92,8 @@
 {% endblock %}
 
 {% block customJS %}
+<script src="/static/assets/js/sienna.js"></script>
+<script src="/static/assets/js/custom.js"></script>
 <script>
   // Función para calcular el total
   function calcularTotal() {

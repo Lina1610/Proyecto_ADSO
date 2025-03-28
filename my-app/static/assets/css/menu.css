@@ -165,4 +165,37 @@
     color: #c48d71;
     font-size: 18px;
   }
+  /* Media query para dispositivos móviles */
+@media (max-width: 768px) {
+    /* Centrar el título */
+    .navbar-left {
+      width: 100%;
+      justify-content: center;
+    }
+  
+    .header-title {
+      font-size: 20px;
+      text-align: center;
+    }
+    
+    /* Eliminar el espacio reservado para navbar-right en móvil */
+    .navbar-right {
+      display: none;
+    }
+  }
+  
+  /* Para tablets, podemos hacer un diseño intermedio si lo necesitas */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .navbar {
+      padding: 15px 20px;
+    }
+    
+    .header-title {
+      font-size: 22px;
+    }
+    
+    .admin-document {
+      display: none; /* Si quieres ocultar solo el número de documento en tablets */
+    }
+  }
   

@@ -3,30 +3,35 @@
 {% block title %}Crud con Python 🐍 | Editar Entrega{% endblock %}
 
 {% block body %}
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/editar.css') }}" />
 
-<div class="card" style="border-radius: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); border: none;">
+
+<div class="card">
   <div class="row justify-content-center mb-2">
     <div class="col-md-12">
-      <h3 class="text-center mt-5 mb-4" style="color: #34495e; font-weight: bold;">
-        <a href="/lista-de-entregas" style="color: #34495e; text-decoration: none; transition: color 0.3s;">
+      <h3 class="text-center mt-5 mb-4" >
+        <a href="/lista-de-entregas" >
           <i class="bi bi-arrow-left-circle" style="font-size: 1.5rem;"></i>
         </a>
         EDITAR ENTREGA
       </h3>
-      <hr style="border-top: 2px solid #34495e; opacity: 0.7;" />
+      <hr />
     </div>
   </div>
 
   <div class="row justify-content-center mb-4">
     <div class="col-md-8">
-      <div class="card-body p-4" style="background-color: #f8f9fa; border-radius: 10px;">
+      <div class="card-body p-4">
         <form action="{{ url_for('viewEditarEntrega', id=entrega.id) }}" method="POST">
+          <!-- Campo hidden para mantener direccion_id -->
+          <input type="hidden" name="direccion_id" value="{{ entrega.direccion_id }}">
+          
           <!-- Campo Tipo de Entrega -->
           <div class="mb-4">
-            <label for="tipo" class="form-label" style="font-weight: 600; color: #2c3e50;">
+            <label for="tipo" class="form-label">
               <i class="bi bi-truck me-2"></i>Tipo de Entrega
             </label>
-            <select class="form-select" id="tipo" name="tipo" required style="border-radius: 8px; border: 1px solid #ced4da;">
+            <select class="form-select" id="tipo" name="tipo" required>
               <option value="Domicilio" {% if entrega.tipo == 'Domicilio' %}selected{% endif %}>Domicilio</option>
               <option value="Presencial" {% if entrega.tipo == 'Presencial' %}selected{% endif %}>Presencial</option>
             </select>
@@ -34,10 +39,10 @@
 
           <!-- Campo Estado de Entrega -->
           <div class="mb-4">
-            <label for="estado" class="form-label" style="font-weight: 600; color: #2c3e50;">
+            <label for="estado" class="form-label">
               <i class="bi bi-info-circle me-2"></i>Estado de la Entrega
             </label>
-            <select class="form-select" id="estado" name="estado" required style="border-radius: 8px; border: 1px solid #ced4da;">
+            <select class="form-select" id="estado" name="estado" required>
               <option value="Pendiente" {% if entrega.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
               <option value="En Proceso" {% if entrega.estado == 'En Proceso' %}selected{% endif %}>En Proceso</option>
               <option value="En camino" {% if entrega.estado == 'En camino' %}selected{% endif %}>En camino</option>
@@ -47,10 +52,12 @@
 
           <!-- Campo Costo de Domicilio -->
           <div class="mb-4">
-            <label for="costo_domicilio" class="form-label" style="font-weight: 600; color: #2c3e50;">
+            <label for="costo_domicilio" class="form-label">
               <i class="bi bi-cash-coin me-2"></i>Costo de Domicilio
             </label>
-            <input type="number" class="form-control" id="costo_domicilio" name="costo_domicilio" value="{{ entrega.costo_domicilio }}" step="0.01" style="border-radius: 8px; border: 1px solid #ced4da;">
+            <input type="number" class="form-control" id="costo_domicilio" name="costo_domicilio" 
+                   value="{{ entrega.costo_domicilio if entrega.costo_domicilio else '' }}" 
+                   step="0.01" style="border-radius: 8px; border: 1px solid #ced4da;">
           </div>
 
           <!-- Campo Usuario (No editable) -->
@@ -58,56 +65,30 @@
             <label for="nombre_usuario" class="form-label" style="font-weight: 600; color: #2c3e50;">
               <i class="bi bi-person me-2"></i>Usuario
             </label>
-            <input 
-              type="text" 
-              class="form-control" 
-              id="nombre_usuario" 
-              name="nombre_usuario" 
-              value="{{ entrega.nombre_usuario }}" 
-              readonly 
-              style="
-                border-radius: 8px;
-                border: 1px solid #ced4da;
-                background-color: #e9ecef; /* Fondo gris */
-                color: #495057; /* Texto oscuro */
-                cursor: not-allowed; /* Cursor de no permitido */
-              ">
+            <input type="text" class="form-control" id="nombre_usuario" 
+                   value="{{ entrega.nombre_usuario if entrega.nombre_usuario else 'N/A' }}" 
+                   readonly style="background-color: #f8f9fa;">
           </div>
 
-          <!-- Campo Dirección (No editable) -->
+          <!-- Campo Dirección (No editable) - Versión mejorada -->
           <div class="mb-4">
             <label for="direccion_completa" class="form-label" style="font-weight: 600; color: #2c3e50;">
               <i class="bi bi-geo-alt me-2"></i>Dirección Completa
             </label>
-            <textarea 
-              class="form-control" 
-              id="direccion_completa" 
-              name="direccion_completa" 
-              readonly 
-              style="
-                border-radius: 8px;
-                border: 1px solid #ced4da;
-                background-color: #e9ecef; /* Fondo gris */
-                color: #495057; /* Texto oscuro */
-                cursor: not-allowed; /* Cursor de no permitido */
-                resize: none; /* Evita que el usuario redimensione el campo */
-              ">
-              {{ entrega.nombre_completo }} - {{ entrega.domicilio }} - Teléfono: {{ entrega.telefono }} - {{ entrega.municipio }}, {{ entrega.departamento }}
-            </textarea>
+            <div class="card p-3" style="background-color: #f8f9fa; border-radius: 8px;">
+              <p class="mb-1"><strong>Nombre:</strong> {{ entrega.nombre_completo if entrega.nombre_completo else 'N/A' }}</p>
+              <p class="mb-1"><strong>Dirección:</strong> {{ entrega.domicilio if entrega.domicilio else 'N/A' }}</p>
+              <p class="mb-1"><strong>Teléfono:</strong> {{ entrega.telefono if entrega.telefono else 'N/A' }}</p>
+              <p class="mb-1"><strong>Ubicación:</strong> 
+                {{ entrega.municipio if entrega.municipio else 'N/A' }}, 
+                {{ entrega.departamento if entrega.departamento else 'N/A' }}
+              </p>
+            </div>
           </div>
 
           <!-- Botones de Acción -->
           <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary btn-lg" style="
-              border-radius: 10px;
-              padding: 12px 30px;
-              background: linear-gradient(135deg, #6a11cb, #2575fc);
-              border: none;
-              color: white;
-              font-weight: 600;
-              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-              transition: all 0.3s ease;
-            ">
+            <button type="submit" class="btn btn-primary btn-lg">
               <i class="bi bi-save me-2" style="font-size: 1.2rem;"></i>Guardar Cambios
             </button>
           </div>

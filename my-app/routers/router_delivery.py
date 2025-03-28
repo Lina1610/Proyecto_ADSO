@@ -145,37 +145,41 @@ def detalles_entrega(id):
 
 @app.route('/editar-entrega/<int:id>', methods=['GET', 'POST'])
 def viewEditarEntrega(id):
-    if 'conectado' in session:
-        if request.method == 'GET':
-            # Obtener la entrega por su ID
-            entrega = buscar_entrega_por_id(id)
-            if isinstance(entrega, dict):
-                # No necesitas seleccionar direcciones si no existe la tabla `direccion`
-                return render_template('public/entrega/editar_entrega.html', entrega=entrega)
-            else:
-                flash(entrega, 'error')
-                return redirect(url_for('lista_entregas'))
-
-        elif request.method == 'POST':
-            # Procesar el formulario de edición
-            data_form = {
-                'tipo': request.form.get('tipo'),
-                'estado': request.form.get('estado'),
-                'costo_domicilio': request.form.get('costo_domicilio'),
-                'direccion_id': request.form.get('direccion_id')
-            }
-
-            # Actualizar la entrega
-            resultado = actualizar_entrega(id, data_form)
-            if isinstance(resultado, int):
-                flash('Entrega actualizada correctamente.', 'success')
-            else:
-                flash(resultado, 'error')
-
-            return redirect(url_for('lista_entregas'))
-    else:
+    if 'conectado' not in session:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
+
+    if request.method == 'GET':
+        entrega = buscar_entrega_por_id(id)
+        if not isinstance(entrega, dict):
+            flash(entrega, 'error')
+            return redirect(url_for('lista_entregas'))
+        
+        return render_template('public/entrega/editar_entrega.html', entrega=entrega)
+
+    elif request.method == 'POST':
+        # Obtener la entrega actual primero
+        entrega_actual = buscar_entrega_por_id(id)
+        if not entrega_actual:
+            flash('La entrega no existe', 'error')
+            return redirect(url_for('lista_entregas'))
+
+        # Procesar el formulario manteniendo los valores existentes
+        data_form = {
+            'tipo': request.form.get('tipo'),
+            'estado': request.form.get('estado'),
+            'costo_domicilio': request.form.get('costo_domicilio', entrega_actual.get('costo_domicilio')),
+            'direccion_id': entrega_actual.get('direccion_id')  # Mantener el valor actual
+        }
+
+        # Actualizar la entrega
+        resultado = actualizar_entrega(id, data_form)
+        if isinstance(resultado, int) and resultado > 0:
+            flash('Entrega actualizada correctamente.', 'success')
+        else:
+            flash(resultado if resultado else 'Error al actualizar', 'error')
+
+        return redirect(url_for('lista_entregas'))
 
 @app.route('/eliminar-entrega/<int:id>', methods=['GET'])
 def eliminar_entrega_route(id):
@@ -201,12 +205,7 @@ from flask import render_template_string
 def viewBuscarEntregaBD():
     try:
         search_query = request.json.get('busqueda', '').strip()
-        print("Término de búsqueda recibido:", search_query)
-
-        if not search_query:
-            entregas = obtener_entregas()
-        else:
-            entregas = buscar_entregaBD(search_query)
+        entregas = buscar_entregaBD(search_query) if search_query else obtener_entregas()
 
         if entregas:
             html_resultados = render_template_string("""
@@ -215,9 +214,28 @@ def viewBuscarEntregaBD():
                     <td>{{ loop.index }}</td>
                     <td>{{ entrega.tipo }}</td>
                     <td>{{ entrega.estado }}</td>
-                    <td>{{ entrega.costo_domicilio }}</td>
-                    <td>{{ entrega.direccion_completa }}</td>
-                    <td>{{ entrega.nombre_usuario }}</td>
+                    <td>
+                        {% if entrega.costo_domicilio %}
+                            ${{ "{:,.0f}".format(entrega.costo_domicilio) }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>{{ entrega.nombre_usuario or 'N/A' }}</td>
+                    <td>
+                        {% if entrega.direccion_completa %}
+                            {{ entrega.direccion_completa }}
+                        {% else %}
+                            Establecimiento físico
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if entrega.municipio %}
+                            {{ entrega.municipio }}, {{ entrega.departamento }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
                     <td width="10px">
                         <a href="/detalles-entrega/{{ entrega.id }}" class="btn btn-info btn-sm" title="Ver detalles">
                             <i class="bi bi-eye"></i> Ver detalles
@@ -234,17 +252,8 @@ def viewBuscarEntregaBD():
             """, entregas=entregas)
             return jsonify({'success': True, 'html': html_resultados})
         else:
-            mensaje_html = f"""
-            <tr>
-                <td colspan="7" style="text-align:center;color: red;font-weight: bold;">
-                    No resultados para la búsqueda: <strong style="color: #222;">{search_query}</strong>
-                </td>
-            </tr>
-            """
-            return jsonify({'success': False, 'html': mensaje_html})
-
+            return jsonify({'success': False, 'html': '<tr><td colspan="8" class="text-center">No se encontraron resultados</td></tr>'})
     except Exception as e:
-        print(f"Error en viewBuscarEntregaBD: {e}")
         return jsonify({'error': str(e)}), 500
     
 @app.route('/obtener-pedidos-cliente')

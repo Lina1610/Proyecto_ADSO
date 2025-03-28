@@ -15,8 +15,11 @@
     <!-- Bootstrap y Estilos Personalizados -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style_pedido.css') }}">
+
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/carrito.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/custom.css') }}">
+
+
 
     <!-- Animaciones -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -28,7 +31,20 @@
         <!-- Navigation (Menú) -->
         <div class="menu">
             
-            <a href="#" class="logo">Logo</a>
+            <a href="#" class="logo-corner">
+                <img src="{{ url_for('static', filename='assets/img/logo_em.png') }}" alt="Bien Sazón">
+            </a>
+             
+           <!-- Checkbox oculto (debe estar justo antes del label) -->
+           <input type="checkbox" id="menu" class="menu-checkbox"/>
+          
+           <!-- Botón hamburguesa (vacío, se llenará con JS) -->
+           <label for="menu" class="menu-label">
+             <span class="hamburger-line"></span>
+             <span class="hamburger-line"></span>
+             <span class="hamburger-line"></span>
+           </label>             
+          
 
                 <nav class="navbar">
                     <ul>
@@ -55,10 +71,10 @@
                         <a href="{{ url_for('perfil_cliente') }}" class="menu-link">MI Perfil</a>
                         {% endif %}
                         {% if session['rol'] in ['administrador', 'superadmin', 'empleado'] %}
-                        <a href="{{ url_for('perfil_aplicativo') }}" class="menu-link">Ir al Aplicativo</a>
+                        <a href="{{ url_for('perfil_aplicativo') }}" class="menu-link"></i> Ir al Aplicativo</a>
                     {% endif %}
 
-                        <a href="{{ url_for('cerraSesion') }}" class="menu-link logout">Cerrar Sesión</a>
+                        <a href="{{ url_for('cerraSesion') }}" class="menu-link logout"></i> Cerrar Sesión</a>
                     </div>
                 </div>
             </div>
@@ -85,12 +101,7 @@
                 <h2>Aprovecha esta oportunidad</h2>
                 <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur ex atque fugit 
                     optio laborum quos nihil eum autem esse, quibusdam porro minus laboriosam sint nostrum 
-                    obcaecati necessitatibus dolorum? Fugit, numquam.</p>             
-       
-            <div class="buttons">
-                <a href="#" class="btn-1">Información</a>
-                <a href="#" class="btn-1">Leer más</a>
-            </div>         
+                    obcaecati necessitatibus dolorum? Fugit, numquam.</p>                    
         </div>
 
         <div class="header-img">
@@ -260,22 +271,11 @@
         </div>
     </div>
 </div>
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-left">
-                <div class="footer-brand">
-                    <h3>Tamales D. María</h3>
-                </div>
-                <div class="social-icons">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-whatsapp"></i></a>
-                </div>
-                <div class="footer-contact">
-                    <p>[dirección de correo electrónico eliminada]</p>
-                    <p>+57 312 345 6789</p>
-                </div>
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-left">
+            <div class="footer-brand">
+                <h3>Tamales el buen sazón</h3>
             </div>
             <div class="social-icons">
                 <a href="#"><i class="fab fa-facebook"></i></a>
@@ -303,10 +303,10 @@
                 <p>Lunes a Sábado</p>
                 <p>7:00 AM - 7:00 PM</p>
             </div>
-            <p class="footer-bottom">© 2023 Tamales el buen sazón<br>Todos los derechos reservados</p>
+            <p class="footer-bottom">© 2023 Tamales D. María<br>Todos los derechos reservados</p>
         </div>
     </div>
-  </footer>
+</footer>
     <script src="/static/assets/js/sienna.js"></script>
     <script src="/static/assets/js/custom.js"></script>
 
