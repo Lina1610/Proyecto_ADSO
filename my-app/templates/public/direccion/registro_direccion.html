@@ -10,7 +10,7 @@
   href="{{ url_for('static', filename='assets/css/file.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/footer.css') }}" />
  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}" />
- <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/formularioUsuario.css') }}" />
+ <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/editar.css') }}" />
  <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
 
 <!-- Incluir Select2 CSS -->
@@ -48,8 +48,9 @@
                 type="text"
                 name="nombre_completo"
                 class="form-control"
-                required />
+                required /><br>
             </div>
+            
             <div class="col-md-6">
               <label for="barrio" class="form-label">
                 Barrio
@@ -58,7 +59,7 @@
                 class="form-control"
                 type="text"
                 name="barrio"
-                required />
+                required /><br>
             </div>
           </div>
 
@@ -72,7 +73,7 @@
                 class="form-control"
                 type="text"
                 name="domicilio"
-                required />
+                required /><br>
             </div>
             <div class="col-md-6">
               <label for="referencias" class="form-label">
@@ -81,7 +82,7 @@
               <input
                 class="form-control"
                 type="text"
-                name="referencias" />
+                name="referencias" /><br>
             </div>
           </div>
 
@@ -95,7 +96,7 @@
                 class="form-control"
                 type="text"
                 name="telefono"
-                required />
+                required /><br>
             </div>
             <div class="col-md-6">
               <label for="estado" class="form-label">
@@ -108,7 +109,7 @@
                 <option selected>Seleccione</option>
                 <option value="activo">Activo</option>
                 <option value="inactivo">Inactivo</option>
-              </select>
+              </select><br>
             </div>
           </div>
 
@@ -125,7 +126,7 @@
                 required
                 min="0"
                 step="1"
-                placeholder="Ingrese el costo del domicilio" />
+                placeholder="Ingrese el costo del domicilio" /><br>
             </div>
             
             <div class="col-md-6">
@@ -166,6 +167,7 @@
               </select>
             </div>
           </div>
+          <br>
           <!-- Botón de envío -->
           <div class="mb-3 mt-4 text-center">
             <button type="submit" class="btn rounded-pill btn-primary">

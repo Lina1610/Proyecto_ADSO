@@ -1,8 +1,12 @@
 {% extends 'public/base_cpanel.html' %}
 {% block title %}Perfil de Usuario{% endblock %}
-<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
 
 {% block body %}
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
+
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/perfilA.css') }}" />
+
+
 <div class="container my-5">
     <!-- Encabezado del Perfil -->
     <div class="profile-header mb-5 text-center">
@@ -230,46 +234,7 @@
     </div>
 </div>
 
-<style>
-    .section-header {
-        cursor: pointer;
-        background-color: #f8f9fa;
-        border-bottom: 2px solid #dee2e6;
-        transition: all 0.3s ease;
-    }
 
-    .section-header:hover {
-        background-color: #e9ecef;
-    }
-
-    .address-card {
-        border: 1px solid #dee2e6; 
-        border-radius: 8px;
-        transition: transform 0.2s;
-    }
-
-    .address-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .bg-light {
-        background-color: #f8f9fa!important;
-    }
-
-    .form-control[readonly] {
-        cursor: not-allowed;
-    }
-
-    .input-group-merge .form-control {
-        border-right: 0;
-    }
-
-    .input-group-merge .input-group-text {
-        border-left: 0;
-        background-color: transparent;
-    }
-</style>
 <script src="/static/assets/js/sienna.js"></script>
 <script src="/static/assets/js/custom.js"></script>
 <script>
