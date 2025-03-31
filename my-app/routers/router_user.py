@@ -1,4 +1,5 @@
 from app import app
+from app import app, mail 
 from flask import render_template, request, flash, redirect, url_for, session, jsonify
 from mysql.connector.errors import Error
 from controllers.funciones_user import lista_usuariosBD, obtener_usuario_por_id, buscarUsuarioBD, eliminar_usuario, procesar_usuario
@@ -13,13 +14,7 @@ from werkzeug.utils import secure_filename
 from middleware import roles_required  # Importación del middleware
 from controllers.funciones_user import cambiar_estado_usuario
 
-# Configuración del correo
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'EMAIL_SENDER'
-app.config['MAIL_PASSWORD'] = 'EMAIL_PASSWORD'
-mail = Mail(app)
+
 
 PATH_URL = "public/usuario"
 EXPIRACION_TOKEN = timedelta(hours=1)
@@ -35,7 +30,7 @@ def viewFormUsuario():
         resultado = procesar_usuario(data_form)
         if isinstance(resultado, int) and resultado > 0:
             flash('Usuario registrado con éxito', 'success')
-            return redirect(url_for('viewFormUsuario'))
+            return redirect(url_for('lista_usuarios'))
         else:
             flash(f'Error al registrar usuario: {resultado}', 'error')
     return render_template('public/nuevosUsuarios/registro_usuario.html')
@@ -156,6 +151,10 @@ def recuperarPassword():
                 'fecha_creacion': datetime.utcnow()
             }
             enlace = url_for('resetPassword', token=token, _external=True)
+            print("DEBUG en recuperarPassword antes de enviar correo:")
+            print(f"app.config keys: {list(app.config.keys())}")
+            print(f"MAIL_USERNAME: {app.config.get('MAIL_USERNAME', 'No definido')}")
+            print(f"MAIL_PASSWORD: {app.config.get('MAIL_PASSWORD', 'No definido')}")
             msg = Message('Recuperación de contraseña', sender=app.config['MAIL_USERNAME'], recipients=[correo])
             msg.body = f'Usa este enlace para restablecer tu contraseña: {enlace}'
             mail.send(msg)

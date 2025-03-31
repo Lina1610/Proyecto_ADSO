@@ -33,7 +33,7 @@ def validar_campos_obligatorios(data_form, campos_requeridos):
 
 def validar_tipo(tipo):
     """Valida que el tipo de entrega sea válido."""
-    tipos_validos = ['Domicilio', 'Establecimiento fisico']
+    tipos_validos = ['Domicilio', 'Establecimiento fisico', 'Presencial']
     if tipo not in tipos_validos:
         return f"El campo 'tipo' debe ser uno de: {', '.join(tipos_validos)}."
     return None
@@ -93,30 +93,85 @@ def insertar_entrega(tipo, estado, costo_domicilio, direccion_id):
     except MySQLError as err:
         return f"Error de MySQL al insertar la entrega: {err}"
 
-def procesar_entrega(tipo_entrega, direccion_id=None):
-    """Crea un registro en la tabla 'entrega' y devuelve el ID."""
+def procesar_entrega(tipo_entrega, direccion_id=None, users_id=None):
+    """Crea registro en entrega con users_id obligatorio"""
+    try:
+        if not users_id:
+            raise ValueError("El users_id es obligatorio")
+        
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Para domicilio, verificar que la dirección pertenece al usuario
+                if tipo_entrega == 'Domicilio' and direccion_id:
+                    cursor.execute("SELECT users_id FROM direccion WHERE id = %s", (direccion_id,))
+                    dir_data = cursor.fetchone()
+                    if dir_data and dir_data['users_id'] != int(users_id):
+                        raise ValueError("La dirección no pertenece al usuario")
+                
+                # Insertar la entrega siempre con users_id, tanto para domicilio como presencial
+                sql = """INSERT INTO entrega (
+                    tipo, estado, costo_domicilio, direccion_id, users_id, fecha_hora
+                ) VALUES (%s, %s, %s, %s, %s, NOW())"""
+                
+                valores = (
+                    tipo_entrega,
+                    'Pendiente',
+                    float(0) if tipo_entrega == 'Domicilio' else None,
+                    int(direccion_id) if tipo_entrega == 'Domicilio' else None,
+                    int(users_id)  # Siempre se asigna el users_id
+                )
+                
+                cursor.execute(sql, valores)
+                entrega_id = cursor.lastrowid
+                conexion_MySQLdb.commit()
+                return entrega_id
+                
+    except Exception as e:
+        print(f"Error en procesar_entrega: {str(e)}")
+        if 'conexion_MySQLdb' in locals():
+            conexion_MySQLdb.rollback()
+        raisey
+
+def crear_pedido(users_id, metodo_pago_id, entrega_id, total):
+    """Crea un pedido y actualiza automáticamente la entrega"""
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                sql = """
-                    INSERT INTO entrega (
-                        tipo, estado, costo_domicilio, direccion_id, fecha_hora
-                    ) VALUES (%s, %s, %s, %s, NOW())
+                # 1. Crear el pedido
+                sql_pedido = """
+                    INSERT INTO pedido (
+                        fecha, estado, total, entrega_id, users_id, metodo_pago_id
+                    ) VALUES (NOW(), %s, %s, %s, %s, %s)
                 """
-                valores = (
-                    tipo_entrega,
-                    'Pendiente',  # Estado por defecto
-                    None,  # Costo de domicilio inicialmente nulo
-                    direccion_id if tipo_entrega == 'Domicilio' else None
+                valores_pedido = (
+                    'Pendiente',
+                    float(total),
+                    int(entrega_id),
+                    int(users_id),
+                    int(metodo_pago_id)
                 )
-                cursor.execute(sql, valores)
+                cursor.execute(sql_pedido, valores_pedido)
+                pedido_id = cursor.lastrowid
+                
+                # 2. Actualizar automáticamente la entrega con el users_id
+                sql_actualizar = """
+                    UPDATE entrega 
+                    SET users_id = %s 
+                    WHERE id = %s AND (users_id IS NULL OR users_id = 0 OR users_id != %s)
+                """
+                # CORRECCIÓN: Paréntesis correctamente cerrados
+                cursor.execute(sql_actualizar, (int(users_id), int(entrega_id), int(users_id)))
+                
                 conexion_MySQLdb.commit()
-                return cursor.lastrowid  # Devuelve el ID de la entrega creada
+                return pedido_id
+                
     except Exception as e:
-        return f"Error al crear la entrega: {str(e)}"
+        print(f"ERROR en crear_pedido: {str(e)}")
+        if 'conexion_MySQLdb' in locals():
+            conexion_MySQLdb.rollback()
+        return f"Error al crear el pedido: {str(e)}"
     
 def obtener_entregas():
-    """Obtiene todas las entregas de la base de datos."""
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
@@ -127,19 +182,28 @@ def obtener_entregas():
                         e.estado, 
                         e.costo_domicilio, 
                         e.direccion_id,
+                        e.users_id,
                         e.fecha_hora,
+                        COALESCE(
+                            u.nombre,  # Usuario directo de la entrega
+                            (SELECT u2.nombre FROM users u2 WHERE u2.id = d.users_id),  # Usuario de la dirección
+                            'Usuario no disponible'
+                        ) AS nombre_usuario,
                         d.nombre_completo,
-                        CONCAT(d.domicilio, ', ', COALESCE(d.barrio, ''), ' - ', COALESCE(d.referencias, '')) AS direccion_completa,
+                        CASE
+                            WHEN e.tipo = 'Domicilio' THEN 
+                                CONCAT(d.domicilio, ', ', COALESCE(d.barrio, ''), ' - ', COALESCE(d.referencias, ''))
+                            ELSE 'Establecimiento físico'
+                        END AS direccion_completa,
                         d.telefono,
                         m.nombre AS municipio,
-                        dp.nombre AS departamento,
-                        u.nombre AS nombre_usuario
+                        dp.nombre AS departamento
                     FROM 
                         entrega e
                     LEFT JOIN 
                         direccion d ON e.direccion_id = d.id
                     LEFT JOIN 
-                        users u ON d.users_id = u.id
+                        users u ON e.users_id = u.id
                     LEFT JOIN 
                         municipio m ON d.municipio_id = m.id
                     LEFT JOIN 
@@ -165,10 +229,11 @@ def buscar_entrega_por_id(id):
                         d.telefono,
                         d.barrio,
                         d.referencias,
-                        d.users_id,
+                        d.users_id AS direccion_users_id,
                         m.nombre AS municipio,
                         dp.nombre AS departamento,
-                        u.nombre AS nombre_usuario
+                        u1.nombre AS nombre_usuario_direccion,
+                        u2.nombre AS nombre_usuario_entrega
                     FROM 
                         entrega e
                     LEFT JOIN 
@@ -178,12 +243,20 @@ def buscar_entrega_por_id(id):
                     LEFT JOIN 
                         departamento dp ON d.departamento_id = dp.id
                     LEFT JOIN 
-                        users u ON d.users_id = u.id
+                        users u1 ON d.users_id = u1.id
+                    LEFT JOIN 
+                        users u2 ON e.users_id = u2.id
                     WHERE 
                         e.id = %s
                 """
                 cursor.execute(querySQL, (id,))
-                return cursor.fetchone()
+                entrega = cursor.fetchone()
+                
+                # Si se encuentra la entrega, agregar un campo combinado para el nombre del usuario
+                if entrega:
+                    entrega['nombre_usuario'] = entrega['nombre_usuario_entrega'] or entrega['nombre_usuario_direccion'] or 'Usuario no disponible'
+                
+                return entrega
     except MySQLError as err:
         print(f"Error de MySQL al buscar la entrega: {err}")
         return None
@@ -338,4 +411,47 @@ def buscar_entregaBD(search_query):
                 return cursor.fetchall()
     except MySQLError as err:
         print(f"Error en buscar_entregaBD: {err}")
+        return []
+
+def obtener_entregas_cliente(users_id):
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                querySQL = """
+                    SELECT 
+                        e.id, 
+                        e.tipo, 
+                        e.estado, 
+                        e.costo_domicilio, 
+                        e.direccion_id,
+                        e.users_id,
+                        e.fecha_hora,
+                        COALESCE(u.nombre, 'Usuario no disponible') AS nombre_usuario,
+                        d.nombre_completo,
+                        CASE
+                            WHEN e.tipo = 'Domicilio' THEN 
+                                CONCAT(d.domicilio, ', ', COALESCE(d.barrio, ''), ' - ', COALESCE(d.referencias, ''))
+                            ELSE 'Establecimiento físico'
+                        END AS direccion_completa,
+                        d.telefono,
+                        m.nombre AS municipio,
+                        dp.nombre AS departamento
+                    FROM 
+                        entrega e
+                    LEFT JOIN 
+                        direccion d ON e.direccion_id = d.id
+                    LEFT JOIN 
+                        users u ON e.users_id = u.id
+                    LEFT JOIN 
+                        municipio m ON d.municipio_id = m.id
+                    LEFT JOIN 
+                        departamento dp ON d.departamento_id = dp.id
+                    WHERE 
+                        e.users_id = %s
+                    ORDER BY e.id DESC
+                """
+                cursor.execute(querySQL, (users_id,))
+                return cursor.fetchall()
+    except MySQLError as err:
+        print(f"Error de MySQL al obtener las entregas del cliente: {err}")
         return []

@@ -1,6 +1,6 @@
 from flask import Flask, request, redirect, url_for, flash, send_from_directory, render_template, session
 from flask_mail import Mail, Message
-from config import Config  # Importar la configuración
+from config import Config
 import pymysql
 from dotenv import load_dotenv
 from datetime import datetime
@@ -36,7 +36,7 @@ from routers.router_principal import *
 from routers.router_carrito import *
 
 # Ruta para hacer copias de seguridad
-from utils.backup_manager import hacer_copia_de_seguridad
+from utils.backup_manager import hacer_copia_de_seguridad, ejecutar_restauracion
 
 # Ruta para crear una copia de seguridad
 @app.route('/hacer_backup', methods=['GET'])
@@ -64,9 +64,7 @@ def lista_backups():
     return render_template('public/backup/lista_backup.html', backups=backups)
 
 # Ruta para restaurar una copia de seguridad
-from utils.backup_manager import ejecutar_restauracion
-
-@app.route('/restaurar_backup/<nombre_archivo>')
+@app.route('/restaurar_backup/<nombre_archivo>', methods=['GET'])
 def restaurar_backup_route(nombre_archivo):
     backup_dir = os.path.join(os.getcwd(), 'backups')
     ruta_backup = os.path.join(backup_dir, nombre_archivo)
@@ -85,7 +83,7 @@ def restaurar_backup_route(nombre_archivo):
     return redirect(url_for('lista_backups'))
 
 # Ruta para eliminar una copia de seguridad
-@app.route('/eliminar_backup/<nombre_archivo>')
+@app.route('/eliminar_backup/<nombre_archivo>', methods=['GET'])
 def eliminar_backup(nombre_archivo):
     backup_dir = os.path.join(os.getcwd(), 'backups')
     ruta_backup = os.path.join(backup_dir, nombre_archivo)

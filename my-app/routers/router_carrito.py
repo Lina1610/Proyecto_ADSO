@@ -1,7 +1,9 @@
 from flask import Blueprint, request, jsonify, session, render_template, redirect, url_for
-from controllers.funciones_carrito import obtener_direcciones_usuario, agregar_al_carrito, obtener_carrito, actualizar_cantidad_carrito, vaciar_carrito, eliminar_del_carrito
+from controllers.funciones_carrito import obtener_direcciones_usuario, crear_entrega_automatica ,agregar_al_carrito, obtener_carrito, actualizar_cantidad_carrito, vaciar_carrito, eliminar_del_carrito
 from conexion.conexionBD import connectionBD
+from datetime import datetime  # Añade esto al inicio
 carrito_bp = Blueprint('carrito', __name__)
+
 
 @carrito_bp.route('/agregar', methods=['POST'])
 def agregar_producto_carrito():
@@ -60,101 +62,107 @@ def vaciar_carrito_usuario():
 @carrito_bp.route('/finalizar-compra', methods=['POST'])
 def finalizar_compra():
     if 'conectado' not in session:
-        return jsonify({'status': 'error', 'mensaje': 'Debe iniciar sesión para finalizar la compra'})
+        return jsonify({'status': 'error', 'mensaje': 'Debe iniciar sesión'})
     
     users_id = session.get('id')
     datos = request.json
-    direccion_id = datos.get('direccion_id')
-    tipo_entrega = datos.get('tipo_entrega')  # 'Domicilio' o 'Presencial'
-    metodo_pago_id = datos.get('metodo_pago_id')  # ID del método de pago seleccionado
     
-    # Validar que se hayan enviado los datos necesarios
-    if not tipo_entrega or not metodo_pago_id:
-        return jsonify({'status': 'error', 'mensaje': 'Faltan datos obligatorios (tipo de entrega o método de pago)'})
-    
-    # Validar dirección solo si el tipo de entrega es "Domicilio"
-    if tipo_entrega == 'Domicilio' and not direccion_id:
-        return jsonify({'status': 'error', 'mensaje': 'Debes seleccionar una dirección de envío para entrega a domicilio'})
-    
-    # Obtener los productos del carrito
-    carrito = obtener_carrito(users_id)
-    if carrito['status'] != 'success':
-        return jsonify({'status': 'error', 'mensaje': 'Error al obtener el carrito'})
-    
-    # Verificar si el carrito está vacío
-    if not carrito['items']:
-        return jsonify({'status': 'error', 'mensaje': 'El carrito está vacío'})
-    
-    # Obtener el ID del primer producto en el carrito para producto_id
-    producto_id = carrito['items'][0]['producto_id']  # Tomamos el ID del primer producto
-    
-    # Calcular el total del carrito
-    total = sum(item['precio'] * item['cantidad'] for item in carrito['items'])
-    
-    # Crear el pedido en la base de datos
     try:
-        conexion = connectionBD()
-        cursor = conexion.cursor()
+        # Validaciones mejoradas
+        tipo_entrega = datos.get('tipo_entrega')
+        metodo_pago_id = datos.get('metodo_pago_id')
+        direccion_id = datos.get('direccion_id')
         
-        # Insertar la entrega en la tabla "entrega"
-        sql_entrega = """
-            INSERT INTO entrega (tipo, estado, costo_domicilio, direccion_id, fecha_hora)
-            VALUES (%s, %s, %s, %s, NOW())
-        """
-        valores_entrega = (
-            tipo_entrega,
-            'Pendiente',  # Estado por defecto
-            0,  # Siempre establecer costo_domicilio en 0
-            direccion_id if tipo_entrega == 'Domicilio' else None  # Usar NULL para "Presencial"
-        )
-        cursor.execute(sql_entrega, valores_entrega)
-        entrega_id = cursor.lastrowid  # Obtener el ID de la entrega recién creada
+        if not all([tipo_entrega, metodo_pago_id]):
+            return jsonify({'status': 'error', 'mensaje': 'Faltan datos obligatorios'})
         
-        # Insertar el pedido en la tabla "pedido"
-        sql_pedido = """
-            INSERT INTO pedido (
-                fecha, estado, total, entrega_id, users_id, metodo_pago_id, producto_id
-            ) VALUES (NOW(), %s, %s, %s, %s, %s, %s)
-        """
-        valores_pedido = (
-            'Pendiente',  # Estado por defecto
-            total,  # Total del carrito
-            entrega_id,
-            users_id,
-            metodo_pago_id,
-            producto_id  # Incluimos el producto_id del primer producto
-        )
-        cursor.execute(sql_pedido, valores_pedido)
-        pedido_id = cursor.lastrowid  # Obtener el ID del pedido recién creado
+        if tipo_entrega not in ['Domicilio', 'Presencial']:
+            return jsonify({'status': 'error', 'mensaje': 'Tipo de entrega no válido'})
         
-        # Insertar los productos del carrito en la tabla "detalle_pedido"
-        for item in carrito['items']:
-            total_item = item['precio'] * item['cantidad']  # Calcular el total para este producto
-            sql_detalle = """
-                INSERT INTO detalle_pedido (
-                    pedido_id, producto_id, cantidad, precio_unitario, total
-                ) VALUES (%s, %s, %s, %s, %s)
-            """
-            cursor.execute(sql_detalle, (
-                pedido_id,
-                item['producto_id'],
-                item['cantidad'],
-                item['precio'],
-                total_item  # Total para este producto
-            ))
-        
-        # Vaciar el carrito después de crear el pedido
-        vaciar_carrito(users_id)
-        
-        conexion.commit()
-        return jsonify({'status': 'success', 'mensaje': 'Pedido creado con éxito', 'pedido_id': pedido_id})
+        if tipo_entrega == 'Domicilio' and not direccion_id:
+            return jsonify({'status': 'error', 'mensaje': 'Dirección requerida para domicilio'})
+
+        # Verificar dirección si es domicilio
+        if tipo_entrega == 'Domicilio':
+            with connectionBD() as conexion:
+                with conexion.cursor() as cursor:
+                    cursor.execute("SELECT users_id FROM direccion WHERE id = %s", (direccion_id,))
+                    if cursor.fetchone()[0] != users_id:
+                        return jsonify({'status': 'error', 'mensaje': 'Dirección no válida'})
+
+        # Procesar carrito
+        carrito = obtener_carrito(users_id)
+        if not carrito.get('items'):
+            return jsonify({'status': 'error', 'mensaje': 'Carrito vacío'})
+
+        with connectionBD() as conexion:
+            with conexion.cursor() as cursor:
+                # 1. Crear entrega (con users_id)
+                sql_entrega = """
+                    INSERT INTO entrega (
+                        tipo, estado, costo_domicilio, direccion_id, users_id, fecha_hora
+                    ) VALUES (%s, %s, %s, %s, %s, NOW())
+                """
+                cursor.execute(sql_entrega, (
+                    tipo_entrega,
+                    'Pendiente',
+                    0,  # Valor fijo para simplificar
+                    direccion_id if tipo_entrega == 'Domicilio' else None,
+                    users_id  # Aseguramos users_id
+                ))
+                entrega_id = cursor.lastrowid
+
+                # 2. Crear pedido (con producto_id del primer item)
+                total = sum(item['precio'] * item['cantidad'] for item in carrito['items'])
+                producto_id = carrito['items'][0]['producto_id']
+                
+                sql_pedido = """
+                    INSERT INTO pedido (
+                        fecha, estado, total, entrega_id, users_id, metodo_pago_id, producto_id
+                    ) VALUES (NOW(), %s, %s, %s, %s, %s, %s)
+                """
+                cursor.execute(sql_pedido, (
+                    'Pendiente',
+                    total,
+                    entrega_id,
+                    users_id,
+                    metodo_pago_id,
+                    producto_id
+                ))
+                pedido_id = cursor.lastrowid
+
+                # 3. Detalles del pedido
+                for item in carrito['items']:
+                    sql_detalle = """
+                        INSERT INTO detalle_pedido (
+                            pedido_id, producto_id, cantidad, precio_unitario, total
+                        ) VALUES (%s, %s, %s, %s, %s)
+                    """
+                    cursor.execute(sql_detalle, (
+                        pedido_id,
+                        item['producto_id'],
+                        item['cantidad'],
+                        item['precio'],
+                        item['precio'] * item['cantidad']
+                    ))
+
+                # 4. Vaciar carrito
+                cursor.execute("DELETE FROM carrito_compras WHERE users_id = %s", (users_id,))
+                
+                conexion.commit()
+                
+                # Usamos datetime.now() para la fecha de respuesta
+                return jsonify({
+                    'status': 'success',
+                    'mensaje': 'Pedido creado con éxito',
+                    'pedido_id': pedido_id,
+                    'total': total,
+                    'fecha': datetime.now().strftime('%d/%m/%Y %H:%M')
+                })
+
     except Exception as e:
-        print(f"Error al finalizar la compra: {e}")
-        return jsonify({'status': 'error', 'mensaje': str(e)})  # Mostrar el error específico
-    finally:
-        if conexion.is_connected():
-            cursor.close()
-            conexion.close()
+        print(f"Error en finalizar_compra: {str(e)}")
+        return jsonify({'status': 'error', 'mensaje': str(e)})
 
 @carrito_bp.route('/eliminar', methods=['POST'])
 def eliminar_producto_carrito():

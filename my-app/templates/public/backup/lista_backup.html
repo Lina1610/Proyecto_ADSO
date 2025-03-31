@@ -10,18 +10,7 @@
     </div>
 
     <!-- Contenedor de mensajes -->
-    <div id="contenedor-mensajes">
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
-    </div>
+    
 
     <!-- Botón para crear una nueva copia de seguridad -->
     <div class="row justify-content-end mb-3">
@@ -53,17 +42,17 @@
               <td>{{ backup.fecha_creacion }}</td>
               <td>{{ backup.tamaño }} MB</td>
               <td>
-                <a href="{{ url_for('restaurar_backup_route', nombre_archivo=backup.nombre) }}" 
-                   class="btn btn-warning btn-sm"
-                   title="Restaurar esta copia"
-                   onclick="return confirm('¿Estás seguro de restaurar este backup? Esto restaurará todos los datos al estado del backup, reemplazando duplicados.')">
-                   <i class="bi bi-arrow-counterclockwise"></i> Restaurar
+                <a href="#" 
+                   onclick="restaurarBackup('{{ backup.nombre }}')" 
+                   class="btn btn-warning btn-sm" 
+                   title="Restaurar esta copia">
+                  <i class="bi bi-arrow-counterclockwise"></i> Restaurar
                 </a>
-                <a href="{{ url_for('eliminar_backup', nombre_archivo=backup.nombre) }}" 
-                   class="btn btn-danger btn-sm"
-                   title="Eliminar esta copia"
-                   onclick="return confirm('¿Estás seguro de eliminar este backup?')">
-                   <i class="bi bi-trash"></i> Eliminar
+                <a href="#" 
+                   onclick="eliminarBackup('{{ backup.nombre }}')" 
+                   class="btn btn-danger btn-sm" 
+                   title="Eliminar esta copia">
+                  <i class="bi bi-trash"></i> Eliminar
                 </a>
               </td>
             </tr>
@@ -75,4 +64,24 @@
   </div>
 </div>
 
+<!-- Modal de confirmación único, igual que en entregas -->
+<div id="confirmModalBackup" class="modal fade" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmModalBackupTitle">Confirmar acción</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="confirmModalBackupMessage">
+        <!-- Mensaje dinámico se insertará aquí -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="confirmActionBackupButton">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='assets/customJS/modal_backup.js') }}"></script>
 {% endblock %}

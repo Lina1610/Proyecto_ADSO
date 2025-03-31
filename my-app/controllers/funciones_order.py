@@ -191,6 +191,7 @@ def obtener_pedidos(user_id=None):
                     SELECT p.id, p.fecha, p.fechaEntrega, p.horaEntrega, p.estado,
                            u.nombre AS usuario_nombre, pr.nombre AS producto_nombre,
                            mp.metodo AS metodo_pago, e.tipo AS tipo_entrega,
+                           e.costo_domicilio,  # ¡Este es el campo que faltaba!
                            COALESCE((SELECT SUM(dp.total) FROM detalle_pedido dp WHERE dp.pedido_id = p.id), 0) AS total
                     FROM pedido p
                     JOIN users u ON p.users_id = u.id
@@ -198,7 +199,6 @@ def obtener_pedidos(user_id=None):
                     JOIN metodo_pago mp ON p.metodo_pago_id = mp.id
                     JOIN entrega e ON p.entrega_id = e.id
                 """
-                # Si se proporciona un user_id, filtrar por ese cliente
                 if user_id:
                     querySQL += " WHERE p.users_id = %s"
                     querySQL += " ORDER BY p.id DESC"

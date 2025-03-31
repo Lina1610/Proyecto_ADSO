@@ -226,11 +226,11 @@ def detalles_pedido(id):
     if 'conectado' in session:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                # Obtener información del pedido
                 cursor.execute("""
                     SELECT p.id, p.fecha, p.fechaEntrega, p.horaEntrega, p.estado,
                            u.nombre AS usuario_nombre, pr.nombre AS producto_nombre,
                            mp.metodo AS metodo_pago, e.tipo AS tipo_entrega,
+                           e.costo_domicilio,  # ¡Campo agregado!
                            (SELECT SUM(dp.total) FROM detalle_pedido dp WHERE dp.pedido_id = p.id) AS total_pedido
                     FROM pedido p
                     JOIN users u ON p.users_id = u.id
@@ -241,11 +241,9 @@ def detalles_pedido(id):
                 """, (id,))
                 pedido = cursor.fetchone()
 
-                # Asegurarse de que total_pedido no sea None
                 if pedido['total_pedido'] is None:
                     pedido['total_pedido'] = 0.0
 
-                # Obtener los detalles del pedido
                 cursor.execute("""
                     SELECT dp.id, dp.precio_unitario, dp.total, dp.cantidad,
                            pr.nombre AS producto_nombre
@@ -258,7 +256,4 @@ def detalles_pedido(id):
         return render_template('public/pedido/detalles_pedido.html', 
                              pedido=pedido, 
                              detalles_pedido=detalles_pedido)
-    else:
-        flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('inicio'))
     

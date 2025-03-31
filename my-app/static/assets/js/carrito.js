@@ -313,58 +313,76 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Función para finalizar la compra
 async function finalizarCompra() {
-    const tipoEntrega = document.querySelector('input[name="tipo_entrega"]:checked')?.value;
-    const metodoPagoId = document.querySelector('input[name="metodo_pago"]:checked')?.value;
-    const direccionId = document.querySelector('input[name="direccion"]:checked')?.value;
-
-    // Validar que se hayan enviado los datos necesarios
-    if (!tipoEntrega || !metodoPagoId) {
-        mostrarNotificacion('Por favor, selecciona un método de pago y un tipo de entrega.', 'error');
-        return;
-    }
-
-    // Validar la dirección si el tipo de entrega es "Domicilio"
-    if (tipoEntrega === 'Domicilio' && !direccionId) {
-        mostrarNotificacion('Por favor, selecciona una dirección de entrega.', 'error');
-        return;
-    }
-
-    // Crear el objeto con los datos del pedido
-    const pedidoData = {
-        tipo_entrega: tipoEntrega,
-        metodo_pago_id: metodoPagoId,
-        direccion_id: tipoEntrega === 'Domicilio' ? direccionId : null, // Usar NULL para "Presencial"
-        productos: carritoItems // Enviar los productos actualizados del carrito
-    };
-
     try {
+        // Obtener datos del formulario
+        const tipoEntrega = document.querySelector('input[name="tipo_entrega"]:checked')?.value;
+        const metodoPago = document.querySelector('input[name="metodo_pago"]:checked');
+        const direccion = document.querySelector('input[name="direccion"]:checked');
+        
+        // Validación básica
+        if (!tipoEntrega || !metodoPago) {
+            mostrarNotificacion('Seleccione método de pago y tipo de entrega', 'error');
+            return;
+        }
+
+        if (tipoEntrega === 'Domicilio' && !direccion) {
+            mostrarNotificacion('Seleccione una dirección para entrega a domicilio', 'error');
+            return;
+        }
+
+        // Mostrar carga
+        mostrarNotificacion('Procesando pedido...', 'info');
+
+        // Preparar datos
+        const formData = {
+            tipo_entrega: tipoEntrega,
+            metodo_pago_id: metodoPago.value,
+            direccion_id: tipoEntrega === 'Domicilio' ? direccion.value : null
+        };
+
+        // Enviar al servidor
         const response = await fetch('/carrito/finalizar-compra', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(pedidoData),
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
         });
 
         const data = await response.json();
-        console.log("Respuesta del servidor:", data);
 
         if (data.status === 'success') {
-            mostrarNotificacion('Pedido creado con éxito.', 'success');
-
-            // Cerrar el modal de confirmación
-            const modalConfirmarPedido = bootstrap.Modal.getInstance(document.getElementById('modalConfirmarPedido'));
-            modalConfirmarPedido.hide();
-
-            // Vaciar el carrito después de finalizar la compra
+            // 1. Mostrar notificación de éxito
+            mostrarNotificacion(data.mensaje, 'success');
+            
+            // 2. Actualizar interfaz del carrito
             carritoItems = [];
             actualizarInterfazCarrito();
+            
+            // 3. Cerrar modales
+            const modales = [
+                'modalProcesarPedido',
+                'modalDirecciones',
+                'modalConfirmarPedido'
+            ];
+            
+            modales.forEach(modalId => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
+                if (modal) modal.hide();
+            });
+            
+            // 4. Opcional: Mostrar resumen en consola
+            console.log('Pedido creado:', {
+                id: data.pedido_id,
+                total: data.total,
+                fecha: data.fecha
+            });
+            
         } else {
-            mostrarNotificacion(data.mensaje || 'Error al crear el pedido.', 'error');
+            mostrarNotificacion(data.mensaje || 'Error al crear pedido', 'error');
         }
+
     } catch (error) {
         console.error('Error:', error);
-        mostrarNotificacion('Ocurrió un error al procesar el pedido.', 'error');
+        mostrarNotificacion('Error de conexión', 'error');
     }
 }
 // Función para procesar el pedido y mostrar las direcciones

@@ -165,13 +165,7 @@
         <i class="menu-icon bi bi-database"></i> 
         <div>Copias de Seguridad</div>
       </a>
-      <ul class="menu-sub">
-        <!-- Opción para crear copia de seguridad -->
-        <li class="menu-item {% if request.path == '/hacer_backup' %} active {% endif %}">
-          <a href="{{ url_for('hacer_backup') }}" class="menu-link">
-            <div>Crear Copia de Seguridad</div>
-          </a>
-        </li>
+      <ul class="menu-sub">        
         <!-- Opción para restaurar copia de seguridad -->
         <li class="menu-item {% if request.path == '/restaurar_backup' %} active {% endif %}">
           <a href="{{ url_for('lista_backups') }}" class="menu-link">

@@ -3,21 +3,36 @@
 <!-- Cambiando el title -->
 {% block title %}Crud con Python 🐍 | Lista de Usuarios{% endblock %}
 
-
 <!-- Inicio del block -->
 {% block body %}
-<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/filtroUsuario.css') }}" />
-
-
-
 <div class="card" style="border-radius: 0px !important">
   <div class="row justify-content-center mb-2">
     <div class="col-md-12 mb-4">
       <h3 class="text-center mt-5 mb-3">LISTA DE USUARIOS</h3>
       <hr />
     </div>
+    
 
     <div id="contenedor-mensajes"></div>
+    <!-- Mensaje de contexto -->
+    <div class="context-indicator d-flex align-items-center">
+      <i class="bi bi-people-fill context-icon"></i>
+      <div>
+        <h6 class="mb-1">Vista de lista de usuarios</h6>
+        <p class="mb-0 small text-muted" id="context-detail">
+          Gestión completa del listado de usuarios registrados en el sistema
+        </p>
+      </div>
+    </div>
+
+    <!-- Botón para crear nuevo usuario (a la derecha) -->
+    <div class="row justify-content-end mb-3">
+      <div class="col-md-3">
+        <a href="{{ url_for('viewFormUsuario') }}" class="btn btn-primary btn-sm">
+          <i class="bi bi-plus-circle"></i> Crear Nuevo Usuario
+        </a>
+      </div>
+    </div>
 
     <!-- Botón para mostrar/ocultar filtros (a la izquierda) -->
     <div class="row justify-content-between">
@@ -268,6 +283,7 @@
 {% block customJS %}
 <script src="{{ url_for('static', filename='assets/customJS/buscar_usuario.js') }}"></script>
 <script src="{{ url_for('static', filename='assets/customJS/modal_eliminar.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/js/position_indicator.js') }}"></script>
 {% endblock %}
 
 

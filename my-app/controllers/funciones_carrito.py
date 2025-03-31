@@ -175,3 +175,38 @@ def obtener_direcciones_usuario(users_id):
         if conexion.is_connected():
             cursor.close()
             conexion.close()
+
+def crear_entrega_automatica(tipo_entrega, users_id, direccion_id=None):
+    """
+    Crea una entrega automáticamente asignando todos los valores requeridos
+    """
+    try:
+        with connectionBD() as conexion:
+            with conexion.cursor() as cursor:
+                # Validar dirección si es domicilio
+                if tipo_entrega == 'Domicilio' and direccion_id:
+                    cursor.execute("SELECT users_id FROM direccion WHERE id = %s", (direccion_id,))
+                    if cursor.fetchone()[0] != users_id:
+                        raise ValueError("La dirección no pertenece al usuario")
+
+                # Insertar entrega con todos los campos requeridos
+                sql = """
+                INSERT INTO entrega (
+                    tipo, estado, costo_domicilio, direccion_id, users_id, fecha_hora
+                ) VALUES (%s, %s, %s, %s, %s, NOW())
+                """
+                valores = (
+                    tipo_entrega,
+                    'Pendiente',
+                    0,  # Valor por defecto
+                    direccion_id if tipo_entrega == 'Domicilio' else None,
+                    users_id
+                )
+                cursor.execute(sql, valores)
+                entrega_id = cursor.lastrowid
+                conexion.commit()
+                return entrega_id
+                
+    except Exception as e:
+        print(f"Error en crear_entrega_automatica: {str(e)}")
+        raise
