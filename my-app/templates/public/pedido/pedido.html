@@ -30,33 +30,39 @@
     <header class="header">
         <!-- Navigation (Menú) -->
         <div class="menu">
-            
             <a href="#" class="logo-corner">
                 <img src="{{ url_for('static', filename='assets/img/logo_em.png') }}" alt="Bien Sazón">
             </a>
-             
-           <!-- Checkbox oculto (debe estar justo antes del label) -->
-           <input type="checkbox" id="menu" class="menu-checkbox"/>
-          
-           <!-- Botón hamburguesa (vacío, se llenará con JS) -->
-           <label for="menu" class="menu-label">
-             <span class="hamburger-line"></span>
-             <span class="hamburger-line"></span>
-             <span class="hamburger-line"></span>
-           </label>             
-          
-
-                <nav class="navbar">
-                    <ul>
-                        <li class="nav-item"><a class="nav-link"  href="{{ url_for('home') }}">Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#services">Servicios</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#sobre_nosotros">Sobre Nosotros</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('pedido.pedido') }}">Pedido</a></li>
-                        
-                        {% if session.conectado %}
-                        <div class="user-menu">
-                            <div class="user-container">
-
+            
+            <!-- Checkbox oculto (debe estar justo antes del label) -->
+            <input type="checkbox" id="menu" class="menu-checkbox"/>
+            
+            <!-- Contenedor para el lado derecho (hamburguesa y carrito) -->
+            <div class="menu-right-container">
+                <!-- Botón hamburguesa -->
+                <label for="menu" class="menu-label">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </label>
+                
+                <!-- Ícono del carrito -->
+                <div class="carrito-icono">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge" id="carrito-count">0</span>
+                </div>
+            </div>
+    
+            <nav class="navbar">
+                <ul>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#services">Servicios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sobre_nosotros">Sobre Nosotros</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('pedido.pedido') }}">Pedido</a></li>
+                    
+                    {% if session.conectado %}
+                    <div class="user-menu">
+                        <div class="user-container">
                             <div class="d-flex align-items-center ms-4 user-info-container">
                                 <div class="user-info-navbar text-end pe-3">
                                     <div class="user-avatar">
@@ -64,37 +70,27 @@
                                     </div>
                                     <span class="text-white d-block user-name">{{ session.nombre }}</span>
                                 </div>
-                                                                 
-                      <!-- Opciones alineadas -->
-                      <div class="user-options">
-                        {% if session['rol'] == 'cliente' %}
-                        <a href="{{ url_for('perfil_cliente') }}" class="menu-link">MI Perfil</a>
-                        {% endif %}
-                        {% if session['rol'] in ['administrador', 'superadmin', 'empleado'] %}
-                        <a href="{{ url_for('perfil_aplicativo') }}" class="menu-link"></i> Ir al Aplicativo</a>
-                    {% endif %}
-
-                        <a href="{{ url_for('cerraSesion') }}" class="menu-link logout"></i> Cerrar Sesión</a>
+                                <!-- Opciones alineadas -->
+                                <div class="user-options">
+                                    {% if session['rol'] == 'cliente' %}
+                                    <a href="{{ url_for('perfil_cliente') }}" class="menu-link">MI Perfil</a>
+                                    {% endif %}
+                                    {% if session['rol'] in ['administrador', 'superadmin', 'empleado'] %}
+                                    <a href="{{ url_for('perfil_aplicativo') }}" class="menu-link">Ir al Aplicativo</a>
+                                    {% endif %}
+                                    <a href="{{ url_for('cerraSesion') }}" class="menu-link logout">Cerrar Sesión</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-         
-                            <!-- Ícono del carrito -->
-                            <li class="nav-item carrito-icono">
-                                <i class="fas fa-shopping-cart"></i>
-                                <span class="badge" id="carrito-count">0</span>
-                           
-                            </li>
-                        {% else %}
-                            <li class="nav-item"><a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}">Registrarse</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{{ url_for('loginCliente') }}">Iniciar sesión</a></li>
-                        {% endif %}
-                    </ul>
-                </nav>
-                        
-                </div>
-            </div>
-        </nav>
+                    {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}">Registrarse</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('loginCliente') }}">Iniciar sesión</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    
         <div class="header-content container">
             <div class="header-txt">
                 <span>Tamales Boyacenses</span>
@@ -102,13 +98,12 @@
                 <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur ex atque fugit 
                     optio laborum quos nihil eum autem esse, quibusdam porro minus laboriosam sint nostrum 
                     obcaecati necessitatibus dolorum? Fugit, numquam.</p>                    
+            </div>
+            <div class="header-img">
+                <img src="/static/assets/img/presenSinFondo.png">
+            </div>
         </div>
-
-        <div class="header-img">
-            <img src="/static/assets/img/presenSinFondo.png">
-        </div>
-</div>
-</header>
+    </header>
 
 <!-- Contenedor Principal -->
 <main class="producto-container">

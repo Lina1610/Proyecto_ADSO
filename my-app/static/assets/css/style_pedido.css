@@ -777,3 +777,123 @@ body {
         font-size: 0.8rem;
     }
 }
+/*menu pedido*/
+/* Ensure the menu-right-container is properly styled */
+.menu-right-container {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Space between hamburger and cart */
+    order: 2; /* Ensure it stays on the right */
+}
+
+/* Style the cart icon to align nicely with the hamburger */
+.carrito-icono {
+    display: flex;
+    align-items: center;
+    position: relative;
+    
+    margin-right: 100px;
+}
+
+.fa-shopping-cart {
+    font-size: 1.6rem;
+    color: #fff;
+    transition: transform 0.3s ease;
+}
+
+.carrito-icono:hover .fa-shopping-cart {
+    transform: scale(1.1);
+}
+
+.badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #CE967B;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Adjust the menu layout for larger screens */
+@media (min-width: 992px) {
+    .menu-right-container {
+        gap: 20px;
+    }
+
+    .menu-label {
+        display: none; /* Hide hamburger on larger screens */
+    }
+
+    .carrito-icono {
+        display: flex; /* Ensure cart icon is visible */
+    }
+}
+
+/* Adjust for smaller screens */
+@media (max-width: 991px) {
+    .menu {
+        padding: 10px 3%;
+    }
+
+    .menu-right-container {
+        gap: 15px;
+    }
+
+    .menu-label {
+        display: block;
+    }
+
+    .carrito-icono {
+        display: flex;
+        align-items: center;
+    }
+
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 80%;
+        max-width: 300px;
+        height: 100vh;
+        background: #000000e6;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding-top: 80px;
+        transform: translateX(-100%);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+
+    #menu:checked ~ .navbar {
+        transform: translateX(0);
+    }
+}
+
+/* Fine-tune for very small screens */
+@media (max-width: 575px) {
+    .menu-right-container {
+        gap: 10px;
+    }
+
+    .fa-shopping-cart {
+        font-size: 1.4rem;
+    }
+
+    .badge {
+        top: -6px;
+        right: -6px;
+        padding: 2px 5px;
+        font-size: 10px;
+    }
+
+    .hamburger-line {
+        width: 20px;
+        height: 2px;
+        margin: 4px 0;
+    }
+}

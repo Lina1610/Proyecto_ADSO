@@ -5,6 +5,7 @@
 
 <!---->
 {% block customCSS %}
+{{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/file.css') }}" />
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/footer.css') }}" />
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}" />
@@ -141,8 +142,7 @@
 {% endblock %}
 
 {% block customJS %}
-<script src="/static/assets/js/sienna.js"></script>
-<script src="/static/assets/js/custom.js"></script>
+
 <script>
   // Función para mostrar/ocultar la contraseña
   document.getElementById("togglePassword").addEventListener("click", function () {

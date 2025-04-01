@@ -3,13 +3,10 @@
 {% block title %}Crud con Python 🐍 | Registrar Abono{% endblock %}
 
 {% block customCSS %}
+{{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/file.css') }}" />
-<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/footer.css') }}" />
- <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}" />
- <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/editar.css') }}" />
- <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
-
- 
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/editar.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
 {% endblock %}
 
 {% block body %}
@@ -23,6 +20,15 @@
         REGISTRAR NUEVO ABONO
       </h3>
       <hr />
+    </div>
+  </div>
+
+   <!-- Mensaje de contexto -->
+   <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-people-fill context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de registro de abono</h6>
+     
     </div>
   </div>
 
@@ -93,6 +99,5 @@
   </div>
 </div>
 
-<script src="/static/assets/js/sienna.js"></script>
-<script src="/static/assets/js/custom.js"></script>
+
 {% endblock %}

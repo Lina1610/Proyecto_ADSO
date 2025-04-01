@@ -31,7 +31,7 @@ def viewFormAbono():
             else:
                 flash(resultado, 'error')
 
-            return redirect(url_for('viewFormAbono'))
+            return redirect(url_for('lista_abonos'))
 
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:

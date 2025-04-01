@@ -5,6 +5,7 @@
 
 <!-- Inicio del block -->
 {% block body %}
+{{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/editar.css') }}" />
 
 

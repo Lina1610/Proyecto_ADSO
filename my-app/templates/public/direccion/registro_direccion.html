@@ -5,6 +5,7 @@
 
 <!---->
 {% block customCSS %}
+{{ super() }}
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='assets/css/file.css') }}" />
@@ -12,6 +13,7 @@
  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}" />
  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/editar.css') }}" />
  <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
+ <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/position_indicator.css') }}" />
 
 <!-- Incluir Select2 CSS -->
 <link
@@ -31,6 +33,15 @@
         REGISTRAR NUEVA DIRECCION
       </h3>
       <hr />
+    </div>
+  </div>
+
+   <!-- Mensaje de contexto -->
+   <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-people-fill context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de registro de direcciones</h6>
+     
     </div>
   </div>
 
@@ -187,8 +198,7 @@
 </div>
 
 <!-- Script para cargar dinámicamente los municipios -->
-<script src="/static/assets/js/sienna.js"></script>
-<script src="/static/assets/js/custom.js"></script>
+
 <script>
   
 

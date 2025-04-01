@@ -9,7 +9,13 @@ CREATE TABLE `abono` (
   PRIMARY KEY (`id`),
   KEY `fk_abono_pedido1_idx` (`pedido_id`),
   CONSTRAINT `fk_abono_pedido1` FOREIGN KEY (`pedido_id`) REFERENCES `pedido` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `abono` (`id`, `numero_abonos`, `fecha`, `estado`, `monto`, `abono_final`, `pedido_id`) VALUES (5, 'Pago inicial', '2025-04-01 12:41:15', 'Abono Pendiente', 12312, NULL, 99);
+INSERT INTO `abono` (`id`, `numero_abonos`, `fecha`, `estado`, `monto`, `abono_final`, `pedido_id`) VALUES (6, 'Pago final', '2025-04-01 12:42:11', 'Abono Pendiente', 1321312, NULL, 101);
+INSERT INTO `abono` (`id`, `numero_abonos`, `fecha`, `estado`, `monto`, `abono_final`, `pedido_id`) VALUES (7, 'Pago inicial', '2025-04-01 12:42:42', 'Abono Pendiente', 123, NULL, 98);
+INSERT INTO `abono` (`id`, `numero_abonos`, `fecha`, `estado`, `monto`, `abono_final`, `pedido_id`) VALUES (8, 'Pago inicial', '2025-04-01 12:43:34', 'Abono Pendiente', 213123, NULL, 98);
+INSERT INTO `abono` (`id`, `numero_abonos`, `fecha`, `estado`, `monto`, `abono_final`, `pedido_id`) VALUES (9, 'Pago inicial', '2025-04-01 12:52:46', 'Abono Pendiente', 23123, NULL, 99);
 
 CREATE TABLE `carrito_compras` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -22,9 +28,9 @@ CREATE TABLE `carrito_compras` (
   KEY `fk_carrito_compras_users1_idx` (`users_id`),
   CONSTRAINT `fk_carrito_compras_producto1` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`),
   CONSTRAINT `fk_carrito_compras_users1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `carrito_compras` (`id`, `cantidad`, `fecha_creacion`, `producto_id`, `users_id`) VALUES (94, 4, 2025-03-31, 73, 14);
+INSERT INTO `carrito_compras` (`id`, `cantidad`, `fecha_creacion`, `producto_id`, `users_id`) VALUES (123, 6, 2025-04-01, 81, 15);
 
 CREATE TABLE `departamento` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -80,12 +86,41 @@ CREATE TABLE `detalle_pedido` (
   KEY `fk_detalle_pedido_producto1_idx` (`producto_id`),
   CONSTRAINT `fk_detalle_pedido_pedido1` FOREIGN KEY (`pedido_id`) REFERENCES `pedido` (`id`),
   CONSTRAINT `fk_detalle_pedido_producto1` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=185 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=214 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (181, 23.00, 46.00, 2, 85, 73);
 INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (182, 23.00, 92.00, 4, 85, 74);
 INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (183, 23.00, 46.00, 2, 86, 73);
 INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (184, 23.00, 46.00, 2, 87, 74);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (185, 23.00, 115.00, 5, 88, 73);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (186, 67.00, 268.00, 4, 88, 79);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (187, 67.00, 201.00, 3, 89, 79);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (188, 67.00, 1005.00, 15, 90, 79);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (189, 89.00, 1335.00, 15, 90, 78);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (190, 67.00, 402.00, 6, 91, 79);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (191, 67.00, 134.00, 2, 92, 79);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (192, 67.00, 335.00, 5, 93, 79);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (193, 9000.00, 27000.00, 3, 94, 81);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (194, 9000.00, 135000.00, 15, 95, 81);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (195, 9000.00, 180000.00, 20, 96, 81);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (196, 9000.00, 99000.00, 11, 97, 81);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (197, 67.00, 402.00, 6, 97, 79);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (198, 9000.00, 18000.00, 2, 98, 81);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (199, 9000.00, 9000.00, 1, 99, 81);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (200, 9000.00, 477000.00, 53, 100, 81);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (201, 67.00, 3484.00, 52, 100, 79);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (202, 9000.00, 18000.00, 2, 101, 81);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (203, 9000.00, 9000.00, 1, 102, 81);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (204, 67.00, 134.00, 2, 102, 77);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (205, 45.00, 45.00, 1, 102, 75);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (206, 9000.00, 45000.00, 5, 103, 81);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (207, 9000.00, 27000.00, 3, 104, 81);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (208, 9000.00, 108000.00, 12, 105, 81);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (209, 67.00, 268.00, 4, 105, 79);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (210, 45.00, 135.00, 3, 105, 75);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (211, 65.00, 195.00, 3, 105, 76);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (212, 67.00, 134.00, 2, 105, 77);
+INSERT INTO `detalle_pedido` (`id`, `precio_unitario`, `total`, `cantidad`, `pedido_id`, `producto_id`) VALUES (213, 89.00, 178.00, 2, 105, 78);
 
 CREATE TABLE `direccion` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -107,13 +142,17 @@ CREATE TABLE `direccion` (
   CONSTRAINT `fk_direccion_departamento1_idx` FOREIGN KEY (`departamento_id`) REFERENCES `departamento` (`id`),
   CONSTRAINT `fk_direccion_municipio1` FOREIGN KEY (`municipio_id`) REFERENCES `municipio` (`id`),
   CONSTRAINT `fk_direccion_users1_idx` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `direccion` (`id`, `nombre_completo`, `barrio`, `domicilio`, `referencias`, `telefono`, `estado`, `costo_domicilio`, `users_id`, `municipio_id`, `departamento_id`, `created_at`) VALUES (13, 'qdasdasd', 'urbanp', 'qdasdasd', 'sadas', '123123', 'Activo', NULL, 14, 481, 12, '2025-03-30 10:52:57');
 INSERT INTO `direccion` (`id`, `nombre_completo`, `barrio`, `domicilio`, `referencias`, `telefono`, `estado`, `costo_domicilio`, `users_id`, `municipio_id`, `departamento_id`, `created_at`) VALUES (14, 'brandon', 'urbanp', 'qdasdasd', '23fdsf', '123123', 'Activo', NULL, 15, 542, 11, '2025-03-30 12:54:56');
 INSERT INTO `direccion` (`id`, `nombre_completo`, `barrio`, `domicilio`, `referencias`, `telefono`, `estado`, `costo_domicilio`, `users_id`, `municipio_id`, `departamento_id`, `created_at`) VALUES (15, 'qwe', 'qwe', 'qwe', 'qwe', '123123', 'Activo', 123, 15, 754, 16, '2025-03-30 13:17:48');
 INSERT INTO `direccion` (`id`, `nombre_completo`, `barrio`, `domicilio`, `referencias`, `telefono`, `estado`, `costo_domicilio`, `users_id`, `municipio_id`, `departamento_id`, `created_at`) VALUES (16, 'me llamo sebastian olmos', 'lagos', 'carrera 10 2-23', 'casa verde', '3214412444', 'Activo', 5000, 15, 222, 5, '2025-03-30 17:13:43');
 INSERT INTO `direccion` (`id`, `nombre_completo`, `barrio`, `domicilio`, `referencias`, `telefono`, `estado`, `costo_domicilio`, `users_id`, `municipio_id`, `departamento_id`, `created_at`) VALUES (20, 'brandon', 'lagos', 'carrera 10 2-23', 'casa verde', '3214412444', 'Activo', 0, 15, 514, 10, '2025-03-31 15:01:55');
+INSERT INTO `direccion` (`id`, `nombre_completo`, `barrio`, `domicilio`, `referencias`, `telefono`, `estado`, `costo_domicilio`, `users_id`, `municipio_id`, `departamento_id`, `created_at`) VALUES (21, 'JUAN SEBASTIAN MORENO OLMOS', 'LAGOS', 'carrera 10 2-23', 'CASA VERDE CON REJAS', '32144124444', 'Activo', NULL, 14, 225, 5, '2025-04-01 08:30:10');
+INSERT INTO `direccion` (`id`, `nombre_completo`, `barrio`, `domicilio`, `referencias`, `telefono`, `estado`, `costo_domicilio`, `users_id`, `municipio_id`, `departamento_id`, `created_at`) VALUES (22, 'ligia Aurora', 'olmos', 'casa azul', 'asdasd', '3187966320', 'Activo', 0, 15, 416, 8, '2025-04-01 09:05:39');
+INSERT INTO `direccion` (`id`, `nombre_completo`, `barrio`, `domicilio`, `referencias`, `telefono`, `estado`, `costo_domicilio`, `users_id`, `municipio_id`, `departamento_id`, `created_at`) VALUES (23, 'alex', 'lagos', 'carrera 10 2-23', 'nada que ver', '32144124444', 'Activo', NULL, 15, 459, 9, '2025-04-01 09:17:48');
+INSERT INTO `direccion` (`id`, `nombre_completo`, `barrio`, `domicilio`, `referencias`, `telefono`, `estado`, `costo_domicilio`, `users_id`, `municipio_id`, `departamento_id`, `created_at`) VALUES (24, 'pedro pppp', 'lagos', 'carrera 10 2-23', 'casa verde', '3214412444', 'Activo', 0, 15, 458, 9, '2025-04-01 09:19:05');
 
 CREATE TABLE `entrega` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -128,11 +167,29 @@ CREATE TABLE `entrega` (
   KEY `fk_entrega_users` (`users_id`),
   CONSTRAINT `fk_entrega_direccion1` FOREIGN KEY (`direccion_id`) REFERENCES `direccion` (`id`),
   CONSTRAINT `fk_entrega_users` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (94, 'Domicilio', '2025-03-31 13:34:37', 'Pendiente', 25000.00, 16, 15);
 INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (95, 'Domicilio', '2025-03-31 13:35:39', 'Pendiente', 25.00, 15, 15);
-INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (96, 'Presencial', '2025-03-31 13:36:24', 'Entregado', 0.00, NULL, 15);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (96, 'Presencial', '2025-03-31 13:36:24', 'En camino', 0.00, NULL, 15);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (97, 'Domicilio', '2025-03-31 20:28:47', 'Pendiente', 0.00, 13, 14);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (98, 'Domicilio', '2025-04-01 08:15:37', 'Pendiente', 0.00, 13, 14);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (99, 'Domicilio', '2025-04-01 08:17:58', 'Pendiente', 0.00, 13, 14);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (100, 'Domicilio', '2025-04-01 08:19:23', 'Pendiente', 0.00, 13, 14);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (101, 'Presencial', '2025-04-01 08:20:46', 'Pendiente', 0.00, NULL, 14);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (102, 'Domicilio', '2025-04-01 08:26:26', 'Pendiente', 0.00, 13, 14);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (103, 'Domicilio', '2025-04-01 08:30:16', 'Pendiente', 0.00, 21, 14);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (104, 'Domicilio', '2025-04-01 08:38:00', 'Pendiente', 0.00, 21, 14);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (105, 'Domicilio', '2025-04-01 08:39:14', 'Pendiente', 0.00, 21, 14);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (106, 'Domicilio', '2025-04-01 08:43:29', 'Pendiente', 25000.00, 16, 15);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (107, 'Presencial', '2025-04-01 08:45:00', 'Pendiente', 0.00, NULL, 15);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (108, 'Domicilio', '2025-04-01 08:53:02', 'Pendiente', 0.00, 20, 15);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (109, 'Domicilio', '2025-04-01 08:55:51', 'Pendiente', 0.00, 16, 15);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (110, 'Domicilio', '2025-04-01 08:57:35', 'Pendiente', 0.00, 20, 15);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (111, 'Domicilio', '2025-04-01 08:58:32', 'Pendiente', 0.00, 20, 15);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (112, 'Domicilio', '2025-04-01 09:06:02', 'Pendiente', 0.00, 22, 15);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (113, 'Domicilio', '2025-04-01 09:18:06', 'Pendiente', 0.00, 23, 15);
+INSERT INTO `entrega` (`id`, `tipo`, `fecha_hora`, `estado`, `costo_domicilio`, `direccion_id`, `users_id`) VALUES (114, 'Domicilio', '2025-04-01 12:09:46', 'Pendiente', 670000.00, 21, 14);
 
 CREATE TABLE `factura` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -142,9 +199,18 @@ CREATE TABLE `factura` (
   PRIMARY KEY (`id`),
   KEY `fk_factura_pedido1_idx` (`pedido_id`) USING BTREE,
   CONSTRAINT `fk_factura_pedido1` FOREIGN KEY (`pedido_id`) REFERENCES `pedido` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `factura` (`id`, `estado`, `fecha`, `pedido_id`) VALUES (4, 'Pendiente', '2025-03-31 14:52:52', 85);
+INSERT INTO `factura` (`id`, `estado`, `fecha`, `pedido_id`) VALUES (5, 'Pendiente', '2025-03-31 19:58:44', 85);
+INSERT INTO `factura` (`id`, `estado`, `fecha`, `pedido_id`) VALUES (6, 'Pendiente', '2025-03-31 20:26:07', 85);
+INSERT INTO `factura` (`id`, `estado`, `fecha`, `pedido_id`) VALUES (7, 'Pendiente', '2025-03-31 20:27:49', 87);
+INSERT INTO `factura` (`id`, `estado`, `fecha`, `pedido_id`) VALUES (8, 'Pendiente', '2025-03-31 20:28:20', 86);
+INSERT INTO `factura` (`id`, `estado`, `fecha`, `pedido_id`) VALUES (9, 'Pendiente', '2025-03-31 20:29:08', 88);
+INSERT INTO `factura` (`id`, `estado`, `fecha`, `pedido_id`) VALUES (10, 'Pendiente', '2025-04-01 12:10:46', 92);
+INSERT INTO `factura` (`id`, `estado`, `fecha`, `pedido_id`) VALUES (11, 'Facturado', '2025-04-01 12:12:36', 99);
+INSERT INTO `factura` (`id`, `estado`, `fecha`, `pedido_id`) VALUES (12, 'Pendiente', '2025-04-01 12:18:22', 100);
+INSERT INTO `factura` (`id`, `estado`, `fecha`, `pedido_id`) VALUES (13, 'Pendiente', '2025-04-01 12:18:36', 91);
+INSERT INTO `factura` (`id`, `estado`, `fecha`, `pedido_id`) VALUES (14, 'Pendiente', '2025-04-01 12:51:51', 90);
 
 CREATE TABLE `metodo_pago` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -1320,11 +1386,29 @@ CREATE TABLE `pedido` (
   CONSTRAINT `fk_pedido_metodo_pago1` FOREIGN KEY (`metodo_pago_id`) REFERENCES `metodo_pago` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_pedido_producto1` FOREIGN KEY (`producto_id`) REFERENCES `producto` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `fk_pedido_users1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=88 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (85, '2025-03-31 13:34:37', NULL, NULL, 'Pendiente', 138.00, 94, 15, 73, 2);
 INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (86, '2025-03-31 13:35:39', NULL, NULL, 'Pendiente', 46.00, 95, 15, 73, 3);
 INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (87, '2025-03-31 13:36:24', NULL, NULL, 'Pendiente', 46.00, 96, 15, 74, 4);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (88, '2025-03-31 20:28:47', NULL, NULL, 'Pendiente', 383.00, 97, 14, 73, 3);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (89, '2025-04-01 08:15:37', NULL, NULL, 'Pendiente', 201.00, 98, 14, 79, 3);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (90, '2025-04-01 08:17:58', NULL, NULL, 'Pendiente', 2340.00, 99, 14, 79, 3);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (91, '2025-04-01 08:19:23', NULL, NULL, 'Pendiente', 402.00, 100, 14, 79, 1);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (92, '2025-04-01 08:20:46', NULL, NULL, 'Pendiente', 134.00, 101, 14, 79, 3);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (93, '2025-04-01 08:26:26', NULL, NULL, 'Pendiente', 335.00, 102, 14, 79, 2);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (94, '2025-04-01 08:30:16', NULL, NULL, 'Pendiente', 27000.00, 103, 14, 81, 2);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (95, '2025-04-01 08:38:00', NULL, NULL, 'Pendiente', 135000.00, 104, 14, 81, 4);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (96, '2025-04-01 08:39:14', NULL, NULL, 'Pendiente', 180000.00, 105, 14, 81, 4);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (97, '2025-04-01 08:43:29', NULL, NULL, 'Pendiente', 99402.00, 106, 15, 81, 3);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (98, '2025-04-01 08:45:00', NULL, NULL, 'Pendiente', 18000.00, 107, 15, 81, 4);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (99, '2025-04-01 08:53:02', NULL, NULL, 'Pendiente', 9000.00, 108, 15, 81, 3);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (100, '2025-04-01 08:55:51', NULL, NULL, 'Pendiente', 480484.00, 109, 15, 81, 2);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (101, '2025-04-01 08:57:35', NULL, NULL, 'Pendiente', 18000.00, 110, 15, 81, 3);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (102, '2025-04-01 08:58:32', NULL, NULL, 'Pendiente', 9179.00, 111, 15, 81, 4);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (103, '2025-04-01 09:06:02', 2025-04-09, 12:51:00, 'Entregado', 45000.00, 94, 15, 81, 4);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (104, '2025-04-01 09:18:06', NULL, NULL, 'Pendiente', 27000.00, 113, 15, 81, 4);
+INSERT INTO `pedido` (`id`, `fecha`, `fechaEntrega`, `horaEntrega`, `estado`, `total`, `entrega_id`, `users_id`, `producto_id`, `metodo_pago_id`) VALUES (105, '2025-04-01 12:09:46', 2025-04-03, 15:02:00, 'En camino', 108910.00, 94, 14, 81, 2);
 
 CREATE TABLE `producto` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -1339,10 +1423,16 @@ CREATE TABLE `producto` (
   `total` decimal(10,2) NOT NULL,
   `imagen` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (73, 23, '23', '23', 23.00, 'Disponible', 23.00, 23, '23', 529.00, '/static/assets/img/productos/98fd2b73-52f7-4f58-b69e-b2e58bce92fe.jpg');
 INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (74, 23, '23', '23fsfd', 23.00, 'Disponible', 23.00, 123, '23', 2829.00, '/static/assets/img/productos/2d0243cb-732c-4b64-8175-1909509bc0d6.jpeg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (75, 45, '45', '45', 45.00, 'Disponible', 54.00, 45, '45', 2025.00, '/static/assets/img/productos/174fce87-e9d0-41ad-b86c-bdb962b1b611.jpeg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (76, 56, '56', '56', 65.00, 'Disponible', 56.00, 56, '78', 3640.00, '/static/assets/img/productos/c3aba3bb-3714-419f-bf89-60ad4af04c67.jpeg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (77, 67, '67', '76', 67.00, 'Disponible', 67.00, 67, '67', 4489.00, '/static/assets/img/productos/d6aedc63-64c8-4d8e-acd6-097d30890d46.png');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (78, 89, '89', '89', 89.00, 'Disponible', 89.00, 89, '676hg', 7921.00, '/static/assets/img/productos/ad85a6ea-6087-4102-8013-710daaedd12d.jpeg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (79, 76, '67', '67', 67.00, 'Disponible', 67.00, 67, 'asd', 4489.00, '/static/assets/img/productos/5d6545bd-9451-4f1a-a885-bf1de4c14e85.jpeg');
+INSERT INTO `producto` (`id`, `codigo`, `nombre`, `descripcion`, `precio`, `estado`, `unidad_medida`, `cantidad`, `marca`, `total`, `imagen`) VALUES (81, 26, 'Tamal Boyacense', 'Tamales realizados a mano ', 9000.00, 'Disponible', 23.00, 23, 'nada', 207000.00, '/static/assets/img/productos/9ddf9ea8-6727-47e0-874f-e543cf120822.jpg');
 
 CREATE TABLE `stock` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -1384,9 +1474,14 @@ CREATE TABLE `users` (
   `estado` enum('activo','inactivo') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `created_user` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (14, 'Cedula ciudadania', 12, 'Super', 'Admin', 3000000000, 'superadmin@example.com', 'scrypt:32768:8:1$QGlMGfByKIcfeM7C$83c2527d53a099e8a1ce5b9a27b3892c123f4fcc633f615d3c144fb39b6a191471a45d92b934ebb198f468ffc2dd513f188d7d08f6af2e7a51bd5722b045b975', 'superadmin', 'activo', '2025-03-30 10:50:34');
-INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (15, 'Cedula ciudadania', 1048847249, 'sebas', 'moreno', 321, '123@gmail.com', 'scrypt:32768:8:1$d6nwgUzREClbEpT8$cb2569cd218b0f95de559614dbccd2b72f99298a0457131d06323849b2674d0c7e2a5d73f7a82b6c66bedb317dd1535f3a3b33ac9aa31bd33d07bd7a0aa232ec', 'cliente', 'activo', '2025-03-30 12:29:21');
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (15, 'Cedula ciudadania', 1048847249, 'sebas ', 'moreno', 321, '123@gmail.com', 'scrypt:32768:8:1$d6nwgUzREClbEpT8$cb2569cd218b0f95de559614dbccd2b72f99298a0457131d06323849b2674d0c7e2a5d73f7a82b6c66bedb317dd1535f3a3b33ac9aa31bd33d07bd7a0aa232ec', 'cliente', 'activo', '2025-03-30 12:29:21');
 INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (16, 'NIT', 23, '23', '23', 23, '23@gmail.com', 'scrypt:32768:8:1$Obv3Q6ncCCjPDyxy$ae0b330f489eaf6936c032bc277b450b453defbd8a1b4dd214dca572e73f000af7bdaf83d537e2b02fa9031ae7f5d9209c7772cdf3d44e26ebb8607a172c7e40', 'cliente', 'activo', '2025-03-30 13:16:32');
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (17, 'Cedula ciudadania', 213, 'dsf', 'sdf', 123, 'asdasd123@gmail.com', 'scrypt:32768:8:1$y4Q25YQ3tQfUh1PN$decb90a67ac396cdf18a8e9e394681649f5d240028f48228e94b2fd9d10b2b2a2da1902b45bf988e4d3371bcc6f23e229f7885e1ae8d72fb1aaf00f39dfaea97', 'cliente', 'activo', '2025-03-31 15:48:59');
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (18, 'Cedula ciudadania', 657, '67', '67', 676, '7878yjgh@gmail.com', 'scrypt:32768:8:1$vdqVhiMKYdMjjTda$3c42f259bbbd4fa7a08ae8bcb66e237ddfbe01999f3286d8b4d1465c3b90b4a4e54e5f60577c3a2d7a242943533bbd14052b3237c2c9716c7fd98b91027cea5c', 'cliente', 'activo', '2025-03-31 16:18:56');
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (19, 'Tarjeta identidad', 567567, '23', '756', 7567567, '56756756@gmail.com', 'scrypt:32768:8:1$ahVuWZvt9O2FE3pc$ea7421ba3b4af8cfb73aedba1082e2b6c09cc4d2e307259b2c5df0390eea8491d9c54d1d9aa97f22621e0d1acde36278b9e5a4b190ad08bb5d62258431118d5b', 'cliente', 'activo', '2025-03-31 16:21:42');
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (20, 'Tarjeta identidad', 77, 'danna', 'mora', 321, '77@gmail.com', 'scrypt:32768:8:1$6h2nnbJql4IZzS5J$d848a9882876a44b3155edb1ec6d2a7a30033376eaf362bf525ba53600ab8931cf871d372d63df78cd8369ee80d2f2a59f4e8b6661a5deefd14de14859b98058', 'cliente', 'activo', '2025-03-31 17:05:26');
+INSERT INTO `users` (`id`, `tipo_documento`, `documento`, `nombre`, `apellido`, `telefono`, `correo`, `contrasena`, `rol`, `estado`, `created_user`) VALUES (21, 'Cedula ciudadania', 5678, 'david cubides', 'olmos', 3214412444, 'juansebastian812005@gmail.com', 'scrypt:32768:8:1$zUVa7F1vNGCFHciV$d875172c136baf698d6d47c4d8c6d4bbeb9bddae7f120e4d859546e07de6a5e81fd37b245601f66f0d4c58faff09b99e5f1ccdd2b181f63f04c07b9b7819511c', 'cliente', 'activo', '2025-03-31 20:09:49');
 

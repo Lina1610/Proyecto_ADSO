@@ -3,6 +3,7 @@
 {% block title %}Crud con Python 🐍 | Detalles del Producto{% endblock %}
 <!---->
 {% block customCSS %}
+{{ super() }}
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename ='assets/css/file.css') }}" />
