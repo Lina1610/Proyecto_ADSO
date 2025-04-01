@@ -8,8 +8,9 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/file.css') }}" />
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/footer.css') }}" />
  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}" />
- <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/formularioUsuario.css') }}" />
+ <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/editarFactura.css') }}" />
  <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
+ <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/position_indicator.css') }}" />
 
 {% endblock %}
 
@@ -18,8 +19,21 @@
 <div class="card" style="border-radius: 0px !important">
   <div class="row justify-content-center mb-2">
     <div class="col-md-12">
-      <h3 class="text-center mt-5 mb-3">REGISTRAR NUEVA FACTURA</h3>
+      <h3 class="text-center mt-5 mb-3">
+        <a href="/lista-de-facturas" class="text-decoration-none me-3">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        REGISTRAR NUEVA FACTURA
+      </h3>
       <hr />
+    </div>
+  </div>
+
+  <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-people-fill context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de registro de facturas</h6>
+      
     </div>
   </div>
 

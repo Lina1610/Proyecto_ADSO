@@ -80,7 +80,7 @@ html {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 5%;
+  padding: 30px 5%; 
   background: transparent;
   transition: all 0.3s ease;
   z-index: 1000;
@@ -202,6 +202,7 @@ html {
   .menu label[for="menu"] {
     display: block;
   }
+  
   
   /* Ocultar menú inicialmente */
   .navbar {

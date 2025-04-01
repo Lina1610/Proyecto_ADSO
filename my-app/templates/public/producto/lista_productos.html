@@ -14,6 +14,25 @@
       <h3 class="text-center mt-5 mb-3">LISTA DE PRODUCTOS</h3>
       <hr />
     </div>
+    <!-- Mensaje de contexto -->
+    <div class="context-indicator d-flex align-items-center">
+      <i class="bi bi-people-fill context-icon"></i>
+      <div>
+        <h6 class="mb-1">Vista de lista de productos </h6>
+        <p class="mb-0 small text-muted" id="context-detail">
+          Gestión completa del listado de productos registrados en el sistema
+        </p>
+      </div>
+    </div>
+
+     <!-- Botón para crear nuevo usuario (a la derecha) -->
+     <div class="row justify-content-end mb-3">
+      <div class="col-md-3">
+        <a href="{{ url_for('viewFormProducto') }}" class="btn btn-primary btn-sm">
+          <i class="bi bi-plus-circle"></i> Crear Nuevo Producto
+        </a>
+      </div>
+    </div>
 
     <!-- Contenedor de mensajes -->
     <div id="contenedor-mensajes"></div>

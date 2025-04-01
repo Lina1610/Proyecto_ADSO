@@ -192,56 +192,60 @@
         </div>
     </div>
 </div>
-<!-- Modal para agregar dirección -->
+<!-- Modal para Agregar Dirección -->
 <div class="modal fade" id="editarDireccionModal" tabindex="-1" aria-labelledby="editarDireccionModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="editarDireccionModalLabel">Agregar Nueva Dirección</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
                 <form id="formRegistrarDireccion" method="POST" onsubmit="guardarDireccion(event)">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="nombre_completo" class="form-label">Nombre Completo</label>
-                                <input type="text" name="nombre_completo" id="registrarNombreCompleto" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="telefono" class="form-label">Teléfono</label>
-                                <input type="tel" name="telefono" id="registrarTelefono" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="departamento_id" class="form-label">Departamento</label>
-                                <select class="form-select" name="departamento_id" id="registrarDepartamentoId" required>
-                                    <option value="">Seleccione un departamento</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="municipio_id" class="form-label">Municipio</label>
-                                <select class="form-select" name="municipio_id" id="registrarMunicipioId" required>
-                                    <option value="">Seleccione un municipio</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="domicilio" class="form-label">Domicilio</label>
-                                <input type="text" name="domicilio" id="registrarDomicilio" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="barrio" class="form-label">Barrio</label>
-                                <input type="text" name="barrio" id="registrarBarrio" class="form-control" required>
-                            </div>
-                        </div>
+                    <div class="mb-3">
+                        <label for="nombre_completo" class="form-label">Nombre Completo</label>
+                        <input type="text" name="nombre_completo" id="registrarNombreCompleto" class="form-control" required />
                     </div>
+                    
+                    <div class="mb-3">
+                        <label for="telefono" class="form-label">Teléfono</label>
+                        <input class="form-control" type="tel" name="telefono" id="registrarTelefono" required />
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="departamento_id" class="form-label">Departamento</label>
+                        <select class="form-select" name="departamento_id" id="registrarDepartamentoId" required>
+                            <option value="">Seleccione un departamento</option>
+                            {% for departamento in departamentos %}
+                                <option value="{{ departamento.id }}">{{ departamento.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="barrio" class="form-label">Barrio</label>
+                        <input class="form-control" type="text" name="barrio" id="registrarBarrio" required />
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="domicilio" class="form-label">Domicilio</label>
+                        <input class="form-control" type="text" name="domicilio" id="registrarDomicilio" required />
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="municipio_id" class="form-label">Municipio</label>
+                        <select class="form-select" name="municipio_id" id="registrarMunicipioId" required>
+                            <option value="">Seleccione un municipio</option>
+                        </select>
+                    </div>
+                    
                     <div class="mb-3">
                         <label for="referencias" class="form-label">Referencias</label>
-                        <textarea name="referencias" id="registrarReferencias" class="form-control" rows="2"></textarea>
+                        <textarea class="form-control" name="referencias" id="registrarReferencias" rows="4"></textarea>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Guardar Dirección</button>
                     </div>
                 </form>

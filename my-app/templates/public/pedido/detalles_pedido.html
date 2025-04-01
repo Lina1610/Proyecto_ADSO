@@ -7,6 +7,7 @@
 {% block body %}
 
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/detalles.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/position_indicator.css') }}" />
 
 <!---->
 {% if pedido %}
@@ -20,6 +21,14 @@
         INFORMACIÓN DEL PEDIDO
       </h3>
       <hr />
+    </div>
+  </div>
+   <!-- Mensaje de contexto -->
+   <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-people-fill context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de detalles de pedidos </h6>
+      
     </div>
   </div>
 

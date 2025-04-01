@@ -42,13 +42,22 @@ def eliminar_factura(id):
 # Ruta para registrar una factura
 @app.route('/registrar-factura', methods=['GET', 'POST'])
 def viewFormFactura():
-    if 'conectado' in session:
-        if request.method == 'POST':
+    if 'conectado' not in session:
+        flash('Primero debes iniciar sesión.', 'error')
+        return redirect(url_for('inicio'))
+
+    if request.method == 'POST':
+        try:
             # Obtener los datos del formulario
             dataForm = {
                 'estado': request.form.get('estado'),
                 'pedido_id': request.form.get('pedido_id')
             }
+
+            # Validar campos obligatorios
+            if not dataForm['pedido_id']:
+                flash('El ID del pedido es obligatorio', 'error')
+                return redirect(url_for('viewFormFactura'))
 
             # Procesar la factura
             resultado = procesar_factura(dataForm)
@@ -56,39 +65,33 @@ def viewFormFactura():
             # Manejar el resultado
             if isinstance(resultado, int) and resultado > 0:
                 flash('Factura registrada correctamente.', 'success')
+                return redirect(url_for('lista_facturas'))  # Redirigir a lista de facturas
             else:
-                flash(resultado, 'error')  # Mostrar mensaje de error
-
-
-
+                flash(f'Error al registrar factura: {resultado}', 'error')
+                return redirect(url_for('viewFormFactura'))
+                
+        except Exception as e:
+            flash(f'Error inesperado: {str(e)}', 'error')
             return redirect(url_for('viewFormFactura'))
 
-            return redirect(url_for('registrar-factura'))
+    # Si es GET, mostrar el formulario con los datos necesarios
+    with connectionBD() as conexion_MySQLdb:
+        with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+            # Obtener la lista de pedidos con el nombre del usuario asociado
+            cursor.execute("""
+                SELECT p.id AS pedido_id, u.nombre AS nombre_usuario, 
+                       p.fecha, p.estado AS estado_pedido
+                FROM pedido p
+                JOIN users u ON p.users_id = u.id
+                WHERE p.id NOT IN (SELECT pedido_id FROM factura)  # Solo pedidos sin factura
+                ORDER BY p.fecha DESC
+            """)
+            pedidos = cursor.fetchall()
 
-
-            return redirect(url_for('registrar-factura'))
-
-            return redirect(url_for('viewFormFactura'))
-
-
-        # Si es GET, mostrar el formulario con los datos necesarios
-        with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                # Obtener la lista de pedidos con el nombre del usuario asociado
-                cursor.execute("""
-                    SELECT p.id AS pedido_id, u.nombre AS nombre_usuario
-                    FROM pedido p
-                    JOIN users u ON p.users_id = u.id
-                """)
-                pedidos = cursor.fetchall()
-
-        return render_template(
-            'public/factura/registro_factura.html',  # Ruta corregida
-            pedidos=pedidos
-        )
-    else:
-        flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('inicio'))
+    return render_template(
+        'public/factura/registro_factura.html',
+        pedidos=pedidos
+    )
 
 # Ruta para la lista de facturas
 @app.route('/lista-de-facturas')

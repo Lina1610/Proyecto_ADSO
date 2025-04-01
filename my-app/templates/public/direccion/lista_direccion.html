@@ -5,12 +5,31 @@
 <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/filtroUsuario.css') }}" />
 
 
+
 <div class="card" style="border-radius: 0px !important">
   <div class="row justify-content-center mb-2">
     <div class="col-md-12 mb-4">
       <h3 class="text-center mt-5 mb-3">LISTA DE DIRECCIONES</h3>
       <hr />
     </div>
+      <!-- Mensaje de contexto -->
+      <div class="context-indicator d-flex align-items-center">
+        <i class="bi bi-people-fill context-icon"></i>
+        <div>
+          <h6 class="mb-1">Vista de lista de direcciones</h6>
+          <p class="mb-0 small text-muted" id="context-detail">
+            Gestión completa del listado de direcciones registrados en el sistema
+          </p>
+        </div>
+      </div>
+
+      <div class="row justify-content-end mb-3">
+        <div class="col-md-3">
+          <a href="{{ url_for('viewFormDireccion') }}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle"></i> Crear Nueva Direccion
+          </a>
+        </div>
+      </div>
 
     <!-- Contenedor de mensajes -->
     <div id="contenedor-mensajes"></div>

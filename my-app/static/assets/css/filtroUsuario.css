@@ -167,6 +167,10 @@
   border-color: #86b7fe;
   outline: 0;
 }
+#search_usuario{
+  min-width: 44% !important;
+  background-color: #f3efef !important;
+}
 
 /* Versión alternativa si prefieres usar Font Awesome */
 /*

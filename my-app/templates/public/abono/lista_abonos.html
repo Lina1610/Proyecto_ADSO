@@ -9,6 +9,25 @@
       <hr />
     </div>
 
+    <!-- Mensaje de contexto -->
+    <div class="context-indicator d-flex align-items-center">
+      <i class="bi bi-people-fill context-icon"></i>
+      <div>
+        <h6 class="mb-1">Vista de lista de abonos</h6>
+        <p class="mb-0 small text-muted" id="context-detail">
+          Gestión completa del listado de abonos registrados en el sistema
+        </p>
+      </div>
+    </div>
+
+    <div class="row justify-content-end mb-3">
+      <div class="col-md-3">
+        <a href="{{ url_for('viewFormAbono') }}" class="btn btn-primary btn-sm">
+          <i class="bi bi-plus-circle"></i> Crear Nuevo Abono
+        </a>
+      </div>
+    </div>
+
     <!-- Botón para mostrar/ocultar filtros (a la izquierda) -->
     <div class="row justify-content-between">
       <div class="col-md-2 mt-2">

@@ -312,6 +312,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Función para finalizar la compra
+// Función para finalizar la compra
 async function finalizarCompra() {
     try {
         // Obtener datos del formulario
@@ -329,6 +330,10 @@ async function finalizarCompra() {
             mostrarNotificacion('Seleccione una dirección para entrega a domicilio', 'error');
             return;
         }
+
+        // Guardar copia de los items del carrito antes de limpiarlo
+        const itemsCarrito = [...carritoItems];
+        const totalCarrito = calcularTotalCarrito();
 
         // Mostrar carga
         mostrarNotificacion('Procesando pedido...', 'info');
@@ -369,12 +374,8 @@ async function finalizarCompra() {
                 if (modal) modal.hide();
             });
             
-            // 4. Opcional: Mostrar resumen en consola
-            console.log('Pedido creado:', {
-                id: data.pedido_id,
-                total: data.total,
-                fecha: data.fecha
-            });
+            // 4. Enviar información a WhatsApp usando la copia guardada
+            enviarPedidoWhatsApp(tipoEntrega, metodoPago, direccion, itemsCarrito, totalCarrito);
             
         } else {
             mostrarNotificacion(data.mensaje || 'Error al crear pedido', 'error');
@@ -384,6 +385,85 @@ async function finalizarCompra() {
         console.error('Error:', error);
         mostrarNotificacion('Error de conexión', 'error');
     }
+}
+
+// Función para calcular el total del carrito
+function calcularTotalCarrito() {
+    return carritoItems.reduce((total, item) => total + (item.precio * item.cantidad), 0);
+}
+
+function enviarPedidoWhatsApp(tipoEntrega, metodoPago, direccion, itemsCarrito, totalCarrito) {
+    // Obtener información del usuario
+    const nombreUsuario = document.querySelector('.user-name')?.textContent || 'Cliente no identificado';
+    
+    // Obtener texto del método de pago
+    const metodoPagoTexto = document.querySelector(`label[for="metodo_pago_${metodoPago.value}"]`)?.textContent.trim() || 'Método no especificado';
+    
+    // Construir mensaje con formato mejorado
+    let mensaje = `*NUEVO PEDIDO - EL RINCÓN DEL TAMAL*%0A%0A`;
+    
+    // Información del cliente
+    mensaje += `*Cliente:* ${nombreUsuario}%0A`;
+    mensaje += `*Tipo de entrega:* ${tipoEntrega}%0A`;
+    mensaje += `*Método de pago:* ${metodoPagoTexto}%0A%0A`;
+    
+    // Detalles de entrega si es domicilio
+    if (tipoEntrega === 'Domicilio' && direccion) {
+        const direccionElement = document.querySelector(`input[name="direccion"][value="${direccion.value}"]`)?.parentElement;
+        if (direccionElement) {
+            const direccionTexto = direccionElement.textContent.trim();
+            
+            mensaje += `*DATOS DE ENTREGA*%0A`;
+            
+            // Extraer componentes usando una expresión regular más robusta
+            const match = direccionTexto.match(
+                /(.+)\n(.+)\n(.+)\n(.+),\s*(.+)\nTeléfono:\s*(.+)/
+            );
+            
+            if (match) {
+                mensaje += `*Nombre del que recibe:* ${match[1].trim()}%0A`;
+                mensaje += `*Dirección de entrega:* ${match[2].trim()}%0A`;
+                mensaje += `*Barrio:* ${match[3].trim()}%0A`;
+                mensaje += `*Ciudad:* ${match[4].trim()}%0A`;
+                mensaje += `*Departamento:* ${match[5].trim()}%0A`;
+                mensaje += `*Teléfono:* ${match[6].trim()}%0A%0A`;
+            } else {
+                // Formato alternativo si no coincide el regex
+                const lineas = direccionTexto.split('\n').map(line => line.trim()).filter(line => line);
+                
+                mensaje += `*Nombre del que recibe:* ${lineas[0] || 'No especificado'}%0A`;
+                mensaje += `*Dirección de entrega:* ${lineas[1] || 'No especificada'}%0A`;
+                
+                // Si hay más campos disponibles para mostrar
+                if (lineas.length > 2 && !lineas[2].includes('Teléfono:')) {
+                    mensaje += `*Ubicación adicional:* ${lineas[2] || 'No especificada'}%0A`;
+                }
+                
+                // Buscar específicamente "Teléfono" en las líneas
+                const telefonoLine = lineas.find(line => line.includes('Teléfono:'));
+                const telefono = telefonoLine ? telefonoLine.replace('Teléfono:', '').trim() : 'No especificado';
+                
+                mensaje += `*Teléfono:* ${telefono}%0A%0A`;
+            }
+        }
+    }
+    
+    // Lista de productos con precio unitario
+    mensaje += `*PRODUCTOS*%0A`;
+    itemsCarrito.forEach(item => {
+        mensaje += `- *${item.nombre}*%0A`;
+        mensaje += `  Cantidad: ${item.cantidad}%0A`;
+        mensaje += `  Precio unitario: $${item.precio.toLocaleString()}%0A`;
+        mensaje += `  Subtotal: $${(item.precio * item.cantidad).toLocaleString()}%0A%0A`;
+    });
+    
+    // Total del pedido
+    mensaje += `*TOTAL DEL PEDIDO:* $${totalCarrito.toLocaleString()}`;
+    
+    // Número de WhatsApp
+    const telefonoWhatsApp = '573219063543';
+    const urlWhatsApp = `https://wa.me/${telefonoWhatsApp}?text=${mensaje}`;
+    window.open(urlWhatsApp, '_blank');
 }
 // Función para procesar el pedido y mostrar las direcciones
 function procesarPedido() {

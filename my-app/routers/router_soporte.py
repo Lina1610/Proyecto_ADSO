@@ -19,7 +19,7 @@ def enviar_soporte():
         msg = EmailMessage()
         msg['Subject'] = f"Soporte - {data['asunto']}"
         msg['From'] = app.config['MAIL_USERNAME']
-        msg['To'] = 'lescobarhiguera@gmail.com'
+        msg['To'] = 'juansebastian812005@gmail.com'
         msg['Reply-To'] = data['email']
         
         cuerpo_email = f"""

@@ -26,7 +26,7 @@
     box-shadow: var(--shadow-md);
     padding: 40px;
     margin: 30px auto;
-    max-width: 900px;
+    max-width: 1500px;
     transition: var(--transition);
     position: relative;
     overflow: hidden;
@@ -219,6 +219,11 @@ input[type="file"]:focus {
 .form-select:focus {
     border-color: var(--primary-color);
 }
+#search_usuario{
+    min-width: 44% !important;
+    background-color: #f3efef !important;
+  }
+
 
 /* Ajustes para dispositivos móviles */
 @media (max-width: 768px) {

@@ -4,13 +4,27 @@
 
 {% block body %}
 <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/editar.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/position_indicator.css') }}" />
 
 
 <div class="card" style="border-radius: 0px !important">
   <div class="row justify-content-center mb-2">
     <div class="col-md-12">
-      <h3 class="text-center mt-5 mb-3">EDITAR PEDIDO</h3>
+      <h3 class="text-center mt-5 mb-3">
+        <a href="{{ url_for('lista_pedidos') }}">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        EDITAR PEDIDO
+      </h3>
       <hr />
+    </div>
+  </div>
+   <!-- Mensaje de contexto -->
+   <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-people-fill context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de editar de pedidos </h6>
+     
     </div>
   </div>
 
