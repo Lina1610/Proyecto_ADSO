@@ -107,18 +107,15 @@ img{
 
 /* --- Contenedor principal del menú --- */
 .navbar {
-  flex-grow: 1; /* Ocupar espacio disponible */
   display: flex;
-  justify-content: flex-end; /* Alinear a la derecha */
+  gap: 30px;
 }
 
 /* --- Lista de elementos --- */
 .navbar ul {
   display: flex;
-  gap: 40px; /* Espacio aumentado entre elementos */
+  gap: 25px;
   align-items: center;
-  margin: 0;
-  padding: 0;
 }
 
 /* --- Elementos individuales --- */
@@ -360,6 +357,218 @@ body {
   height: 40px;
   padding: 0 20px;
 }
+/* Tablets (768px - 991px) */
+@media (max-width: 991px) {
+  .header-content {
+      flex-direction: column;
+      text-align: center;
+      padding: 30px 15px;
+      gap: 20px;
+  }
+
+  .header-txt h2 {
+      font-size: 50px;
+  }
+
+  .header-img img {
+      height: 350px;
+  }
+
+ .menu label {
+display: block;
+position: absolute;
+top: 50%; /* Centra verticalmente */
+right: 20px; /* Ubica en la derecha */
+transform: translateY(-50%); /* Ajuste fino para centrar bien */
+z-index: 1001;
+padding: 15px;
+cursor: pointer;
+}
+/* Estilos para dividir elementos del menú */
+.navbar ul li {
+width: 100%;
+border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Línea separadora */
+}
+
+/* Eliminar el borde del último elemento para que no quede una línea extra */
+.navbar ul li:last-child {
+border-bottom: none;
+}
+
+/* Sección del usuario */
+.user-container {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 15px;
+border-top: 1px solid rgba(255, 255, 255, 0.2); /* Línea arriba del usuario */
+}
+
+/* Contenedor del perfil y opciones */
+.user-options {
+display: flex;
+flex-direction: column;
+padding-left: 15px;
+border-left: 1px solid rgba(255, 255, 255, 0.2); /* Línea divisoria vertical */
+gap: 10px;
+}
+
+/* Estilos para los enlaces del perfil */
+.user-options a {
+color: white;
+text-decoration: none;
+font-weight: bold;
+}
+
+/* Estilo para "Cerrar sesión" */
+.user-options .logout {
+color: red;
+}
+
+.navbar {
+position: fixed;
+top: 0;
+left: 0;
+width: 80%;
+max-width: 300px;
+height: 100vh;
+background: #000000e6;
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+justify-content: flex-start; /* Opciones arriba */
+padding-top: 50px; /* Espaciado para que no quede pegado al borde */
+transform: translateX(-100%);
+opacity: 0;
+visibility: hidden;
+transition: all 0.3s ease;
+z-index: 1000;
+}
+
+
+ 
+/* Posiciona el carrito al pie del menú hamburguesa */
+.cart-container {
+  position: absolute;
+  bottom: 20px; /* Ajusta la distancia desde la parte inferior */
+  left: 20px; /* Ajusta la distancia desde la izquierda */
+  z-index: 1001;
+}
+
+.cart-container a {
+  color: white;
+  font-size: 22px;
+  text-decoration: none;
+  position: relative;
+}
+
+/* Ajustar el icono del carrito */
+.cart-container a i {
+  font-size: 26px;
+}
+
+/* Ajustar la burbuja de notificación */
+.cart-badge {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  background: red;
+  color: white;
+  font-size: 12px;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+  line-height: 18px;
+  font-weight: bold;
+}
+
+#menu:checked ~ .navbar {
+    transform: translateX(0);
+    left: 0;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ... (Tu CSS existente para la animación del icono hamburguesa) ... */
+
+  /* Animación del icono hamburguesa */
+.menu label[for="menu"]::before,
+.menu label[for="menu"]::after,
+.menu label[for="menu"] .hamburger-line {
+  content: '';
+  display: block;
+  width: 25px;
+  height: 3px;
+  background: #FFF;
+  margin: 5px 0;
+  transition: all 0.3s ease;
+}
+
+#menu:checked ~ label[for="menu"]::before {
+  transform: translateY(8px) rotate(45deg);
+}
+
+#menu:checked ~ label[for="menu"]::after {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+#menu:checked ~ label[for="menu"] .hamburger-line {
+  opacity: 0;
+}
+  .navbar ul {
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+  }
+
+  .navbar ul li {
+      width: 100%;
+  }
+
+  .navbar ul li a {
+      display: block;
+      padding: 12px 15px;
+      text-align: left;
+  }
+
+  #menu:checked ~ .navbar {
+      transform: translateX(0);
+  }
+
+  #menu:checked ~ .menu-label .hamburger-line:nth-child(1) {
+      transform: translateY(8px) rotate(45deg);
+  }
+
+  #menu:checked ~ .menu-label .hamburger-line:nth-child(2) {
+      opacity: 0;
+  }
+
+  #menu:checked ~ .menu-label .hamburger-line:nth-child(3) {
+      transform: translateY(-8px) rotate(-45deg);
+  }
+
+  .user-container {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+
+  .user-options {
+      border-left: none;
+      padding-left: 0;
+      flex-direction: column;
+      gap: 30px;
+  }
+
+  .producto-container {
+      padding: 3rem 1rem;
+  }
+
+  .producto-card {
+      flex: 1 1 280px;
+  }
+}
+
 
 
 
