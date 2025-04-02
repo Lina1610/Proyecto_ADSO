@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content />
+    <meta name="author" content />
+    <title>Agency - Start Bootstrap Theme</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Font Awesome icons (free version)-->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'
+      rel='stylesheet'>
+
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
+      crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700"
+      rel="stylesheet" type="text/css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700"
+      rel="stylesheet" type="text/css" />
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+    <script
+      src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
+   
+    
+     <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+
+
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link rel="stylesheet"
+      href="{{ url_for('static', filename ='assets/css/style.css') }}" />
+      <link rel="stylesheet"
+      href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
+      
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+    <body id="page-top">
+
+
+      <header class="header">
+        <div class="menu">
+          <!-- Logo -->
+          <a href="#" class="logo">Logo</a>
+          
+          <!-- Checkbox oculto (debe estar justo antes del label) -->
+          <input type="checkbox" id="menu" class="menu-checkbox"/>
+          
+          <!-- Botón hamburguesa (vacío, se llenará con JS) -->
+          <label for="menu" class="menu-label">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+          </label>         
+          
+          <!-- Menú de navegación -->
+          <nav class="navbar">
+            <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0 align-items-center">
+              <li class="nav-item"><a class="nav-link" href="#">Inicio</a></li>
+              <li class="nav-item"><a class="nav-link" href="#nosotros_group">Sobre Nosotros</a></li>
+              <li class="nav-item"><a class="nav-link" href="#services_group">Servicios</a></li>
+              <li class="nav-item"><a class="nav-link" href="#blog_group">Blog</a></li>
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('pedido.pedido') }}">Pedidos</a></li>
+              
+              {% if session.conectado %}
+                <li class="nav-item user-menu-container"> <!-- Cambio importante: envolver en <li> -->
+                  <div class="user-menu">
+                    <div class="user-container">
+                      <div class="avatar-name-group">
+                        <div class="user-avatar"><i class="fas fa-user-circle"></i></div>
+                        <span class="user-name">{{ session.nombre }}</span>
+                      </div>
+                      <div class="user-options">
+                        {% if session['rol'] == 'cliente' %}
+                          <a href="{{ url_for('perfil_cliente') }}" class="menu-link">MI Perfil</a>
+                        {% endif %}
+                        {% if session['rol'] in ['administrador', 'superadmin', 'empleado'] %}
+                          <a href="{{ url_for('perfil_aplicativo') }}" class="menu-link">Ir al Aplicativo</a>
+                        {% endif %}
+                        <a href="{{ url_for('cerraSesion') }}" class="menu-link logout">Cerrar Sesión</a>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              {% else %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}">Registrarse</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('loginCliente') }}">Iniciar sesión</a></li> 
+              {% endif %}
+            </ul>
+          </nav>
+        </div>
+        
+        <!-- Contenido del header -->
+        <div class="header-content container">
+          <h1 id="animated-text">TAMALES EL BUEN SAZÓN</h1>
+          <p>Nos especializamos en la preparación de auténticos tamales boyacenses, ofreciendo una experiencia gastronómica única que te transportará 
+            directamente a las cocinas de Boyacá. Disfruta de la calidez de nuestro servicio y del sabor inigualable de nuestros tamales, 
+            ¡te sentirás como en casa!</p>
+            <a href="https://wa.me/573213828939" class="btn-1" target="_blank">Información</a>
+          </div>
+      </header>
+<!-- Navigation-->
+
+      
+<section class="coffee"  data-aos="fade-up">
+  <div class="coffee-content container" id="nosotros_group">
+      <h2>Ricos Tamales Boyacenses</h2>
+      <p class="txt-p">
+        Disfruta de la auténtica tradición boyacense con nuestros tamales, preparados con ingredientes frescos y una receta casera que 
+        conserva el verdadero sabor de nuestra tierra. Cada bocado es un homenaje a nuestras raíces y al amor por la buena cocina.
+      </p>
+
+      <div class="coffee-group">
+          <div class="coffee-1">
+              <img src="/static/assets/img/preparoredon.png" alt="">
+              <h3> Tamal Tradicional</h3>
+              <p>Una delicia envuelta con esmero, llevando el auténtico sabor de Boyacá a tu mesa.</p>
+          </div>
+
+          <div class="coffee-1">
+              <img src="/static/assets/img/circuloSinfondo.png" alt="">
+              <h3>Tamales Listos para Cocinar</h3>
+              <p>Preparados con ingredientes frescos y listos para ser disfrutados en cualquier momento.</p>
+          </div>
+
+          <div class="coffee-1">
+              <img src="/static/assets/img/ingrediredon.png" alt="">
+              <h3> Ingredientes de Calidad</h3>
+              <p>Cada tamal es elaborado con los mejores ingredientes para garantizar un sabor inigualable..</p>
+          </div>
+      </div>
+
+
+  </div>
+</section>
+
+      <main class="services"id="services_group">
+        <div class="services-content container">
+          <h2 class="sub-title">Servicios Tamaleria</h2>
+          <div class="services-group">
+
+            <div class="services-1">
+              <img src="/static/assets/img/icon.png">
+              <h3>Pedidos Personalizados</h3>
+            </div>
+
+            <div class="services-1">
+              <img src="/static/assets/img/i2.png">
+              <h3>Eventos y Celebraciones</h3>
+            </div>
+
+            <div class="services-1">
+              <img src="/static/assets/img/i3.png">
+              <h3>Desayunos y Meriendas</h3>
+            </div>
+          </div>
+
+          <p>En Tamales El Buen Sazón, ofrecemos tamales boyacenses preparados con tradición y amor. Disfruta de pedidos personalizados
+             para cualquier ocasión, lleva el auténtico sabor a tus celebraciones y complementa tus 
+             mañanas con un desayuno lleno de tradición. ¡Déjanos ser parte de tus mejores momentos con el
+             inconfundible sabor de nuestros tamales!</p>          
+        </div>
+        
+      </main>
+
+      <section class="general" data-aos="fade-right">
+        <div class="general-1" data-aos="fade-right">
+          <h2>Sabor Auténtico en Cada Bocado</h2>
+          <p>Nuestros tamales boyacenses están preparados con ingredientes frescos y seleccionados, manteniendo la receta tradicional que ha pasado de
+             generación en generación. Cada tamal es una experiencia única que te transportará al calor del hogar.</p>
+        </div>
+        <div class="general-2"></div>
+      </section>
+      
+      <section class="general">
+        <div class="general-3" data-aos="fade-right"></div>
+        <div class="general-1">
+          <h2>Siempre Calientes y Listos para Ti</h2>
+          <p>Disfruta de tamales recién preparados en cualquier momento del día. Ya sea para un desayuno especial o una comida reconfortante, 
+            nuestros tamales siempre están listos para brindarte el mejor sabor, textura y aroma. ¡Déjate conquistar por su tradición y calidez!</p>
+        </div>
+      </section>
+
+      <section class="blog container" data-aos="fade-down" id="blog_group">
+        <h2>Descubre el Mundo de los Tamales</h2>
+        <div class="blog-content">
+          
+          <div class="blog-1">
+            <img src="/static/assets/img/hojas.jpg">
+            <h2>La Hoja de Plátano: Un Toque de Sabor y Tradición</h2>
+            <p>Las hojas de plátano no solo envuelven nuestros tamales, sino
+               que también aportan un aroma y sabor únicos. Descubre su importancia en la cocina tradicional.</p>
+          </div>
+      
+          <div class="blog-1">
+            <video autoplay loop muted>
+                <source src="/static/assets/img/Videos/videoPreparacion.mp4" type="video/mp4">
+                Tu navegador no soporta el video.
+            </video>
+            <h2>El Tamal Perfecto: Ingredientes y Preparación</h2>
+            <p>Conoce los secretos para preparar un tamal delicioso, desde la selección de los mejores ingredientes hasta la técnica de cocción ideal.</p>
+       
+    </div>
+      
+          <div class="blog-1">
+            <img src="/static/assets/img/carne.jpg">
+            <h2>La Carne en los Tamales: Un Sabor Irresistible</h2>
+            <p>Elige el mejor corte de carne para darle ese toque jugoso y sabroso a tu tamal. Aquí te contamos cuáles son las mejores opciones.</p>
+          </div>
+          <div class="blog-1">
+            <video autoplay loop muted>
+              <source src="/static/assets/img/Videos/Video_Tamal.mp4" type="video/mp4">
+              Tu navegador no soporta el video.
+          </video>            <h2>Cómo Disfrutar un Tamal Como un Experto
+          </h2>
+            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eaque fugit omnis, cum ea alias, 
+              quidem minus quis odio ut tempora itaque accusantium corporis facilis non voluptatibus optio, dolore fuga eveniet.</p>
+          </div>
+      
+        </div> <!-- Cierra el blog-content aquí -->
+        <div class="button-container">
+            <a href="#" class="btn-1">Informacion</a>
+          </div>
+        
+        
+      </section>
+
+    </body>
+    </html>
+
+
+<!-- Botón de ayuda flotante -->
+<a href="#help-section" class="help-btn">
+  <i class="fas fa-question-circle"></i>
+</a>
+
+    <a href="https://wa.me/573213828939" class="whatsapp-btn" target="_blank" rel="noopener noreferrer">
+      <i class="fab fa-whatsapp"></i>
+    </a>
+
+ <!-- Modal de Ayuda -->
+<div id="help-modal" class="help-modal">
+  <div class="help-modal-content">
+    <div class="help-modal-header">
+      <h3 class="modal-title">Centro de Ayuda</h3>
+      <button class="close-modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+      </button>
+    </div>
+    
+    <form id="support-form" class="help-modal-body">
+      <div class="form-group">
+        <label for="nombre">Nombre completo</label>
+        <input type="text" id="nombre" name="nombre" 
+               class="form-control modern-input"
+               placeholder="Ej: Juan Pérez"
+               value="{{ session.nombre if session.conectado }}" 
+               required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Correo electrónico</label>
+        <input type="email" id="email" name="email" 
+               class="form-control modern-input"
+               placeholder="Ej: juan@ejemplo.com"
+               value="{{ session.email if session.conectado }}" 
+               required>
+      </div>
+
+      <div class="form-group">
+        <label for="asunto">Tipo de consulta</label>
+        <div class="custom-select">
+          <select id="asunto" name="asunto" required>
+            <option value="">Seleccione una opción</option>
+            <option value="Problema técnico">Problema técnico</option>
+            <option value="Soporte de cuenta">Soporte de cuenta</option>
+            <option value="Información general">Información general</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="mensaje">Mensaje</label>
+        <textarea id="mensaje" name="mensaje" 
+                  class="form-control modern-textarea"
+                  placeholder="Describa su consulta en detalle..."
+                  rows="5" required></textarea>
+      </div>
+
+      <div class="form-options">
+        <label class="checkbox-container modern-checkbox">
+          <input type="checkbox" required>
+          Acepto los <a href="#" class="privacy-link">términos del servicio</a>
+        </label>
+      </div>
+
+      <div class="form-buttons">
+        <button type="button" class="btn-cancel">Cancelar</button>
+        <button type="submit" class="btn-submit">
+          <span class="submit-text">Enviar mensaje</span>
+          <div class="loading-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </button>
+      </div>
+    </form>
+
+    <div class="help-modal-footer">
+      {% if session.conectado %}
+      <div class="session-info">
+        <p>Conectado como: <strong>{{ session.nombre }}</strong></p>
+        <a href="{{ url_for('cerraSesion') }}" class="logout-link">Cerrar sesión</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+      
+     <!-- Footer -->
+<footer class="footer">
+  <div class="footer-container">
+      <div class="footer-left">
+          <div class="footer-brand">
+              <h3>Tamales el buen sazón</h3>
+              <p class="location">📍 Sogamoso, Boyacá</p>
+          </div>
+          <div class="social-icons">
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="https://wa.me/573213828939" target="_blank"><i class="fab fa-whatsapp"></i></a>
+          </div>
+          <div class="footer-contact">
+              <p><i class="fas fa-envelope"></i> lescobarhiguera@gmail.com</p>
+              <p><i class="fas fa-phone-alt"></i> 321 382 8939</p>
+          </div>
+      </div>
+      
+      <div class="footer-center">
+          <ul class="footer-list">
+              <li><a href="#" class="footer-link">Inicio</a></li>
+              <li><a href="#" class="footer-link">Menú</a></li>
+              <li><a href="#" class="footer-link">Pedidos</a></li>
+              <li><a href="#" class="footer-link">Sobre Nosotros</a></li>
+          </ul>
+      </div>
+      
+      <div class="footer-right">
+          <div class="business-hours">
+              <h4>Horario de atención</h4>
+              <p>Lunes a Sábado</p>
+              <p>7:00 AM - 7:00 PM</p>
+          </div>
+          <p class="footer-bottom">© 2023 Tamales el buen sazón<br>Todos los derechos reservados</p>
+      </div>
+  </div>
+</footer>
+      <script src="/static/assets/js/menu_responsive.js"></script>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
+
+      <script>
+        window.addEventListener('scroll', function() {
+          const menu = document.querySelector('.menu');
+          let scrollPosition = window.scrollY;
+          
+          if (scrollPosition > 50) { // Cambia 50 por los píxeles que prefieras
+            menu.classList.add('scrolled');
+          } else {
+            menu.classList.remove('scrolled');
+          }
+        });
+        </script>
+        <script>
+          AOS.init({
+            duration: 1000,
+            once: false,
+            easing: 'ease-in-out',
+            mirror: true
+          });
+        </script>
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+              gsap.registerPlugin(TextPlugin);
+              
+              // Configuración inicial: texto vacío y opacity 0
+              gsap.set("#animated-text", {
+                  text: "", 
+                  opacity: 0
+              });
+          
+              // Animación combinada
+              gsap.to("#animated-text", {
+                  duration: 2,
+                  opacity: 1,
+                  text: "TAMALES EL BUEN SAZÓN",
+                  ease: "power2.out",
+                  delay: 0.5
+              });
+          });
+          </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      const whatsappBtn = document.querySelector('.whatsapp-btn');
+      
+      window.addEventListener('scroll', function() {
+          // Ajustar posición al hacer scroll
+          const scrollPosition = window.scrollY;
+          const viewportHeight = window.innerHeight;
+          
+          // Mover botón hacia arriba cuando se acerca al footer
+          if (scrollPosition + viewportHeight > document.body.offsetHeight - 200) {
+              whatsappBtn.style.bottom = '100px';
+          } else {
+              whatsappBtn.style.bottom = '40px';
+          }
+      });
+  });
+  </script>
+
+ 
+    <script src="/static/assets/js/sienna.js"></script>
+    <script src="/static/assets/js/custom.js"></script>
+
+    <!-- Al final del body, antes de cerrar </body> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
+<script src="{{ url_for('static', filename='assets/js/custom2.js') }}"></script>
+
+
+  </body>
+  </html>

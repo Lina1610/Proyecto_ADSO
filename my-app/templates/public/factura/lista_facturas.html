@@ -1,0 +1,216 @@
+{% extends 'public/base_cpanel.html' %}
+{% block title %}Crud con Python 🐍 | Lista de Facturas{% endblock %}
+{% block body %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/filtroUsuario.css') }}" />
+
+
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12 mb-4">
+      <h3 class="text-center mt-5 mb-3">LISTA DE FACTURAS</h3>
+      <hr />
+    </div>
+    <!-- Mensaje de contexto -->
+    <div class="context-indicator d-flex align-items-center">
+      <i class="bi bi-people-fill context-icon"></i>
+      <div>
+        <h6 class="mb-1">Vista de lista de factutras</h6>
+        <p class="mb-0 small text-muted" id="context-detail">
+          Gestión completa del listado de facturas registradas en el sistema
+        </p>
+      </div>
+    </div>
+
+    <div class="row justify-content-end mb-3">
+      <div class="col-md-3">
+        <a href="{{ url_for('viewFormFactura') }}" class="btn btn-primary btn-sm">
+          <i class="bi bi-plus-circle"></i> Crear Nueva Factura
+        </a>
+      </div>
+    </div>
+
+    <!-- Botón para mostrar/ocultar filtros (a la izquierda) -->
+    <div class="row justify-content-between">
+      <div class="col-md-2 mt-2">
+        <button id="toggleFiltros" class="btn btn-primary btn-sm">
+          <i class="bi bi-funnel"></i> Mostrar/Ocultar Filtros
+        </button>
+      </div>
+
+      <!-- Buscador general (a la derecha) -->
+      <div class="col-md-6 mt-2">
+        <input
+          type="search"
+          id="search_factura"
+          class="form-control border-0 shadow-none"
+          placeholder="Buscar..."
+          onkeyup="buscarFacturaAjax()" />
+      </div>
+    </div>
+
+    <!-- Panel de filtros -->
+    <div id="panelFiltros" class="mb-3" style="display: none;">
+      <div class="card">
+        <div class="card-header bg-light">
+          <h5 class="mb-0">Filtros</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <!-- Filtro de Estado -->
+            <div class="col-md-3 mb-2">
+              <label for="filtro_estado" class="form-label">Estado</label>
+              <select id="filtro_estado" class="form-select filtro-campo" data-campo="1">
+                <option value="">Todos</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Facturado">Facturado</option>
+              </select>
+            </div>
+            
+            <!-- Filtro de Fecha -->
+            <div class="col-md-3 mb-2">
+              <label for="filtro_fecha" class="form-label">Fecha</label>
+              <input type="date" id="filtro_fecha" class="form-control filtro-campo" data-campo="2">
+            </div>
+            
+            <!-- Filtro de Pedido ID -->
+            <div class="col-md-3 mb-2">
+              <label for="filtro_pedido_id" class="form-label">Pedido ID</label>
+              <input type="text" id="filtro_pedido_id" class="form-control filtro-campo" data-campo="3" placeholder="Filtrar por Pedido ID">
+            </div>
+            
+            <!-- Selector de número de filas -->
+            <div class="col-md-3 mb-2">
+              <label for="num_filas" class="form-label">Mostrar filas</label>
+              <select id="num_filas" class="form-select">
+                <option value="10">10 filas</option>
+                <option value="25">25 filas</option>
+                <option value="50">50 filas</option>
+                <option value="100">100 filas</option>
+                <option value="0">Todas</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- Botón para limpiar filtros -->
+          <div class="row mt-2">
+            <div class="col-12 text-end">
+              <button id="limpiarFiltros" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> Limpiar Filtros
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de facturas -->
+    <div class="row justify-content-center mb-2">
+      <div class="table-responsive text-nowrap table-hover">
+        <table
+          id="tbl_facturas"
+          class="table table-striped table-bordered"
+          cellspacing="0"
+          width="100%">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+              <th>Pedido ID</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tabla_facturas_body">
+            {% for factura in facturas %}
+            <tr id="factura_{{ factura.id }}" class="fila-datos">
+              <td>{{ loop.index }}</td>
+              <td>{{ factura.estado }}</td>
+              <td>{{ factura.fecha }}</td>
+              <td>{{ factura.pedido_id }}</td>
+              <td width="10px">
+                <a
+                  href="{{ url_for('detalles_factura', id=factura.id) }}"
+                  class="btn btn-info btn-sm"
+                  title="Ver detalles">
+                  <i class="bi bi-eye"></i>
+                  Ver detalles
+                </a>
+                <a
+                  href="{{ url_for('viewEditarFactura', id=factura.id) }}"
+                  class="btn btn-success btn-sm"
+                  title="Actualizar">
+                  <i class="bi bi-arrow-clockwise"></i>
+                  Actualizar
+                </a>
+                <a
+                  href="#"
+                  onclick="eliminarFactura('{{ factura.id }}');"
+                  class="btn btn-danger btn-sm"
+                  title="Eliminar">
+                  <i class="bi bi-trash3"></i>
+                  Eliminar
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <!-- Información de paginación -->
+        <div id="info-paginacion" class="mt-3 mb-3">
+          <span>Mostrando <span id="filas-mostradas">0</span> de <span id="filas-totales">0</span> registros</span>
+        </div>
+
+        <!-- Botones de exportación -->
+        <div class="botones-export mt-3">
+          <button id="btnExportarExcel" class="btn btn-success">
+            <i class="fas fa-file-excel"></i> Exportar a Excel
+          </button>
+          <button id="btnExportarPDF" class="btn btn-danger">
+            <i class="fas fa-file-pdf"></i> Exportar a PDF
+          </button>
+          <button id="btnImprimir" class="btn btn-info">
+            <i class="fas fa-print"></i> Imprimir
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal de confirmación para eliminar factura -->
+<div id="confirmModalFactura" class="modal fade" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirmar eliminación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de eliminar esta factura?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteFacturaButton">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Librerías necesarias -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.16.9/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saverjs@latest/FileSaver.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tableexport@5.2.0/dist/js/tableexport.min.js"></script>
+
+<!-- Script personalizado para exportación -->
+<script src="{{ url_for('static', filename='assets/js/reportInvoice.js') }}"></script>
+
+<!-- Estilos CSS personalizados -->
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/report.css') }}">
+{% block customJS %}
+<script src="{{ url_for('static', filename='assets/customJS/buscar_factura.js') }}"></script>
+<script src="{{ url_for('static', filename='assets/customJS/modal_eliminar_factura.js') }}"></script>
+{% endblock %}
+
+{% endblock %}

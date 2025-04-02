@@ -1,0 +1,90 @@
+{% extends 'public/login/base_login.html' %}
+
+{% block title %}Crud con Python 🐍 | Crear cuenta{% endblock %}
+
+{% block body %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card custom-card">
+        <div class="card-body">
+          <div class="app-brand justify-content-center">
+            <span class="app-brand-logo">
+              <img class="logo" src="{{ url_for('static', filename='assets/img/logose.png') }}" alt="Logo" />
+            </span>
+          </div>
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+          <form class="mb-3" action="{{ url_for('cpanelResgisterUserBD') }}" method="POST" id="register-form">
+            <div class="row">
+              <div class="col-12 col-md-6 mb-4">
+                <label for="tipo_documento" class="form-label">Tipo de documento</label>
+                <select class="form-control" id="tipo_documento" name="tipo_documento" required>
+                  <option value="">Seleccione...</option>
+                  <option value="Cedula ciudadania" {% if form_data.tipo_documento == 'Cedula ciudadania' %}selected{% endif %}>Cédula de Ciudadanía</option>
+                  <option value="Tarjeta identidad" {% if form_data.tipo_documento == 'Tarjeta identidad' %}selected{% endif %}>Tarjeta de Identidad</option>
+                  <option value="Cedula extranjeria" {% if form_data.tipo_documento == 'Cedula extranjeria' %}selected{% endif %}>Cédula de Extranjería</option>
+                  <option value="NIT" {% if form_data.tipo_documento == 'NIT' %}selected{% endif %}>Nit</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6 mb-4">
+                <label for="documento" class="form-label">Documento</label>
+                <input type="text" class="form-control" id="documento" name="documento" value="{{ form_data.documento|default('') }}" required pattern="[0-9]+" maxlength="15" oninvalid="this.setCustomValidity('Por favor, ingrese solo números.')" oninput="this.setCustomValidity('')" />
+              </div>
+              <div class="col-12 col-md-6 mb-4">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" value="{{ form_data.nombre|default('') }}" required pattern="[A-Za-z]+" maxlength="100" oninvalid="this.setCustomValidity('Por favor, ingrese solo letras.')" oninput="this.setCustomValidity('')" />
+              </div>
+              <div class="col-12 col-md-6 mb-4">
+                <label for="apellido" class="form-label">Apellido</label>
+                <input type="text" class="form-control" id="apellido" name="apellido" value="{{ form_data.apellido|default('') }}" required pattern="[A-Za-z]+" maxlength="100" oninvalid="this.setCustomValidity('Por favor, ingrese solo letras.')" oninput="this.setCustomValidity('')" />
+              </div>
+              <div class="col-12 col-md-6 mb-4">
+                <label for="telefono" class="form-label">Teléfono</label>
+                <input type="tel" class="form-control" id="telefono" name="telefono" value="{{ form_data.telefono|default('') }}" required pattern="[0-9]+" maxlength="10" oninvalid="this.setCustomValidity('Por favor, ingrese solo números.')" oninput="this.setCustomValidity('')" />
+              </div>
+              <div class="col-12 col-md-6 mb-4">
+                <label for="correo" class="form-label">Correo electrónico</label>
+                <input type="email" class="form-control" id="correo" name="correo" value="{{ form_data.correo|default('') }}" required maxlength="50" oninvalid="this.setCustomValidity('Por favor, ingrese un correo válido.')" oninput="this.setCustomValidity('')" />
+              </div>
+              <div class="col-12 col-md-6 mb-4">
+                <label class="form-label" for="contrasena">Contraseña</label>
+                <div class="input-group input-group-merge">
+                  <input type="password" class="form-control" id="contrasena" name="contrasena" required pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,50}$" maxlength="50" oninvalid="this.setCustomValidity('La contraseña debe tener entre 8 y 50 caracteres, e incluir letras y números.')" oninput="this.setCustomValidity('')" aria-describedby="password" />
+                </div>
+                <div id="password-strength" class="mt-2"></div>
+              </div>
+              <div class="col-12 col-md-6 mb-4">
+                <label class="form-label" for="confirm_contrasena">Confirmar contraseña</label>
+                <div class="input-group input-group-merge">
+                  <input type="password" class="form-control" id="confirm_contrasena" name="confirm_contrasena" required maxlength="50" oninvalid="this.setCustomValidity('Por favor, confirme su contraseña.')" oninput="this.setCustomValidity('')" aria-describedby="confirm-password" />
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-primary w-100" type="submit">
+              Crear cuenta <i class="bi bi-arrow-right-circle"></i>
+            </button>
+          </form>
+          <div class="text-center mt-4">
+            <a href="{{ url_for('inicio') }}" class="d-flex align-items-center justify-content-center">
+              <i class="bx bx-chevron-left scaleX-n1-rtl bx-sm"></i> Volver
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
+<script src="{{ url_for('static', filename='assets/customJS/home.js') }}"></script>
+{% endblock %}

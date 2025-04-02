@@ -1,0 +1,90 @@
+{% extends 'public/base_cpanel.html' %}
+<!--Cambiando el title-->
+{% block title %}Crud con Python 🐍 | Detalles del Producto{% endblock %}
+<!---->
+{% block customCSS %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename ='assets/css/file.css') }}" />
+{% endblock %}
+
+<!--Inicio del block-->
+{% block body %}
+<!---->
+{% if (producto|length) %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">
+        <a href="{{ url_for('lista_productos') }}">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        INFORMACIÓN DEL PRODUCTO
+      </h3>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <div class="card-body">
+        <div class="row">
+          <!-- Columna 1 -->
+          <div class="col-md-6">
+            <label for="codigo" class="form-label">Código</label>            
+            {{ producto.codigo }}
+            <br />
+            <label for="nombre" class="form-label">Nombre del producto</label>            
+            {{ producto.nombre }}
+            <br />
+            <label for="descripcion" class="form-label">Descripción del producto</label>
+            <br />
+            {{ producto.descripcion }}
+
+      
+            <label for="estado" class="form-label">Estado del producto</label>
+            <br />
+            {{ producto.estado }}
+          </div>
+
+          <!-- Columna 2 -->
+          <div class="col-md-6">
+            <!-- Mostrar la imagen del producto -->
+            <label for="imagen" class="form-label">Imagen del producto</label>
+            <br />
+            {% if producto.imagen %}
+              <img src="{{ producto.imagen }}" 
+                   alt="{{ producto.nombre }}" 
+                   class="img-fluid" 
+                   style="max-width: 100%; height: auto;">
+            {% else %}
+              <p class="text-muted">No hay imagen disponible.</p>
+            {% endif %}
+            <br /><br />
+
+            <label for="precio" class="form-label">Precio del producto</label>
+            <br />
+            $ {{ '{:,.2f}'.format(producto.precio) }}
+
+            <label for="cantidad" class="form-label">Cantidad del producto</label>
+            <br />
+            {{ producto.cantidad }}
+
+            
+
+            <label for="total" class="form-label">Total del producto</label>
+            <br />
+            $ {{ '{:,.2f}'.format(producto.total) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<h2 class="text-center">
+  No existe el Producto 😭
+  <hr />
+</h2>
+{% endif %} 
+{% endblock %}

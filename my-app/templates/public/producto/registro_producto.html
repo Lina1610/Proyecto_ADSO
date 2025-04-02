@@ -1,0 +1,134 @@
+{% extends 'public/base_cpanel.html' %}
+{% block title %}Crud con Python 🐍 | Registrar Producto{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/file.css') }}" />
+{% endblock %}
+
+{% block body %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">REGISTRAR PRODUCTO NUEVO</h3>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="/registrar-producto"
+        autocomplete="off"
+        enctype="multipart/form-data">
+        <div class="card-body">
+          <div class="row">
+            <!-- Columna 1 -->
+            <div class="col-md-6">
+              <label for="codigo" class="form-label">Código</label>
+              <input type="text" class="form-control" id="codigo" name="codigo" 
+                     value="{{ data_form.get('codigo', '') }}" 
+                     pattern="^(?!0$)[0-9]{1,10}$" maxlength="10" 
+                     onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" 
+                     required
+                     oninvalid="this.setCustomValidity('El código es obligatorio, debe contener solo números y no puede ser solo 0.')"
+                     oninput="this.setCustomValidity(''); validarCodigo(this);">
+
+              <label for="nombre" class="form-label">Nombre del producto</label>
+              <input type="text" class="form-control" id="nombre" name="nombre" 
+                     value="{{ data_form.get('nombre', '') }}" 
+                     maxlength="100" 
+                     required
+                     oninvalid="this.setCustomValidity('El nombre es obligatorio.')"
+                     oninput="this.setCustomValidity('')">
+
+              <label for="descripcion" class="form-label">Descripción del producto</label>
+              <textarea class="form-control" id="descripcion" name="descripcion" 
+                        maxlength="100" 
+                        required
+                        oninvalid="this.setCustomValidity('La descripción es obligatoria.')"
+                        oninput="this.setCustomValidity('')">{{ data_form.get('descripcion', '') }}</textarea>
+
+              <label for="estado" class="form-label">Estado del producto</label>
+              <select class="form-select" id="estado" name="estado" 
+                      required
+                      oninvalid="this.setCustomValidity('Selecciona un estado.')"
+                      oninput="this.setCustomValidity('')">
+                <option value="Disponible" {% if data_form.get('estado') == 'Disponible' %}selected{% endif %}>Disponible</option>
+                <option value="No disponible" {% if data_form.get('estado') == 'No disponible' %}selected{% endif %}>No disponible</option>
+              </select>
+            </div>
+
+            <!-- Columna 2 -->
+            <div class="col-md-6">
+              <label for="precio" class="form-label">Precio del producto</label>
+              <input type="number" step="0.01" min="0.01" class="form-control" id="precio" name="precio" 
+                     value="{{ data_form.get('precio', '') }}" 
+                     onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46)" 
+                     required
+                     oninvalid="this.setCustomValidity('El precio es obligatorio y debe ser mayor a 0.')"
+                     oninput="this.setCustomValidity('')">
+
+              <label for="cantidad" class="form-label">Cantidad del producto</label>
+              <input type="number" min="1" class="form-control" id="cantidad" name="cantidad" 
+                     value="{{ data_form.get('cantidad', '') }}" 
+                     onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" 
+                     required
+                     oninvalid="this.setCustomValidity('La cantidad es obligatoria y debe ser mayor a 0.')"
+                     oninput="this.setCustomValidity('')">
+
+              <label for="total" class="form-label">Total del producto</label>
+              <input type="number" step="0.01" min="0.01" class="form-control" id="total" name="total" 
+                     value="{{ data_form.get('total', '') }}" 
+                     readonly required>
+
+              <label for="imagen" class="form-label">Imagen del producto</label>
+              <input type="file" class="form-control" id="imagen" name="imagen" accept=".jpg,.png,.jpeg">
+            </div>
+          </div>
+
+          <!-- Botón de guardar registro -->
+          <div class="mb-3 mt-4 text-center">
+            <button type="submit" class="btn rounded-pill btn-primary">
+              Guardar registro ahora
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block customJS %}
+<script>
+  // Función para calcular el total automáticamente
+  function calcularTotal() {
+    const cantidad = parseFloat(document.getElementById('cantidad').value);
+    const precio = parseFloat(document.getElementById('precio').value);
+
+    if (!isNaN(cantidad) && !isNaN(precio)) {
+      const total = cantidad * precio;
+      document.getElementById('total').value = total.toFixed(2);
+    } else {
+      document.getElementById('total').value = '';
+    }
+  }
+
+  // Función para validar el código
+  function validarCodigo(input) {
+    const codigo = input.value;
+    if (codigo === "0") {
+      input.setCustomValidity('El código no puede ser solo 0.');
+    } else {
+      input.setCustomValidity('');
+    }
+  }
+
+  // Escuchamos cambios en los campos cantidad y precio
+  document.getElementById('cantidad').addEventListener('input', calcularTotal);
+  document.getElementById('precio').addEventListener('input', calcularTotal);
+</script>
+{% endblock %}

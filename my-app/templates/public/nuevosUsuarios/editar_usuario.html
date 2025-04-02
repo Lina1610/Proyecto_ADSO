@@ -1,0 +1,392 @@
+{% extends 'public/base_cpanel.html' %}
+
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Editar Usuario{% endblock %}
+
+<!-- Custom CSS -->
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/file.css') }}" />
+<style>
+  /* Estilo para mensajes de error del backend */
+  .error-message {
+    background-color: #ff9500;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+</style>
+{% endblock %}
+
+<!-- Inicio del block -->
+{% block body %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">
+        <a href="/lista-de-usuarios">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        EDITAR USUARIO
+      </h3>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="{{ url_for('actualizarUsuario') }}"
+        autocomplete="off"
+        id="editarForm">
+        <input type="hidden" name="id" value="{{ usuario.id }}">
+
+        <div class="row">
+          <!-- Columna 1 -->
+          <div class="col-md-6">
+            <!-- Nombre -->
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input 
+                type="text" 
+                name="nombre" 
+                id="nombre"
+                class="form-control" 
+                value="{{ request.form.get('nombre', usuario.nombre) }}"
+                minlength="2" 
+                maxlength="100" 
+                required 
+                oninvalid="this.setCustomValidity('El nombre debe tener al menos 2 caracteres')"
+                oninput="this.setCustomValidity('')"
+              />
+            </div>
+
+            <!-- Tipo de Documento -->
+            <div class="mb-3">
+              <label for="tipo_documento" class="form-label">Tipo de Documento</label>
+              <select class="form-select" name="tipo_documento" required
+                oninvalid="this.setCustomValidity('Por favor, selecciona un tipo de documento')"
+                onchange="this.setCustomValidity('')">
+                <option value="Cedula ciudadania" {% if request.form.get('tipo_documento', usuario.tipo_documento) == 'Cedula ciudadania' %}selected{% endif %}>Cédula de Ciudadanía</option>
+                <option value="Tarjeta identidad" {% if request.form.get('tipo_documento', usuario.tipo_documento) == 'Tarjeta identidad' %}selected{% endif %}>Tarjeta de Identidad</option>
+                <option value="Cedula extranjeria" {% if request.form.get('tipo_documento', usuario.tipo_documento) == 'Cedula extranjeria' %}selected{% endif %}>Cédula de Extranjería</option>
+                <option value="NIT" {% if request.form.get('tipo_documento', usuario.tipo_documento) == 'NIT' %}selected{% endif %}>NIT</option>
+              </select>
+            </div>
+
+            <!-- Correo -->
+            <div class="mb-3">
+              <label for="correo" class="form-label">Correo</label>
+              <input 
+                type="email" 
+                name="correo" 
+                id="correo"
+                class="form-control" 
+                value="{{ request.form.get('correo', usuario.correo) }}"
+                maxlength="50" 
+                required 
+                oninvalid="this.setCustomValidity('Por favor, ingresa un correo válido')"
+                oninput="this.setCustomValidity('')"
+              />
+              {% if 'correo_duplicado' in get_flashed_messages() %}
+                <div class="error-message">El correo ya está registrado</div>
+              {% endif %}
+            </div>
+
+            <!-- Rol -->
+            <div class="mb-3">
+              <label for="rol" class="form-label">Rol</label>
+              <select class="form-select" name="rol" required
+                oninvalid="this.setCustomValidity('Por favor, selecciona un rol')"
+                onchange="this.setCustomValidity('')">
+                <option value="administrador" {% if request.form.get('rol', usuario.rol) == 'administrador' %}selected{% endif %}>Administrador</option>
+                <option value="cliente" {% if request.form.get('rol', usuario.rol) == 'cliente' %}selected{% endif %}>Cliente</option>
+                <option value="proveedor" {% if request.form.get('rol', usuario.rol) == 'proveedor' %}selected{% endif %}>Proveedor</option>
+                <option value="empleado" {% if request.form.get('rol', usuario.rol) == 'empleado' %}selected{% endif %}>Empleado</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Columna 2 -->
+          <div class="col-md-6">
+            <!-- Apellido -->
+            <div class="mb-3">
+              <label for="apellido" class="form-label">Apellido</label>
+              <input 
+                type="text" 
+                name="apellido" 
+                id="apellido"
+                class="form-control" 
+                value="{{ request.form.get('apellido', usuario.apellido) }}"
+                minlength="2" 
+                maxlength="100" 
+                required 
+                oninvalid="this.setCustomValidity('El apellido debe tener al menos 2 caracteres')"
+                oninput="this.setCustomValidity('')"
+              />
+            </div>
+
+            <!-- Documento -->
+            <div class="mb-3">
+              <label for="documento" class="form-label">Documento</label>
+              <input 
+                type="number" 
+                name="documento" 
+                id="documento"
+                class="form-control" 
+                value="{{ request.form.get('documento', usuario.documento) }}"
+                min="1" 
+                required 
+                oninvalid="this.setCustomValidity('El documento debe tener al menos 10 dígitos')"
+                oninput="this.setCustomValidity('')"
+              />
+              {% if 'documento_duplicado' in get_flashed_messages() %}
+                <div class="error-message">El documento ya está registrado</div>
+              {% endif %}
+            </div>
+
+            <!-- Teléfono -->
+            <div class="mb-3">
+              <label for="telefono" class="form-label">Teléfono</label>
+              <input 
+                type="number" 
+                name="telefono" 
+                id="telefono"
+                class="form-control" 
+                value="{{ request.form.get('telefono', usuario.telefono) }}"
+                min="1" 
+                required 
+                oninvalid="this.setCustomValidity('El teléfono debe tener al menos 7 dígitos')"
+                oninput="this.setCustomValidity('')"
+              />
+            </div>
+
+            <!-- Estado -->
+            <div class="mb-3">
+              <label for="estado" class="form-label">Estado</label>
+              <select class="form-select" name="estado" required
+                oninvalid="this.setCustomValidity('Por favor, selecciona un estado')"
+                onchange="this.setCustomValidity('')">
+                <option value="activo" {% if request.form.get('estado', usuario.estado) == 'activo' %}selected{% endif %}>Activo</option>
+                <option value="inactivo" {% if request.form.get('estado', usuario.estado) == 'inactivo' %}selected{% endif %}>Inactivo</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3 mt-4 text-center">
+          <button type="submit" class="btn rounded-pill btn-primary">
+            Guardar cambios
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+      </form>
+
+      <!-- Formulario para cambiar la contraseña -->
+      <hr>
+      <h4 class="text-center mt-4 mb-3">Cambiar Contraseña</h4>
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="{{ url_for('cambiar_contrasena') }}"
+        autocomplete="off"
+        id="passwordForm">
+        <input type="hidden" name="user_id" value="{{ usuario.id }}">
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="mb-3">
+              <label for="nueva_password" class="form-label">Nueva Contraseña</label>
+              <div class="input-group">
+                <input 
+                  type="password" 
+                  id="nueva_password" 
+                  name="nueva_password" 
+                  class="form-control" 
+                  minlength="8" 
+                  maxlength="20" 
+                  required 
+                  oninvalid="this.setCustomValidity('La contraseña debe tener al menos 8 caracteres')"
+                  oninput="this.setCustomValidity('')"
+                />
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3 mt-4 text-center">
+          <button type="submit" class="btn rounded-pill btn-warning">
+            Cambiar Contraseña
+            <i class="bi bi-key"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block customJS %}
+<script>
+// Función para mostrar/ocultar la contraseña
+document.getElementById("togglePassword").addEventListener("click", function () {
+  const passwordInput = document.getElementById("nueva_password");
+  const icon = this.querySelector("i");
+
+  if (passwordInput.type === "password") {
+    passwordInput.type = "text";
+    icon.classList.remove("bi-eye");
+    icon.classList.add("bi-eye-slash");
+  } else {
+    passwordInput.type = "password";
+    icon.classList.remove("bi-eye-slash");
+    icon.classList.add("bi-eye");
+  }
+});
+
+// Validaciones específicas para la contraseña
+document.getElementById("nueva_password").addEventListener("invalid", function () {
+  const password = this.value;
+
+  if (password.length < 8) {
+    this.setCustomValidity("La contraseña debe tener al menos 8 caracteres (actualmente tiene " + password.length + ")");
+    return;
+  }
+
+  if (password.length > 20) {
+    this.setCustomValidity("La contraseña no puede tener más de 20 caracteres");
+    return;
+  }
+
+  if (/^[a-zA-Z]+$/.test(password)) {
+    this.setCustomValidity("La contraseña no puede contener solo letras");
+    return;
+  }
+
+  if (/^\d+$/.test(password)) {
+    this.setCustomValidity("La contraseña no puede contener solo números");
+    return;
+  }
+
+  this.setCustomValidity("");
+});
+
+// Limpiar el mensaje de error cuando el usuario corrija la contraseña
+document.getElementById("nueva_password").addEventListener("input", function () {
+  this.setCustomValidity("");
+});
+
+// Validaciones para el formulario de edición
+document.getElementById("editarForm").addEventListener("submit", function (event) {
+  const nombreInput = document.getElementById("nombre");
+  const apellidoInput = document.getElementById("apellido");
+  const correoInput = document.getElementById("correo");
+  const documentoInput = document.getElementById("documento");
+  const telefonoInput = document.getElementById("telefono");
+
+  // Validar nombre
+  const nombre = nombreInput.value;
+  if (nombre.length < 2 || nombre.length > 100) {
+    nombreInput.setCustomValidity("El nombre debe tener entre 2 y 100 caracteres");
+    event.preventDefault();
+    return;
+  } else {
+    nombreInput.setCustomValidity("");
+  }
+
+  // Validar apellido
+  const apellido = apellidoInput.value;
+  if (apellido.length < 2 || apellido.length > 100) {
+    apellidoInput.setCustomValidity("El apellido debe tener entre 2 y 100 caracteres");
+    event.preventDefault();
+    return;
+  } else {
+    apellidoInput.setCustomValidity("");
+  }
+
+  // Validar correo
+  const correo = correoInput.value;
+  if (correo.length > 50) {
+    correoInput.setCustomValidity("El correo no puede exceder los 50 caracteres");
+    event.preventDefault();
+    return;
+  }
+  if (!correo.includes("@")) {
+    correoInput.setCustomValidity("El correo debe contener un @");
+    event.preventDefault();
+    return;
+  }
+  const emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+  if (!emailPattern.test(correo)) {
+    correoInput.setCustomValidity("Ingresa un correo válido (por ejemplo, usuario@dominio.com)");
+    event.preventDefault();
+    return;
+  } else {
+    correoInput.setCustomValidity("");
+  }
+
+  // Validar documento
+  const documento = documentoInput.value;
+  if (documento <= 0) {
+    documentoInput.setCustomValidity("El documento debe ser un número mayor a 0");
+    event.preventDefault();
+    return;
+  }
+  if (String(documento).length < 10 || String(documento).length > 15) {
+    documentoInput.setCustomValidity("El documento debe tener entre 10 y 15 dígitos");
+    event.preventDefault();
+    return;
+  } else {
+    documentoInput.setCustomValidity("");
+  }
+
+  // Validar teléfono
+  const telefono = telefonoInput.value;
+  if (telefono <= 0) {
+    telefonoInput.setCustomValidity("El teléfono debe ser un número mayor a 0");
+    event.preventDefault();
+    return;
+  }
+  if (String(telefono).length < 7 || String(telefono).length > 13) {
+    telefonoInput.setCustomValidity("El teléfono debe tener entre 7 y 13 dígitos");
+    event.preventDefault();
+    return;
+  } else {
+    telefonoInput.setCustomValidity("");
+  }
+});
+
+// Limpiar mensajes de error al corregir
+document.getElementById("nombre").addEventListener("input", function () {
+  this.setCustomValidity("");
+});
+
+document.getElementById("apellido").addEventListener("input", function () {
+  this.setCustomValidity("");
+});
+
+document.getElementById("correo").addEventListener("input", function () {
+  this.setCustomValidity("");
+});
+
+document.getElementById("documento").addEventListener("input", function () {
+  this.setCustomValidity("");
+  if (this.value.length > 15) {
+    this.value = this.value.slice(0, 15);
+  }
+});
+
+document.getElementById("telefono").addEventListener("input", function () {
+  this.setCustomValidity("");
+  if (this.value.length > 13) {
+    this.value = this.value.slice(0, 13);
+  }
+});
+</script>
+{% endblock %}

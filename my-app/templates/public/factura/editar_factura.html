@@ -1,0 +1,97 @@
+{% extends 'public/base_cpanel.html' %}
+
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Editar Factura{% endblock %}
+
+<!-- Inicio del block -->
+{% block body %}
+<div class="card" style="border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-4" style="color: #2c3e50; font-weight: bold;">
+        <a href="/lista-de-facturas" style="color: #2c3e50; text-decoration: none;">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        EDITAR FACTURA
+      </h3>
+      <hr style="border-top: 2px solid #2c3e50;" />
+    </div>
+  </div>
+
+  <!-- Mostrar mensajes flash -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="row justify-content-center mb-2">
+        <div class="col-md-10">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-10">
+      <div class="card-body">
+        <form action="{{ url_for('viewEditarFactura', id=factura.id) }}" method="POST" autocomplete="off">
+          <div class="row">
+            <!-- Estado de la Factura -->
+            <div class="col-md-6 mb-3">
+              <label for="estado" class="form-label" style="font-weight: bold;">
+                Estado de la Factura
+              </label>
+              <select
+                class="form-select"
+                id="estado"
+                name="estado"
+                required
+                oninvalid="this.setCustomValidity('Por favor, selecciona un estado para la factura.')"
+                oninput="this.setCustomValidity('')">
+                <option value="" disabled>Seleccione estado</option>
+                <option value="Pendiente" {% if form_data.get('estado', factura.estado) == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                <option value="Facturado" {% if form_data.get('estado', factura.estado) == 'Facturado' %}selected{% endif %}>Facturado</option>
+              </select>
+            </div>
+
+            <!-- ID del Pedido -->
+            <div class="col-md-6 mb-3">
+              <label for="pedido_id" class="form-label" style="font-weight: bold;">
+                Pedido
+              </label>
+              <select
+                class="form-select"
+                name="pedido_id"
+                id="pedido_id"
+                required
+                oninvalid="this.setCustomValidity('Por favor, selecciona un pedido.')"
+                oninput="this.setCustomValidity('')">
+                <option value="" disabled>Seleccione un pedido</option>
+                {% for pedido in pedidos %}
+                  <option value="{{ pedido.pedido_id }}"
+                          {% if form_data.get('pedido_id', factura.pedido_id|string) == pedido.pedido_id|string %}selected{% endif %}>
+                    Pedido #{{ pedido.pedido_id }} - Usuario: {{ pedido.nombre_usuario }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <!-- Botones de Guardar y Cancelar -->
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-save"></i> Guardar Cambios
+            </button>
+            <a href="/lista-de-facturas" class="btn btn-secondary">
+              <i class="bi bi-x-circle"></i> Cancelar
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

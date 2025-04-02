@@ -1,0 +1,170 @@
+{% extends 'public/base_cpanel.html' %}
+
+{% block title %}Crud con Python 🐍 | Detalles de Entrega{% endblock %}
+
+{% block body %}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/detalles.css') }}" />
+
+{% if entrega %}
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-4" >
+        <a href="/lista-de-entregas">
+          <i class="bi bi-arrow-left-circle" style="font-size: 1.5rem;"></i>
+        </a>
+        DETALLES DE LA ENTREGA
+      </h3>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-10">
+      <div class="card-body">
+        <!-- Tarjeta de Información General -->
+        <div class="card mb-4" >
+          <div class="card-header" >
+            <i class="bi bi-info-circle me-2"></i>Información General
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <!-- Columna 1 -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label" >
+                    <i class="bi bi-truck me-2"></i>Tipo de Entrega
+                  </label>
+                  <p>{{ entrega.tipo }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">
+                    <i class="bi bi-calendar-event me-2"></i>Fecha y Hora
+                  </label>
+                  <p>{{ entrega.fecha_hora }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">
+                    <i class="bi bi-clipboard-check me-2"></i>Estado de la Entrega
+                  </label>
+                  <p >{{ entrega.estado }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">
+                    <i class="bi bi-cash-coin me-2"></i>Costo de Domicilio
+                  </label>
+                  <p >
+                    {% if entrega.costo_domicilio is not none %}
+                      $ {{ '{:,.0f}'.format(entrega.costo_domicilio).replace(',', '.') }}
+                    {% else %}
+                      No disponible
+                    {% endif %}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Columna 2 -->
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label">
+                    <i class="bi bi-person me-2"></i>Usuario
+                  </label>
+                  <p>{{ entrega.nombre_usuario }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">
+                    <i class="bi bi-person me-2"></i>Nombre Completo
+                  </label>
+                  <p>{{ entrega.nombre_completo }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">
+                    <i class="bi bi-telephone me-2"></i>Teléfono
+                  </label>
+                  <p>{{ entrega.telefono }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">
+                    <i class="bi bi-geo-alt me-2"></i>Domicilio
+                  </label>
+                  <p >{{ entrega.domicilio }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">
+                    <i class="bi bi-building me-2"></i>Municipio
+                  </label>
+                  <p>{{ entrega.municipio }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">
+                    <i class="bi bi-globe me-2"></i>Departamento
+                  </label>
+                  <p>{{ entrega.departamento }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="text-center mt-4">
+          <button id="btnDescargarPDF" class="btn btn-danger btn-lg" style="
+            border-radius: 10px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            border: none;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+          ">
+            <i class="bi bi-file-earmark-pdf me-2" style="font-size: 1.2rem;"></i>Descargar PDF
+          </button>
+          <button id="btnDescargarImagen" class="btn btn-success btn-lg" style="
+            border-radius: 10px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #28a745, #218838);
+            border: none;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin-left: 20px;
+          ">
+            <i class="bi bi-image me-2" style="font-size: 1.2rem;"></i>Descargar Imagen
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<h2 class="text-center" style="color: #e74c3c; font-weight: bold;">
+  No existe la Entrega 😭
+  <hr style="border-top: 2px solid #e74c3c;" />
+</h2>
+{% endif %}
+
+<script>
+  document.getElementById('btnDescargarPDF').addEventListener('click', function () {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("Detalles de la Entrega", 105, 20, null, null, "center");
+    doc.setFontSize(12);
+    doc.text("Información detallada de la entrega", 105, 30, null, null, "center");
+    
+    const entregaContent = document.querySelector('.card-body').innerText;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text(entregaContent, 10, 50);
+    
+    doc.setFontSize(10);
+    doc.text("Gracias por usar nuestro servicio!", 105, 280, null, null, "center");
+    
+    doc.save('detalles_entrega.pdf');
+  });
+</script>
+
+{% endblock %}

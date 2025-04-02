@@ -1,0 +1,436 @@
+{% extends 'public/base_cpanel.html' %}
+{% block title %}Perfil de Usuario{% endblock %}
+{% block body %}
+<div class="container my-5">
+    <!-- Div para mostrar mensajes de éxito o error de la actualización de datos -->
+    <div id="mensaje-actualizacion" class="custom-alert d-none" role="alert"></div>
+
+    <!-- Encabezado del Perfil -->
+    <div class="profile-header mb-5 text-center">
+        <h1 class="display-5 fw-bold">{{ info_perfil_session['nombre'] }} {{ info_perfil_session['apellido'] }}</h1>
+        <p class="text-muted">Documento: {{ info_perfil_session['documento'] }}</p>
+    </div>
+
+    <!-- Sección Tu Información -->
+    <div class="card mb-3">
+        <div class="card-header section-header" data-bs-toggle="collapse" href="#infoPersonal">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-user-circle fa-2x me-3 text-primary"></i>
+                <div>
+                    <h5 class="mb-0">Tu Información</h5>
+                    <small class="text-muted">Datos personales y de contacto</small>
+                </div>
+            </div>
+        </div>
+        <div class="collapse" id="infoPersonal">
+            <div class="card-body">
+                <form id="form-datos-perfil" method="POST">
+                    <div class="row g-3">
+                        <!-- Campos no editables -->
+                        <div class="col-md-6">
+                            <label class="form-label">Tipo de Documento</label>
+                            <input type="text" class="form-control bg-light" 
+                                   value="{{ info_perfil_session['tipo_documento'] }}" readonly>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Documento</label>
+                            <input type="text" class="form-control bg-light" 
+                                   value="{{ info_perfil_session['documento'] }}" readonly>
+                        </div>
+
+                        <!-- Campos editables -->
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" name="nombre" class="form-control" 
+                                   value="{{ info_perfil_session['nombre'] }}" 
+                                   maxlength="120" required 
+                                   oninvalid="this.setCustomValidity('Por favor, ingrese su nombre.')"
+                                   oninput="this.setCustomValidity('')">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Apellido</label>
+                            <input type="text" name="apellido" class="form-control" 
+                                   value="{{ info_perfil_session['apellido'] }}" 
+                                   maxlength="120" required 
+                                   oninvalid="this.setCustomValidity('Por favor, ingrese su apellido.')"
+                                   oninput="this.setCustomValidity('')">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Teléfono</label>
+                            <input type="text" name="telefono" class="form-control" 
+                                   value="{{ info_perfil_session['telefono'] }}" 
+                                   minlength="7" maxlength="13" pattern="[0-9]+" required 
+                                   onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"
+                                   oninvalid="this.setCustomValidity('El teléfono debe tener entre 7 y 13 dígitos y solo contener números.')"
+                                   oninput="this.setCustomValidity('')">
+                        </div>
+
+                        <!-- Campos no editables -->
+                        <div class="col-md-6">
+                            <label class="form-label">Correo</label>
+                            <input type="email" class="form-control bg-light" 
+                                   value="{{ info_perfil_session['correo'] }}" readonly>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Rol</label>
+                            <input type="text" class="form-control bg-light" 
+                                   value="{{ info_perfil_session['rol'] }}" readonly>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Estado</label>
+                            <input type="text" class="form-control bg-light" 
+                                   value="{{ info_perfil_session['estado'] }}" readonly>
+                        </div>
+
+                        <!-- Campo Contraseña para actualización -->
+                        <div class="col-md-12 mt-4">
+                            <label class="form-label">Confirmar con Contraseña Actual</label>
+                            <div class="input-group input-group-merge">
+                                <input type="password" 
+                                       class="form-control" 
+                                       name="pass_actual"
+                                       placeholder="Ingrese su contraseña para confirmar cambios"
+                                       required
+                                       oninvalid="this.setCustomValidity('Por favor, ingrese su contraseña actual.')"
+                                       oninput="this.setCustomValidity('')">
+                                <span class="input-group-text cursor-pointer">
+                                    <i class="bx bx-hide" onclick="togglePassword(this)"></i>
+                                </span>
+                            </div>
+                            <small class="text-muted">Debe ingresar su contraseña actual para guardar los cambios</small>
+                        </div>
+
+                        <div class="col-12 text-center mt-4">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fas fa-save me-2"></i>Guardar Cambios
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección Actualizar Contraseña -->
+    <div class="card">
+        <div class="card-header section-header" data-bs-toggle="collapse" href="#cambiarClave">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-lock fa-2x me-3 text-primary"></i>
+                <div>
+                    <h5 class="mb-0">Seguridad</h5>
+                    <small class="text-muted">Actualiza tu contraseña</small>
+                </div>
+            </div>
+        </div>
+        <div class="collapse" id="cambiarClave">
+            <div class="card-body">
+                <!-- Div para mostrar mensajes de éxito o error del cambio de contraseña -->
+                <div id="mensaje-cambio-contrasena" class="custom-alert d-none" role="alert"></div>
+
+                <form id="form-cambiar-contrasena" method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label">Contraseña Actual</label>
+                            <div class="input-group input-group-merge">
+                                <input type="password" 
+                                       class="form-control" 
+                                       name="pass_actual"
+                                       required
+                                       oninvalid="this.setCustomValidity('Por favor, ingrese su contraseña actual.')"
+                                       oninput="this.setCustomValidity('')">
+                                <span class="input-group-text cursor-pointer">
+                                    <i class="bx bx-hide" onclick="togglePassword(this)"></i>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Nueva Contraseña</label>
+                            <div class="input-group input-group-merge">
+                                <input type="password" 
+                                       class="form-control" 
+                                       name="new_pass_user"
+                                       id="new_pass_user"
+                                       minlength="8" maxlength="20" 
+                                       required
+                                       oninvalid="this.setCustomValidity('La contraseña debe tener entre 8 y 20 caracteres y contener al menos dos de los siguientes: letras, números o caracteres especiales (por ejemplo, !@#$%^&*).')"
+                                       oninput="this.setCustomValidity('')">
+                                <span class="input-group-text cursor-pointer">
+                                    <i class="bx bx-hide" onclick="togglePassword(this)"></i>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Confirmar Nueva Contraseña</label>
+                            <div class="input-group input-group-merge">
+                                <input type="password" 
+                                       class="form-control" 
+                                       name="repetir_pass_user"
+                                       id="repetir_pass_user"
+                                       maxlength="20" 
+                                       required
+                                       oninvalid="this.setCustomValidity('Por favor, confirme su nueva contraseña.')"
+                                       oninput="this.setCustomValidity('')">
+                                <span class="input-group-text cursor-pointer">
+                                    <i class="bx bx-hide" onclick="togglePassword(this)"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Campo oculto para user_id -->
+                        <input type="hidden" name="user_id" value="{{ info_perfil_session['id'] }}">
+
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-key me-2"></i>Actualizar Contraseña
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .section-header {
+        cursor: pointer;
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+        transition: all 0.3s ease;
+    }
+
+    .section-header:hover {
+        background-color: #e9ecef;
+    }
+
+    .bg-light {
+        background-color: #f8f9fa!important;
+    }
+
+    .form-control[readonly] {
+        cursor: not-allowed;
+    }
+
+    .input-group-merge .form-control {
+        border-right: 0;
+    }
+
+    .input-group-merge .input-group-text {
+        border-left: 0;
+        background-color: transparent;
+    }
+
+    /* Estilo personalizado para los mensajes */
+    .custom-alert {
+        padding: 10px 20px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        color: #721c24; /* Texto rojo oscuro para que sea legible sobre el fondo claro */
+        font-size: 16px;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .custom-alert.success {
+        background-color: #48c808; /* Verde para mensajes de éxito */
+        color: #fff; /* Texto blanco para el mensaje de éxito */
+    }
+
+    .custom-alert.error {
+        background-color: #ffe0db !important; /* Rojo claro de la imagen, con !important para evitar que Bootstrap lo sobrescriba */
+        color: #ff3e1d !important; /* Texto rojo oscuro, con !important para evitar que Bootstrap lo sobrescriba */
+    }
+</style>
+
+<script>
+    // Función para alternar visibilidad de contraseñas
+    function togglePassword(icon) {
+        const inputGroup = icon.closest('.input-group-merge');
+        const passwordInput = inputGroup.querySelector('input');
+        const eyeIcon = icon;
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.classList.replace('bx-hide', 'bx-show');
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.classList.replace('bx-show', 'bx-hide');
+        }
+    }
+
+    // Validar el formulario de cambio de contraseña
+    function validarPassword() {
+        const newPass = document.getElementById('new_pass_user');
+        const repetirPass = document.getElementById('repetir_pass_user');
+
+        // Validar longitud mínima y máxima de la nueva contraseña
+        if (newPass.value.length < 8) {
+            newPass.setCustomValidity('La contraseña debe tener al menos 8 caracteres.');
+            return false;
+        } else if (newPass.value.length > 20) {
+            newPass.setCustomValidity('La contraseña no puede tener más de 20 caracteres.');
+            return false;
+        } else {
+            newPass.setCustomValidity('');
+        }
+
+        // Validar longitud mínima y máxima de confirmar contraseña
+        if (repetirPass.value.length < 8) {
+            repetirPass.setCustomValidity('La contraseña debe tener al menos 8 caracteres.');
+            return false;
+        } else if (repetirPass.value.length > 20) {
+            repetirPass.setCustomValidity('La contraseña no puede tener más de 20 caracteres.');
+            return false;
+        } else {
+            repetirPass.setCustomValidity('');
+        }
+
+        // Validar que las contraseñas coincidan
+        if (newPass.value !== repetirPass.value) {
+            repetirPass.setCustomValidity('Las contraseñas no coinciden. Por favor, verifica.');
+            return false;
+        } else {
+            repetirPass.setCustomValidity('');
+        }
+
+        // Validar que contenga al menos dos de los tres requisitos (letras, números, caracteres especiales)
+        const hasLetters = /[a-zA-Z]/.test(newPass.value);
+        const hasNumbers = /[0-9]/.test(newPass.value);
+        const hasSpecial = /[!@#$%^&*]/.test(newPass.value);
+        const requirementsMet = [hasLetters, hasNumbers, hasSpecial].filter(Boolean).length;
+
+        if (requirementsMet < 2) {
+            newPass.setCustomValidity('La contraseña debe contener al menos dos de los siguientes: letras, números o caracteres especiales (por ejemplo, !@#$%^&*).');
+            return false;
+        } else {
+            newPass.setCustomValidity('');
+        }
+
+        // Validar que no sea solo letras
+        if (newPass.value.match(/^[a-zA-Z]+$/)) {
+            newPass.setCustomValidity('La contraseña no puede contener solo letras.');
+            return false;
+        } else {
+            newPass.setCustomValidity('');
+        }
+
+        // Validar que no sea solo números
+        if (newPass.value.match(/^[0-9]+$/)) {
+            newPass.setCustomValidity('La contraseña no puede contener solo números.');
+            return false;
+        } else {
+            newPass.setCustomValidity('');
+        }
+
+        return true;
+    }
+
+    // Manejar el envío del formulario de actualización de datos con AJAX
+    document.getElementById('form-datos-perfil').addEventListener('submit', function(event) {
+        event.preventDefault(); // Evitar el envío tradicional del formulario
+
+        const form = this;
+        const formData = new FormData(form);
+        const mensajeDiv = document.getElementById('mensaje-actualizacion');
+
+        fetch('{{ url_for("actualizar_datos_perfil") }}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Mostrar el mensaje en el div
+            mensajeDiv.classList.remove('d-none');
+            // Agregar emoji al mensaje de éxito, y asegurar que el mensaje de error se muestre
+            mensajeDiv.textContent = data.success 
+                ? `${data.message} 😊` 
+                : (data.message || 'Error al actualizar los datos. Por favor, intenta de nuevo.');
+
+            // Estilizar según el éxito o error
+            if (data.success) {
+                mensajeDiv.classList.remove('error');
+                mensajeDiv.classList.add('success');
+                // Actualizar los datos en la página
+                document.querySelector('.profile-header h1').textContent = `${formData.get('nombre')} ${formData.get('apellido')}`;
+            } else {
+                mensajeDiv.classList.remove('success');
+                mensajeDiv.classList.add('error');
+            }
+
+            // Si la respuesta incluye "reload": true, recargar la página
+            if (data.reload) {
+                setTimeout(() => {
+                    location.reload();
+                }, 2000); // Recargar después de 2 segundos para que el usuario vea el mensaje
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mensajeDiv.classList.remove('d-none');
+            mensajeDiv.classList.remove('success');
+            mensajeDiv.classList.add('error');
+            mensajeDiv.textContent = 'Error al procesar la solicitud. Intenta de nuevo.';
+        });
+    });
+
+    // Manejar el envío del formulario de cambio de contraseña con AJAX
+    document.getElementById('form-cambiar-contrasena').addEventListener('submit', function(event) {
+        event.preventDefault(); // Evitar el envío tradicional del formulario
+
+        // Validar las contraseñas antes de enviar
+        if (!validarPassword()) {
+            return; // Detener si la validación falla
+        }
+
+        const form = this;
+        const formData = new FormData(form);
+        const mensajeDiv = document.getElementById('mensaje-cambio-contrasena');
+
+        fetch('{{ url_for("cambiar_contrasena") }}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Mostrar el mensaje en el div
+            mensajeDiv.classList.remove('d-none');
+            // Agregar emoji al mensaje de éxito, y asegurar que el mensaje de error se muestre
+            mensajeDiv.textContent = data.success 
+                ? `${data.message} 😊` 
+                : (data.message || 'Error al cambiar la contraseña. Por favor, intenta de nuevo.');
+
+            // Estilizar según el éxito o error
+            if (data.success) {
+                mensajeDiv.classList.remove('error');
+                mensajeDiv.classList.add('success');
+                // Limpiar los campos del formulario
+                form.reset();
+            } else {
+                mensajeDiv.classList.remove('success');
+                mensajeDiv.classList.add('error');
+            }
+
+            // Si la respuesta incluye "reload": true, recargar la página
+            if (data.reload) {
+                setTimeout(() => {
+                    location.reload();
+                }, 2000); // Recargar después de 2 segundos para que el usuario vea el mensaje
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mensajeDiv.classList.remove('d-none');
+            mensajeDiv.classList.remove('success');
+            mensajeDiv.classList.add('error');
+            mensajeDiv.textContent = 'Error al procesar la solicitud. Intenta de nuevo.';
+        });
+    });
+</script>
+{% endblock %}

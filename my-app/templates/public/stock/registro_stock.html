@@ -1,0 +1,86 @@
+{% extends 'public/base_cpanel.html' %}
+
+{% block title %}Registrar Stock{% endblock %}
+
+{% block customCSS %}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/file.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/footer.css') }}" />
+ <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}" />
+ <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/editar.css') }}" />
+ <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
+
+{% endblock %}
+
+{% block body %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">REGISTRAR NUEVO STOCK</h3>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <form class="form-horizontal mx-auto" method="POST" action="/registrar-stock" autocomplete="off">
+        <div class="card-body">
+          <div class="row">
+            <!-- Columna Izquierda -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="cantidad_disponible" class="form-label">Cantidad Disponible</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  name="cantidad_disponible"
+                  id="cantidad_disponible"
+                  min="1" 
+                  required
+                >
+              </div>
+
+              <div class="mb-3">
+                <label for="producto_id" class="form-label">Producto</label>
+                <select class="form-select" name="producto_id" id="producto_id" required>
+                  <option value="" selected disabled>Seleccione un producto</option>
+                  {% for producto in productos %}
+                    <option value="{{ producto.id }}">
+                      ID: {{ producto.id }} - {{ producto.nombre }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
+            <!-- Columna Derecha -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="users_id" class="form-label">Usuario</label>
+                <select class="form-select" name="users_id" id="users_id" required>
+                  <option value="" selected disabled>Seleccione un usuario</option>
+                  {% for usuario in usuarios %}
+                    <option value="{{ usuario.id }}">
+                      ID: {{ usuario.id }} - {{ usuario.nombre }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botón de Guardar -->
+          <div class="mb-3 mt-4 text-center">
+            <button type="submit" class="btn rounded-pill btn-primary">
+              Guardar registro ahora
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="/static/assets/js/sienna.js"></script>
+<script src="/static/assets/js/custom.js"></script>
+{% endblock %}

@@ -1,0 +1,53 @@
+.botones-export {
+    margin-top: 30px; /* Más espacio arriba de los botones */
+    text-align: center; /* Centrar los botones */
+}
+
+.botones-export button {
+    margin-right: 15px; /* Espacio entre los botones */
+}
+
+@media print {
+    /* Establecer el tamaño y la organización de la tabla */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+
+    /* Estilo de las celdas */
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
+
+    /* Estilo para los encabezados de columna */
+    th {
+        background-color: #f4f4f4;
+        font-weight: bold;
+    }
+
+    /* Ocultar la columna de acción (la columna de botones) en impresión */
+    th:nth-child(10), td:nth-child(10) {
+        display: none;
+    }
+
+    /* Asegurarse de que todo el contenido se ajuste a la página */
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+    }
+
+    /* Configurar márgenes de la página */
+    @page {
+        margin: 20mm;
+    }
+
+    /* Ajustar el encabezado para la impresión */
+    h3 {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+}
+

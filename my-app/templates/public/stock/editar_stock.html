@@ -1,0 +1,79 @@
+{% extends 'public/base_cpanel.html' %}
+
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Editar Stock{% endblock %}
+
+<!-- Inicio del block -->
+{% block body %}
+<div class="card" style="border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-4" style="color: #2c3e50; font-weight: bold;">
+        <a href="/lista-de-stock" style="color: #2c3e50; text-decoration: none;">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        EDITAR STOCK
+      </h3>
+      <hr style="border-top: 2px solid #2c3e50;" />
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-8">
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="{{ url_for('actualizarStock') }}"
+        autocomplete="off">
+        <input type="hidden" name="id" value="{{ stock.id }}">
+
+        <!-- Cantidad Disponible -->
+        <div class="mb-3">
+          <label for="cantidad_disponible" class="form-label" style="font-weight: bold;">Cantidad Disponible</label>
+          <input
+            type="number"
+            name="cantidad_disponible"
+            class="form-control"
+            value="{{ stock.cantidad_disponible }}"
+            min="1"
+            required
+            style="border-radius: 8px; padding: 10px;" />
+        </div>
+
+        <!-- Producto -->
+        <div class="mb-3">
+          <label for="producto_id" class="form-label" style="font-weight: bold;">Producto</label>
+          <select class="form-select" name="producto_id" required style="border-radius: 8px; padding: 10px;">
+            <option value="" selected disabled>Seleccione un producto</option>
+            {% for producto in productos %}
+              <option value="{{ producto.id }}" {% if producto.id == stock.producto_id %}selected{% endif %}>
+                {{ producto.nombre }} (ID: {{ producto.id }})
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Usuario -->
+        <div class="mb-3">
+          <label for="users_id" class="form-label" style="font-weight: bold;">Usuario</label>
+          <select class="form-select" name="users_id" required style="border-radius: 8px; padding: 10px;">
+            <option value="" selected disabled>Seleccione un usuario</option>
+            {% for usuario in usuarios %}
+              <option value="{{ usuario.id }}" {% if usuario.id == stock.users_id %}selected{% endif %}>
+                {{ usuario.nombre }} (ID: {{ usuario.id }})
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Botón de Guardar Cambios -->
+        <div class="mb-3 mt-4 text-center">
+          <button type="submit" class="btn rounded-pill btn-primary" style="padding: 10px 20px; font-size: 16px;">
+            <i class="bi bi-save"></i> Guardar cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
