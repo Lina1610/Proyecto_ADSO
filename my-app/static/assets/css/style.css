@@ -1446,3 +1446,82 @@ p {
       font-size: 16px;
   }
 }
+/* Añade esto al final de tu archivo CSS */
+
+@media (max-width: 991px) {
+  /* Estilos para el menú hamburguesa */
+  .navbar {
+      padding: 80px 20px 20px;
+  }
+  
+  /* Líneas divisorias entre elementos del menú */
+  .navbar ul li {
+      width: 100%;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0;
+      margin: 0;
+  }
+  
+  /* Eliminar borde del último elemento */
+  .navbar ul li:last-child {
+      border-bottom: none;
+  }
+  
+  /* Estilo para los enlaces del menú */
+  .navbar ul li a {
+      display: block;
+      padding: 15px 20px;
+      color: white !important;
+      font-weight: 600;
+      transition: all 0.3s ease;
+  }
+  
+  /* Efecto hover */
+  .navbar ul li a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #CE967B !important;
+  }
+  
+  /* Estilo especial para Cerrar Sesión */
+  .logout {
+      color: #ff6b6b !important;
+  }
+  
+  /* Estilos para el contenedor de usuario */
+  .user-menu-container {
+      width: 100%;
+      padding: 0;
+  }
+  
+  /* Estilos para las opciones de usuario */
+  .user-options {
+      flex-direction: column;
+      gap: 0 !important;
+      border-left: none !important;
+      padding-left: 0 !important;
+      width: 100%;
+  }
+  
+  /* Estilo para las opciones del perfil */
+  .user-options a {
+      padding: 15px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      display: block;
+      width: 100%;
+  }
+  
+  /* Eliminar borde del último elemento de opciones */
+  .user-options a:last-child {
+      border-bottom: none;
+  }
+  
+  /* Ocultar el avatar y nombre en móvil */
+  .avatar-name-group {
+      display: none;
+  }
+  
+  /* Mostrar las opciones de usuario como elementos normales del menú */
+  .user-options {
+      display: block !important;
+  }
+}
