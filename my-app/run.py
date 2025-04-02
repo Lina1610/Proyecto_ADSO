@@ -101,5 +101,9 @@ def home():
         flash('Ya estás conectado.', 'success')
     return render_template('public/index.html')
 
+@app.route('/static/node_modules/<path:filename>')
+def serve_node_modules(filename):
+    return send_from_directory('node_modules', filename)
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

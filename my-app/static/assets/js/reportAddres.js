@@ -249,61 +249,109 @@ document.addEventListener("DOMContentLoaded", function () {
             try {
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
-
-                // Título del documento
-                doc.text("Reporte de Direcciones" + (hayFiltrosActivos ? " Filtrado" : ""), 14, 15);
                 
-                // Fecha y hora de generación
-                const fechaActual = new Date();
+                // Configuración del logo (lado izquierdo)
+                const logoUrl = "/static/assets/img/logose.png";
+                const logoWidth = 30;
+                const logoHeight = 30;
+                const leftMargin = 15; // Margen izquierdo para el logo
+    
+                // Agregar logo (posición fija izquierda)
+                try {
+                    doc.addImage(logoUrl, "PNG", leftMargin, 15, logoWidth, logoHeight);
+                } catch (imageError) {
+                    console.error("Error al cargar la imagen del logo:", imageError);
+                }
+    
+                // Configuración texto derecho
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const rightMargin = 20; // Margen derecho
+                const rightTextX = pageWidth - rightMargin; // Posición X para texto derecho
+    
+                // Nombre de la empresa (derecha)
+                doc.setFontSize(14);
+                doc.setFont("helvetica", "bold");
+                doc.text("Tamales el Buen Sazón", rightTextX, 20, { align: "right" });
+    
+                // Título del reporte (derecha)
+                doc.setFontSize(12);
+                doc.setFont("helvetica", "normal");
+                const title = "Reporte de Direcciones" + (hayFiltrosActivos ? " (Filtrado)" : "");
+                doc.text(title, rightTextX, 30, { align: "right" });
+    
+                // Fecha de generación (derecha)
                 doc.setFontSize(10);
-                doc.text(`Fecha de generación: ${fechaActual.toLocaleDateString()} ${fechaActual.toLocaleTimeString()}`, 14, 22);
-
-                // Obtener encabezados sin las últimas dos columnas
-                const headers = [];
-                document.querySelectorAll("#tbl_direcciones thead th").forEach((th, index) => {
-                    if (index < 6) { // Evitar las últimas dos columnas (Acción Estado y Acciones)
-                        headers.push(th.innerText);
-                    }
-                });
-
-                // Obtener filas sin las últimas dos columnas
+                const fechaActual = new Date();
+                const fechaText = `Generado: ${fechaActual.toLocaleDateString()} ${fechaActual.toLocaleTimeString()}`;
+                doc.text(fechaText, rightTextX, 36, { align: "right" });
+    
+                // Línea separadora
+                doc.setDrawColor(200, 200, 200);
+                doc.line(leftMargin, 45, pageWidth - rightMargin, 45);
+    
+                // Obtener encabezados excluyendo columnas de Acción
+                const headers = Array.from(document.querySelectorAll("#tbl_direcciones thead th"))
+                    .filter((th, index) => index < 6) // Excluir últimas dos columnas
+                    .map(th => th.innerText.replace(/\s+/g, ' ').trim());
+    
+                // Obtener datos excluyendo columnas de Acción
                 const data = [];
                 const filasAExportar = hayFiltrosActivos 
                     ? filasFiltradas 
-                    : $tablaBody.querySelectorAll("tr.fila-datos");
-
-                filasAExportar.forEach((fila) => {
-                    const rowData = [];
-                    fila.querySelectorAll("td").forEach((td, index) => {
-                        if (index < 6) { // Evitar las últimas dos columnas (Acción Estado y Acciones)
-                            rowData.push(td.innerText);
-                        }
-                    });
-                    data.push(rowData);
+                    : document.querySelectorAll("#tbl_direcciones tbody tr.fila-datos");
+                
+                filasAExportar.forEach(tr => {
+                    const rowData = Array.from(tr.querySelectorAll("td"))
+                        .filter((td, index) => index < 6) // Excluir últimas dos columnas
+                        .map(td => td.innerText.replace(/\s+/g, ' ').trim());
+                    
+                    if (rowData.length > 0 && rowData.some(cell => cell !== '')) {
+                        data.push(rowData);
+                    }
                 });
-
-                // Generar tabla en el PDF
+    
+                // Generar tabla centrada (optimizada para 6 columnas)
                 doc.autoTable({
                     head: [headers],
                     body: data,
-                    startY: 30,
-                    theme: "striped",
-                    styles: { fontSize: 9, cellPadding: 3 },
-                    headStyles: { fillColor: [44, 62, 80], textColor: [255, 255, 255] },
-                    alternateRowStyles: { fillColor: [240, 240, 240] },
-                    margin: { top: 30 },
-                    didDrawPage: function (data) {
-                        // Agregar número de página en el pie de página
+                    startY: 55, // Posición después del encabezado
+                    theme: "grid",
+                    styles: { 
+                        fontSize: 9,
+                        cellPadding: 3,
+                        overflow: 'linebreak',
+                        halign: 'center'
+                    },
+                    columnStyles: {
+                        // Ajustar anchos específicos para 6 columnas
+                        0: { cellWidth: 'auto' },
+                        1: { cellWidth: 'auto' },
+                        2: { cellWidth: 'auto' },
+                        3: { cellWidth: 'auto' },
+                        4: { cellWidth: 'auto' },
+                        5: { cellWidth: 'auto' }
+                    },
+                    headStyles: { 
+                        fillColor: [44, 62, 80], // Azul oscuro corporativo
+                        textColor: [255, 255, 255],
+                        fontStyle: 'bold',
+                        cellPadding: 4
+                    },
+                    margin: { horizontal: 'center' }, // Centrar horizontalmente
+                    tableWidth: 'wrap', // Ajustar automáticamente al ancho de contenido
+                    didDrawPage: function(data) {
+                        // Número de página (derecha abajo)
                         doc.setFontSize(8);
                         doc.text(
                             `Página ${doc.getNumberOfPages()}`,
-                            data.settings.margin.left,
-                            doc.internal.pageSize.height - 10
+                            pageWidth - rightMargin,
+                            doc.internal.pageSize.height - 10,
+                            { align: "right" }
                         );
                     }
                 });
-
-                doc.save("Reporte_Direcciones" + (hayFiltrosActivos ? "_Filtrado" : "") + ".pdf");
+    
+                doc.save("Reporte_Direcciones_TamalesBuenSazon" + (hayFiltrosActivos ? "_Filtrado" : "") + ".pdf");
                 mostrarMensaje("Archivo PDF generado correctamente", "success");
             } catch (error) {
                 console.error("Error al exportar a PDF:", error);
@@ -316,67 +364,170 @@ document.addEventListener("DOMContentLoaded", function () {
     if ($btnImprimir) {
         $btnImprimir.addEventListener("click", function () {
             try {
-                const tablaHtml = $tabla.cloneNode(true); // Clonar la tabla
+                // Clonar la tabla completa
+                const tablaHtml = $tabla.cloneNode(true);
                 const tbodyClonado = tablaHtml.querySelector("tbody");
-
-                // Limpiar el tbody clonado
                 tbodyClonado.innerHTML = "";
-
-                // Usar datos filtrados si hay filtros activos, de lo contrario usar todas las filas
+    
+                // Obtener filas a imprimir (filtradas o todas)
                 const filasAImprimir = hayFiltrosActivos 
                     ? filasFiltradas 
                     : $tablaBody.querySelectorAll("tr.fila-datos");
-
+    
+                // Procesar cada fila para imprimir
                 filasAImprimir.forEach((fila) => {
-                    const filaClonada = fila.cloneNode(true); // Clonar la fila
-                    // Eliminar las últimas dos columnas (Acción Estado y Acciones)
+                    const filaClonada = fila.cloneNode(true);
                     const celdas = filaClonada.querySelectorAll("td");
-                    if (celdas.length > 6) { // Verificar que haya más de 6 columnas
-                        celdas[celdas.length - 1].remove(); // Eliminar la última celda (Acciones)
-                        celdas[celdas.length - 2].remove(); // Eliminar la penúltima celda (Acción Estado)
+                    
+                    // Eliminar columnas de acción (últimas dos columnas)
+                    if (celdas.length > 6) {
+                        celdas[celdas.length - 1].remove(); // Eliminar Acciones
+                        celdas[celdas.length - 2].remove(); // Eliminar Acción Estado
                     }
-                    tbodyClonado.appendChild(filaClonada); // Agregar la fila clonada al tbody
+                    
+                    tbodyClonado.appendChild(filaClonada);
                 });
-
-                // Eliminar las últimas dos columnas del encabezado
+    
+                // Eliminar columnas de acción del encabezado
                 const theadClonado = tablaHtml.querySelector("thead");
-                const filaEncabezado = theadClonado.querySelector("tr");
-                const celdasEncabezado = filaEncabezado.querySelectorAll("th");
-                if (celdasEncabezado.length > 6) { // Verificar que haya más de 6 columnas
-                    celdasEncabezado[celdasEncabezado.length - 1].remove(); // Eliminar la última celda (Acciones)
-                    celdasEncabezado[celdasEncabezado.length - 2].remove(); // Eliminar la penúltima celda (Acción Estado)
+                const celdasEncabezado = theadClonado.querySelectorAll("th");
+                if (celdasEncabezado.length > 6) {
+                    celdasEncabezado[celdasEncabezado.length - 1].remove(); // Eliminar Acciones
+                    celdasEncabezado[celdasEncabezado.length - 2].remove(); // Eliminar Acción Estado
                 }
-
-                // Abrir una ventana de impresión
-                const ventanaImpresion = window.open("", "", "height=800, width=1000");
+    
+                // Configurar ventana de impresión con diseño profesional
+                const ventanaImpresion = window.open("", "_blank", "width=1000,height=600");
+                const fechaActual = new Date();
+                const fechaTexto = fechaActual.toLocaleDateString() + ' ' + fechaActual.toLocaleTimeString();
+                
                 ventanaImpresion.document.write(`
+                    <!DOCTYPE html>
                     <html>
-                        <head>
-                            <title>Imprimir Reporte de Direcciones${hayFiltrosActivos ? " Filtrado" : ""}</title>
-                            <style>
-                                @media print {
-                                    table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-                                    th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }
-                                    th { background-color: #f4f4f4; font-weight: bold; }
-                                    body { font-family: Arial, sans-serif; font-size: 12px; margin: 0; padding: 0; }
-                                    @page { margin: 20mm; }
-                                    .fecha-generacion { font-size: 10px; color: #666; margin-bottom: 15px; }
+                    <head>
+                        <title>Reporte de Direcciones - Tamales el Buen Sazón</title>
+                        <style>
+                            @media print {
+                                body {
+                                    font-family: 'Arial', sans-serif;
+                                    margin: 0;
+                                    padding: 20px;
+                                    color: #333;
                                 }
-                            </style>
-                        </head>
-                        <body>
-                            <h2>Reporte de Direcciones${hayFiltrosActivos ? " Filtrado" : ""}</h2>
-                            <div class="fecha-generacion">
-                                Fecha de generación: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}
+                                .header {
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                    margin-bottom: 20px;
+                                    padding-bottom: 10px;
+                                    border-bottom: 1px solid #ddd;
+                                }
+                                .logo {
+                                    height: 50px;
+                                }
+                                .company-info {
+                                    text-align: right;
+                                }
+                                .company-name {
+                                    font-size: 18px;
+                                    font-weight: bold;
+                                    color: #2c3e50;
+                                    margin-bottom: 5px;
+                                }
+                                .report-title {
+                                    font-size: 16px;
+                                    margin: 5px 0;
+                                }
+                                .report-date {
+                                    font-size: 12px;
+                                    color: #666;
+                                }
+                                table {
+                                    width: 100%;
+                                    border-collapse: collapse;
+                                    margin-top: 15px;
+                                    font-size: 12px;
+                                }
+                                th {
+                                    background-color: #2c3e50;
+                                    color: white;
+                                    padding: 10px;
+                                    text-align: left;
+                                    font-weight: bold;
+                                }
+                                td {
+                                    padding: 8px;
+                                    border-bottom: 1px solid #eee;
+                                    vertical-align: top;
+                                }
+                                .address {
+                                    max-width: 250px;
+                                    word-wrap: break-word;
+                                }
+                                tr:nth-child(even) {
+                                    background-color: #f9f9f9;
+                                }
+                                .footer {
+                                    margin-top: 20px;
+                                    font-size: 10px;
+                                    color: #666;
+                                    text-align: right;
+                                    padding-top: 10px;
+                                    border-top: 1px solid #ddd;
+                                }
+                                @page {
+                                    size: auto;
+                                    margin: 15mm;
+                                }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <img src="/static/assets/img/logose.png" class="logo" alt="Logo">
+                            <div class="company-info">
+                                <div class="company-name">Tamales el Buen Sazón</div>
+                                <div class="report-title">Reporte de Direcciones${hayFiltrosActivos ? " (Filtrado)" : ""}</div>
+                                <div class="report-date">Generado: ${fechaTexto}</div>
                             </div>
-                            ${tablaHtml.outerHTML}
-                        </body>
+                        </div>
+                        
+                        ${tablaHtml.outerHTML}
+                        
+                        <div class="footer">
+                            Página 1 de 1 • ${fechaTexto}
+                        </div>
+                        
+                        <script>
+                            // Calcular número de páginas y aplicar estilos después de cargar
+                            window.onload = function() {
+                                // Aplicar estilo especial a direcciones largas
+                                document.querySelectorAll('td:nth-child(3)').forEach(td => {
+                                    td.classList.add('address');
+                                });
+                                
+                                const pageHeight = window.innerHeight;
+                                const tableHeight = document.querySelector('table').offsetHeight;
+                                const totalPages = Math.ceil(tableHeight / (pageHeight - 200));
+                                
+                                document.querySelector('.footer').innerHTML = 
+                                    \`Página 1 de \${totalPages} • ${fechaTexto}\`;
+                            };
+                        </script>
+                    </body>
                     </html>
                 `);
+                
                 ventanaImpresion.document.close();
-                ventanaImpresion.focus();
-                ventanaImpresion.print();
-                mostrarMensaje("Documento enviado a impresión", "info");
+                
+                // Esperar a que cargue el contenido antes de imprimir
+                ventanaImpresion.onload = function() {
+                    setTimeout(() => {
+                        ventanaImpresion.print();
+                        mostrarMensaje("Documento enviado a impresión", "info");
+                    }, 500);
+                };
+                
             } catch (error) {
                 console.error("Error al imprimir:", error);
                 mostrarMensaje("Error al imprimir", "danger");

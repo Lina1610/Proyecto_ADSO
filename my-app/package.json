@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "accessibility": "^6.0.7",
     "aos": "^2.3.4"
   }
 }

@@ -30,9 +30,7 @@
     <header class="header">
         <!-- Navigation (Menú) -->
         <div class="menu">
-            <a href="#" class="logo-corner">
-                <img src="{{ url_for('static', filename='assets/img/logo_em.png') }}" alt="Bien Sazón">
-            </a>
+            <a href="#" class="logo">Buen Sazón</a>
             
             <!-- Checkbox oculto -->
             <input type="checkbox" id="menu" class="menu-checkbox"/>
@@ -56,11 +54,9 @@
             <nav class="navbar">
                 <ul>
                     <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}">Inicio</a></li>
-                    <!--<li class="nav-item"><a class="nav-link" href="#sobre_nosotros">Sobre Nosotros</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#services">Servicios</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>-->
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('pedido.pedido') }}">Pedidos</a></li>
-                    <!--<li class="nav-item"><a class="nav-link" href="#">Supersad</a></li>-->
+                    <li class="nav-item"><a class="nav-link" href="/#services_group">Servicios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#nosotros_group">Sobre Nosotros</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('pedido.pedido') }}">Pedido</a></li>
                     
                     {% if session.conectado %}
                     <li class="nav-item user-menu">

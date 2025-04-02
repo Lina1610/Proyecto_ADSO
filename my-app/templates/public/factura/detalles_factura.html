@@ -6,9 +6,10 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/detalles.css') }}" />
 
 {% if factura_pedido %}
+<div class="card">
   <div class="row justify-content-center mb-2">
     <div class="col-md-12">
-      <h3 class="text-center mt-5 mb-4">
+      <h3 class="text-center mt-5 mb-3">
         <a href="/lista-de-facturas">
           <i class="bi bi-arrow-left-circle"></i>
         </a>
@@ -30,37 +31,33 @@
   <div class="row justify-content-center mb-4">
     <div class="col-md-10">
       <div class="card-body">
-        <div class="card mb-4">
-        
-        
-          <div class="card-body">
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">ID de la Factura</label>
+                <label class="form-label">ID de la Factura</label>
                 <p>{{ factura_pedido.factura_id }}</p>
               </div>
               <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Estado de la Factura</label>
+                <label class="form-label">Estado de la Factura</label>
                 <p>{{ factura_pedido.estado_factura }}</p>
               </div>
             </div>
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Fecha de la Factura</label>
+                <label class="form-label">Fecha de la Factura</label>
                 <p>{{ factura_pedido.fecha_factura }}</p>
               </div>
               <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Fecha de Entrega</label>
+                <label class="form-label">Fecha de Entrega</label>
                 <p>{{ factura_pedido.fechaEntrega }}</p>
               </div>
             </div>
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Hora de Entrega</label>
+                <label class="form-label">Hora de Entrega</label>
                 <p>{{ factura_pedido.horaEntrega }}</p>
               </div>
               <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Total del Pedido</label>
+                <label class="form-label">Total del Pedido</label>
                 <p>
                   {% if factura_pedido.total is not none %}
                     $ {{ '{:,.0f}'.format(factura_pedido.total).replace(',', '.') }}
@@ -72,17 +69,17 @@
             </div>
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Nombre del Usuario</label>
+                <label class="form-label" >Nombre del Usuario</label>
                 <p>{{ factura_pedido.nombre_usuario }}</p>
               </div>
               <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Nombre del Producto</label>
+                <label class="form-label">Nombre del Producto</label>
                 <p>{{ factura_pedido.nombre_producto }}</p>
               </div>
             </div>
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Método de Pago</label>
+                <label class="form-label" >Método de Pago</label>
                 <p>{{ factura_pedido.metodo_pago }}</p>
               </div>
             </div>
@@ -103,7 +100,6 @@
 {% else %}
 <h2 class="text-center" style="color: #e74c3c; font-weight: bold;">
   No existe la Factura o el Pedido asociado 😭
-  <hr style="border-top: 2px solid #e74c3c;" />
 </h2>
 {% endif %}
 

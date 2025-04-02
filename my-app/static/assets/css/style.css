@@ -92,9 +92,10 @@ html {
   font-weight: 700;
   text-transform: uppercase;
   display: flex;
-  justify-content: center; /* Centra horizontalmente */
-  align-items: center; /* Centra verticalmente */
-  height: 100%; /* Asegura que ocupe toda la altura del contenedor */
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-style: italic; /* Agrega esta línea para poner la letra en cursiva */
 }
 .navbar {
   display: flex;
@@ -1410,6 +1411,11 @@ p {
   color: #ff6b6b !important;
 }
 
+.menu .logo:hover {
+  color: #CE967B !important; /* Cambia a este color al hacer hover */
+  text-decoration: none !important;
+  background-color: transparent !important;
+}
 .menu-link:hover {
   color: #CE967B;
   transform: translateY(-1px);

@@ -233,47 +233,99 @@ document.addEventListener("DOMContentLoaded", function () {
             try {
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
-  
-                doc.text("Reporte de Productos", 14, 10);
-  
-                // Obtener encabezados sin la columna "Acción"
-                const headers = [];
-                document
-                    .querySelectorAll("#tbl_productos thead th")
-                    .forEach((th, index) => {
-                        if (index !== 8) { // Excluir columna de acción (índice 8)
-                            headers.push(th.innerText);
-                        }
-                    });
-  
-                // Obtener filas visibles (filtradas o todas) sin la columna "Acción"
-                const data = [];
-                const filasExportar = obtenerFilasExportar();
                 
-                filasExportar.forEach(row => {
-                    const rowData = [];
-                    row.querySelectorAll("td").forEach((td, index) => {
-                        if (index !== 8) { // Excluir columna de acción (índice 8)
-                            rowData.push(td.innerText);
-                        }
-                    });
-                    data.push(rowData);
+                // Configuración del logo (lado izquierdo)
+                const logoUrl = "/static/assets/img/logose.png";
+                const logoWidth = 30;
+                const logoHeight = 30;
+                const leftMargin = 15; // Margen izquierdo para el logo
+    
+                // Agregar logo (posición fija izquierda)
+                try {
+                    doc.addImage(logoUrl, "PNG", leftMargin, 15, logoWidth, logoHeight);
+                } catch (imageError) {
+                    console.error("Error al cargar la imagen del logo:", imageError);
+                }
+    
+                // Configuración texto derecho
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const rightMargin = 20; // Margen derecho
+                const rightTextX = pageWidth - rightMargin; // Posición X para texto derecho
+    
+                // Nombre de la empresa (derecha)
+                doc.setFontSize(14);
+                doc.setFont("helvetica", "bold");
+                doc.text("Tamales el Buen Sazón", rightTextX, 20, { align: "right" });
+    
+                // Título del reporte (derecha)
+                doc.setFontSize(12);
+                doc.setFont("helvetica", "normal");
+                const title = "Reporte de Productos" + (hayFiltrosActivos ? " (Filtrado)" : "");
+                doc.text(title, rightTextX, 30, { align: "right" });
+    
+                // Fecha de generación (derecha)
+                doc.setFontSize(10);
+                const fechaActual = new Date();
+                const fechaText = `Generado: ${fechaActual.toLocaleDateString()} ${fechaActual.toLocaleTimeString()}`;
+                doc.text(fechaText, rightTextX, 36, { align: "right" });
+    
+                // Línea separadora
+                doc.setDrawColor(200, 200, 200);
+                doc.line(leftMargin, 45, pageWidth - rightMargin, 45);
+
+                // Obtener encabezados excluyendo columna de Acción
+                const headers = Array.from(document.querySelectorAll("#tbl_productos thead th"))
+                    .filter((th, index) => index !== 8) // Excluir columna de acción (índice 8)
+                    .map(th => th.innerText.replace(/\s+/g, ' ').trim());
+    
+                // Obtener datos excluyendo columna de Acción
+                const data = [];
+                const filasAExportar = hayFiltrosActivos 
+                    ? filasFiltradas 
+                    : document.querySelectorAll("#tbl_productos tbody tr.fila-datos");
+                
+                filasAExportar.forEach(tr => {
+                    const rowData = Array.from(tr.querySelectorAll("td"))
+                        .filter((td, index) => index !== 8) // Excluir columna de acción
+                        .map(td => td.innerText.replace(/\s+/g, ' ').trim());
+                    
+                    if (rowData.length > 0 && rowData.some(cell => cell !== '')) {
+                        data.push(rowData);
+                    }
                 });
-  
-                // Generar tabla en el PDF
+    
+                // Generar tabla centrada
                 doc.autoTable({
                     head: [headers],
                     body: data,
-                    startY: 20,
-                    theme: "striped",
-                    styles: { fontSize: 10, cellPadding: 3 },
-                    headStyles: { fillColor: [44, 62, 80], textColor: [255, 255, 255] },
-                    alternateRowStyles: { fillColor: [240, 240, 240] },
+                    startY: 55, // Posición después del encabezado
+                    theme: "grid",
+                    styles: { 
+                        fontSize: 8,
+                        cellPadding: 3,
+                        overflow: 'linebreak',
+                        halign: 'center'
+                    },
+                    headStyles: { 
+                        fillColor: [44, 62, 80],
+                        textColor: [255, 255, 255],
+                        fontStyle: 'bold',
+                        cellPadding: 4
+                    },
+                    margin: { horizontal: 'center' }, // Centrar horizontalmente
+                    didDrawPage: function(data) {
+                        // Número de página (derecha abajo)
+                        doc.setFontSize(8);
+                        doc.text(
+                            `Página ${doc.getNumberOfPages()}`,
+                            pageWidth - rightMargin,
+                            doc.internal.pageSize.height - 10,
+                            { align: "right" }
+                        );
+                    }
                 });
-  
-                doc.save("Reporte_Productos.pdf");
-  
-                // Mostrar mensaje de éxito
+    
+                doc.save("Reporte_Productos_TamalesBuenSazon" + (hayFiltrosActivos ? "_Filtrado" : "") + ".pdf");
                 mostrarMensaje("Archivo PDF generado correctamente", "success");
             } catch (error) {
                 console.error("Error al exportar a PDF:", error);
@@ -286,81 +338,177 @@ document.addEventListener("DOMContentLoaded", function () {
     if ($btnImprimir) {
         $btnImprimir.addEventListener("click", function () {
             try {
-                // Crear una tabla temporal para imprimir
+                // Crear tabla temporal con estructura completa
                 const tablaTemp = document.createElement('table');
-                tablaTemp.classList.add('table', 'table-striped', 'table-bordered');
+                tablaTemp.className = 'table-print';
                 
-                // Clonar encabezados sin la columna de acción
+                // Clonar encabezados excluyendo columna de acción
                 const thead = document.createElement('thead');
                 const trHead = document.createElement('tr');
                 
                 document.querySelectorAll("#tbl_productos thead th").forEach((th, index) => {
                     if (index !== 8) { // Excluir columna de acción (índice 8)
-                        const clonTh = th.cloneNode(true);
-                        trHead.appendChild(clonTh);
+                        const thClon = th.cloneNode(true);
+                        thClon.style.backgroundColor = '#2c3e50';
+                        thClon.style.color = 'white';
+                        thClon.style.padding = '10px';
+                        trHead.appendChild(thClon);
                     }
                 });
                 
                 thead.appendChild(trHead);
                 tablaTemp.appendChild(thead);
                 
-                // Clonar filas visibles sin la columna de acción
+                // Clonar filas de datos excluyendo columna de acción
                 const tbody = document.createElement('tbody');
-                const filasExportar = obtenerFilasExportar();
+                const filasAImprimir = obtenerFilasExportar();
                 
-                filasExportar.forEach(fila => {
-                    const clonFila = document.createElement('tr');
+                filasAImprimir.forEach(fila => {
+                    const trClon = fila.cloneNode(false);
                     
                     fila.querySelectorAll("td").forEach((td, index) => {
-                        if (index !== 8) { // Excluir columna de acción (índice 8)
-                            const clonTd = td.cloneNode(true);
-                            clonFila.appendChild(clonTd);
+                        if (index !== 8) { // Excluir columna de acción
+                            const tdClon = td.cloneNode(true);
+                            tdClon.style.padding = '8px';
+                            tdClon.style.borderBottom = '1px solid #eee';
+                            trClon.appendChild(tdClon);
                         }
                     });
                     
-                    tbody.appendChild(clonFila);
+                    tbody.appendChild(trClon);
                 });
                 
                 tablaTemp.appendChild(tbody);
                 
-                // Abrir ventana de impresión
-                const ventanaImpresion = window.open("", "", "height=800, width=1000");
-  
-                ventanaImpresion.document.write(
-                    "<html><head><title>Imprimir Reporte</title>"
-                );
-                ventanaImpresion.document.write("<style>");
-                ventanaImpresion.document.write(
-                    "table { width: 100%; border-collapse: collapse; margin: 20px 0; }"
-                );
-                ventanaImpresion.document.write(
-                    "th, td { padding: 8px; text-align: left; border: 1px solid #ddd; }"
-                );
-                ventanaImpresion.document.write(
-                    "th { background-color: #f4f4f4; font-weight: bold; }"
-                );
-                ventanaImpresion.document.write(
-                    "body { font-family: Arial, sans-serif; font-size: 12px; }"
-                );
-                ventanaImpresion.document.write("@page { margin: 20mm; }");
-                ventanaImpresion.document.write("</style></head>");
-                ventanaImpresion.document.write("<body>");
-                ventanaImpresion.document.write("<h2>Reporte de Productos</h2>");
-                ventanaImpresion.document.write(tablaTemp.outerHTML);
-                ventanaImpresion.document.write("</body></html>");
-  
+                // Configurar ventana de impresión con estilo profesional
+                const ventanaImpresion = window.open("", "_blank", "width=1000,height=600");
+                const fechaActual = new Date();
+                const fechaTexto = fechaActual.toLocaleDateString() + ' ' + fechaActual.toLocaleTimeString();
+                
+                ventanaImpresion.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Reporte de Productos - Tamales el Buen Sazón</title>
+                        <style>
+                            @media print {
+                                body {
+                                    font-family: 'Arial', sans-serif;
+                                    margin: 0;
+                                    padding: 20px;
+                                    color: #333;
+                                }
+                                .header {
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                    margin-bottom: 20px;
+                                    padding-bottom: 10px;
+                                    border-bottom: 1px solid #ddd;
+                                }
+                                .logo {
+                                    height: 50px;
+                                }
+                                .company-info {
+                                    text-align: right;
+                                }
+                                .company-name {
+                                    font-size: 18px;
+                                    font-weight: bold;
+                                    color: #2c3e50;
+                                    margin-bottom: 5px;
+                                }
+                                .report-title {
+                                    font-size: 16px;
+                                    margin: 5px 0;
+                                }
+                                .report-date {
+                                    font-size: 12px;
+                                    color: #666;
+                                }
+                                .table-print {
+                                    width: 100%;
+                                    border-collapse: collapse;
+                                    margin-top: 15px;
+                                    font-size: 12px;
+                                }
+                                .table-print th {
+                                    background-color: #2c3e50;
+                                    color: white;
+                                    padding: 10px;
+                                    text-align: left;
+                                    font-weight: bold;
+                                }
+                                .table-print td {
+                                    padding: 8px;
+                                    border-bottom: 1px solid #eee;
+                                    vertical-align: top;
+                                }
+                                .table-print tr:nth-child(even) {
+                                    background-color: #f9f9f9;
+                                }
+                                .footer {
+                                    margin-top: 20px;
+                                    font-size: 10px;
+                                    color: #666;
+                                    text-align: right;
+                                    padding-top: 10px;
+                                    border-top: 1px solid #ddd;
+                                }
+                                @page {
+                                    size: auto;
+                                    margin: 15mm;
+                                }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <img src="/static/assets/img/logose.png" class="logo" alt="Logo">
+                            <div class="company-info">
+                                <div class="company-name">Tamales el Buen Sazón</div>
+                                <div class="report-title">Reporte de Productos${hayFiltrosActivos ? " (Filtrado)" : ""}</div>
+                                <div class="report-date">Generado: ${fechaTexto}</div>
+                            </div>
+                        </div>
+                        
+                        ${tablaTemp.outerHTML}
+                        
+                        <div class="footer">
+                            Página 1 de 1 • ${fechaTexto}
+                        </div>
+                        
+                        <script>
+                            // Calcular número de páginas después de cargar
+                            window.onload = function() {
+                                const pageHeight = window.innerHeight;
+                                const tableHeight = document.querySelector('.table-print').offsetHeight;
+                                const totalPages = Math.ceil(tableHeight / (pageHeight - 200));
+                                
+                                document.querySelector('.footer').innerHTML = 
+                                    \`Página 1 de \${totalPages} • ${fechaTexto}\`;
+                            };
+                        </script>
+                    </body>
+                    </html>
+                `);
+                
                 ventanaImpresion.document.close();
-                ventanaImpresion.print();
-  
-                // Mostrar mensaje de éxito
-                mostrarMensaje("Documento enviado a impresión", "info");
+                
+                // Esperar a que cargue el contenido antes de imprimir
+                ventanaImpresion.onload = function() {
+                    setTimeout(() => {
+                        ventanaImpresion.print();
+                        mostrarMensaje("Documento enviado a impresión", "info");
+                    }, 500);
+                };
+                
             } catch (error) {
                 console.error("Error al imprimir:", error);
                 mostrarMensaje("Error al imprimir", "danger");
             }
         });
     }
-  
     // Función para mostrar mensajes al usuario
     function mostrarMensaje(mensaje, tipo) {
         const contenedorMensajes = document.getElementById('contenedor-mensajes');
