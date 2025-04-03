@@ -250,90 +250,97 @@
     window.addEventListener('load', function() { new Accessibility(); }, false);
 
   </script>
-  <a href="https://wa.me/573213828939" class="whatsapp-btn" target="_blank" rel="noopener noreferrer">
-    <i class="fab fa-whatsapp"></i>
-  </a>
-
-<!-- Modal de Ayuda -->
-<div id="help-modal" class="help-modal">
-<div class="help-modal-content">
-  <div class="help-modal-header">
-    <h3 class="modal-title">Centro de Ayuda</h3>
-    <button class="close-modal">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-      </svg>
-    </button>
-  </div>
   
-  <form id="support-form" class="help-modal-body">
-    <div class="form-group">
-      <label for="nombre">Nombre completo</label>
-      <input type="text" id="nombre" name="nombre" 
-             class="form-control modern-input"
-             placeholder="Ej: Juan Pérez"
-             value="{{ session.nombre if session.conectado }}" 
-             required>
-    </div>
 
-    <div class="form-group">
-      <label for="email">Correo electrónico</label>
-      <input type="email" id="email" name="email" 
-             class="form-control modern-input"
-             placeholder="Ej: juan@ejemplo.com"
-             value="{{ session.email if session.conectado }}" 
-             required>
-    </div>
+<!-- Botón de ayuda flotante -->
+<a href="#help-section" class="help-btn">
+  <i class="fas fa-question-circle"></i>
+</a>
 
-    <div class="form-group">
-      <label for="asunto">Tipo de consulta</label>
-      <div class="custom-select">
-        <select id="asunto" name="asunto" required>
-          <option value="">Seleccione una opción</option>
-          <option value="Problema técnico">Problema técnico</option>
-          <option value="Soporte de cuenta">Soporte de cuenta</option>
-          <option value="Información general">Información general</option>
-          <option value="Otro">Otro</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="mensaje">Mensaje</label>
-      <textarea id="mensaje" name="mensaje" 
-                class="form-control modern-textarea"
-                placeholder="Describa su consulta en detalle..."
-                rows="5" required></textarea>
-    </div>
-
-    <div class="form-options">
-      <label class="checkbox-container modern-checkbox">
-        <input type="checkbox" required>
-        Acepto los <a href="#" class="privacy-link">términos del servicio</a>
-      </label>
-    </div>
-
-    <div class="form-buttons">
-      <button type="button" class="btn-cancel">Cancelar</button>
-      <button type="submit" class="btn-submit">
-        <span class="submit-text">Enviar mensaje</span>
-        <div class="loading-dots">
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-        </div>
+ <!-- Modal de Ayuda -->
+<div id="help-modal" class="help-modal">
+  <div class="help-modal-content">
+    <div class="help-modal-header">
+      <h3 class="modal-title">Centro de Ayuda</h3>
+      <button class="close-modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
       </button>
     </div>
-  </form>
+    
+    <form id="support-form" class="help-modal-body">
+      <div class="form-group">
+        <label for="nombre">Nombre completo</label>
+        <input type="text" id="nombre" name="nombre" 
+               class="form-control modern-input"
+               placeholder="Ej: Juan Pérez"
+               value="{{ session.nombre if session.conectado }}" 
+               required>
+      </div>
 
-  <div class="help-modal-footer">
-    {% if session.conectado %}
-    <div class="session-info">
-      <p>Conectado como: <strong>{{ session.nombre }}</strong></p>
-      <a href="{{ url_for('cerraSesion') }}" class="logout-link">Cerrar sesión</a>
+      <div class="form-group">
+        <label for="email">Correo electrónico</label>
+        <input type="email" id="email" name="email" 
+               class="form-control modern-input"
+               placeholder="Ej: juan@ejemplo.com"
+               value="{{ session.email if session.conectado }}" 
+               required>
+      </div>
+
+      <div class="form-group">
+        <label for="asunto">Tipo de consulta</label>
+        <div class="custom-select">
+          <select id="asunto" name="asunto" required>
+            <option value="">Seleccione una opción</option>
+            <option value="Problema técnico">Problema técnico</option>
+            <option value="Soporte de cuenta">Soporte de cuenta</option>
+            <option value="Información general">Información general</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="mensaje">Mensaje</label>
+        <textarea id="mensaje" name="mensaje" 
+                  class="form-control modern-textarea"
+                  placeholder="Describa su consulta en detalle..."
+                  rows="5" required></textarea>
+      </div>
+
+      <div class="form-options">
+        <label class="checkbox-container modern-checkbox">
+          <input type="checkbox" required>
+          Acepto los <a href="#" class="privacy-link">términos del servicio</a>
+        </label>
+      </div>
+
+      <div class="form-buttons">
+        <button type="button" class="btn-cancel">Cancelar</button>
+        <button type="submit" class="btn-submit">
+          <span class="submit-text">Enviar mensaje</span>
+          <div class="loading-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </button>
+      </div>
+    </form>
+
+    <div class="help-modal-footer">
+      {% if session.conectado %}
+      <div class="session-info">
+        <p>Conectado como: <strong>{{ session.nombre }}</strong></p>
+        <a href="{{ url_for('cerraSesion') }}" class="logout-link">Cerrar sesión</a>
+      </div>
+      {% endif %}
     </div>
-    {% endif %}
   </div>
 </div>
-</div>
+
+<!-- Luego tu script personalizado -->
+<script src="{{ url_for('static', filename='assets/js/custom3.js') }}"></script>
+      
 </aside>
