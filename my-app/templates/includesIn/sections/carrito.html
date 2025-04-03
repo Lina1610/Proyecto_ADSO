@@ -1,0 +1,41 @@
+<!-- public/templates/includesIn/sections/pedido_content.html -->
+<main class="producto-container">
+    <div class="producto-container container mt-5 pt-5" id="producto-container">
+        <h2 class="text-center mb-4" data-aos="fade-up">Nuestros Productos</h2>
+        <div class="row">
+            {% if productos %}
+                {% for producto in productos %}
+                    <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                        <div class="card producto-card h-100 shadow-sm">
+                            <img src="{{ producto.imagen if producto.imagen else '/static/assets/img/default-product.png' }}" 
+                                 alt="{{ producto.nombre }}" 
+                                 class="card-img-top">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ producto.nombre }}</h5>
+                                <p class="card-text">{{ producto.descripcion }}</p>
+                                <p class="card-text mt-auto">
+                                    <strong>Precio:</strong> ${{ producto.precio|float|round(2) }}
+                                </p>
+                                <button class="btn-agregar-carrito mt-auto"  
+                                        onclick="agregarAlCarrito({{ producto.id }}, '{{ producto.nombre }}', {{ producto.precio|float }}, '{{ producto.imagen if producto.imagen else '/static/assets/img/default-product.png' }}')">
+                                    Agregar al carrito
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center" data-aos="fade-up">
+                    <p class="text-muted">No hay productos disponibles.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="carrito-container" id="carrito-container">
+        <h5>Carrito de Compras</h5>
+        <div id="carrito-items">
+            <!-- Aquí se mostrarán los productos agregados dinámicamente -->
+        </div>
+    </div>
+</main>

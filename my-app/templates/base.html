@@ -1,0 +1,21 @@
+<!-- public/templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'includesIn/head.html' %}
+    <title>{% block title %}Tamales El Buen Sazón{% endblock %}</title>
+</head>
+<body id="page-top">
+    {% include 'includesIn/header.html' %}
+
+    <main>
+        {% block content %}
+            <!-- Este bloque será reemplazado por el contenido de las páginas hijas -->
+        {% endblock %}
+    </main>
+
+    {% include 'includesIn/footer.html' %}
+    {% include 'includesIn/modals.html' %}
+    {% include 'includesIn/scripts.html' %}
+</body>
+</html>

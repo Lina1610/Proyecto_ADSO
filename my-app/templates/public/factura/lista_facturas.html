@@ -3,6 +3,7 @@
 {% block body %}
 
 <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/filtroUsuario.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/buscadorEntrega.css') }}" />
 
 
 <div class="card" style="border-radius: 0px !important">
@@ -39,7 +40,8 @@
       </div>
 
       <!-- Buscador general (a la derecha) -->
-      <div class="col-md-6 mt-2">
+      <div class="search-container">
+      <div class="col-md-8 mt-3">
         <input
           type="search"
           id="search_factura"

@@ -1,0 +1,61 @@
+<header class="header">
+    <div class="menu">
+      <!-- Logo -->
+      <a href="#" class="logo">Buen Sazón</a>
+      
+      <!-- Checkbox oculto (debe estar justo antes del label) -->
+      <input type="checkbox" id="menu" class="menu-checkbox"/>
+      
+      <!-- Botón hamburguesa (vacío, se llenará con JS) -->
+      <label for="menu" class="menu-label">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </label>         
+      
+      <!-- Menú de navegación -->
+      <nav class="navbar">
+        <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0 align-items-center">
+          <li class="nav-item"><a class="nav-link" href="#">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="#nosotros_group">Sobre Nosotros</a></li>
+          <li class="nav-item"><a class="nav-link" href="#services_group">Servicios</a></li>
+          <li class="nav-item"><a class="nav-link" href="#blog_group">Blog</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('pedido.pedido') }}">Pedidos</a></li>
+          
+          {% if session.conectado %}
+            <li class="nav-item user-menu-container">
+              <div class="user-menu">
+                <div class="user-container">
+                  <div class="avatar-name-group">
+                    <div class="user-avatar"><i class="fas fa-user-circle"></i></div>
+                    <span class="user-name">{{ session.nombre }}</span>
+                  </div>
+                  <div class="user-options">
+                    {% if session['rol'] == 'cliente' %}
+                      <a href="{{ url_for('perfil_cliente') }}" class="menu-link">MI Perfil</a>
+                    {% endif %}
+                    {% if session['rol'] in ['administrador', 'superadmin', 'empleado'] %}
+                      <a href="{{ url_for('perfil_aplicativo') }}" class="menu-link">Ir al Aplicativo</a>
+                    {% endif %}
+                    <a href="{{ url_for('cerraSesion') }}" class="menu-link logout">Cerrar Sesión</a>
+                  </div>
+                </div>
+              </div>
+            </li>
+          {% else %}
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}">Registrarse</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('loginCliente') }}">Iniciar sesión</a></li> 
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+    
+    <!-- Contenido del header -->
+    <div class="header-content container">
+      <h1 id="animated-text">TAMALES EL BUEN SAZÓN</h1>
+      <p>Nos especializamos en la preparación de auténticos tamales boyacenses, ofreciendo una experiencia gastronómica única que te transportará 
+        directamente a las cocinas de Boyacá. Disfruta de la calidez de nuestro servicio y del sabor inigualable de nuestros tamales, 
+        ¡te sentirás como en casa!</p>
+      <a href="https://wa.me/573213828939" class="btn-1" target="_blank">Información</a>
+    </div>
+  </header>

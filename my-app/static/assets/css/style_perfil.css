@@ -449,6 +449,7 @@ body {
 
 /* Versión móvil */
 @media (max-width: 992px) {
+  
   .menu-fixed {
     padding: 10px 0;
   }

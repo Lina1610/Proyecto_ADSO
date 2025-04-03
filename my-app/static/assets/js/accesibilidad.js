@@ -13,8 +13,7 @@ script.onload = function () {
         window.accessibility({
             language: 'es', // Cambia el idioma si es necesario
             icon: {
-                position: 'bottom-right', // Posición del icono de accesibilidad
-                color: 'blue', // Color del icono
+                position: 'center', // Cambiamos de 'bottom-right' a 'center'                color: 'blue', // Color del icono
             },
             labels: {
                 resetTitle: 'Restablecer ajustes',

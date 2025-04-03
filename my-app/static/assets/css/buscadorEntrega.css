@@ -1,0 +1,96 @@
+.search-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto 5px; /* Agrega un margen inferior para separarlo de la tabla */
+}
+  
+  .search-container .form-control {
+    padding-left: 50px;
+    padding-right: 15px;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-radius: 25px;
+    border: 1px solid #ced4da;
+    background-color: #f8f9fa;
+    color: #000;
+    transition: all 0.3s ease;
+    font-size: 18px;
+    height: 55px;
+    width: 100%;
+    box-sizing: border-box;
+    line-height: 55px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-container .form-control::placeholder {
+    color: #a0aec0;
+    line-height: normal;
+  }
+  
+  .search-container .form-control:focus {
+    border-color: #4299e1;
+    box-shadow: 0 0 8px rgba(66, 153, 225, 0.5);
+    background-color: #fff;
+    color: #000;
+  }
+  
+  .search-container::before {
+    content: "\f002";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    left: 20px;
+    top: 53%;
+    transform: translateY(-40%);
+    font-size: 20px;
+    color: #6c757d;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 55px;
+    width: 30px;
+  }
+  
+  
+  @media (max-width: 768px) {
+    .search-container {
+      max-width: 100%;
+      padding: 0 15px;
+    }
+  
+    .search-container .form-control {
+      font-size: 16px;
+      height: 48px;
+      padding-left: 45px;
+      line-height: 48px;
+    }
+  
+    .search-container::before {
+      left: 15px;
+      font-size: 18px;
+      height: 18px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .search-container {
+      padding: 0 10px;
+    }
+  
+    .search-container .form-control {
+      font-size: 14px;
+      height: 42px;
+      padding-left: 40px;
+      line-height: 42px;
+    }
+  
+    .search-container::before {
+      left: 12px;
+      font-size: 16px;
+      height: 16px;
+    }
+  }
+  

@@ -24,53 +24,112 @@
 #tbl_productos {
   margin-top: 10px;
 }
-/* Estilo ultra minimalista para el buscador */
-#search_producto {
-  padding: 2px 5px 2px 25px; /* Ajuste fino de padding */
-  width: 120px; /* Ancho suficiente para "Buscar..." */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: 5px center;
-  background-size: 14px 14px;
-  border: none !important; /* Elimina cualquier borde */
-  outline: none !important; /* Elimina el outline */
-  box-shadow: none !important; /* Elimina sombras */
-  font-size: 14px;
-  color: #333; /* Color de texto oscuro */
-  background-color: transparent !important; /* Fondo transparente */
-  margin: 0;
-  transition: width 0.3s ease;
+/* ------------------------- */
+.search-container {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-/* Efecto al hacer hover/focus */
-#search_producto:hover,
-#search_producto:focus {
-  width: 180px; /* Se expande un poco al interactuar */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23000' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
-}
-
-/* Contenedor para mejor alineación */
-.col-md-6.mt-2 {
+.search-container .form-control {
+  padding-left: 50px;
+  padding-right: 15px;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-radius: 25px;
+  border: 1px solid #ced4da;
+  background-color: #f8f9fa;
+  color: #000;
+  transition: all 0.3s ease;
+  font-size: 18px;
+  height: 55px;
+  width: 100%;
+  box-sizing: border-box;
+  line-height: 55px;
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-/* Contenedor principal responsive */
-.row.justify-content-between {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-bottom: 15px;
   align-items: center;
 }
 
-/* Botón de filtros totalmente responsive */
+.search-container .form-control::placeholder {
+  color: #a0aec0;
+  line-height: normal;
+}
+
+.search-container .form-control:focus {
+  border-color: #4299e1;
+  box-shadow: 0 0 8px rgba(66, 153, 225, 0.5);
+  background-color: #fff;
+  color: #000;
+}
+
+.search-container::before {
+  content: "\f002";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  left: 20px;
+  top: 53%;
+  transform: translateY(-60%);
+  font-size: 20px;
+  color: #6c757d;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 55px;
+  width: 30px;
+}
+
+
+@media (max-width: 768px) {
+  .search-container {
+    max-width: 100%;
+    padding: 0 15px;
+  }
+
+  .search-container .form-control {
+    font-size: 16px;
+    height: 48px;
+    padding-left: 45px;
+    line-height: 48px;
+  }
+
+  .search-container::before {
+    left: 15px;
+    font-size: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 576px) {
+  .search-container {
+    padding: 0 10px;
+  }
+
+  .search-container .form-control {
+    font-size: 14px;
+    height: 42px;
+    padding-left: 40px;
+    line-height: 42px;
+  }
+
+  .search-container::before {
+    left: 12px;
+    font-size: 16px;
+    height: 16px;
+  }
+}
+
+/* ------------------------- */
+/* ESTILOS PARA EL BOTÓN DE FILTROS */
+/* ------------------------- */
 #toggleFiltros {
   padding: 10px 20px;
   font-size: 16px;
-  font-weight: 600; /* Texto más grueso */
+  font-weight: 600;
   border-radius: 6px;
-  background-color: #0d6efd; /* Color azul sólido */
+  background-color: #0d6efd;
   color: white;
   border: none;
   transition: all 0.3s ease;
@@ -80,27 +139,9 @@
   gap: 8px;
 }
 
-
-/* Buscador ultra minimalista y responsive */
-#search_producto {
-  flex: 1 1 auto;
-  min-width: 120px;
-  max-width: 100%;
-  padding: 8px 10px 8px 35px;
-  font-size: 14px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: 10px center;
-  background-size: 16px 16px;
-  border: none;
-  outline: none;
-  box-shadow: none;
-  color: #333;
-  background-color: transparent;
-  transition: all 0.3s ease;
-}
-
-/* Panel de filtros responsive */
+/* ------------------------- */
+/* ESTILOS PARA EL PANEL DE FILTROS */
+/* ------------------------- */
 #panelFiltros {
   margin-bottom: 20px;
   width: 100%;
@@ -111,64 +152,18 @@
 
 /* Media Queries para diferentes dispositivos */
 
-/* Tablets en horizontal y pantallas pequeñas (768px - 1024px) */
-@media (min-width: 768px) and (max-width: 1024px) {
-  #toggleFiltros {
-    padding: 8px 12px;
-    font-size: 13px;
-  }
-  
-  #search_producto {
-    padding-left: 30px;
-    background-size: 14px 14px;
-  }
-}
-
-/* Tablets en vertical y móviles grandes (576px - 767px) */
-@media (min-width: 576px) and (max-width: 767px) {
-  .row.justify-content-between {
-    gap: 10px;
-  }
-  
-  #toggleFiltros {
-    padding: 7px 10px;
-  }
-  
-  #search_producto {
-    min-width: 180px;
-  }
-}
-
-/* Móviles pequeños (0 - 575px) */
-@media (max-width: 575px) {
+@media (max-width: 768px) {
   .row.justify-content-between {
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
   }
-  
   #toggleFiltros {
     width: 100%;
     padding: 10px;
     font-size: 14px;
   }
-  
   #search_producto {
     width: 100%;
-    padding: 10px 10px 10px 35px;
   }
-  
-  #panelFiltros .card-body {
-    padding: 15px;
-  }
-}
-
-/* Efectos hover y focus para interactividad */
-#toggleFiltros:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-#search_producto:focus {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23000' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
 }

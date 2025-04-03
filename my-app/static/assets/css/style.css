@@ -870,8 +870,8 @@ p {
 
 .whatsapp-btn {
   position: fixed;
-  bottom: 15px; /* Ajusta para que quede bien en la esquina */
-  right: 15px;
+  bottom: 100px !important; /* Ajustamos la posición vertical para que no se solapen */
+  left: 15px !important; /* Aseguramos que esté a la izquierda */
   background-color: #25d366;
   color: white;
   font-size: 24px;
@@ -929,7 +929,7 @@ p {
 .help-btn {
   position: fixed;
   bottom: 40px;
-  right: 40px;
+  left: 40px; /* Cambiamos de right a left */
   background: #25D366;
   color: white;
   width: 50px;

@@ -1,0 +1,18 @@
+<!-- public/templates/pedido.html -->
+{% extends "base.html" %}
+{% block title %}Tamales El Buen Sazón - Pedido{% endblock %}
+
+{% block header_content %}
+    <div class="header-txt">
+        <span>Tamales Boyacenses</span>
+        <h2>Aprovecha esta oportunidad</h2>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur ex atque fugit optio laborum quos nihil eum autem esse, quibusdam porro minus laboriosam sint nostrum obcaecati necessitatibus dolorum? Fugit, numquam.</p>
+    </div>
+    <div class="header-img">
+        <img src="/static/assets/img/presenSinFondo.png">
+    </div>
+{% endblock %}
+
+{% block content %}
+    {% include 'includesIn/sections/carrito.html' %}
+{% endblock %}

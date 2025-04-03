@@ -444,7 +444,15 @@ body {
     margin-bottom: 1rem;
     text-transform: uppercase;
 }
-
+.footer-link {
+    color: #bdc3c7;
+    text-decoration: none;
+    display: block;
+    margin: 1rem 0;
+    transition: all 0.3s ease;
+    position: relative;
+    padding-left: 15px;
+  }
 .social-icons {
     display: flex;
     gap: 1.2rem;
@@ -932,8 +940,127 @@ body {
         margin: 4px 0;
     }
 }
-/* Añade esto a tu CSS */
-
+/* Estilos botón de ayuda */
+.help-btn {
+    position: fixed;
+    bottom: 40px;
+    left: 40px; /* Cambiamos de right a left */
+    background: #25D366;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    z-index: 1000;
+    transition: all 0.3s ease;
+  }
+  
+  .help-btn i {
+    font-size: 28px;
+  }
+  
+  .help-btn:hover {
+    background: #128C7E;
+    transform: scale(1.1);
+  }
+  
+  /* Ajuste para no solaparse con WhatsApp */
+  .whatsapp-btn {
+    bottom: 100px !important;
+  }
+  /* Modal de Ayuda Mejorado */
+  .help-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Ligero ajuste en la opacidad */
+    z-index: 1000;
+    backdrop-filter: blur(5px); /* Mayor desenfoque para un look más moderno */
+    animation: modalFadeIn 0.3s ease;
+  }
+  
+  .help-modal-content {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff; /* Blanco puro para mayor claridad */
+    width: 90%;
+    max-width: 550px; /* Ligero aumento en el ancho máximo */
+    border-radius: 20px; /* Bordes más redondeados */
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); /* Sombra más definida */
+    overflow: hidden;
+  }
+  
+  .help-modal-header {
+    padding: 2rem; /* Mayor padding para el encabezado */
+    background: linear-gradient(135deg, #4CAF50, #2E7D32); /* Verde para un look fresco */
+    color: white;
+    position: relative;
+  }
+  .whatsapp-btn {
+    position: fixed;
+    bottom: 100px !important; /* Ajustamos la posición vertical para que no se solapen */
+    left: 15px !important; /* Aseguramos que esté a la izquierda */
+    background-color: #25d366;
+    color: white;
+    font-size: 24px;
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 10000; /* Asegura que esté por encima de todo */
+  }
+  
+  .whatsapp-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.4);
+  }
+  
+  
+  
+  .whatsapp-btn i {
+    font-size: 32px;
+  }
+  
+  
+  /* Efecto hover */
+  .whatsapp-btn:hover {
+    transform: rotate(5deg) scale(1.08);
+    box-shadow: 0 15px 40px rgba(37, 211, 102, 0.5);
+  }
+  
+  /* Efecto click */
+  .whatsapp-btn:active {
+    transform: scale(0.95) rotate(0deg);
+  }
+  
+  /* Versión móvil */
+  @media (max-width: 768px) {
+    .whatsapp-btn {
+      width: 58px;
+      height: 58px;
+      bottom: 25px;
+      right: 25px;
+      border-radius: 14px;
+    }
+    
+    .whatsapp-btn i {
+      font-size: 30px;
+    }
+  }  
 /* Estilos generales del menú */
 .navbar ul {
     display: flex;

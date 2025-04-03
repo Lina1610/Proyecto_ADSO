@@ -1,0 +1,37 @@
+<!-- public/templates/includesIn/sections/blog.html -->
+<section class="blog container" data-aos="fade-down" id="blog_group">
+  <h2>Descubre el Mundo de los Tamales</h2>
+  <div class="blog-content">
+      <div class="blog-1">
+          <img src="{{ url_for('static', filename='assets/img/hojas.jpg') }}">
+          <h2>La Hoja de Plátano: Un Toque de Sabor y Tradición</h2>
+          <p>Las hojas de plátano no solo envuelven nuestros tamales, sino
+             que también aportan un aroma y sabor únicos. Descubre su importancia en la cocina tradicional.</p>
+      </div>
+      <div class="blog-1">
+          <video autoplay loop muted>
+              <source src="{{ url_for('static', filename='assets/img/Videos/videoPreparacion.mp4') }}" type="video/mp4">
+              Tu navegador no soporta el video.
+          </video>
+          <h2>El Tamal Perfecto: Ingredientes y Preparación</h2>
+          <p>Conoce los secretos para preparar un tamal delicioso, desde la selección de los mejores ingredientes hasta la técnica de cocción ideal.</p>
+      </div>
+      <div class="blog-1">
+          <img src="{{ url_for('static', filename='assets/img/carne.jpg') }}">
+          <h2>La Carne en los Tamales: Un Sabor Irresistible</h2>
+          <p>Elige el mejor corte de carne para darle ese toque jugoso y sabroso a tu tamal. Aquí te contamos cuáles son las mejores opciones.</p>
+      </div>
+      <div class="blog-1">
+          <video autoplay loop muted>
+              <source src="{{ url_for('static', filename='assets/img/Videos/Video_Tamal.mp4') }}" type="video/mp4">
+              Tu navegador no soporta el video.
+          </video>
+          <h2>Cómo Disfrutar un Tamal Como un Experto</h2>
+          <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eaque fugit omnis, cum ea alias, 
+             quidem minus quis odio ut tempora itaque accusantium corporis facilis non voluptatibus optio, dolore fuga eveniet.</p>
+      </div>
+  </div>
+  <div class="button-container">
+      <a href="#" class="btn-1">Información</a>
+  </div>
+</section>
