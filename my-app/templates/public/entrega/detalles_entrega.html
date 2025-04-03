@@ -1,137 +1,158 @@
 {% extends 'public/base_cpanel.html' %}
 
-{% block title %}Crud con Python 🐍 | Detalles de Entrega{% endblock %}
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Detalles de la Entrega{% endblock %}
 
+<!-- Inicio del block -->
 {% block body %}
+{{ super() }}
+
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/detalles.css') }}" />
 
+<!---->
 {% if entrega %}
+<div class="card" style="border-radius: 0px !important">
   <div class="row justify-content-center mb-2">
     <div class="col-md-12">
-      <h3 class="text-center mt-5 mb-4" >
+      <h3 class="text-center mt-5 mb-3">
         <a href="/lista-de-entregas">
-          <i class="bi bi-arrow-left-circle" style="font-size: 1.5rem;"></i>
+          <i class="bi bi-arrow-left-circle"></i>
         </a>
-        DETALLES DE LA ENTREGA
+        INFORMACIÓN DE LA ENTREGA
       </h3>
       <hr />
     </div>
   </div>
 
-  <div class="row justify-content-center mb-4">
+  <!-- Mensaje de contexto -->
+  <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-people-fill context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de detalles entregas</h6>
+      
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
     <div class="col-md-10">
       <div class="card-body">
-        <!-- Tarjeta de Información General -->
-        <div class="card mb-4" >
-          <div class="card-header" >
-            <i class="bi bi-info-circle me-2"></i>Información General
+        <div class="row">
+          <div class="col-md-6">
+            <label for="tipo" class="form-label">
+              Tipo de Entrega
+            </label>
+            <br />
+            {{ entrega.tipo }}
           </div>
-          <div class="card-body">
-            <div class="row">
-              <!-- Columna 1 -->
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label class="form-label" >
-                    <i class="bi bi-truck me-2"></i>Tipo de Entrega
-                  </label>
-                  <p>{{ entrega.tipo }}</p>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">
-                    <i class="bi bi-calendar-event me-2"></i>Fecha y Hora
-                  </label>
-                  <p>{{ entrega.fecha_hora }}</p>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">
-                    <i class="bi bi-clipboard-check me-2"></i>Estado de la Entrega
-                  </label>
-                  <p >{{ entrega.estado }}</p>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">
-                    <i class="bi bi-cash-coin me-2"></i>Costo de Domicilio
-                  </label>
-                  <p >
-                    {% if entrega.costo_domicilio is not none %}
-                      $ {{ '{:,.0f}'.format(entrega.costo_domicilio).replace(',', '.') }}
-                    {% else %}
-                      No disponible
-                    {% endif %}
-                  </p>
-                </div>
-              </div>
-
-              <!-- Columna 2 -->
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label class="form-label">
-                    <i class="bi bi-person me-2"></i>Usuario
-                  </label>
-                  <p>{{ entrega.nombre_usuario }}</p>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">
-                    <i class="bi bi-person me-2"></i>Nombre Completo
-                  </label>
-                  <p>{{ entrega.nombre_completo }}</p>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">
-                    <i class="bi bi-telephone me-2"></i>Teléfono
-                  </label>
-                  <p>{{ entrega.telefono }}</p>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">
-                    <i class="bi bi-geo-alt me-2"></i>Domicilio
-                  </label>
-                  <p >{{ entrega.domicilio }}</p>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">
-                    <i class="bi bi-building me-2"></i>Municipio
-                  </label>
-                  <p>{{ entrega.municipio }}</p>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">
-                    <i class="bi bi-globe me-2"></i>Departamento
-                  </label>
-                  <p>{{ entrega.departamento }}</p>
-                </div>
-              </div>
-            </div>
+          <div class="col-md-6">
+            <label for="fecha_hora" class="form-label">
+              Fecha y Hora
+            </label>
+            <br />
+            {{ entrega.fecha_hora }}
           </div>
         </div>
 
-        <!-- Botones de Acción -->
-        <div class="text-center mt-4">
-          <button id="btnDescargarPDF" class="btn btn-danger btn-lg" style="
-            border-radius: 10px;
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #dc3545, #c82333);
-            border: none;
-            color: white;
-            font-weight: 600;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-          ">
-            <i class="bi bi-file-earmark-pdf me-2" style="font-size: 1.2rem;"></i>Descargar PDF
-          </button>
-          <button id="btnDescargarImagen" class="btn btn-success btn-lg" style="
-            border-radius: 10px;
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #28a745, #218838);
-            border: none;
-            color: white;
-            font-weight: 600;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            margin-left: 20px;
-          ">
-            <i class="bi bi-image me-2" style="font-size: 1.2rem;"></i>Descargar Imagen
-          </button>
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="estado" class="form-label">
+              Estado de la Entrega
+            </label>
+            <br />
+            {{ entrega.estado }}
+          </div>
+          <div class="col-md-6">
+            <label for="costo_domicilio" class="form-label">
+              Costo de Domicilio
+            </label>
+            <br />
+            {% if entrega.costo_domicilio is not none %}
+              $ {{ '{:,.0f}'.format(entrega.costo_domicilio).replace(',', '.') }}
+            {% else %}
+              No disponible
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="nombre_usuario" class="form-label">
+              Usuario
+            </label>
+            <br />
+            {{ entrega.nombre_usuario }}
+          </div>
+          <div class="col-md-6">
+            <label for="nombre_completo" class="form-label">
+              Nombre Completo
+            </label>
+            <br />
+            {{ entrega.nombre_completo }}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="telefono" class="form-label">
+              Teléfono
+            </label>
+            <br />
+            {{ entrega.telefono }}
+          </div>
+          <div class="col-md-6">
+            <label for="domicilio" class="form-label">
+              Domicilio
+            </label>
+            <br />
+            {{ entrega.domicilio }}
+          </div>
+        </div>
+        
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="municipio" class="form-label">
+              Municipio
+            </label>
+            <br />
+            {{ entrega.municipio }}
+          </div>
+          <div class="col-md-6">
+            <label for="departamento" class="form-label">
+              Departamento
+            </label>
+            <br />
+            {{ entrega.departamento }}
+          </div>
+        </div>
+        
+        <div class="row mt-2">
+          <div class="col-md-12 text-center mt-4">
+            <button id="btnDescargarPDF" class="btn btn-danger btn-lg" style="
+              border-radius: 10px;
+              padding: 12px 30px;
+              background: linear-gradient(135deg, #dc3545, #c82333);
+              border: none;
+              color: white;
+              font-weight: 600;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+              transition: all 0.3s ease;
+            ">
+              <i class="bi bi-file-earmark-pdf me-2" style="font-size: 1.2rem;"></i>Descargar PDF
+            </button>
+            <button id="btnDescargarImagen" class="btn btn-success btn-lg" style="
+              border-radius: 10px;
+              padding: 12px 30px;
+              background: linear-gradient(135deg, #28a745, #218838);
+              border: none;
+              color: white;
+              font-weight: 600;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+              transition: all 0.3s ease;
+              margin-left: 20px;
+            ">
+              <i class="bi bi-image me-2" style="font-size: 1.2rem;"></i>Descargar Imagen
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -164,6 +185,11 @@
     doc.text("Gracias por usar nuestro servicio!", 105, 280, null, null, "center");
     
     doc.save('detalles_entrega.pdf');
+  });
+
+  document.getElementById('btnDescargarImagen').addEventListener('click', function() {
+    // Código para descargar como imagen
+    alert('Funcionalidad de descarga de imagen en desarrollo');
   });
 </script>
 

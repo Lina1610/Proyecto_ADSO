@@ -1,6 +1,8 @@
 from app import app
 from flask import render_template, request, flash, redirect, url_for, session,  jsonify
 from mysql.connector.errors import Error
+from controllers.funciones_order import *
+import datetime  # Importación corregida
 
 
 from mysql.connector import Error
@@ -163,74 +165,84 @@ def eliminar_pedido_route(id):
 
 @app.route('/editar-pedido/<int:id>', methods=['GET', 'POST'])
 def viewEditarPedido(id):
-    if 'conectado' in session:
-        if request.method == 'GET':
-            # Obtener los datos del pedido por su ID
-            with connectionBD() as conexion_MySQLdb:
-                # Usar un cursor con buffered=True
-                with conexion_MySQLdb.cursor(dictionary=True, buffered=True) as cursor:
-                    cursor.execute("""
-                        SELECT p.id, p.fecha, p.fechaEntrega, p.horaEntrega, p.estado,
-                               p.users_id, p.producto_id, p.metodo_pago_id, p.entrega_id,
-                               u.nombre AS usuario_nombre, pr.nombre AS producto_nombre,
-                               mp.metodo AS metodo_pago, e.tipo AS tipo_entrega
-                        FROM pedido p
-                        JOIN users u ON p.users_id = u.id
-                        JOIN producto pr ON p.producto_id = pr.id
-                        JOIN metodo_pago mp ON p.metodo_pago_id = mp.id
-                        JOIN entrega e ON p.entrega_id = e.id
-                        WHERE p.id = %s
-                    """, (id,))
-                    pedido = cursor.fetchone()  # Consumir el resultado
+    if 'conectado' not in session:
+        flash('Primero debes iniciar sesión.', 'error')
+        return redirect(url_for('inicio'))
 
-                    if not pedido:
-                        flash('Pedido no encontrado', 'error')
-                        return redirect(url_for('lista_pedidos'))
+    with connectionBD() as conexion_MySQLdb:
+        with conexion_MySQLdb.cursor(dictionary=True, buffered=True) as cursor:
+            cursor.execute("""
+                SELECT p.id, p.fecha, p.fechaEntrega, p.horaEntrega, p.estado,
+                       p.users_id, p.producto_id, p.metodo_pago_id, p.entrega_id,
+                       u.nombre AS usuario_nombre, pr.nombre AS producto_nombre,
+                       mp.metodo AS metodo_pago, e.tipo AS tipo_entrega
+                FROM pedido p
+                JOIN users u ON p.users_id = u.id
+                JOIN producto pr ON p.producto_id = pr.id
+                JOIN metodo_pago mp ON p.metodo_pago_id = mp.id
+                JOIN entrega e ON p.entrega_id = e.id
+                WHERE p.id = %s
+            """, (id,))
+            pedido = cursor.fetchone()
 
-                    # Obtener usuarios, productos, métodos de pago y tipos de entrega
-                    cursor.execute("SELECT id, nombre FROM users")
-                    usuarios = cursor.fetchall()  # Consumir todos los resultados
+            if not pedido:
+                flash('Pedido no encontrado', 'error')
+                return redirect(url_for('lista_pedidos'))
 
-                    cursor.execute("SELECT id, nombre FROM producto")
-                    productos = cursor.fetchall()  # Consumir todos los resultados
+            # Formatear fechaEntrega y horaEntrega para el formulario
+            if isinstance(pedido['fechaEntrega'], (datetime.date, datetime.datetime)):
+                pedido['fechaEntrega'] = pedido['fechaEntrega'].strftime('%Y-%m-%d')
+            if isinstance(pedido['horaEntrega'], (datetime.time, datetime.datetime)):
+                pedido['horaEntrega'] = pedido['horaEntrega'].strftime('%H:%M')
+            elif isinstance(pedido['horaEntrega'], str) and ':' in pedido['horaEntrega']:
+                pedido['horaEntrega'] = pedido['horaEntrega'][:5]
 
-                    metodos_pago = obtener_metodos_pago(conexion_MySQLdb)
-                    tipos_entrega = obtener_tipos_entrega(conexion_MySQLdb)
+            cursor.execute("SELECT id, nombre FROM users")
+            usuarios = cursor.fetchall()
+            cursor.execute("SELECT id, nombre FROM producto")
+            productos = cursor.fetchall()
+            metodos_pago = obtener_metodos_pago(conexion_MySQLdb)
+            tipos_entrega = obtener_tipos_entrega(conexion_MySQLdb)
 
+    if request.method == 'POST':
+        data_form = request.form
+        print("Datos recibidos del formulario:", dict(data_form))
+        resultado = actualizar_pedido(id, data_form)
+
+        if resultado is True:
+            flash('Pedido actualizado correctamente', 'success')
+            return redirect(url_for('lista_pedidos'))
+        else:
+            flash(f'Error: {resultado}', 'error')
             return render_template(
                 'public/pedido/editar_pedido.html',
                 pedido=pedido,
                 usuarios=usuarios,
                 productos=productos,
                 metodos_pago=metodos_pago,
-                tipos_entrega=tipos_entrega
+                tipos_entrega=tipos_entrega,
+                form_data=data_form
             )
 
-        elif request.method == 'POST':
-            # Procesar la actualización del pedido
-            data_form = request.form
-            resultado = actualizar_pedido(id, data_form)
+    return render_template(
+        'public/pedido/editar_pedido.html',
+        pedido=pedido,
+        usuarios=usuarios,
+        productos=productos,
+        metodos_pago=metodos_pago,
+        tipos_entrega=tipos_entrega
+    )
 
-            if resultado is True:
-                flash('Pedido actualizado correctamente', 'success')
-            else:
-                flash(f'Error al actualizar el pedido: {resultado}', 'error')
-
-            return redirect(url_for('lista_pedidos'))
-    else:
-        flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('inicio'))
-    
 @app.route('/detalles-pedido/<int:id>')
 def detalles_pedido(id):
     if 'conectado' in session:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                # Obtener información del pedido
                 cursor.execute("""
                     SELECT p.id, p.fecha, p.fechaEntrega, p.horaEntrega, p.estado,
                            u.nombre AS usuario_nombre, pr.nombre AS producto_nombre,
                            mp.metodo AS metodo_pago, e.tipo AS tipo_entrega,
-                           e.costo_domicilio,  # ¡Campo agregado!
                            (SELECT SUM(dp.total) FROM detalle_pedido dp WHERE dp.pedido_id = p.id) AS total_pedido
                     FROM pedido p
                     JOIN users u ON p.users_id = u.id
@@ -241,9 +253,11 @@ def detalles_pedido(id):
                 """, (id,))
                 pedido = cursor.fetchone()
 
+                # Asegurarse de que total_pedido no sea None
                 if pedido['total_pedido'] is None:
                     pedido['total_pedido'] = 0.0
 
+                # Obtener los detalles del pedido
                 cursor.execute("""
                     SELECT dp.id, dp.precio_unitario, dp.total, dp.cantidad,
                            pr.nombre AS producto_nombre
@@ -256,4 +270,7 @@ def detalles_pedido(id):
         return render_template('public/pedido/detalles_pedido.html', 
                              pedido=pedido, 
                              detalles_pedido=detalles_pedido)
+    else:
+        flash('Primero debes iniciar sesión.', 'error')
+        return redirect(url_for('inicio'))
     

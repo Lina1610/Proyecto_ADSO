@@ -1,152 +1,174 @@
 from app import app
-from flask import render_template, request, flash,jsonify, redirect, url_for, session
+from flask import render_template, request, flash, jsonify, redirect, url_for, session
 from mysql.connector.errors import Error
 from controllers.funciones_delivery import *
 from conexion.conexionBD import connectionBD
-from migrations.migraciones import MigradorEntregas
 
 PATH_URL = "public/entrega"
 
 @app.route('/registrar-entrega', methods=['GET', 'POST'])
 def viewFormEntrega():
     if 'conectado' not in session:
-        if request.method == 'POST':
-            return jsonify({"status": "error", "mensaje": "Primero debes iniciar sesión."}), 401
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
 
-    if request.method == 'POST':
-        try:
-            data_form = request.form
-            users_id = session.get('users_id')
-            
-            if not users_id:
-                return jsonify({"status": "error", "mensaje": "No se pudo identificar al usuario."}), 400
-
-            # Validar campos obligatorios
-            campos_requeridos = ['tipo']
-            error = validar_campos_obligatorios(data_form, campos_requeridos)
-            if error:
-                return jsonify({"status": "error", "mensaje": error}), 400
-
-            # Validar tipo de entrega
-            error = validar_tipo(data_form['tipo'])
-            if error:
-                return jsonify({"status": "error", "mensaje": error}), 400
-
-            # Validación específica para domicilio
-            if data_form['tipo'] == 'Domicilio' and not data_form.get('direccion_id'):
-                return jsonify({"status": "error", "mensaje": "Debes seleccionar una dirección para entrega a domicilio"}), 400
-
-            # Procesar la entrega - Siempre pasar users_id
-            resultado = procesar_entrega(
-                tipo_entrega=data_form['tipo'],
-                direccion_id=data_form.get('direccion_id'),
-                users_id=users_id  # Esto es clave, pasar siempre el users_id
-            )
-
-            if isinstance(resultado, int) and resultado > 0:
-                # Obtener la entrega recién creada para mostrarla
-                nueva_entrega = buscar_entrega_por_id(resultado)
-                return jsonify({
-                    "status": "success",
-                    "mensaje": "Entrega registrada con éxito",
-                    "entrega": nueva_entrega
-                })
-            else:
-                return jsonify({"status": "error", "mensaje": f"Error al registrar entrega: {resultado}"}), 500
-
-        except Exception as e:
-            return jsonify({"status": "error", "mensaje": f"Error inesperado: {str(e)}"}), 500
-
-    # Para GET, renderizar el formulario
-    return render_template('public/entrega/form_entrega.html')
-
-@app.route('/actualizar-entregas-sin-usuario')
-def actualizar_entregas_sin_usuario():
-    if 'conectado' not in session or session.get('rol') != 'admin':
-        flash('Acceso restringido a administradores', 'error')
-        return redirect(url_for('inicio'))
-    
+    direcciones = []
     try:
         with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor() as cursor:
-                # Actualizar entregas presenciales sin users_id
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                 cursor.execute("""
-                    UPDATE entrega e 
-                    JOIN pedido p ON e.id = p.entrega_id 
-                    SET e.users_id = p.users_id 
-                    WHERE e.tipo = 'Presencial' AND e.users_id IS NULL
+                    SELECT 
+                        d.id, 
+                        d.nombre_completo, 
+                        CONCAT_WS(', ', d.domicilio, d.barrio, d.referencias) AS direccion_completa,
+                        m.nombre AS municipio,
+                        dp.nombre AS departamento
+                    FROM 
+                        direccion d
+                    JOIN 
+                        municipio m ON d.municipio_id = m.id
+                    JOIN 
+                        departamento dp ON d.departamento_id = dp.id
+                    WHERE 
+                        d.estado = 'Activo'
                 """)
-                presenciales_actualizadas = cursor.rowcount
-                
-                # Actualizar entregas a domicilio sin users_id
-                cursor.execute("""
-                    UPDATE entrega e 
-                    JOIN direccion d ON e.direccion_id = d.id 
-                    SET e.users_id = d.users_id 
-                    WHERE e.tipo = 'Domicilio' AND e.users_id IS NULL
-                """)
-                domicilio_actualizadas = cursor.rowcount
-                
-                conexion_MySQLdb.commit()
-                
-                flash(f'Actualización exitosa: {presenciales_actualizadas} entregas presenciales y {domicilio_actualizadas} entregas a domicilio actualizadas.', 'success')
+                direcciones = cursor.fetchall()
+    except Error as e:
+        flash(f'Error al cargar direcciones: {str(e)}', 'error')
+
+    if request.method == 'POST':
+        data_form = request.form
+        campos_requeridos = ['tipo', 'estado']
         
-        return redirect(url_for('lista_entregas'))
-    except Exception as e:
-        flash(f'Error al actualizar entregas: {str(e)}', 'error')
-        return redirect(url_for('lista_entregas'))
+        # Validar campos obligatorios
+        error = validar_campos_obligatorios(data_form, campos_requeridos)
+        if error:
+            flash(error, 'error')
+            return render_template(f'{PATH_URL}/registro_entrega.html', data_form=data_form, direcciones=direcciones)
 
+        tipo = data_form['tipo']
+        estado = data_form['estado']
+        costo_domicilio_str = data_form.get('costo_domicilio', '')
+        direccion_id_str = data_form.get('direccion_id', '')
 
+        # Validar tipo
+        error = validar_tipo(tipo)
+        if error:
+            flash(error, 'error')
+            return render_template(f'{PATH_URL}/registro_entrega.html', data_form=data_form, direcciones=direcciones)
+
+        # Validar estado
+        error = validar_estado(estado)
+        if error:
+            flash(error, 'error')
+            return render_template(f'{PATH_URL}/registro_entrega.html', data_form=data_form, direcciones=direcciones)
+
+        # Validar costo_domicilio
+        costo_domicilio, error = validar_costo_domicilio(costo_domicilio_str)
+        if error:
+            flash(error, 'error')
+            return render_template(f'{PATH_URL}/registro_entrega.html', data_form=data_form, direcciones=direcciones)
+
+        # Validar direccion_id (ahora es opcional)
+        direccion_id, error = validar_direccion_id(direccion_id_str, tipo)
+        if error:
+            flash(error, 'error')
+            return render_template(f'{PATH_URL}/registro_entrega.html', data_form=data_form, direcciones=direcciones)
+
+        # Verificar que la dirección exista si se proporcionó
+        if direccion_id:
+            error = verificar_direccion_existe(direccion_id)
+            if error:
+                flash(error, 'error')
+                return render_template(f'{PATH_URL}/registro_entrega.html', data_form=data_form, direcciones=direcciones)
+
+        # Si pasa todas las validaciones, procesar la entrega
+        resultado = procesar_entrega(tipo, direccion_id)
+        if isinstance(resultado, int) and resultado > 0:
+            flash('Entrega registrada con éxito', 'success')
+        else:
+            flash(f'Error al registrar entrega: {resultado}', 'error')
+        return redirect(url_for('viewFormEntrega'))
+
+    return render_template(f'{PATH_URL}/registro_entrega.html', direcciones=direcciones)
 
 @app.route('/guardar-pedido', methods=['POST'])
 def guardar_pedido():
     if 'conectado' not in session:
-        return jsonify({"status": "error", "mensaje": "Debes iniciar sesión"}), 401
+        return jsonify({"status": "error", "mensaje": "Debes iniciar sesión para realizar esta acción."})
 
     try:
         data = request.get_json()
-        users_id = session['users_id']
-        
-        # Validaciones básicas
-        required_fields = ['metodo_pago_id', 'tipo_entrega', 'total']
-        for field in required_fields:
-            if field not in data:
-                return jsonify({"status": "error", "mensaje": f"Falta el campo {field}"}), 400
+        metodo_pago_id = data.get('metodo_pago_id')
+        tipo_entrega = data.get('tipo_entrega')
+        direccion_id = data.get('direccion_id')
+        users_id = session.get('users_id')
+        total = data.get('total')
 
-        # Crear entrega primero (asegurando users_id)
-        entrega_id = procesar_entrega(
-            tipo_entrega=data['tipo_entrega'],
-            direccion_id=data.get('direccion_id'),
-            users_id=users_id  # Pasar siempre el users_id
-        )
+        # Validar datos obligatorios
+        if not metodo_pago_id or not tipo_entrega or not users_id or not total:
+            return jsonify({"status": "error", "mensaje": "Faltan datos obligatorios."})
 
-        # Resto del código para crear el pedido...
-        pedido_id = crear_pedido(
-            users_id=users_id,
-            metodo_pago_id=data['metodo_pago_id'],
-            entrega_id=entrega_id,
-            total=data['total']
-        )
+        # Validar tipo_entrega
+        error = validar_tipo(tipo_entrega)
+        if error:
+            return jsonify({"status": "error", "mensaje": error})
 
-        return jsonify({
-            "status": "success",
-            "mensaje": "Pedido creado correctamente",
-            "pedido_id": pedido_id,
-            "entrega_id": entrega_id
-        })
+        # Validar direccion_id (ahora es opcional)
+        direccion_id, error = validar_direccion_id(direccion_id, tipo_entrega)
+        if error:
+            return jsonify({"status": "error", "mensaje": error})
+
+        # Verificar que la dirección exista si se proporcionó
+        if direccion_id:
+            error = verificar_direccion_existe(direccion_id)
+            if error:
+                return jsonify({"status": "error", "mensaje": error})
+
+        # Crear la entrega
+        entrega_id = procesar_entrega(tipo_entrega, direccion_id)
+        if isinstance(entrega_id, str):
+            return jsonify({"status": "error", "mensaje": entrega_id})
+
+        # Crear el pedido
+        pedido_id = crear_pedido(users_id, metodo_pago_id, entrega_id, total)
+        if isinstance(pedido_id, str):
+            return jsonify({"status": "error", "mensaje": pedido_id})
+
+        return jsonify({"status": "success", "mensaje": "Pedido registrado con éxito.", "pedido_id": pedido_id})
 
     except Exception as e:
-        return jsonify({"status": "error", "mensaje": str(e)}), 500
+        return jsonify({"status": "error", "mensaje": f"Error al registrar el pedido: {str(e)}"})
 
-    
+def crear_pedido(users_id, metodo_pago_id, entrega_id, total):
+    """Crea un registro en la tabla 'pedido'."""
+    try:
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                sql = """
+                    INSERT INTO pedido (
+                        fecha, estado, total, entrega_id, users_id, metodo_pago_id
+                    ) VALUES (NOW(), %s, %s, %s, %s, %s)
+                """
+                valores = (
+                    'Pendiente',
+                    total,
+                    entrega_id,
+                    users_id,
+                    metodo_pago_id
+                )
+                cursor.execute(sql, valores)
+                conexion_MySQLdb.commit()
+                return cursor.lastrowid
+    except Exception as e:
+        return f"Error al crear el pedido: {str(e)}"
+
 @app.route('/lista-de-entregas')
 def lista_entregas():
     if 'conectado' in session:
         entregas = obtener_entregas()
-        print("Datos enviados a la plantilla:", entregas)  # Depuración
-        if isinstance(entregas, list):  # Asegúrate de que entregas sea una lista
+        print("Datos enviados a la plantilla:", entregas)
+        if isinstance(entregas, list):
             return render_template('public/entrega/lista_entregas.html', entregas=entregas)
         else:
             flash("Error al obtener las entregas.", 'error')
@@ -174,63 +196,107 @@ def viewEditarEntrega(id):
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
 
-    if request.method == 'GET':
-        entrega = buscar_entrega_por_id(id)
-        if not isinstance(entrega, dict):
-            flash(entrega, 'error')
-            return redirect(url_for('lista_entregas'))
+    entrega = buscar_entrega_por_id(id)
+    if not isinstance(entrega, dict):
+        flash('No se encontró la entrega', 'error')
+        return redirect(url_for('lista_entregas'))
+
+    if request.method == 'POST':
+        data_form = request.form
+        tipo_entrega = data_form.get('tipo')
         
-        return render_template('public/entrega/editar_entrega.html', entrega=entrega)
+        # Validar campos obligatorios
+        campos_requeridos = ['tipo', 'estado']
+        error = validar_campos_obligatorios(data_form, campos_requeridos)
+        if error:
+            flash(error, 'error')
+            return render_template('public/entrega/editar_entrega.html',
+                                entrega=entrega,
+                                entrega_id=id)
 
-    elif request.method == 'POST':
-        # Obtener la entrega actual primero
-        entrega_actual = buscar_entrega_por_id(id)
-        if not entrega_actual:
-            flash('La entrega no existe', 'error')
-            return redirect(url_for('lista_entregas'))
+        # Validar tipo y estado
+        error = validar_tipo(tipo_entrega)
+        if error:
+            flash(error, 'error')
+            return render_template('public/entrega/editar_entrega.html',
+                                entrega=entrega,
+                                entrega_id=id)
 
-        # Procesar el formulario manteniendo los valores existentes
-        data_form = {
-            'tipo': request.form.get('tipo'),
-            'estado': request.form.get('estado'),
-            'costo_domicilio': request.form.get('costo_domicilio', entrega_actual.get('costo_domicilio')),
-            'direccion_id': entrega_actual.get('direccion_id')  # Mantener el valor actual
+        error = validar_estado(data_form.get('estado'))
+        if error:
+            flash(error, 'error')
+            return render_template('public/entrega/editar_entrega.html',
+                                entrega=entrega,
+                                entrega_id=id)
+
+        # Validar costo domicilio
+        costo_domicilio, error = validar_costo_domicilio(data_form.get('costo_domicilio', ''))
+        if error:
+            flash(error, 'error')
+            return render_template('public/entrega/editar_entrega.html',
+                                entrega=entrega,
+                                entrega_id=id)
+
+        # Validar dirección SOLO para domicilio
+        direccion_id = None
+        if tipo_entrega == 'Domicilio':
+            direccion_id, error = validar_direccion_id(
+                data_form.get('direccion_id', ''),
+                tipo_entrega
+            )
+            if error:
+                flash(error, 'error')
+                return render_template('public/entrega/editar_entrega.html',
+                                    entrega=entrega,
+                                    entrega_id=id)
+
+        # Preparar datos para actualización
+        datos_actualizacion = {
+            'tipo': tipo_entrega,
+            'estado': data_form.get('estado'),
+            'costo_domicilio': costo_domicilio,
+            'direccion_id': direccion_id if tipo_entrega == 'Domicilio' else None
         }
 
         # Actualizar la entrega
-        resultado = actualizar_entrega(id, data_form)
+        resultado = actualizar_entrega(id, datos_actualizacion)
         if isinstance(resultado, int) and resultado > 0:
             flash('Entrega actualizada correctamente.', 'success')
+            return redirect(url_for('lista_entregas'))
         else:
-            flash(resultado if resultado else 'Error al actualizar', 'error')
-
-        return redirect(url_for('lista_entregas'))
+            flash('Error al actualizar la entrega', 'error')
+    
+    # GET request - Mostrar formulario
+    return render_template('public/entrega/editar_entrega.html',
+                         entrega=entrega,
+                         entrega_id=id)
 
 @app.route('/eliminar-entrega/<int:id>', methods=['GET'])
 def eliminar_entrega_route(id):
-    if 'conectado' in session:  # Verifica si el usuario está autenticado
-        resultado = eliminar_entrega(id)  # Llama a la función para eliminar la entrega
-        print(f"Resultado de eliminar_entrega: {resultado}, tipo: {type(resultado)}")  # Depuración
-
-        if resultado == True:  # Comprobación explícita
+    if 'conectado' in session:
+        resultado = eliminar_entrega(id)
+        print(f"Resultado de eliminar_entrega: {resultado}, tipo: {type(resultado)}")
+        if resultado == True:
             flash('Entrega eliminada correctamente.', 'success')
         else:
             flash('Error al eliminar la entrega', 'error')
-
-        # Redireccionar a la lista de entregas
-        return redirect(url_for('lista_entregas'))  # Ajusta 'lista_entregas' a tu ruta correcta
+        return redirect(url_for('lista_entregas'))
     else:
         flash('Usuario no autenticado', 'error')
-        return redirect(url_for('inicio'))  # Redirigir al inicio si no está autenticado
+        return redirect(url_for('inicio'))
 
 from flask import render_template_string
-
 
 @app.route("/buscando-entrega", methods=['POST'])
 def viewBuscarEntregaBD():
     try:
         search_query = request.json.get('busqueda', '').strip()
-        entregas = buscar_entregaBD(search_query) if search_query else obtener_entregas()
+        print("Término de búsqueda recibido:", search_query)
+
+        if not search_query:
+            entregas = obtener_entregas()
+        else:
+            entregas = buscar_entregaBD(search_query)
 
         if entregas:
             html_resultados = render_template_string("""
@@ -239,28 +305,9 @@ def viewBuscarEntregaBD():
                     <td>{{ loop.index }}</td>
                     <td>{{ entrega.tipo }}</td>
                     <td>{{ entrega.estado }}</td>
-                    <td>
-                        {% if entrega.costo_domicilio %}
-                            ${{ "{:,.0f}".format(entrega.costo_domicilio) }}
-                        {% else %}
-                            N/A
-                        {% endif %}
-                    </td>
-                    <td>{{ entrega.nombre_usuario or 'N/A' }}</td>
-                    <td>
-                        {% if entrega.direccion_completa %}
-                            {{ entrega.direccion_completa }}
-                        {% else %}
-                            Establecimiento físico
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if entrega.municipio %}
-                            {{ entrega.municipio }}, {{ entrega.departamento }}
-                        {% else %}
-                            N/A
-                        {% endif %}
-                    </td>
+                    <td>{{ entrega.costo_domicilio }}</td>
+                    <td>{{ entrega.direccion_completa }}</td>
+                    <td>{{ entrega.nombre_usuario }}</td>
                     <td width="10px">
                         <a href="/detalles-entrega/{{ entrega.id }}" class="btn btn-info btn-sm" title="Ver detalles">
                             <i class="bi bi-eye"></i> Ver detalles
@@ -277,10 +324,19 @@ def viewBuscarEntregaBD():
             """, entregas=entregas)
             return jsonify({'success': True, 'html': html_resultados})
         else:
-            return jsonify({'success': False, 'html': '<tr><td colspan="8" class="text-center">No se encontraron resultados</td></tr>'})
+            mensaje_html = f"""
+            <tr>
+                <td colspan="7" style="text-align:center;color: red;font-weight: bold;">
+                    No resultados para la búsqueda: <strong style="color: #222;">{search_query}</strong>
+                </td>
+            </tr>
+            """
+            return jsonify({'success': False, 'html': mensaje_html})
+
     except Exception as e:
+        print(f"Error en viewBuscarEntregaBD: {e}")
         return jsonify({'error': str(e)}), 500
-    
+
 @app.route('/obtener-pedidos-cliente')
 def obtener_pedidos_cliente():
     if 'conectado' in session:
@@ -307,87 +363,3 @@ def obtener_pedidos_cliente():
             return jsonify([])
     else:
         return jsonify({"error": "Usuario no autenticado"}), 401
-
-@app.route('/debug-entregas')
-def debug_entregas():
-    if 'conectado' not in session:
-        return "No conectado"
-    
-    with connectionBD() as conexion_MySQLdb:
-        with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-            # Ver entregas recientes
-            cursor.execute("SELECT id, tipo, users_id, direccion_id FROM entrega ORDER BY id DESC LIMIT 5")
-            entregas = cursor.fetchall()
-            
-            # Ver usuarios
-            cursor.execute("SELECT id, nombre FROM users WHERE id IN (SELECT DISTINCT users_id FROM entrega WHERE users_id IS NOT NULL)")
-            usuarios = cursor.fetchall()
-            
-            return render_template_string("""
-                <h2>Últimas 5 entregas</h2>
-                <pre>{{ entregas|tojson(indent=2) }}</pre>
-                <h2>Usuarios en entregas</h2>
-                <pre>{{ usuarios|tojson(indent=2) }}</pre>
-            """, entregas=entregas, usuarios=usuarios)
-
-@app.route('/crear-entrega', methods=['POST'])
-def crear_entrega():
-    users_id = session.get('users_id')
-    
-    # Depuración de sesión
-    print(f"Sesión actual - users_id: {users_id}")
-    
-    if not users_id:
-        flash('Debes iniciar sesión para crear una entrega', 'error')
-        return redirect(url_for('inicio'))
-    
-    tipo_entrega = request.form.get('tipo_entrega')
-    direccion_id = request.form.get('direccion_id') if tipo_entrega == 'Domicilio' else None
-    
-    # Validaciones
-    if not tipo_entrega:
-        flash('Debe seleccionar un tipo de entrega', 'error')
-        return redirect(url_for('lista_entregas'))
-    
-    entrega_id = procesar_entrega(
-        tipo_entrega=tipo_entrega, 
-        direccion_id=direccion_id, 
-        users_id=users_id
-    )
-    
-    if isinstance(entrega_id, int):
-        flash('Entrega creada correctamente', 'success')
-    else:
-        flash(f'Error al crear entrega: {entrega_id}', 'error')
-    
-    return redirect(url_for('lista_entregas'))
-
-@app.route('/admin/migrar-entregas')
-def migrar_entregas():
-    if 'conectado' not in session or session.get('rol') != 'superadmin':
-        flash('Acceso restringido a administradores', 'error')
-        return redirect(url_for('inicio'))
-
-    try:
-        registros = MigradorEntregas.migrar_users_id()
-        if registros is None:
-            flash('Error en la migración', 'error')
-        elif registros == 0:
-            flash('No hay registros pendientes de migración', 'info')
-        else:
-            flash(f'Migración exitosa: {registros} registros actualizados', 'success')
-    except Exception as e:
-        flash(f'Error: {str(e)}', 'error')
-    
-    return redirect(url_for('lista_entregas'))
-
-@app.route('/mis-entregas')
-def mis_entregas():
-    if 'conectado' not in session:
-        flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('inicio'))
-    
-    user_id = session['users_id']
-    entregas = obtener_entregas_cliente(user_id)
-    
-    return render_template('public/cliente/mis_entregas.html', entregas=entregas)

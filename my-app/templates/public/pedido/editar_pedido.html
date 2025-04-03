@@ -3,9 +3,7 @@
 {% block title %}Editar Pedido{% endblock %}
 
 {% block body %}
-<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/editar.css') }}" />
-<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/position_indicator.css') }}" />
-
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/editar.css') }}" />
 
 <div class="card" style="border-radius: 0px !important">
   <div class="row justify-content-center mb-2">
@@ -19,6 +17,7 @@
       <hr />
     </div>
   </div>
+
    <!-- Mensaje de contexto -->
    <div class="context-indicator d-flex align-items-center">
     <i class="bi bi-people-fill context-icon"></i>
@@ -30,6 +29,17 @@
 
   <div class="row justify-content-center mb-2">
     <div class="col-md-10">
+      <!-- Mostrar mensajes flash -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}" role="alert">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
       <form class="form-horizontal mx-auto" method="POST" action="{{ url_for('viewEditarPedido', id=pedido.id) }}">
         <div class="card-body">
           <div class="row">
@@ -38,23 +48,25 @@
               <!-- Fecha Entrega -->
               <div class="mb-3">
                 <label for="fechaEntrega" class="form-label">Fecha Entrega</label>
-                <input type="date" class="form-control" name="fechaEntrega" value="{{ pedido.fechaEntrega }}" required>
+                <input type="date" class="form-control" name="fechaEntrega" 
+                       value="{{ form_data.fechaEntrega if form_data else pedido.fechaEntrega }}" required>
               </div>
 
               <!-- Hora Entrega -->
               <div class="mb-3">
                 <label for="horaEntrega" class="form-label">Hora Entrega</label>
-                <input type="time" class="form-control" name="horaEntrega" value="{{ pedido.horaEntrega }}" required>
+                <input type="time" class="form-control" name="horaEntrega" 
+                       value="{{ form_data.horaEntrega if form_data else pedido.horaEntrega }}" required>
               </div>
 
               <!-- Estado -->
               <div class="mb-3">
                 <label for="estado" class="form-label">Estado</label>
                 <select class="form-select" name="estado" required>
-                  <option value="Pendiente" {% if pedido.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
-                  <option value="En Proceso" {% if pedido.estado == 'En Proceso' %}selected{% endif %}>En Proceso</option>
-                  <option value="En camino" {% if pedido.estado == 'En camino' %}selected{% endif %}>En camino</option>
-                  <option value="Entregado" {% if pedido.estado == 'Entregado' %}selected{% endif %}>Entregado</option>
+                  <option value="Pendiente" {% if (form_data and form_data.estado == 'Pendiente') or (not form_data and pedido.estado == 'Pendiente') %}selected{% endif %}>Pendiente</option>
+                  <option value="En Proceso" {% if (form_data and form_data.estado == 'En Proceso') or (not form_data and pedido.estado == 'En Proceso') %}selected{% endif %}>En Proceso</option>
+                  <option value="En camino" {% if (form_data and form_data.estado == 'En camino') or (not form_data and pedido.estado == 'En camino') %}selected{% endif %}>En camino</option>
+                  <option value="Entregado" {% if (form_data and form_data.estado == 'Entregado') or (not form_data and pedido.estado == 'Entregado') %}selected{% endif %}>Entregado</option>
                 </select>
               </div>
             </div>
@@ -64,12 +76,13 @@
               <!-- Usuario (No editable) -->
               <div class="mb-3">
                 <label for="users_id" class="form-label">Usuario</label>
-                <input type="text" class="form-control" id="users_id" name="users_id" value="{{ pedido.users_id }}" readonly style="
+                <input type="text" class="form-control" id="users_id" name="users_id" 
+                       value="{{ pedido.users_id }}" readonly style="
                   border-radius: 8px;
                   border: 1px solid #ced4da;
-                  background-color: #e9ecef; /* Fondo gris */
-                  color: #495057; /* Texto oscuro */
-                  cursor: not-allowed; /* Cursor de no permitido */
+                  background-color: #e9ecef;
+                  color: #495057;
+                  cursor: not-allowed;
                 ">
               </div>
 
@@ -78,7 +91,10 @@
                 <label for="producto_id" class="form-label">Producto</label>
                 <select class="form-select" name="producto_id" required>
                   {% for producto in productos %}
-                    <option value="{{ producto.id }}" {% if producto.id == pedido.producto_id %}selected{% endif %}>{{ producto.nombre }}</option>
+                    <option value="{{ producto.id }}" 
+                            {% if (form_data and form_data.producto_id|string == producto.id|string) or (not form_data and producto.id == pedido.producto_id) %}selected{% endif %}>
+                      {{ producto.nombre }}
+                    </option>
                   {% endfor %}
                 </select>
               </div>
@@ -88,7 +104,10 @@
                 <label for="metodo_pago" class="form-label">Método de Pago</label>
                 <select class="form-select" name="metodo_pago" required>
                   {% for metodo in metodos_pago %}
-                    <option value="{{ metodo.id }}" {% if metodo.id == pedido.metodo_pago_id %}selected{% endif %}>{{ metodo.metodo }}</option>
+                    <option value="{{ metodo.id }}" 
+                            {% if (form_data and form_data.metodo_pago|string == metodo.id|string) or (not form_data and metodo.id == pedido.metodo_pago_id) %}selected{% endif %}>
+                      {{ metodo.metodo }}
+                    </option>
                   {% endfor %}
                 </select>
               </div>
@@ -98,7 +117,10 @@
                 <label for="tipo_entrega" class="form-label">Tipo de Entrega</label>
                 <select class="form-select" name="tipo_entrega" required>
                   {% for tipo in tipos_entrega %}
-                    <option value="{{ tipo }}" {% if tipo == pedido.tipo_entrega %}selected{% endif %}>{{ tipo }}</option>
+                    <option value="{{ tipo }}" 
+                            {% if (form_data and form_data.tipo_entrega == tipo) or (not form_data and tipo == pedido.tipo_entrega) %}selected{% endif %}>
+                      {{ tipo }}
+                    </option>
                   {% endfor %}
                 </select>
               </div>

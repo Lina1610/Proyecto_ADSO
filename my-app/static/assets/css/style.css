@@ -324,7 +324,6 @@ html {
   color: #F9FAFC;
   text-transform: uppercase;
 }
-
 .coffee{
   padding: 100px 0;
   background-color: #E1E2E6;
@@ -686,7 +685,6 @@ p {
   margin: 0 auto;
   display: inline-block; /* Mantener esto para que funcione text-align */
 }
-
 /* CENTRAR ELEMENTOS DEL BLOG */
 .blog.container {
   text-align: center;

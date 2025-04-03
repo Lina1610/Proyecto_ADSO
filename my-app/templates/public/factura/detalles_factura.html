@@ -1,18 +1,24 @@
 {% extends 'public/base_cpanel.html' %}
 
+<!-- Cambiando el title -->
 {% block title %}Crud con Python 🐍 | Detalles de Factura{% endblock %}
 
+<!-- Inicio del block -->
 {% block body %}
+{{ super() }}
+
 <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/detalles.css') }}" />
 
+<!---->
 {% if factura_pedido %}
+<div class="card" style="border-radius: 0px !important">
   <div class="row justify-content-center mb-2">
     <div class="col-md-12">
-      <h3 class="text-center mt-5 mb-4">
+      <h3 class="text-center mt-5 mb-3">
         <a href="/lista-de-facturas">
           <i class="bi bi-arrow-left-circle"></i>
         </a>
-        DETALLES DE LA FACTURA
+        INFORMACIÓN DE LA FACTURA
       </h3>
       <hr />
     </div>
@@ -20,81 +26,125 @@
 
   <!-- Mensaje de contexto -->
   <div class="context-indicator d-flex align-items-center">
-    <i class="bi bi-people-fill context-icon"></i>
+    <i class="bi bi-receipt context-icon"></i>
     <div>
       <h6 class="mb-1">Vista de detalles de factura</h6>
-      
     </div>
   </div>
 
-  <div class="row justify-content-center mb-4">
+  <div class="row justify-content-center mb-2">
     <div class="col-md-10">
       <div class="card-body">
-        <div class="card mb-4">
-        
-        
-          <div class="card-body">
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">ID de la Factura</label>
-                <p>{{ factura_pedido.factura_id }}</p>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Estado de la Factura</label>
-                <p>{{ factura_pedido.estado_factura }}</p>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Fecha de la Factura</label>
-                <p>{{ factura_pedido.fecha_factura }}</p>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Fecha de Entrega</label>
-                <p>{{ factura_pedido.fechaEntrega }}</p>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Hora de Entrega</label>
-                <p>{{ factura_pedido.horaEntrega }}</p>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Total del Pedido</label>
-                <p>
-                  {% if factura_pedido.total is not none %}
-                    $ {{ '{:,.0f}'.format(factura_pedido.total).replace(',', '.') }}
-                  {% else %}
-                    No disponible
-                  {% endif %}
-                </p>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Nombre del Usuario</label>
-                <p>{{ factura_pedido.nombre_usuario }}</p>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Nombre del Producto</label>
-                <p>{{ factura_pedido.nombre_producto }}</p>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Método de Pago</label>
-                <p>{{ factura_pedido.metodo_pago }}</p>
-              </div>
-            </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="factura_id" class="form-label">
+              ID de la Factura
+            </label>
+            <br />
+            {{ factura_pedido.factura_id }}
+          </div>
+          <div class="col-md-6">
+            <label for="estado_factura" class="form-label">
+              Estado de la Factura
+            </label>
+            <br />
+            {{ factura_pedido.estado_factura }}
           </div>
         </div>
-        <div class="text-center mt-4">
-          <button id="btnDescargarPDF" class="btn btn-danger">
-            <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
-          </button>
-          <button id="btnDescargarImagen" class="btn btn-success">
-            <i class="bi bi-image"></i> Descargar Imagen
-          </button>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="fecha_factura" class="form-label">
+              Fecha de la Factura
+            </label>
+            <br />
+            {{ factura_pedido.fecha_factura }}
+          </div>
+          <div class="col-md-6">
+            <label for="fechaEntrega" class="form-label">
+              Fecha de Entrega
+            </label>
+            <br />
+            {{ factura_pedido.fechaEntrega }}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="horaEntrega" class="form-label">
+              Hora de Entrega
+            </label>
+            <br />
+            {{ factura_pedido.horaEntrega }}
+          </div>
+          <div class="col-md-6">
+            <label for="total" class="form-label">
+              Total del Pedido
+            </label>
+            <br />
+            {% if factura_pedido.total is not none %}
+              $ {{ '{:,.0f}'.format(factura_pedido.total).replace(',', '.') }}
+            {% else %}
+              No disponible
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="nombre_usuario" class="form-label">
+              Nombre del Usuario
+            </label>
+            <br />
+            {{ factura_pedido.nombre_usuario }}
+          </div>
+          <div class="col-md-6">
+            <label for="nombre_producto" class="form-label">
+              Nombre del Producto
+            </label>
+            <br />
+            {{ factura_pedido.nombre_producto }}
+          </div>
+        </div>
+        
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="metodo_pago" class="form-label">
+              Método de Pago
+            </label>
+            <br />
+            {{ factura_pedido.metodo_pago }}
+          </div>
+        </div>
+        
+        <div class="row mt-2">
+          <div class="col-md-12 text-center mt-4">
+            <button id="btnDescargarPDF" class="btn btn-danger btn-lg" style="
+              border-radius: 10px;
+              padding: 12px 30px;
+              background: linear-gradient(135deg, #dc3545, #c82333);
+              border: none;
+              color: white;
+              font-weight: 600;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+              transition: all 0.3s ease;
+            ">
+              <i class="bi bi-file-earmark-pdf me-2" style="font-size: 1.2rem;"></i>Descargar PDF
+            </button>
+            <button id="btnDescargarImagen" class="btn btn-success btn-lg" style="
+              border-radius: 10px;
+              padding: 12px 30px;
+              background: linear-gradient(135deg, #28a745, #218838);
+              border: none;
+              color: white;
+              font-weight: 600;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+              transition: all 0.3s ease;
+              margin-left: 20px;
+            ">
+              <i class="bi bi-image me-2" style="font-size: 1.2rem;"></i>Descargar Imagen
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -127,6 +177,11 @@
     doc.text("Gracias por su compra!", 105, 280, null, null, "center");
     
     doc.save('factura.pdf');
+  });
+
+  document.getElementById('btnDescargarImagen').addEventListener('click', function() {
+    // Código para descargar como imagen
+    alert('Funcionalidad de descarga de imagen en desarrollo');
   });
 </script>
 

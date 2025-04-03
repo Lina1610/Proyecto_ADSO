@@ -27,54 +27,46 @@
 <body id="page-top">
      <!-- Navigation (Menú) -->
      <div class="menu">
-            
         <a href="#" class="logo">Logo</a>
-
-            <!-- Checkbox oculto (debe estar justo antes del label) -->
-            <input type="checkbox" id="menu" class="menu-checkbox"/>
-          
-            <!-- Botón hamburguesa (vacío, se llenará con JS) -->
-            <label for="menu" class="menu-label">
-              <span class="hamburger-line"></span>
-              <span class="hamburger-line"></span>
-              <span class="hamburger-line"></span>
-            </label>  
-
-            <nav class="navbar">
-                <ul>
-                    <li class="nav-item"><a class="nav-link"  href="{{ url_for('home') }}">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#services">Servicios</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#sobre_nosotros">Sobre Nosotros</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('pedido.pedido') }}">Pedido</a></li>
-                    
-                    {% if session.conectado %}
-                    <div class="user-menu">
-                        <div class="user-container">
-
-                        <div class="d-flex align-items-center ms-4 user-info-container">
-                            <div class="user-info-navbar text-end pe-3">
-                                <div class="user-avatar">
-                                    <i class="fas fa-user-circle"></i>
-                                </div>
-                                <span class="text-white d-block user-name">{{ session.nombre }}</span>
-                            </div>
-                                                             
-                  <!-- Opciones alineadas -->
-                  <div class="user-options">
-                    <a href="{{ url_for('perfil_cliente') }}" class="menu-link">MI Perfil</a>
-                    <a href="{{ url_for('cerraSesion') }}" class="menu-link logout">Cerrar Sesión</a>
-                </div>
-            </div>
+      
+        <!-- Checkbox oculto -->
+        <input type="checkbox" id="menu" class="menu-checkbox"/>
+        
+        <!-- Contenedor para el lado derecho (hamburguesa) -->
+        <div class="menu-right-container">
+          <!-- Botón hamburguesa -->
+          <label for="menu" class="menu-label">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+          </label>
         </div>
-     
-                    {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}">Registrarse</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ url_for('loginCliente') }}">Iniciar sesión</a></li>
-                    {% endif %}
-                </ul>
-            </nav>
-                    
-            </div>
+      
+        <nav class="navbar">
+          <ul>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('indexPrincipal') }}">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link" href="#services">Servicios</a></li>
+            <li class="nav-item"><a class="nav-link" href="#sobre_nosotros">Sobre Nosotros</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('pedido.pedido') }}">Pedidos</a></li>
+            
+            {% if session.conectado %}
+            <li class="nav-item user-menu">
+              <!-- Avatar y nombre (visible en pantalla completa) -->
+              <span class="user-avatar"><i class="fas fa-user-circle"></i></span>
+              <span class="user-name">{{ session.nombre }}</span>
+              
+              <div class="user-options">
+                <a href="{{ url_for('perfil_cliente') }}" class="menu-link">Mi Perfil</a>
+                <a href="{{ url_for('cerraSesion') }}" class="menu-link logout-btn">Cerrar Sesión</a>
+              </div>
+            </li>
+            {% else %}
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}">Registrarse</a></li>
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('loginCliente') }}">Iniciar sesión</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+    
         </div>
     </nav>
     
@@ -89,248 +81,244 @@
                 </div>
 
                 <!-- Sección de Información Personal -->
-<div class="card mb-3">
-    <div class="card-header section-header" data-bs-toggle="collapse" href="#infoPersonal">
-        <div class="d-flex align-items-center">
-            <i class="fas fa-user-circle fa-2x me-3 text-primary"></i>
-            <div>
-                <h5 class="mb-0">Tu Información</h5>
-                <small class="text-muted">Datos personales y de contacto</small>
-            </div>
-        </div>
-    </div>
-    <div class="collapse" id="infoPersonal">
-        <div class="card-body">
-            <form method="POST" id="formEditarPerfil">
-                <div class="row g-3">
-                    <!-- Campos no editables -->
-                    <div class="col-md-6">
-                        <label class="form-label">Tipo de Documento</label>
-                        <input type="text" class="form-control bg-light" 
-                               value="{{ info_perfil_session.tipo_documento }}" readonly>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <label class="form-label">Documento</label>
-                        <input type="text" class="form-control bg-light" 
-                               value="{{ info_perfil_session.documento }}" readonly>
-                    </div>
-
-                    <!-- Campos editables -->
-                    <div class="col-md-6">
-                        <label class="form-label">Nombre</label>
-                        <input type="text" name="nombre" class="form-control" 
-                               value="{{ info_perfil_session.nombre }}" required>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Apellido</label>
-                        <input type="text" name="apellido" class="form-control" 
-                               value="{{ info_perfil_session.apellido }}" required>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Teléfono</label>
-                        <input type="text" name="telefono" class="form-control" 
-                               value="{{ info_perfil_session.telefono }}" required>
-                    </div>
-
-                    <!-- Campos no editables -->
-                    <div class="col-md-6">
-                        <label class="form-label">Correo</label>
-                        <input type="email" class="form-control bg-light" 
-                               value="{{ info_perfil_session.correo }}" readonly>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Rol</label>
-                        <input type="text" class="form-control bg-light" 
-                               value="{{ info_perfil_session.rol }}" readonly>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Estado</label>
-                        <input type="text" class="form-control bg-light" 
-                               value="{{ info_perfil_session.estado }}" readonly>
-                    </div>
-
-                    <!-- Campo Contraseña para actualización -->
-                    <div class="col-md-12 mt-4">
-                        <label class="form-label">Confirmar con Contraseña Actual</label>
-                        <div class="input-group input-group-merge">
-                            <input type="password" 
-                                   class="form-control" 
-                                   name="pass_actual"
-                                   placeholder="Ingrese su contraseña para confirmar cambios"
-                                   required>
-                            <span class="input-group-text cursor-pointer">
-                                <i class="bx bx-hide" onclick="togglePassword(this)"></i>
-                            </span>
+                <div class="card mb-3">
+                    <div class="card-header section-header" data-bs-toggle="collapse" href="#infoPersonal">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-user-circle fa-2x me-3 text-primary"></i>
+                            <div>
+                                <h5 class="mb-0">Tu Información</h5>
+                                <small class="text-muted">Datos personales y de contacto</small>
+                            </div>
                         </div>
-                        <small class="text-muted">Debe ingresar su contraseña actual para guardar los cambios</small>
                     </div>
-
-                    <div class="col-12 text-center mt-4">
-                        <button type="submit" class="btn btn-primary px-4">
-                            <i class="fas fa-save me-2"></i>Guardar Cambios
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-{% if session.rol == 'cliente' %}
-<!-- Direcciones -->
-<div class="card mb-4">
-    <div class="card-header section-header" data-bs-toggle="collapse" href="#seccionDirecciones">
-        <div class="d-flex align-items-center">
-            <i class="fas fa-map-marker-alt fa-2x me-3 text-primary"></i>
-            <div>
-                <h5 class="mb-0">Mis Direcciones</h5>
-                <small class="text-muted">Direcciones registradas para tus envíos</small>
-            </div>
-        </div>
-    </div>
-    <div class="collapse " id="seccionDirecciones">
-        <div class="card-body">
-            <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#modalAgregarDireccion">
-                <i class="fas fa-plus"></i> Agregar Dirección
-            </button>
-
-            {% if direcciones %}
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Barrio</th>
-                                <th>Domicilio</th>
-                                <th>Teléfono</th>
-                                <th>Ubicación</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for direccion in direcciones %}
-                            <tr>
-                                <td>{{ direccion.nombre_completo }}</td>
-                                <td>{{ direccion.barrio }}</td>
-                                <td>{{ direccion.domicilio }}</td>
-                                <td>{{ direccion.telefono }}</td>
-                                <td>{{ direccion.nombre_municipio }}, {{ direccion.nombre_departamento }}</td>
-                                <td>
-                                    <button onclick="editarDireccion({{ direccion.id }})" class="btn btn-sm btn-primary">
-                                        <i class="fas fa-edit"></i> Editar
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#eliminarDireccionModal" onclick="confirmarEliminar({{ direccion.id }})">
-                                        <i class="fas fa-trash"></i> Eliminar
-                                    </button>
-                                    
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <div class="alert alert-info">
-                    No tienes direcciones registradas. Agrega una dirección para tus envíos.
-                </div>
-            {% endif %}
-        </div>
-    </div>
-</div>
-{% endif %}
-
-{% if session.rol == 'cliente' %}
- <!-- Sección de Pedidos -->
-<div class="card mb-4">
-    <div class="card-header section-header" data-bs-toggle="collapse" href="#seccionPedidos">
-        <div class="d-flex align-items-center">
-            <i class="fas fa-shopping-cart fa-2x me-3 text-primary"></i>
-            <div>
-                <h5 class="mb-0">Mis Pedidos</h5>
-                <small class="text-muted">Historial de tus pedidos realizados</small>
-            </div>
-        </div>
-    </div>
-    <div class="collapse " id="seccionPedidos">
-        <div class="card-body">
-            <!-- Campo de búsqueda -->
-            <div class="row justify-content-end">
-                <div class="col-md-6 mt-4 py-2">                    
-                </div>
-            </div>
-
-            <!-- Tabla de pedidos -->
-            <div class="row justify-content-center mb-2">
-                <div class="table-responsive text-nowrap table-hover">
-                    <table
-                        id="tbl_pedidos"
-                        class="table table-striped table-bordered"
-                        cellspacing="0"
-                        width="100%">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Estado</th>
-                                <th>Producto</th>
-                                <th>Método de Pago</th>
-                                <th>Tipo de Entrega</th>
-                                <th>Total</th>
-                                <th width="20%">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla_pedidos_body">
-                            {% if pedidos %}
-                                {% for pedido in pedidos %}
-                                <tr id="pedido_{{ pedido.id }}">
-                                    <td>{{ loop.index }}</td>
-                                    <td>
-                                        {% if pedido.estado == 'Pendiente' %}
-                                            <span class="badge bg-warning">Pendiente</span>
-                                        {% elif pedido.estado == 'En Proceso' %}
-                                            <span class="badge bg-info">En Proceso</span>
-                                        {% elif pedido.estado == 'En camino' %}
-                                            <span class="badge bg-primary">En camino</span>
-                                        {% elif pedido.estado == 'Entregado' %}
-                                            <span class="badge bg-success">Entregado</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ pedido.producto_nombre }}</td>
-                                    <td>{{ pedido.metodo_pago }}</td>
-                                    <td>{{ pedido.tipo_entrega }}</td>
-                                    <td>{{ pedido.total | round(2) }}</td>
-                                    <td>
-                                        <button onclick="cargarDetallesPedido({{ pedido.id }})" 
-                                                class="btn btn-info btn-sm" 
-                                                title="Ver detalles"
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#modalDetallesPedido">
-                                            <i class="bi bi-eye"></i> Detalles
+                    <div class="collapse" id="infoPersonal">
+                        <div class="card-body">
+                            <form method="POST" id="formEditarPerfil">
+                                <div class="row g-3">
+                                    <!-- Campos no editables -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Tipo de Documento</label>
+                                        <input type="text" class="form-control bg-light" 
+                                               value="{{ info_perfil_session.tipo_documento }}" readonly>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Documento</label>
+                                        <input type="text" class="form-control bg-light" 
+                                               value="{{ info_perfil_session.documento }}" readonly>
+                                    </div>
+                                    <!-- Campos editables -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Nombre</label>
+                                        <input type="text" name="nombre" class="form-control" 
+                                               value="{{ info_perfil_session.nombre }}" 
+                                               maxlength="150" required 
+                                               pattern="[A-Za-z\s]+"
+                                               oninvalid="this.setCustomValidity('El nombre solo puede contener letras y espacios, máximo 150 caracteres.')"
+                                               oninput="this.setCustomValidity('')">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Apellido</label>
+                                        <input type="text" name="apellido" class="form-control" 
+                                               value="{{ info_perfil_session.apellido }}" 
+                                               maxlength="150" required 
+                                               pattern="[A-Za-z\s]+"
+                                               oninvalid="this.setCustomValidity('El apellido solo puede contener letras y espacios, máximo 150 caracteres.')"
+                                               oninput="this.setCustomValidity('')">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Teléfono</label>
+                                        <input type="text" name="telefono" class="form-control" 
+                                               value="{{ info_perfil_session.telefono }}" 
+                                               minlength="7" maxlength="13" pattern="[0-9]+" required 
+                                               onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"
+                                               oninvalid="this.setCustomValidity('El teléfono debe tener entre 7 y 13 dígitos y solo contener números.')"
+                                               oninput="this.setCustomValidity('')">
+                                    </div>
+                                    <!-- Campos no editables -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Correo</label>
+                                        <input type="email" class="form-control bg-light" 
+                                               value="{{ info_perfil_session.correo }}" readonly>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Rol</label>
+                                        <input type="text" class="form-control bg-light" 
+                                               value="{{ info_perfil_session.rol }}" readonly>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Estado</label>
+                                        <input type="text" class="form-control bg-light" 
+                                               value="{{ info_perfil_session.estado }}" readonly>
+                                    </div>
+                                    <!-- Campo Contraseña para actualización -->
+                                    <div class="col-md-12 mt-4">
+                                        <label class="form-label">Confirmar con Contraseña Actual</label>
+                                        <div class="input-group input-group-merge">
+                                            <input type="password" 
+                                                   class="form-control" 
+                                                   name="pass_actual"
+                                                   placeholder="Ingrese su contraseña para confirmar cambios"
+                                                   required
+                                                   oninvalid="this.setCustomValidity('Por favor, ingrese su contraseña actual.')"
+                                                   oninput="this.setCustomValidity('')">
+                                            <span class="input-group-text cursor-pointer">
+                                                <i class="bx bx-hide" onclick="togglePassword(this)"></i>
+                                            </span>
+                                        </div>
+                                        <small class="text-muted">Debe ingresar su contraseña actual para guardar los cambios</small>
+                                    </div>
+                                    <div class="col-12 text-center mt-4">
+                                        <button type="submit" class="btn btn-primary px-4">
+                                            <i class="fas fa-save me-2"></i>Guardar Cambios
                                         </button>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            {% else %}
-                            <tr>
-                                <td colspan="7" class="text-center">
-                                    <i class="bi bi-exclamation-circle"></i> No hay pedidos registrados.
-                                </td>
-                            </tr>
-                            {% endif %}
-                        </tbody>
-                    </table>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endif %}
+                {% if session.rol == 'cliente' %}
+                <!-- Direcciones -->
+                <div class="card mb-4">
+                    <div class="card-header section-header" data-bs-toggle="collapse" href="#seccionDirecciones">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-map-marker-alt fa-2x me-3 text-primary"></i>
+                            <div>
+                                <h5 class="mb-0">Mis Direcciones</h5>
+                                <small class="text-muted">Direcciones registradas para tus envíos</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="collapse" id="seccionDirecciones">
+                        <div class="card-body">
+                            <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#modalAgregarDireccion">
+                                <i class="fas fa-plus"></i> Agregar Dirección
+                            </button>
 
+                            {% if direcciones %}
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Barrio</th>
+                                                <th>Domicilio</th>
+                                                <th>Teléfono</th>
+                                                <th>Ubicación</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for direccion in direcciones %}
+                                            <tr>
+                                                <td>{{ direccion.nombre_completo }}</td>
+                                                <td>{{ direccion.barrio }}</td>
+                                                <td>{{ direccion.domicilio }}</td>
+                                                <td>{{ direccion.telefono }}</td>
+                                                <td>{{ direccion.nombre_municipio }}, {{ direccion.nombre_departamento }}</td>
+                                                <td>
+                                                    <button onclick="editarDireccion({{ direccion.id }})" class="btn btn-sm btn-primary">
+                                                        <i class="fas fa-edit"></i> Editar
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#eliminarDireccionModal" onclick="confirmarEliminar({{ direccion.id }})">
+                                                        <i class="fas fa-trash"></i> Eliminar
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-info">
+                                    No tienes direcciones registradas. Agrega una dirección para tus envíos.
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
 
+                {% if session.rol == 'cliente' %}
+                <!-- Sección de Pedidos -->
+                <div class="card mb-4">
+                    <div class="card-header section-header" data-bs-toggle="collapse" href="#seccionPedidos">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-shopping-cart fa-2x me-3 text-primary"></i>
+                            <div>
+                                <h5 class="mb-0">Mis Pedidos</h5>
+                                <small class="text-muted">Historial de tus pedidos realizados</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="collapse" id="seccionPedidos">
+                        <div class="card-body">
+                            <!-- Campo de búsqueda -->
+                            <div class="row justify-content-end">
+                                <div class="col-md-6 mt-4 py-2"></div>
+                            </div>
 
+                            <!-- Tabla de pedidos -->
+                            <div class="row justify-content-center mb-2">
+                                <div class="table-responsive text-nowrap table-hover">
+                                    <table id="tbl_pedidos" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Estado</th>
+                                                <th>Producto</th>
+                                                <th>Método de Pago</th>
+                                                <th>Tipo de Entrega</th>
+                                                <th>Total</th>
+                                                <th width="20%">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tabla_pedidos_body">
+                                            {% if pedidos %}
+                                                {% for pedido in pedidos %}
+                                                <tr id="pedido_{{ pedido.id }}">
+                                                    <td>{{ loop.index }}</td>
+                                                    <td>
+                                                        {% if pedido.estado == 'Pendiente' %}
+                                                            <span class="badge bg-warning">Pendiente</span>
+                                                        {% elif pedido.estado == 'En Proceso' %}
+                                                            <span class="badge bg-info">En Proceso</span>
+                                                        {% elif pedido.estado == 'En camino' %}
+                                                            <span class="badge bg-primary">En camino</span>
+                                                        {% elif pedido.estado == 'Entregado' %}
+                                                            <span class="badge bg-success">Entregado</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ pedido.producto_nombre }}</td>
+                                                    <td>{{ pedido.metodo_pago }}</td>
+                                                    <td>{{ pedido.tipo_entrega }}</td>
+                                                    <td>{{ pedido.total | round(2) }}</td>
+                                                    <td>
+                                                        <button onclick="cargarDetallesPedido({{ pedido.id }})" 
+                                                                class="btn btn-info btn-sm" 
+                                                                title="Ver detalles"
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#modalDetallesPedido">
+                                                            <i class="bi bi-eye"></i> Detalles
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="7" class="text-center">
+                                                    <i class="bi bi-exclamation-circle"></i> No hay pedidos registrados.
+                                                </td>
+                                            </tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
 
                 <!-- Sección Actualizar Contraseña -->
                 <div class="card">
@@ -345,7 +333,7 @@
                     </div>
                     <div class="collapse" id="cambiarClave">
                         <div class="card-body">
-                            <form method="POST" id="formCambiarContrasena">
+                            <form method="POST" id="formCambiarContrasena" action="{{ url_for('actualizarPassword') }}" onsubmit="return validarFormulario()">
                                 <div class="row g-3">
                                     <div class="col-md-12">
                                         <label class="form-label">Contraseña Actual</label>
@@ -353,13 +341,15 @@
                                             <input type="password" 
                                                    class="form-control" 
                                                    name="pass_actual"
+                                                   id="pass_actual"
+                                                   maxlength="20"
                                                    required>
                                             <span class="input-group-text cursor-pointer">
                                                 <i class="bx bx-hide" onclick="togglePassword(this)"></i>
                                             </span>
                                         </div>
+                                        <small class="text-danger" id="error_pass_actual"></small>
                                     </div>
-                                    
                                     <div class="col-md-6">
                                         <label class="form-label">Nueva Contraseña</label>
                                         <div class="input-group input-group-merge">
@@ -367,13 +357,14 @@
                                                    class="form-control" 
                                                    name="new_pass_user"
                                                    id="new_pass_user"
+                                                   maxlength="20"
                                                    required>
                                             <span class="input-group-text cursor-pointer">
                                                 <i class="bx bx-hide" onclick="togglePassword(this)"></i>
                                             </span>
                                         </div>
+                                        <small class="text-danger" id="error_new_pass_user"></small>
                                     </div>
-                                    
                                     <div class="col-md-6">
                                         <label class="form-label">Confirmar Nueva Contraseña</label>
                                         <div class="input-group input-group-merge">
@@ -381,13 +372,14 @@
                                                    class="form-control" 
                                                    name="repetir_pass_user"
                                                    id="repetir_pass_user"
+                                                   maxlength="20"
                                                    required>
                                             <span class="input-group-text cursor-pointer">
                                                 <i class="bx bx-hide" onclick="togglePassword(this)"></i>
                                             </span>
                                         </div>
+                                        <small class="text-danger" id="error_repetir_pass_user"></small>
                                     </div>
-                                    
                                     <div class="col-12 text-end">
                                         <button type="submit" class="btn btn-primary">
                                             <i class="fas fa-key me-2"></i>Actualizar Contraseña
@@ -397,81 +389,77 @@
                             </form>
                         </div>
                     </div>
-                </div>
-            </div>
+                </div>  
         </section>
     </main>
-<!-- Modal para Agregar Dirección -->
-<div class="modal fade" id="modalAgregarDireccion" tabindex="-1" aria-labelledby="modalAgregarDireccionLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalAgregarDireccionLabel">Agregar Nueva Dirección</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body">
-                <form id="formRegistrarDireccion" method="POST">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="nombre_completo" class="form-label">Nombre Completo</label>
-                            <input type="text" name="nombre_completo" class="form-control" required />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="barrio" class="form-label">Barrio</label>
-                            <input class="form-control" type="text" name="barrio" required />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="domicilio" class="form-label">Domicilio</label>
-                            <input class="form-control" type="text" name="domicilio" required />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="referencias" class="form-label">Referencias</label>
-                            <input class="form-control" type="text" name="referencias" />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="telefono" class="form-label">Teléfono</label>
-                            <input class="form-control" type="text" name="telefono" required />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="departamento_id" class="form-label">Departamento</label>
-                            <select class="form-select" name="departamento_id" id="registrarDepartamentoId" required>
-                                <option value="">Seleccione un departamento</option>
-                                {% for departamento in departamentos %}
-                                    <option value="{{ departamento.id }}">{{ departamento.nombre }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="municipio_id" class="form-label">Municipio</label>
-                            <select class="form-select" name="municipio_id" id="registrarMunicipioId" required>
-                                <option value="">Seleccione un municipio</option>
-                            </select>
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label">Confirmar con Contraseña Actual</label>
-                            <div class="input-group input-group-merge">
-                                <input type="password" class="form-control" name="pass_actual" required>
-                                <span class="input-group-text cursor-pointer">
-                                    <i class="bx bx-hide" onclick="togglePassword(this)"></i>
-                                </span>
+
+    <!-- Modal para Agregar Dirección -->
+    <div class="modal fade" id="modalAgregarDireccion" tabindex="-1" aria-labelledby="modalAgregarDireccionLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAgregarDireccionLabel">Agregar Nueva Dirección</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formRegistrarDireccion" onsubmit="return handleSubmit(event, 'registrar')">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="nombre_completo" class="form-label">Nombre Completo</label>
+                                <input type="text" name="nombre_completo" class="form-control" maxlength="160" required />
                             </div>
-                            <small class="text-muted">Debe verificar su identidad para agregar una dirección</small>
+                            <div class="col-md-6 mb-3">
+                                <label for="barrio" class="form-label">Barrio</label>
+                                <input class="form-control" type="text" name="barrio" maxlength="500" required />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="domicilio" class="form-label">Domicilio</label>
+                                <input class="form-control" type="text" name="domicilio" maxlength="500" required />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="referencias" class="form-label">Referencias</label>
+                                <input class="form-control" type="text" name="referencias" maxlength="500" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="telefono" class="form-label">Teléfono</label>
+                                <input class="form-control" type="tel" name="telefono" maxlength="15" pattern="[0-9]{7,15}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="departamento_id" class="form-label">Departamento</label>
+                                <select class="form-select" name="departamento_id" id="registrarDepartamentoId" required>
+                                    <option value="">Seleccione un departamento</option>
+                                    {% for departamento in departamentos %}
+                                        <option value="{{ departamento.id }}">{{ departamento.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="municipio_id" class="form-label">Municipio</label>
+                                <select class="form-select" name="municipio_id" id="registrarMunicipioId" required>
+                                    <option value="">Seleccione un municipio</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Confirmar con Contraseña Actual</label>
+                                <div class="input-group input-group-merge">
+                                    <input type="password" class="form-control" name="pass_actual" required>
+                                    <span class="input-group-text cursor-pointer">
+                                        <i class="bx bx-hide" onclick="togglePassword(this)"></i>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-plus me-2"></i> Agregar Dirección
-                        </button>
-                    </div>
-                </form>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i> Agregar Dirección
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-
-
 
 <!-- Modal para editar dirección -->
 <div class="modal fade" id="editarDireccionModal" tabindex="-1" aria-labelledby="editarDireccionModalLabel" aria-hidden="true">
@@ -482,33 +470,31 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Formulario de edición -->
-                <form id="formEditarDireccion" method="POST">
+                <form id="formEditarDireccion" onsubmit="return handleSubmit(event, 'editar')">
                     <input type="hidden" name="id" id="editarDireccionId">
-                    <input type="hidden" name="contexto" id="editarContexto" value="web"> <!-- Este input define el contexto -->
-
+                    <input type="hidden" name="contexto" id="editarContexto" value="web">
                     <div class="mb-3">
-                        <label for="nombre_completo" class="form-label">Nombre Completo</label>
-                        <input type="text" name="nombre_completo" id="editarNombreCompleto" class="form-control" required>
+                        <label for="editarNombreCompleto" class="form-label">Nombre Completo</label>
+                        <input type="text" name="nombre_completo" id="editarNombreCompleto" class="form-control" maxlength="160" required>
                     </div>
                     <div class="mb-3">
-                        <label for="barrio" class="form-label">Barrio</label>
-                        <input type="text" name="barrio" id="editarBarrio" class="form-control" required>
+                        <label for="editarBarrio" class="form-label">Barrio</label>
+                        <input type="text" name="barrio" id="editarBarrio" class="form-control" maxlength="500" required>
                     </div>
                     <div class="mb-3">
-                        <label for="domicilio" class="form-label">Domicilio</label>
-                        <input type="text" name="domicilio" id="editarDomicilio" class="form-control" required>
+                        <label for="editarDomicilio" class="form-label">Domicilio</label>
+                        <input type="text" name="domicilio" id="editarDomicilio" class="form-control" maxlength="500" required>
                     </div>
                     <div class="mb-3">
-                        <label for="referencias" class="form-label">Referencias</label>
-                        <input type="text" name="referencias" id="editarReferencias" class="form-control">
+                        <label for="editarReferencias" class="form-label">Referencias</label>
+                        <input type="text" name="referencias" id="editarReferencias" class="form-control" maxlength="500">
                     </div>
                     <div class="mb-3">
-                        <label for="telefono" class="form-label">Teléfono</label>
-                        <input type="text" name="telefono" id="editarTelefono" class="form-control" required>
+                        <label for="editarTelefono" class="form-label">Teléfono</label>
+                        <input type="tel" name="telefono" id="editarTelefono" class="form-control" maxlength="15" pattern="[0-9]{7,15}" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" />
                     </div>
                     <div class="mb-3">
-                        <label for="departamento_id" class="form-label">Departamento</label>
+                        <label for="editarDepartamentoId" class="form-label">Departamento</label>
                         <select class="form-select" name="departamento_id" id="editarDepartamentoId">
                             <option value="">Seleccione un departamento</option>
                             {% for departamento in departamentos %}
@@ -517,7 +503,7 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="municipio_id" class="form-label">Municipio</label>
+                        <label for="editarMunicipioId" class="form-label">Municipio</label>
                         <select class="form-select" name="municipio_id" id="editarMunicipioId">
                             <option value="">Seleccione un municipio</option>
                             {% for municipio in municipios %}
@@ -534,121 +520,502 @@
         </div>
     </div>
 </div>
-<!-- Modal de Confirmación para Eliminar Dirección -->
-<div class="modal fade" id="eliminarDireccionModal" tabindex="-1" aria-labelledby="eliminarDireccionLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="eliminarDireccionLabel">Confirmar Eliminación</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body">
-                <p>¿Estás seguro de que deseas eliminar esta dirección?</p>
-                <input type="hidden" id="direccionIdAEliminar">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger btn-sm" id="confirmarEliminar">
-                    <i class="fas fa-trash"></i> Eliminar
-                </button>
-                
-
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Modal para Detalles del Pedido -->
-<div class="modal fade" id="modalDetallesPedido" tabindex="-1" aria-labelledby="modalDetallesPedidoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalDetallesPedidoLabel">Detalles del Pedido</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Aquí se cargarán los detalles del pedido -->
-                <div id="detallesPedidoContent">
-                    <!-- Los detalles se cargarán dinámicamente aquí -->
+    <!-- Modal de Confirmación para Eliminar Dirección -->
+    <div class="modal fade" id="eliminarDireccionModal" tabindex="-1" aria-labelledby="eliminarDireccionLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eliminarDireccionLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de que deseas eliminar esta dirección?</p>
+                    <input type="hidden" id="direccionIdAEliminar">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger btn-sm" id="confirmarEliminar">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Modal para Detalles del Pedido -->
+    <div class="modal fade" id="modalDetallesPedido" tabindex="-1" aria-labelledby="modalDetallesPedidoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalDetallesPedidoLabel">Detalles del Pedido</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Aquí se cargarán los detalles del pedido -->
+                    <div id="detallesPedidoContent">
+                        <!-- Los detalles se cargarán dinámicamente aquí -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-
-
-       <!-- Footer -->
-<footer class="footer">
-    <div class="footer-container">
-        <div class="footer-left">
-            <div class="footer-brand">
-                <h3>Tamales D. María</h3>
-                <p class="location">📍 Sogamoso, Boyacá</p>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <div class="footer-brand">
+                    <h3>Tamales D. María</h3>
+                    <p class="location">📍 Sogamoso, Boyacá</p>
+                </div>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.me/573213828939" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                </div>
+                <div class="footer-contact">
+                    <p><i class="fas fa-envelope"></i> lescobarhiguera@gmail.com</p>
+                    <p><i class="fas fa-phone-alt"></i> 321 382 8939</p>
+                </div>
             </div>
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="https://wa.me/573213828939" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <div class="footer-center">
+                <ul class="footer-list">
+                    <li><a href="#" class="footer-link">Inicio</a></li>
+                    <li><a href="#" class="footer-link">Menú</a></li>
+                    <li><a href="#" class="footer-link">Pedidos</a></li>
+                    <li><a href="#" class="footer-link">Sobre Nosotros</a></li>
+                </ul>
             </div>
-            <div class="footer-contact">
-                <p><i class="fas fa-envelope"></i> lescobarhiguera@gmail.com</p>
-                <p><i class="fas fa-phone-alt"></i> 321 382 8939</p>
+            <div class="footer-right">
+                <div class="business-hours">
+                    <h4>Horario de atención</h4>
+                    <p>Lunes a Sábado</p>
+                    <p>7:00 AM - 7:00 PM</p>
+                </div>
+                <p class="footer-bottom">© 2023 Tamales el buen sazón<br>Todos los derechos reservados</p>
             </div>
         </div>
-        
-        <div class="footer-center">
-            <ul class="footer-list">
-                <li><a href="#" class="footer-link">Inicio</a></li>
-                <li><a href="#" class="footer-link">Menú</a></li>
-                <li><a href="#" class="footer-link">Pedidos</a></li>
-                <li><a href="#" class="footer-link">Sobre Nosotros</a></li>
-            </ul>
-        </div>
-        
-        <div class="footer-right">
-            <div class="business-hours">
-                <h4>Horario de atención</h4>
-                <p>Lunes a Sábado</p>
-                <p>7:00 AM - 7:00 PM</p>
-            </div>
-            <p class="footer-bottom">© 2023 Tamales el buen sazón<br>Todos los derechos reservados</p>
-        </div>
-    </div>
-  </footer>
-  <script src="/static/assets/js/sienna.js"></script>
-  <script src="/static/assets/js/custom.js"></script>
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function() {
-                            // Cargar municipios al cambiar departamento
-                            document.getElementById('registrarDepartamentoId').addEventListener('change', function() {
-                                const departamentoId = this.value;
-                                if (departamentoId) {
-                                    fetch(`/obtener-municipios?departamento_id=${departamentoId}`)
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            const municipioSelect = document.getElementById('registrarMunicipioId');
-                                            municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
-                                            data.forEach(municipio => {
-                                                municipioSelect.innerHTML += `<option value="${municipio.id}">${municipio.nombre}</option>`;
-                                            });
-                                        });
-                                }
-                            });
-                        });
-                        </script>
+    </footer>
+
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
     <script src="{{ url_for('static', filename='assets/js/bos.js') }}"></script>
     <!-- Incluir el archivo JavaScript externo -->
     <script src="{{ url_for('static', filename='assets/js/modals.js') }}"></script>
-    <!-- JavaScript para manejar los modales --> 
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- JavaScript para manejar los formularios -->
     <script>
-        document.getElementById("formEditarDireccion").addEventListener("submit", actualizarDireccionWeb);
+        // Función para alternar visibilidad de contraseña
+        function togglePassword(element) {
+            const input = element.parentElement.previousElementSibling;
+            const icon = element;
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("bx-hide");
+                icon.classList.add("bx-show");
+            } else {
+                input.type = "password";
+                icon.classList.remove("bx-show");
+                icon.classList.add("bx-hide");
+            }
+        }
+        
+        // Validar el formulario de edición del perfil
+        function validateProfileForm() {
+            let isValid = true;
+        
+            // Validar Nombre (máximo 150 caracteres, solo letras y espacios, opcional)
+            const nombre = document.querySelector('#formEditarPerfil input[name="nombre"]');
+            if (nombre && nombre.value && (nombre.value.length > 150 || !/^[A-Za-z\s]+$/.test(nombre.value))) {
+                alert("El nombre solo puede contener letras y espacios, con un máximo de 150 caracteres.");
+                isValid = false;
+            }
+        
+            // Validar Apellido (máximo 150 caracteres, solo letras y espacios, opcional)
+            const apellido = document.querySelector('#formEditarPerfil input[name="apellido"]');
+            if (apellido && apellido.value && (apellido.value.length > 150 || !/^[A-Za-z\s]+$/.test(apellido.value))) {
+                alert("El apellido solo puede contener letras y espacios, con un máximo de 150 caracteres.");
+                isValid = false;
+            }
+        
+            // Validar Teléfono (solo números, entre 7 y 13 dígitos, opcional)
+            const telefono = document.querySelector('#formEditarPerfil input[name="telefono"]');
+            if (telefono && telefono.value && !/^[0-9]{7,13}$/.test(telefono.value)) {
+                alert("El teléfono debe tener entre 7 y 13 dígitos y solo contener números.");
+                isValid = false;
+            }
+        
+            // Validar Contraseña Actual (obligatoria)
+            const passActual = document.querySelector('#formEditarPerfil input[name="pass_actual"]');
+            if (!passActual || !passActual.value) {
+                alert("La contraseña actual es obligatoria.");
+                isValid = false;
+            }
+        
+            return isValid;
+        }
+        
+        // Asegurar que el evento submit se maneje correctamente
+        document.addEventListener('DOMContentLoaded', function() {
+            const formEditarPerfil = document.getElementById('formEditarPerfil');
+            if (formEditarPerfil) {
+                formEditarPerfil.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Prevenir el envío por defecto
+                    console.log("Formulario de perfil enviado");
+        
+                    if (!validateProfileForm()) {
+                        console.log("Formulario no válido");
+                        return; // Detener si no es válido
+                    }
+        
+                    const formData = new FormData(this);
+                    fetch('/actualizar-datos-perfil', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const mensajeDiv = document.getElementById('mensaje-actualizacion');
+                        mensajeDiv.classList.remove('d-none', 'alert-success', 'alert-danger');
+        
+                        if (data.success) {
+                            mensajeDiv.classList.add('alert-success');
+                            mensajeDiv.textContent = data.message || "Datos actualizados con éxito.";
+                        } else {
+                            mensajeDiv.classList.add('alert-danger');
+                            mensajeDiv.textContent = data.error === 0 ? "La contraseña actual es incorrecta." :
+                                                     data.error === 3 ? "La contraseña actual es obligatoria." :
+                                                     data.error || "Error al actualizar los datos.";
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        const mensajeDiv = document.getElementById('mensaje-actualizacion');
+                        mensajeDiv.classList.remove('d-none', 'alert-success', 'alert-danger');
+                        mensajeDiv.classList.add('alert-danger');
+                        mensajeDiv.textContent = "Error al procesar la solicitud: " + error.message;
+                    });
+                });
+            }
+        });
+       
+
+        // Función para alternar visibilidad de contraseña
+        function togglePassword(element) {
+            const input = element.parentElement.previousElementSibling;
+            const icon = element;
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("bx-hide");
+                icon.classList.add("bx-show");
+            } else {
+                input.type = "password";
+                icon.classList.remove("bx-show");
+                icon.classList.add("bx-hide");
+            }
+        }
+    
+        // Validar el formulario (sin mensajes de error visibles)
+        function validateForm(formType) {
+            let isValid = true;
+            const prefix = formType === 'registrar' ? '' : 'editar';
+            
+            // Validar Nombre Completo (máximo 160 caracteres)
+            const nombreCompleto = document.getElementById(`${prefix}NombreCompleto`);
+            if (nombreCompleto.value.length > 160) {
+                isValid = false;
+            }
+    
+            // Validar Barrio (máximo 500 caracteres)
+            const barrio = document.getElementById(`${prefix}Barrio`);
+            if (barrio.value.length > 500) {
+                isValid = false;
+            }
+    
+            // Validar Domicilio (máximo 500 caracteres)
+            const domicilio = document.getElementById(`${prefix}Domicilio`);
+            if (domicilio.value.length > 500) {
+                isValid = false;
+            }
+    
+            // Validar Referencias (máximo 500 caracteres, opcional)
+            const referencias = document.getElementById(`${prefix}Referencias`);
+            if (referencias.value.length > 500) {
+                isValid = false;
+            }
+    
+            // Validar Teléfono (solo números, entre 7 y 15 dígitos, opcional)
+            const telefono = document.getElementById(`${prefix}Telefono`);
+            if (telefono.value) {
+                const telefonoPattern = /^[0-9]{7,15}$/;
+                if (!telefonoPattern.test(telefono.value)) {
+                    isValid = false;
+                }
+            }
+    
+            return isValid;
+        }
+    
+        // Manejar el envío del formulario de datos del perfil
+        document.getElementById('formEditarPerfil').addEventListener('submit', function(e) {
+            e.preventDefault();
+    
+            const formData = new FormData(this);
+            fetch('/actualizar-datos-perfil', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const mensajeDiv = document.getElementById('mensaje-actualizacion');
+                mensajeDiv.classList.remove('d-none', 'alert-success', 'alert-danger');
+                if (data.success) {
+                    mensajeDiv.classList.add('alert-success');
+                    mensajeDiv.textContent = data.message;
+                } else {
+                    mensajeDiv.classList.add('alert-danger');
+                    mensajeDiv.textContent = data.error;
+                }
+            })
+        
+    
+        // Cargar municipios al cambiar departamento
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('registrarDepartamentoId').addEventListener('change', function() {
+                const departamentoId = this.value;
+                if (departamentoId) {
+                    fetch(`/obtener-municipios?departamento_id=${departamentoId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const municipioSelect = document.getElementById('registrarMunicipioId');
+                            municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+                            data.forEach(municipio => {
+                                municipioSelect.innerHTML += `<option value="${municipio.id}">${municipio.nombre}</option>`;
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error al cargar municipios:', error);
+                        });
+                }
+            });
+    
+            // Manejar el formulario de agregar dirección
+            document.getElementById('formRegistrarDireccion').addEventListener('submit', function(e) {
+                e.preventDefault();
+    
+                // Validar antes de enviar
+                if (!validateForm('registrar')) {
+                    return;
+                }
+    
+                const formData = new FormData(this);
+                fetch('/api/registrar-direccion', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Cerrar el modal
+                        const modal = bootstrap.Modal.getInstance(document.querySelector('#modalAgregarDireccion'));
+                        modal.hide();
+                        // Recargar la página para mostrar la nueva dirección
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al procesar la solicitud.');
+                });
+            });
+    
+            // Manejar el formulario de editar dirección
+            document.getElementById("formEditarDireccion").addEventListener("submit", actualizarDireccionWeb);
+        });
+    
+        // Función para actualizar dirección
+        function actualizarDireccionWeb(e) {
+            e.preventDefault();
+    
+            // Validar antes de enviar
+            if (!validateForm('editar')) {
+                return;
+            }
+    
+            const form = e.target;
+            const formData = new FormData(form);
+            const id = document.getElementById('editarDireccionId').value;
+    
+            fetch(`/api/actualizar-direccion/${id}`, {
+                method: 'PUT', // Asumimos que el backend espera PUT para actualizar
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Cerrar el modal
+                    const modal = bootstrap.Modal.getInstance(document.querySelector('#editarDireccionModal'));
+                    modal.hide();
+                    // Recargar la página para actualizar la lista de direcciones
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al procesar la solicitud: ' + error.message);
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+    function togglePassword(element) {
+        const input = element.parentElement.previousElementSibling;
+        const icon = element;
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("bx-hide");
+            icon.classList.add("bx-show");
+        } else {
+            input.type = "password";
+            icon.classList.remove("bx-show");
+            icon.classList.add("bx-hide");
+        }
+    }
+
+    function validarFormulario() {
+        // Limpiar mensajes de error previos
+        document.getElementById("error_pass_actual").innerText = "";
+        document.getElementById("error_new_pass_user").innerText = "";
+        document.getElementById("error_repetir_pass_user").innerText = "";
+
+        let isValid = true;
+
+        // Obtener valores de los campos
+        const passActual = document.getElementById("pass_actual").value;
+        const newPass = document.getElementById("new_pass_user").value;
+        const repetirPass = document.getElementById("repetir_pass_user").value;
+
+        // Validación 1: Campos obligatorios
+        if (!passActual) {
+            document.getElementById("error_pass_actual").innerText = "Este campo es obligatorio.";
+            isValid = false;
+        }
+        if (!newPass) {
+            document.getElementById("error_new_pass_user").innerText = "Este campo es obligatorio.";
+            isValid = false;
+        }
+        if (!repetirPass) {
+            document.getElementById("error_repetir_pass_user").innerText = "Este campo es obligatorio.";
+            isValid = false;
+        }
+
+        // Si algún campo está vacío, no continuar con las otras validaciones
+        if (!isValid) return false;
+
+        // Validación 2: Longitud de la nueva contraseña (8-20 caracteres)
+        if (newPass.length < 8 || newPass.length > 20) {
+            document.getElementById("error_new_pass_user").innerText = "Debe tener entre 8 y 20 caracteres.";
+            isValid = false;
+        }
+
+        // Validación 3: Requisitos de complejidad
+        const tieneLetras = /[A-Za-z]/.test(newPass);
+        const tieneNumeros = /\d/.test(newPass);
+        const tieneEspeciales = /[@$!%*?&]/.test(newPass);
+        const tiposPresentes = (tieneLetras ? 1 : 0) + (tieneNumeros ? 1 : 0) + (tieneEspeciales ? 1 : 0);
+
+        if (tiposPresentes < 2) {
+            document.getElementById("error_new_pass_user").innerText = "Debe combinar al menos dos de: letras, números o caracteres especiales (@$!%*?&).";
+            isValid = false;
+        } else if (!tieneLetras && tieneNumeros && !tieneEspeciales) {
+            document.getElementById("error_new_pass_user").innerText = "No puede contener solo números.";
+            isValid = false;
+        } else if (tieneLetras && !tieneNumeros && !tieneEspeciales) {
+            document.getElementById("error_new_pass_user").innerText = "No puede contener solo letras.";
+            isValid = false;
+        }
+
+        // Validación 4: Coincidencia de contraseñas
+        if (newPass !== repetirPass) {
+            document.getElementById("error_repetir_pass_user").innerText = "Las contraseñas no coinciden.";
+            isValid = false;
+        }
+
+        // Validación 5: Nueva contraseña diferente a la actual
+        if (newPass === passActual) {
+            document.getElementById("error_new_pass_user").innerText = "La nueva contraseña no puede ser igual a la actual.";
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    const formCambiarContrasena = document.getElementById('formCambiarContrasena');
+    if (formCambiarContrasena) {
+        formCambiarContrasena.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log("Formulario de contraseña enviado");
+
+            if (!validarFormulario()) {
+                console.log("Validación fallida");
+                return;
+            }
+
+            const formData = new FormData(this);
+            fetch('/actualizar-password', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                const status = response.status;
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(`${status}: ${err.error || 'Error desconocido'}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                const mensajeDiv = document.getElementById('mensaje-actualizacion');
+                mensajeDiv.classList.remove('d-none', 'alert-success', 'alert-danger');
+
+                if (data.success) {
+                    mensajeDiv.classList.add('alert-success');
+                    mensajeDiv.textContent = data.message || "Contraseña actualizada con éxito.";
+                    formCambiarContrasena.reset(); // Limpiar el formulario
+                    // Forzar la recarga después de 2 segundos
+                    setTimeout(() => {
+                        console.log("Recargando la página...");
+                        window.location.href = window.location.href; // Forzar recarga completa
+                    }, 2000);
+                } else {
+                    mensajeDiv.classList.add('alert-danger');
+                    mensajeDiv.textContent = data.error || "Error al actualizar la contraseña.";
+                }
+            })
+            .catch(error => {
+                console.error('Error en fetch:', error);
+                const mensajeDiv = document.getElementById('mensaje-actualizacion');
+                mensajeDiv.classList.remove('d-none', 'alert-success', 'alert-danger');
+                mensajeDiv.classList.add('alert-danger');
+                mensajeDiv.textContent = error.message;
+            });
+        });
+    }
+});
         </script>
-</body>
-</html>
+    </body>
+    </html>

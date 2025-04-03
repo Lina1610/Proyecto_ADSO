@@ -1,0 +1,96 @@
+/* Estilos del formulario de dirección - Versión que mantiene el diseño original */
+
+.card {
+    border-radius: 0px !important;
+    margin-bottom: 2rem;
+}
+
+.text-center h3 {
+    color: #333;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.text-center h3 a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.text-center h3 a:hover {
+    color: #0d6efd;
+}
+
+.context-indicator {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+    border-left: 4px solid #0d6efd;
+}
+
+.context-icon {
+    font-size: 1.5rem;
+    margin-right: 0.75rem;
+    color: #6c757d;
+}
+
+.context-indicator h6 {
+    margin-bottom: 0;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.form-horizontal {
+    padding: 1.5rem;
+    background-color: #fff;
+    border-radius: 0.25rem;
+}
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #495057;
+}
+
+.form-control, 
+.form-select {
+    border-radius: 0.25rem;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.form-control:focus, 
+.form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+    transform: translateY(-1px);
+}
+
+/* Estilos para los mensajes flash */
+.alert {
+    border-radius: 0.25rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .col-md-6 {
+        margin-bottom: 0.5rem;
+    }
+}

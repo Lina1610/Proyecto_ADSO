@@ -13,20 +13,27 @@ from controllers.funciones_address import (
 )
 from controllers.funciones_login import info_perfil_session  # Importar la función necesaria
 
+# Definición de la constante PATH_URL
 PATH_URL = "public/direccion"
 
 
-
+# Ruta para mostrar las direcciones del cliente
 @app.route('/cliente-direcciones', methods=['GET'])
 def cliente_direcciones():
+    """
+    Muestra las direcciones asociadas a un usuario conectado.
+    Accesible para roles: cliente, administrador, superadmin, empleado.
+    """
     if 'conectado' in session:
         # Permitir múltiples roles
         if session['rol'] in ['cliente', 'administrador', 'superadmin', 'empleado']:
             user_id = session.get('id')
 
+            # Obtener las direcciones del usuario
             direcciones = obtener_direcciones_usuario(user_id)
             print("Direcciones obtenidas:", direcciones)
 
+            # Obtener departamentos y municipios para el formulario
             with connectionBD() as conexion_MySQLdb:
                 with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                     cursor.execute("SELECT id, nombre FROM departamento")
@@ -35,7 +42,7 @@ def cliente_direcciones():
                     cursor.execute("SELECT id, nombre FROM municipio")
                     municipios = cursor.fetchall()
 
-            # Verifica si el template soporta todos los roles o usa uno diferente
+            # Renderizar la plantilla con los datos
             return render_template(
                 'public/perfil/perfil_cliente.html',  # Asegúrate que este template sea adecuado para todos los roles
                 info_perfil_session=info_perfil_session(),
@@ -49,35 +56,40 @@ def cliente_direcciones():
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
-# Ruta para registrar una dirección 
 
 
-# Ruta para el sitio web (API JSON)
+# Ruta para registrar una dirección (API JSON)
 @app.route('/api/registrar-direccion', methods=['POST'])
 def api_registrar_direccion():
-    if 'conectado' not in session or 'id' not in session:
-        response = jsonify({"success": False, "error": "Primero debes iniciar sesión."})
-        response.headers.add('Content-Type', 'application/json')
-        return response, 401
+    if 'conectado' not in session:
+        return jsonify({"success": False, "error": "Debes iniciar sesión"}), 401
     
     try:
-        resultado = procesar_direccion(request.form)
+        # Para datos JSON
+        if request.is_json:
+            data = request.get_json()
+        # Para datos de formulario tradicional
+        else:
+            data = request.form.to_dict()
         
-        print(f"Resultado de procesar_direccion: {resultado}, tipo: {type(resultado)}")
+        # Añadir el user_id de la sesión
+        data['users_id'] = session.get('id')
+        
+        resultado = procesar_direccion(data)
         
         if isinstance(resultado, int) and resultado > 0:
-            response = jsonify({"success": True, "message": "Dirección registrada con éxito"})
-            response.headers.add('Content-Type', 'application/json')
-            return response, 200
+            return jsonify({
+                "success": True, 
+                "message": "Dirección registrada con éxito",
+                "direccion_id": resultado
+            }), 200
         else:
-            response = jsonify({"success": False, "error": str(resultado)})
-            response.headers.add('Content-Type', 'application/json')
-            return response, 400
+            # Aquí devolvemos el mensaje de error como un string
+            return jsonify({"success": False, "error": str(resultado)}), 400
+            
     except Exception as e:
-        print(f"Error al procesar la dirección: {e}")
-        response = jsonify({"success": False, "error": "Error interno del servidor"})
-        response.headers.add('Content-Type', 'application/json')
-        return response, 500
+        print(f"Error al registrar dirección: {e}")
+        return jsonify({"success": False, "error": "Error interno del servidor"}), 500
 
 # Ruta para el aplicativo (Interfaz web)
 @app.route('/registrar-direccion', methods=['GET', 'POST'])
@@ -96,22 +108,6 @@ def viewFormDireccion():
     rol_usuario = session.get('rol', '')
     print(f"🔍 Rol del usuario: {rol_usuario}")  # 🛠 Depuración
     
-    if request.method == 'POST':
-        print("🔍 Datos del formulario recibidos:", request.form)  # 🛠 Depuración
-        resultado = procesar_direccion(request.form)
-        
-        if isinstance(resultado, int) and resultado > 0:
-            flash('Dirección registrada con éxito', 'success')
-            print("🔍 Sesión DESPUÉS de registrar la dirección:", session)  # 🛠 Depuración
-            # Redirigir según el rol del usuario
-            if rol_usuario == 'cliente':
-                return redirect(url_for('cliente_direcciones'))
-            else:
-                return redirect(url_for('lista_direcciones'))  # Ruta para administradores
-        else:
-            flash(f'Error al registrar dirección: {resultado}', 'error')
-            return redirect(url_for('cliente_direcciones' if rol_usuario == 'cliente' else 'lista_direcciones'))
-    
     # Obtener datos de departamento, municipios y usuarios
     with connectionBD() as conexion_MySQLdb:
         with conexion_MySQLdb.cursor(dictionary=True) as cursor:
@@ -122,13 +118,41 @@ def viewFormDireccion():
             cursor.execute("SELECT id, nombre FROM users")
             users = cursor.fetchall()
     
+    if request.method == 'POST':
+        print("🔍 Datos del formulario recibidos:", request.form)  # 🛠 Depuración
+        # Procesar la dirección con las validaciones
+        resultado = procesar_direccion(request.form)
+        
+        if isinstance(resultado, int) and resultado > 0:
+            flash('Dirección registrada con éxito', 'success')
+            print("🔍 Sesión DESPUÉS de registrar la dirección:", session)  # 🛠 Depuración
+            # Redirigir según el rol del usuario
+            if rol_usuario == 'cliente':
+                return redirect(url_for('cliente_direcciones'))
+            else:
+                return redirect(url_for('lista_direcciones'))
+        else:
+            # En caso de error, renderizar el formulario nuevamente con los datos ingresados
+            flash(f'Error al registrar dirección: {resultado}', 'error')
+            return render_template(
+                f'{PATH_URL}/registro_direccion.html',
+                departamentos=departamentos,
+                municipios=municipios,
+                users=users,
+                form_data=request.form  # Pasar los datos del formulario para repoblar los campos
+            )
+    
+    # Si es GET, mostrar el formulario vacío
     return render_template(
         f'{PATH_URL}/registro_direccion.html',
         departamentos=departamentos,
         municipios=municipios,
-        users=users
+        users=users,
+        form_data={}  # Formulario vacío
     )
 
+
+# Ruta para obtener departamentos
 @app.route('/obtener-departamentos', methods=['GET'])
 def obtener_departamentos():
     """
@@ -143,10 +167,15 @@ def obtener_departamentos():
                 return jsonify(departamentos)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+
 # Ruta para obtener municipios según departamento
 @app.route('/obtener_municipios', methods=['GET'])
 def obtener_municipios():
+    """
+    Obtiene los municipios asociados a un departamento específico.
+    Retorna un JSON con los municipios o un mensaje de error.
+    """
     departamento_id = request.args.get('departamento_id')
     if not departamento_id or not departamento_id.isdigit():
         return jsonify({"error": "ID de departamento inválido"}), 400
@@ -188,9 +217,9 @@ def lista_direcciones():
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
-    
 
-    
+
+# Ruta para mostrar los detalles de una dirección
 @app.route('/detalles-direccion/<int:id>')
 def detalles_direccion(id):
     """
@@ -210,62 +239,58 @@ def detalles_direccion(id):
     
     print(f"Datos de la dirección obtenidos: {direccion}")  # Depuración
     return render_template('public/direccion/detalles_direccion.html', direccion=direccion)
-    
 
-# optener los datos del cliete
-@app.route('/guardar-direccion', methods=['POST'])
+
+# Ruta para guardar una dirección (API JSON)
+@app.route('/api/guardar-direccion', methods=['POST'])
 def guardar_direccion():
     """
-    Guarda una nueva dirección en la base de datos.
+    Guarda una nueva dirección en la base de datos desde el modal del carrito.
+    Retorna una respuesta JSON con el resultado.
     """
     if 'conectado' not in session:
-        return jsonify({"error": "Primero debes iniciar sesión"}), 401
+        return jsonify({"success": False, "error": "Debes iniciar sesión"}), 401
 
     try:
-        # Obtener los datos del formulario
+        # Obtener los datos del formulario como JSON
         data = request.get_json()
+        
+        if not data:
+            return jsonify({"success": False, "error": "Datos no proporcionados"}), 400
 
-        # Validar que los datos estén completos
-        if not data or not all(key in data for key in ['nombre_completo', 'barrio', 'domicilio', 'telefono', 'departamento_id', 'municipio_id']):
-            return jsonify({"error": "Datos incompletos"}), 400
+        # Validar campos obligatorios
+        campos_requeridos = ['nombre_completo', 'barrio', 'domicilio', 'telefono', 'departamento_id', 'municipio_id']
+        for campo in campos_requeridos:
+            if campo not in data or not str(data[campo]).strip():
+                return jsonify({"success": False, "error": f"El campo {campo} es obligatorio"}), 400
 
-        # Guardar la dirección en la base de datos
-        with connectionBD() as conexion_MySQLdb:
-            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                sql = """
-                    INSERT INTO direccion (
-                        nombre_completo, barrio, domicilio, referencias, telefono,
-                        departamento_id, municipio_id, users_id
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                """
-                valores = (
-                    data['nombre_completo'],
-                    data['barrio'],
-                    data['domicilio'],
-                    data.get('referencias', ''),  # Campo opcional
-                    data['telefono'],
-                    data['departamento_id'],
-                    data['municipio_id'],
-                    session['id']  # ID del usuario conectado
-                )
-                cursor.execute(sql, valores)
-                conexion_MySQLdb.commit()
+        # Añadir el user_id de la sesión
+        data['users_id'] = session.get('id')
 
-        return jsonify({"success": True, "message": "Dirección guardada correctamente"}), 201
-
+        # Procesar la dirección con las validaciones
+        resultado = procesar_direccion(data)
+        
+        if isinstance(resultado, int) and resultado > 0:
+            return jsonify({
+                "success": True, 
+                "message": "Dirección guardada correctamente",
+                "direccion_id": resultado
+            }), 201
+        else:
+            return jsonify({"success": False, "error": str(resultado)}), 400
+            
     except Exception as e:
         print(f"Error al guardar la dirección: {e}")
-        return jsonify({"error": "Error al guardar la dirección"}), 500
-
+        return jsonify({"success": False, "error": "Error interno del servidor"}), 500
 
 
 # Ruta para mostrar el formulario de edición de una dirección
 @app.route('/editar-direccion/<int:id>', methods=['GET'])
 def viewEditarDireccion(id):
-
-    #Muestra el formulario para editar una dirección específica por su ID.
-    #Solo accesible si el usuario está conectado.
- 
+    """
+    Muestra el formulario para editar una dirección específica por su ID.
+    Solo accesible si el usuario está conectado.
+    """
     if 'conectado' in session:
         # Obtener la dirección por su ID
         direccion = obtener_direccion_por_id(id)
@@ -283,15 +308,20 @@ def viewEditarDireccion(id):
                 departamentos=departamentos
             )
         else:
-            flash('La dirección no existe.', 'error')
+            flash(' La dirección no existe.', 'error')
             return redirect(url_for('lista_direcciones'))
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio')) 
 
-# sitio web
+
+# Ruta para actualizar una dirección (sitio web)
 @app.route('/actualizar-direccion', methods=['POST'])
 def actualizarDireccion():
+    """
+    Actualiza una dirección existente en la base de datos.
+    Solo accesible si el usuario está conectado.
+    """
     if 'conectado' in session:
         if request.method == 'POST':
             # Obtener los datos del formulario
@@ -304,53 +334,26 @@ def actualizarDireccion():
                 flash('La dirección no existe.', 'error')
                 return redirect(url_for('lista_direcciones'))
 
-            # Actualizar la dirección en la base de datos
-            try:
-                with connectionBD() as conexion_MySQLdb:
-                    with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                        sql = """
-                            UPDATE direccion SET
-                                nombre_completo = %s,
-                                barrio = %s,
-                                domicilio = %s,
-                                referencias = %s,
-                                telefono = %s,
-                                estado = %s,
-                                costo_domicilio = %s,
-                                municipio_id = %s,
-                                departamento_id = %s
-                            WHERE id = %s
-                        """
-                        valores = (
-                            data_form['nombre_completo'],
-                            data_form['barrio'],
-                            data_form['domicilio'],
-                            data_form['referencias'],
-                            data_form['telefono'],
-                            data_form['estado'],
-                            int(data_form['costo_domicilio']),
-                            int(data_form['municipio_id']),
-                            int(data_form['departamento_id']),
-                            id_direccion
-                        )
-                        cursor.execute(sql, valores)
-                        conexion_MySQLdb.commit()
-
+            # Actualizar la dirección usando la función con validaciones
+            resultado = actualizar_direccion(id_direccion, data_form)
+            if "correctamente" in resultado:
                 flash('Dirección actualizada correctamente.', 'success')
                 return redirect(url_for('lista_direcciones'))
-            except Exception as e:
-                print(f"Error al actualizar la dirección: {e}")
-                flash('Error al actualizar la dirección.', 'error')
+            else:
+                flash(f'Error al actualizar la dirección: {resultado}', 'error')
                 return redirect(url_for('lista_direcciones'))
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))
 
 
-
-#lo del cliente
+# Ruta para actualizar una dirección (cliente, interfaz web)
 @app.route('/actualizar-direccion-web', methods=['POST'])
 def actualizar_direccion_web():
+    """
+    Actualiza una dirección existente a través de una solicitud JSON.
+    Retorna una respuesta JSON con el resultado.
+    """
     print(f"📌 Método recibido: {request.method}")  # 🔥 Esto te dirá si realmente está llegando un POST
     try:
         data = request.json
@@ -360,6 +363,7 @@ def actualizar_direccion_web():
         if not direccion_id:
             return jsonify({'error': 'ID de dirección no proporcionado'}), 400
 
+        # Actualizar la dirección con las validaciones
         resultado = actualizar_direccion(direccion_id, data)
 
         if "correctamente" in resultado:
@@ -371,9 +375,13 @@ def actualizar_direccion_web():
         return jsonify({'error': 'Error interno del servidor'}), 500
 
 
-# aca otro cliente 
+# Ruta para actualizar una dirección (API)
 @app.route('/actualizar-direccion-api', methods=['POST'])
 def actualizarDireccionAPI():
+    """
+    Actualiza una dirección existente a través de una API JSON.
+    Retorna una respuesta JSON con el resultado.
+    """
     if 'conectado' in session:
         if request.method == 'POST':
             data_json = request.get_json()
@@ -383,48 +391,19 @@ def actualizarDireccionAPI():
             if not direccion:
                 return jsonify({"success": False, "error": "La dirección no existe."})
 
-            try:
-                with connectionBD() as conexion_MySQLdb:
-                    with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                        sql = """
-                            UPDATE direccion SET
-                                nombre_completo = %s,
-                                barrio = %s,
-                                domicilio = %s,
-                                referencias = %s,
-                                telefono = %s,
-                                estado = %s,
-                                costo_domicilio = %s,
-                                municipio_id = %s,
-                                departamento_id = %s
-                            WHERE id = %s
-                        """
-                        valores = (
-                            data_json['nombre_completo'],
-                            data_json['barrio'],
-                            data_json['domicilio'],
-                            data_json['referencias'],
-                            data_json['telefono'],
-                            data_json['estado'],
-                            int(data_json['costo_domicilio']),
-                            int(data_json['municipio_id']),
-                            int(data_json['departamento_id']),
-                            id_direccion
-                        )
-                        cursor.execute(sql, valores)
-                        conexion_MySQLdb.commit()
-
+            # Actualizar la dirección con las validaciones
+            resultado = actualizar_direccion(id_direccion, data_json)
+            if "correctamente" in resultado:
                 response = jsonify({"success": True, "message": "Felicitaciones, dirección actualizada correctamente 😁"})
                 response.mimetype = "application/json; charset=utf-8"
                 return response
-            except Exception as e:
-                print(f"Error al actualizar la dirección: {e}")
-                return jsonify({"success": False, "error": f"Error al actualizar la dirección: {str(e)}"})
+            else:
+                return jsonify({"success": False, "error": f"Error al actualizar la dirección: {resultado}"})
     else:
         return jsonify({"success": False, "error": "Primero debes iniciar sesión."})
 
 
-#lo de direccion cliente
+# Ruta para obtener los datos de una dirección (cliente)
 @app.route('/obtener-direccion/<int:id>', methods=['GET'])
 def obtener_datos_direccion(id):
     """
@@ -443,8 +422,9 @@ def obtener_datos_direccion(id):
             return jsonify({"success": False, "error": f"Error al obtener los datos: {str(e)}"})
     else:
         return jsonify({"success": False, "error": "Primero debes iniciar sesión."})
-### cualquier cosa aca va la direccion que mando a watsap     
 
+
+# Ruta para activar una dirección
 @app.route('/activar-direccion/<int:id>')
 def activar_direccion(id):
     """
@@ -468,6 +448,7 @@ def activar_direccion(id):
     return redirect(url_for('lista_direcciones'))
 
 
+# Ruta para desactivar una dirección
 @app.route('/desactivar-direccion/<int:id>')
 def desactivar_direccion(id):
     """
@@ -491,7 +472,7 @@ def desactivar_direccion(id):
     return redirect(url_for('lista_direcciones'))
 
 
-
+# Ruta para eliminar una dirección (método GET)
 @app.route('/eliminar-direccion/<int:id>', methods=['GET'])
 def eliminar_direccion(id):
     """
@@ -514,8 +495,8 @@ def eliminar_direccion(id):
         flash('Primero debes iniciar sesión.', 'error')
     return redirect(url_for('lista_direcciones'))
 
-from flask import jsonify, request, session
 
+# Ruta para eliminar una dirección (método DELETE)
 @app.route('/eliminar-direccion/<int:id>', methods=['DELETE'])
 def eliminar_direccion_route(id):
     """
@@ -538,9 +519,13 @@ def eliminar_direccion_route(id):
         return jsonify({'success': False, 'error': 'Error al eliminar la dirección.'}), 500
 
 
-
+# Ruta para buscar direcciones
 @app.route("/buscando-direccion", methods=['POST'])
 def viewBuscarDireccionBD():
+    """
+    Busca direcciones en la base de datos según un término de búsqueda.
+    Retorna un JSON con los resultados en formato HTML para una tabla.
+    """
     try:
         search_query = request.json.get('busqueda')  # Obtener el término de búsqueda desde el JSON
         if not search_query:

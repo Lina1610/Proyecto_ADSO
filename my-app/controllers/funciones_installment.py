@@ -4,42 +4,135 @@ from conexion.conexionBD import connectionBD
 from flask import session
 import re
 
-def procesar_abono(dataForm):
+# Constantes para límites
+MAX_MONTO = 9999999999  # Límite de DECIMAL(10,0)
+
+def validar_monto(monto):
+    """
+    Valida que el monto sea un número entero positivo y no exceda el límite.
+    """
     try:
+        monto = float(monto)
+        if monto <= 0:
+            return False, "El monto debe ser un valor positivo"
+        if monto > MAX_MONTO:
+            return False, "El monto no puede exceder 9999999999"
+        if not monto.is_integer():
+            return False, "El monto debe ser un número entero (sin decimales)"
+        return True, None
+    except (ValueError, TypeError):
+        return False, "El monto debe ser un número válido"
+
+def validar_id(id_value, nombre_campo):
+    """
+    Valida que un ID sea un número entero positivo.
+    """
+    try:
+        id_value = int(id_value)
+        if id_value <= 0:
+            return False, f"El {nombre_campo} debe ser un número positivo"
+        return True, None
+    except (ValueError, TypeError):
+        return False, f"El {nombre_campo} debe ser un número entero"
+
+def validar_abono_final(abono_final):
+    """
+    Valida el campo abono_final (opcional, DECIMAL(10,0)).
+    """
+    if not abono_final or abono_final.strip() == '':
+        return True, None  # Permitir valores nulos o vacíos
+    try:
+        abono_final = float(abono_final)
+        if abono_final < 0:
+            return False, "El abono final no puede ser negativo"
+        if abono_final > MAX_MONTO:
+            return False, "El abono final no puede exceder 9999999999"
+        if not abono_final.is_integer():
+            return False, "El abono final debe ser un número entero (sin decimales)"
+        return True, None
+    except (ValueError, TypeError):
+        return False, "El abono final debe ser un número válido"
+
+def pedido_existe(pedido_id):
+    """
+    Verifica si un pedido existe en la base de datos.
+    """
+    try:
+        with connectionBD() as conexion:
+            with conexion.cursor(dictionary=True) as cursor:
+                cursor.execute("SELECT id FROM pedido WHERE id = %s", (pedido_id,))
+                return cursor.fetchone() is not None
+    except Exception as e:
+        print(f"Error al verificar pedido: {e}")
+        return False
+
+def abono_duplicado(pedido_id, numero_abonos, abono_id=None):
+    """
+    Verifica si ya existe un abono con el mismo pedido_id y numero_abonos.
+    Si abono_id se proporciona, excluye ese abono (para actualizaciones).
+    """
+    try:
+        with connectionBD() as conexion:
+            with conexion.cursor(dictionary=True) as cursor:
+                if abono_id:
+                    sql = "SELECT id FROM abono WHERE pedido_id = %s AND numero_abonos = %s AND id != %s"
+                    cursor.execute(sql, (pedido_id, numero_abonos, abono_id))
+                else:
+                    sql = "SELECT id FROM abono WHERE pedido_id = %s AND numero_abonos = %s"
+                    cursor.execute(sql, (pedido_id, numero_abonos))
+                return cursor.fetchone() is not None
+    except Exception as e:
+        print(f"Error al verificar duplicados: {e}")
+        return False
+
+def procesar_abono(dataForm):
+    """
+    Procesa la inserción de un nuevo abono con validaciones.
+    """
+    try:
+        # Validar campos requeridos
         campos_requeridos = ['numero_abonos', 'estado', 'monto', 'pedido_id']
         for campo in campos_requeridos:
             if campo not in dataForm or not dataForm[campo].strip():
-                return f"El campo {campo.replace('_', ' ').title()} es requerido"
+                return f"El campo {campo.replace('_', ' ').title()} es obligatorio"
 
         numero_abonos = dataForm['numero_abonos'].strip()
         if numero_abonos not in ['Pago inicial', 'Pago final']:
-            return "Número de abono inválido. Debe ser 'Pago inicial' o 'Pago final'"
+            return "El número de abono debe ser 'Pago inicial' o 'Pago final'"
 
         estado = dataForm['estado'].strip()
         if estado not in ['Abono Pendiente', 'Abono confirmado']:
-            return "Estado de abono inválido. Debe ser 'Abono Pendiente' o 'Abono confirmado'"
+            return "El estado debe ser 'Abono Pendiente' o 'Abono confirmado'"
 
-        try:
-            monto = float(dataForm['monto'])
-            if monto <= 0:
-                return "El monto debe ser un valor positivo"
-        except ValueError:
-            return "El monto debe ser un número válido"
+        # Validar monto
+        es_valido, mensaje = validar_monto(dataForm['monto'])
+        if not es_valido:
+            return mensaje
+        monto = float(dataForm['monto'])
 
-        try:
-            pedido_id = int(dataForm['pedido_id'])
-        except ValueError:
-            return "Datos numéricos inválidos. Asegúrate de que el ID del pedido sea un número válido"
+        # Validar pedido_id
+        es_valido, mensaje = validar_id(dataForm['pedido_id'], "ID del pedido")
+        if not es_valido:
+            return mensaje
+        pedido_id = int(dataForm['pedido_id'])
 
-        abono_final = dataForm.get('abono_final', '').strip()  # Campo no obligatorio
+        # Validar abono_final
+        abono_final = dataForm.get('abono_final', '').strip()
+        es_valido, mensaje = validar_abono_final(abono_final)
+        if not es_valido:
+            return mensaje
+        abono_final_value = float(abono_final) if abono_final else None
+
+        # Verificar si el pedido existe
+        if not pedido_existe(pedido_id):
+            return "El pedido seleccionado no existe"
+
+        # Verificar duplicados
+        if abono_duplicado(pedido_id, numero_abonos):
+            return "Ya existe un abono de tipo '{}' para este pedido".format(numero_abonos)
 
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                cursor.execute("SELECT id FROM pedido WHERE id = %s", (pedido_id,))
-                pedido = cursor.fetchone()
-                if not pedido:
-                    return "El pedido seleccionado no existe"
-
                 sql = """
                     INSERT INTO abono (
                         numero_abonos,
@@ -54,7 +147,7 @@ def procesar_abono(dataForm):
                     estado,
                     monto,
                     pedido_id,
-                    abono_final if abono_final else None  # Si no se proporciona, se inserta NULL
+                    abono_final_value
                 )
 
                 cursor.execute(sql, valores)
@@ -64,13 +157,16 @@ def procesar_abono(dataForm):
                 if resultado_insert > 0:
                     return resultado_insert
                 else:
-                    return "No se pudo insertar el abono en la base de datos"
+                    return "No se pudo registrar el abono en la base de datos"
 
     except Exception as e:
-        print(f"Error en procesar_abono: {e}")
-        return f"Se produjo un error en procesar_abono: {str(e)}"
-    
+        print(f"Error al procesar el abono: {e}")
+        return f"Se produjo un error al registrar el abono: {str(e)}"
+
 def obtener_abonos():
+    """
+    Obtiene todos los abonos de la base de datos.
+    """
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
@@ -79,41 +175,62 @@ def obtener_abonos():
                     FROM abono
                 """)
                 abonos = cursor.fetchall()
-                print("Abonos encontrados:", abonos)  # Depuración
+                print("Abonos encontrados:", abonos)
                 return abonos
     except Exception as e:
         print(f"Error al obtener abonos: {e}")
         return []
-    
+
 def actualizar_abono(id, data_form):
+    """
+    Actualiza un abono existente con validaciones.
+    """
     try:
-        print("Datos recibidos:", data_form)  # Depuración
+        # Validar ID del abono
+        es_valido, mensaje = validar_id(id, "ID del abono")
+        if not es_valido:
+            return mensaje
+
+        # Validar campos requeridos
         campos_requeridos = ['numero_abonos', 'estado', 'monto', 'pedido_id']
         for campo in campos_requeridos:
             if campo not in data_form or not data_form[campo].strip():
-                return f"El campo {campo.replace('_', ' ').title()} es requerido"
+                return f"El campo {campo.replace('_', ' ').title()} es obligatorio"
 
         numero_abonos = data_form['numero_abonos'].strip()
         if numero_abonos not in ['Pago inicial', 'Pago final']:
-            return "Número de abono inválido. Debe ser 'Pago inicial' o 'Pago final'"
+            return "El número de abono debe ser 'Pago inicial' o 'Pago final'"
 
         estado = data_form['estado'].strip()
         if estado not in ['Abono Pendiente', 'Abono confirmado']:
-            return "Estado de abono inválido. Debe ser 'Abono Pendiente' o 'Abono confirmado'"
+            return "El estado debe ser 'Abono Pendiente' o 'Abono confirmado'"
 
-        try:
-            monto = float(data_form['monto'])
-            if monto <= 0:
-                return "El monto debe ser un valor positivo"
-        except ValueError:
-            return "El monto debe ser un número válido"
+        # Validar monto
+        es_valido, mensaje = validar_monto(data_form['monto'])
+        if not es_valido:
+            return mensaje
+        monto = float(data_form['monto'])
 
-        try:
-            pedido_id = int(data_form['pedido_id'])
-        except ValueError:
-            return "Datos numéricos inválidos. Asegúrate de que el ID del pedido sea un número válido"
+        # Validar pedido_id
+        es_valido, mensaje = validar_id(data_form['pedido_id'], "ID del pedido")
+        if not es_valido:
+            return mensaje
+        pedido_id = int(data_form['pedido_id'])
 
-        abono_final = data_form.get('abono_final', '').strip()  # Campo no obligatorio
+        # Validar abono_final
+        abono_final = data_form.get('abono_final', '').strip()
+        es_valido, mensaje = validar_abono_final(abono_final)
+        if not es_valido:
+            return mensaje
+        abono_final_value = float(abono_final) if abono_final else None
+
+        # Verificar si el pedido existe
+        if not pedido_existe(pedido_id):
+            return "El pedido seleccionado no existe"
+
+        # Verificar duplicados (excluyendo el abono actual)
+        if abono_duplicado(pedido_id, numero_abonos, id):
+            return "Ya existe un abono de tipo '{}' para este pedido".format(numero_abonos)
 
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor() as cursor:
@@ -131,7 +248,7 @@ def actualizar_abono(id, data_form):
                     estado,
                     monto,
                     pedido_id,
-                    abono_final if abono_final else None,  # Si no se proporciona, se actualiza a NULL
+                    abono_final_value,
                     id
                 )
 
@@ -140,17 +257,24 @@ def actualizar_abono(id, data_form):
                 resultado_update = cursor.rowcount
 
                 if resultado_update > 0:
-                    return True  # Éxito
+                    return True
                 else:
                     return "No se pudo actualizar el abono en la base de datos"
 
     except Exception as e:
-        print(f"Error en actualizar_abono: {e}")
-        return f"Se produjo un error en actualizar_abono: {str(e)}"
-    
+        print(f"Error al actualizar el abono: {e}")
+        return f"Se produjo un error al actualizar el abono: {str(e)}"
 
 def buscarAbonoBD(search_query):
+    """
+    Busca abonos en la base de datos según un término de búsqueda.
+    """
     try:
+        # Sanitizar el término de búsqueda
+        search_query = search_query.strip()
+        if not search_query:
+            return None
+
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                 querySQL = """
@@ -181,12 +305,19 @@ def buscarAbonoBD(search_query):
                 cursor.execute(querySQL, (search_pattern, search_pattern, search_pattern, search_pattern, search_pattern, search_pattern))
                 return cursor.fetchall()
     except Exception as e:
-        print(f"Error en buscarAbonoBD: {e}")
+        print(f"Error al buscar abonos: {e}")
         return None
-    
+
 def eliminar_abono(id):
-    """Elimina un abono por su ID."""
+    """
+    Elimina un abono por su ID.
+    """
     try:
+        # Validar ID del abono
+        es_valido, mensaje = validar_id(id, "ID del abono")
+        if not es_valido:
+            return mensaje
+
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor() as cursor:
                 # Verificar si el abono existe antes de eliminar
@@ -194,7 +325,7 @@ def eliminar_abono(id):
                 existe_antes = cursor.fetchone() is not None
 
                 if not existe_antes:
-                    return False  # El abono no existía para empezar
+                    return False
 
                 # Intentar eliminar
                 cursor.execute("DELETE FROM abono WHERE id = %s", (id,))
@@ -204,9 +335,7 @@ def eliminar_abono(id):
                 cursor.execute("SELECT id FROM abono WHERE id = %s", (id,))
                 existe_despues = cursor.fetchone() is not None
 
-                # Si ya no existe, la eliminación fue exitosa
                 return existe_antes and not existe_despues
     except Exception as e:
-        print(f"Error en eliminar_abono: {e}")
+        print(f"Error al eliminar el abono: {e}")
         return False
-

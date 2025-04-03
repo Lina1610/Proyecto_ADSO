@@ -8,12 +8,12 @@ def crear_super_admin():
 
         # Datos del superadmin
         tipo_documento = 'Cedula ciudadania'
-        documento = '12'
+        documento = '1048847249'
         nombre = 'Super'
         apellido = 'Admin'
         telefono = '3000000000'
-        correo = 'superadmin@example.com'
-        contrasena = generate_password_hash('12', method='scrypt')
+        correo = 'juansebastian812005@gmail.com'
+        contrasena = generate_password_hash('sebastian812005', method='scrypt')
         rol = 'superadmin'
         estado = 'activo'
 

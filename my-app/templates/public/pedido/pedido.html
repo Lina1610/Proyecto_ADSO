@@ -55,7 +55,7 @@
         
             <nav class="navbar">
                 <ul>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('indexPrincipal') }}">Inicio</a></li>
                     <!--<li class="nav-item"><a class="nav-link" href="#sobre_nosotros">Sobre Nosotros</a></li>
                     <li class="nav-item"><a class="nav-link" href="#services">Servicios</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>-->
@@ -189,60 +189,57 @@
         </div>
     </div>
 </div>
-<!-- Modal para Agregar Dirección -->
+<!-- Modal para agregar dirección -->
 <div class="modal fade" id="editarDireccionModal" tabindex="-1" aria-labelledby="editarDireccionModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
+            <div class="modal-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h5 class="modal-title" id="editarDireccionModalLabel">Agregar Nueva Dirección</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <div id="errorMensaje" class="error-mensaje d-none"></div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="formRegistrarDireccion" method="POST" onsubmit="guardarDireccion(event)">
-                    <div class="mb-3">
-                        <label for="nombre_completo" class="form-label">Nombre Completo</label>
-                        <input type="text" name="nombre_completo" id="registrarNombreCompleto" class="form-control" required />
+                <form id="formRegistrarDireccion">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="registrarNombreCompleto" class="form-label">Nombre Completo</label>
+                                <input type="text" name="nombre_completo" id="registrarNombreCompleto" class="form-control" maxlength="160" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="registrarTelefono" class="form-label">Teléfono</label>
+                                <input type="text" name="telefono" id="registrarTelefono" class="form-control" maxlength="13" pattern="[0-9]{7,13}" required onkeypress="return soloNumeros(event)">
+                            </div>
+                            <div class="mb-3">
+                                <label for="registrarDepartamentoId" class="form-label">Departamento</label>
+                                <select class="form-select" name="departamento_id" id="registrarDepartamentoId" required>
+                                    <option value="">Seleccione un departamento</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="registrarMunicipioId" class="form-label">Municipio</label>
+                                <select class="form-select" name="municipio_id" id="registrarMunicipioId" required>
+                                    <option value="">Seleccione un municipio</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="registrarDomicilio" class="form-label">Domicilio</label>
+                                <input type="text" name="domicilio" id="registrarDomicilio" class="form-control" maxlength="500" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="registrarBarrio" class="form-label">Barrio</label>
+                                <input type="text" name="barrio" id="registrarBarrio" class="form-control" maxlength="500" required>
+                            </div>
+                        </div>
                     </div>
-                    
                     <div class="mb-3">
-                        <label for="telefono" class="form-label">Teléfono</label>
-                        <input class="form-control" type="tel" name="telefono" id="registrarTelefono" required />
+                        <label for="registrarReferencias" class="form-label">Referencias</label>
+                        <textarea name="referencias" id="registrarReferencias" class="form-control" rows="2" maxlength="500"></textarea>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="departamento_id" class="form-label">Departamento</label>
-                        <select class="form-select" name="departamento_id" id="registrarDepartamentoId" required>
-                            <option value="">Seleccione un departamento</option>
-                            {% for departamento in departamentos %}
-                                <option value="{{ departamento.id }}">{{ departamento.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="barrio" class="form-label">Barrio</label>
-                        <input class="form-control" type="text" name="barrio" id="registrarBarrio" required />
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="domicilio" class="form-label">Domicilio</label>
-                        <input class="form-control" type="text" name="domicilio" id="registrarDomicilio" required />
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="municipio_id" class="form-label">Municipio</label>
-                        <select class="form-select" name="municipio_id" id="registrarMunicipioId" required>
-                            <option value="">Seleccione un municipio</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="referencias" class="form-label">Referencias</label>
-                        <textarea class="form-control" name="referencias" id="registrarReferencias" rows="4"></textarea>
-                    </div>
-                    
-                    <div class="d-flex justify-content-end mt-4">
-                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Guardar Dirección</button>
                     </div>
                 </form>
@@ -324,6 +321,97 @@
             duration: 1000,
             once: true,
         });
+    // Limpiar el formulario al abrir el modal
+    document.getElementById('editarDireccionModal').addEventListener('show.bs.modal', function () {
+        document.getElementById('formRegistrarDireccion').reset();
+        const inputs = document.querySelectorAll('#formRegistrarDireccion .is-invalid');
+        inputs.forEach(input => input.classList.remove('is-invalid'));
+        document.getElementById('errorMensaje').classList.add('d-none');
+        document.getElementById('errorMensaje').innerHTML = '';
+    });
+
+    // Restaurar el mensaje predeterminado cuando el campo se corrige
+    document.querySelectorAll('input, select, textarea').forEach(input => {
+        input.addEventListener('input', function () {
+            this.setCustomValidity('');
+        });
+    });
+
+    // Solo permitir números en el campo teléfono
+    function soloNumeros(event) {
+        const charCode = event.which ? event.which : event.keyCode;
+        if (charCode < 48 || charCode > 57) {
+            return false;
+        }
+        return true;
+    }
+
+   // Limpiar el formulario al abrir el modal
+   document.getElementById('editarDireccionModal').addEventListener('show.bs.modal', function () {
+        document.getElementById('formRegistrarDireccion').reset();
+        const inputs = document.querySelectorAll('#formRegistrarDireccion .is-invalid');
+        inputs.forEach(input => input.classList.remove('is-invalid'));
+        document.getElementById('errorMensaje').classList.add('d-none');
+        document.getElementById('errorMensaje').innerHTML = '';
+    });
+
+    // Restaurar el mensaje predeterminado cuando el campo se corrige
+    document.querySelectorAll('input, select, textarea').forEach(input => {
+        input.addEventListener('input', function () {
+            this.setCustomValidity('');
+        });
+    });
+
+    // Solo permitir números en el campo teléfono
+    function soloNumeros(event) {
+        const charCode = event.which ? event.which : event.keyCode;
+        if (charCode < 48 || charCode > 57) {
+            return false;
+        }
+        return true;
+    }
+
+    // Validación del formulario al enviarlo (solo para límites de caracteres de otros campos)
+    document.getElementById('formRegistrarDireccion').addEventListener('submit', function(event) {
+        const nombreCompleto = document.getElementById('registrarNombreCompleto');
+        const domicilio = document.getElementById('registrarDomicilio');
+        const barrio = document.getElementById('registrarBarrio');
+        const referencias = document.getElementById('registrarReferencias');
+        const errorMensaje = document.getElementById('errorMensaje');
+
+        let hayErrorCaracteres = false;
+        let mensajeError = '';
+
+        // Validación de límites de caracteres (excluyendo el teléfono)
+        if (nombreCompleto.value.length > 160) {
+            hayErrorCaracteres = true;
+            mensajeError = 'El mínimo es 1 y el máximo es 160 para el nombre completo.';
+        }
+        if (domicilio.value.length > 500) {
+            hayErrorCaracteres = true;
+            mensajeError = 'El mínimo es 1 y el máximo es 500 para el domicilio.';
+        }
+        if (barrio.value.length > 500) {
+            hayErrorCaracteres = true;
+            mensajeError = 'El mínimo es 1 y el máximo es 500 para el barrio.';
+        }
+        if (referencias.value.length > 500) {
+            hayErrorCaracteres = true;
+            mensajeError = 'El mínimo es 1 y el máximo es 500 para las referencias.';
+        }
+
+        // Mostrar mensaje de error si hay problemas con los caracteres
+        if (hayErrorCaracteres) {
+            event.preventDefault(); // Prevenir el envío si hay errores de caracteres
+            errorMensaje.classList.remove('d-none');
+            errorMensaje.innerHTML = mensajeError;
+        } else {
+            errorMensaje.classList.add('d-none');
+            errorMensaje.innerHTML = '';
+            // No necesitamos llamar a guardarDireccion aquí porque el formulario se enviará automáticamente si pasa las validaciones del navegador
+        }
+    });
     </script>
 </body>
+
 </html>

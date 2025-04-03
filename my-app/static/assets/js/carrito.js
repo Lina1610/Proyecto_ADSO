@@ -792,14 +792,14 @@ function mostrarDirecciones(tipoEntrega) {
     }
 }
 
-// ==================== FUNCIONES DE DIRECCIONES ====================
 async function guardarDireccion(event) {
-    event.preventDefault(); // Evitar el envío tradicional del formulario
+    event.preventDefault();
+    console.log("Formulario enviado"); // Depuración
 
-    // Validar sesión
+    // Verificar autenticación
     if (!verificarAutenticacion()) return;
 
-    // Obtener datos del formulario
+    // Recolectar datos del formulario
     const formData = {
         nombre_completo: document.getElementById('registrarNombreCompleto').value.trim(),
         barrio: document.getElementById('registrarBarrio').value.trim(),
@@ -809,12 +809,15 @@ async function guardarDireccion(event) {
         departamento_id: document.getElementById('registrarDepartamentoId').value,
         municipio_id: document.getElementById('registrarMunicipioId').value
     };
+    console.log("Datos enviados:", formData); // Depuración
 
-    // Validar campos del formulario
+    // Validar campos obligatorios
     if (!validarCamposDireccion(formData)) return;
 
     try {
-        const response = await fetch('/guardar-direccion', {
+        mostrarNotificacion('Guardando dirección...', 'info');
+        
+        const response = await fetch('/api/registrar-direccion', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -824,22 +827,34 @@ async function guardarDireccion(event) {
         });
 
         const data = await response.json();
+        console.log("Respuesta del servidor:", data); // Depuración
 
-        if (!response.ok) throw new Error(data.error || "Error desconocido");
+        if (data.success) {
+            mostrarNotificacion(data.message || '¡Dirección guardada exitosamente!', 'success');
+            
+            // Cerrar el modal
+            const modalEl = document.getElementById('editarDireccionModal');
+            if (modalEl) {
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) {
+                    modal.hide();
+                    console.log("Modal cerrado"); // Depuración
+                } else {
+                    console.log("No se pudo obtener instancia del modal"); // Depuración
+                }
+            }
 
-        // Mostrar notificación de éxito
-        mostrarNotificacion('¡Dirección guardada exitosamente!', 'success');
-
-        // Cerrar el modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('editarDireccionModal'));
-        modal.hide();
-
-        // Actualizar la lista de direcciones
-        mostrarDirecciones('Domicilio');
-
+            // Actualizar las direcciones
+            if (typeof mostrarDirecciones === 'function') {
+                mostrarDirecciones('Domicilio');
+                console.log("Direcciones actualizadas"); // Depuración
+            }
+        } else {
+            mostrarNotificacion(data.error || 'Error al guardar la dirección', 'error');
+        }
     } catch (error) {
-        console.error('Error:', error);
-        mostrarNotificacion(error.message || 'Error al guardar la dirección', 'error');
+        console.error('Error en guardarDireccion:', error);
+        mostrarNotificacion('Error de conexión con el servidor', 'error');
     }
 }
 function validarCamposDireccion(formData) {
@@ -918,12 +933,18 @@ function handleError(error) {
 document.addEventListener('DOMContentLoaded', () => {
     cargarCarrito();
     
+    // Vincular el evento submit al formulario
+    const form = document.getElementById('formRegistrarDireccion');
+    if (form) {
+        form.addEventListener('submit', guardarDireccion);
+        console.log("Evento submit vinculado al formulario"); // Depuración
+    }
+
     // Cargar departamentos cuando se abre el modal
     const modalDireccion = document.getElementById('editarDireccionModal');
     if (modalDireccion) {
         modalDireccion.addEventListener('show.bs.modal', () => {
             cargarDepartamentos();
-            // Reiniciar municipios al abrir el modal
             const selectMunicipio = document.getElementById('registrarMunicipioId');
             selectMunicipio.innerHTML = '<option value="">Seleccione un municipio</option>';
         });

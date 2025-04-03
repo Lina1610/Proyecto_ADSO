@@ -3,17 +3,26 @@
 <!-- Cambiando el title -->
 {% block title %}Crud con Python 🐍 | Editar Usuario{% endblock %}
 
+<!-- Custom CSS -->
+{% block customCSS %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/file.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/footer.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/editar.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/position_indicator.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/registro_usuario.css') }}" />
+
+{% endblock %}
+
 <!-- Inicio del block -->
 {% block body %}
-
-<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/editar.css') }}" />
-
-
 <div class="card" style="border-radius: 0px !important">
   <div class="row justify-content-center mb-2">
     <div class="col-md-12">
       <h3 class="text-center mt-5 mb-3">
-        <a href="/lista-de-usuarios">
+        <a href="/lista-de-usuarios" class="text-decoration-none me-3">
           <i class="bi bi-arrow-left-circle"></i>
         </a>
         EDITAR USUARIO
@@ -21,14 +30,14 @@
       <hr />
     </div>
   </div>
-    <!-- Mensaje de contexto -->
-    <div class="context-indicator d-flex align-items-center">
-      <i class="bi bi-people-fill context-icon"></i>
-      <div>
-        <h6 class="mb-1">Vista de editar usuarios</h6>
-        
-      </div>
+  
+  <!-- Mensaje de contexto -->
+  <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-people-fill context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de editar usuarios</h6>
     </div>
+  </div>
 
   <div class="row justify-content-center mb-2">
     <div class="col-md-10">
@@ -36,88 +45,140 @@
         class="form-horizontal mx-auto"
         method="POST"
         action="{{ url_for('actualizarUsuario') }}"
-        autocomplete="off">
+        autocomplete="off"
+        id="editarForm">
         <input type="hidden" name="id" value="{{ usuario.id }}">
 
         <div class="row">
+          <!-- Columna 1 -->
           <div class="col-md-6">
-            <label for="nombre" class="form-label">Nombre</label>
-            <input
-              type="text"
-              name="nombre"
-              class="form-control"
-              value="{{ usuario.nombre }}"
-              required />
-          </div>
-          <div class="col-md-6">
-            <label for="apellido" class="form-label">Apellido</label>
-            <input
-              type="text"
-              name="apellido"
-              class="form-control"
-              value="{{ usuario.apellido }}"
-              required />
-          </div>
-        </div>
+            <!-- Nombre -->
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input 
+                type="text" 
+                name="nombre" 
+                id="nombre"
+                class="form-control" 
+                value="{{ request.form.get('nombre', usuario.nombre) }}"
+                minlength="2" 
+                maxlength="100" 
+                required 
+                oninvalid="this.setCustomValidity('El nombre debe tener al menos 2 caracteres')"
+                oninput="this.setCustomValidity('')"
+              />
+            </div>
 
-        <div class="row mt-2">
-          <div class="col-md-6">
-            <label for="tipo_documento" class="form-label">Tipo de documento</label>
-            <select class="form-select" name="tipo_documento" required>
-              <option value="Cedula ciudadania" {% if usuario.tipo_documento == 'Cedula ciudadania' %}selected{% endif %}>Cédula de Ciudadanía</option>
-              <option value="Tarjeta identidad" {% if usuario.tipo_documento == 'Tarjeta identidad' %}selected{% endif %}>Tarjeta de Identidad</option>
-              <option value="Cedula extranjeria" {% if usuario.tipo_documento == 'Cedula extranjeria' %}selected{% endif %}>Cédula de Extranjería</option>
-              <option value="NIT" {% if usuario.tipo_documento == 'NIT' %}selected{% endif %}>NIT</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label for="documento" class="form-label">Documento</label>
-            <input
-              type="text"
-              name="documento"
-              class="form-control"
-              value="{{ usuario.documento }}"
-              required />
-          </div>
-        </div>
+            <!-- Tipo de Documento -->
+            <div class="mb-3">
+              <label for="tipo_documento" class="form-label">Tipo de Documento</label>
+              <select class="form-select" name="tipo_documento" required
+                oninvalid="this.setCustomValidity('Por favor, selecciona un tipo de documento')"
+                onchange="this.setCustomValidity('')">
+                <option value="Cedula ciudadania" {% if request.form.get('tipo_documento', usuario.tipo_documento) == 'Cedula ciudadania' %}selected{% endif %}>Cédula de Ciudadanía</option>
+                <option value="Tarjeta identidad" {% if request.form.get('tipo_documento', usuario.tipo_documento) == 'Tarjeta identidad' %}selected{% endif %}>Tarjeta de Identidad</option>
+                <option value="Cedula extranjeria" {% if request.form.get('tipo_documento', usuario.tipo_documento) == 'Cedula extranjeria' %}selected{% endif %}>Cédula de Extranjería</option>
+                <option value="NIT" {% if request.form.get('tipo_documento', usuario.tipo_documento) == 'NIT' %}selected{% endif %}>NIT</option>
+              </select>
+            </div>
 
-        <div class="row mt-2">
-          <div class="col-md-6">
-            <label for="correo" class="form-label">Correo</label>
-            <input
-              type="email"
-              name="correo"
-              class="form-control"
-              value="{{ usuario.correo }}"
-              required />
-          </div>
-          <div class="col-md-6">
-            <label for="telefono" class="form-label">Teléfono</label>
-            <input
-              type="text"
-              name="telefono"
-              class="form-control"
-              value="{{ usuario.telefono }}"
-              required />
-          </div>
-        </div>
+            <!-- Correo -->
+            <div class="mb-3">
+              <label for="correo" class="form-label">Correo</label>
+              <input 
+                type="email" 
+                name="correo" 
+                id="correo"
+                class="form-control" 
+                value="{{ request.form.get('correo', usuario.correo) }}"
+                maxlength="50" 
+                required 
+                oninvalid="this.setCustomValidity('Por favor, ingresa un correo válido')"
+                oninput="this.setCustomValidity('')"
+              />
+              {% if 'correo_duplicado' in get_flashed_messages() %}
+                <div class="error-message">El correo ya está registrado</div>
+              {% endif %}
+            </div>
 
-        <div class="row mt-2">
-          <div class="col-md-6">
-            <label for="rol" class="form-label">Rol</label>
-            <select class="form-select" name="rol" required>
-              <option value="administrador" {% if usuario.rol == 'administrador' %}selected{% endif %}>Administrador</option>
-              <option value="cliente" {% if usuario.rol == 'cliente' %}selected{% endif %}>Cliente</option>
-              <option value="proveedor" {% if usuario.rol == 'proveedor' %}selected{% endif %}>Proveedor</option>
-              <option value="empleado" {% if usuario.rol == 'empleado' %}selected{% endif %}>Empleado</option>
-            </select>
+            <!-- Rol -->
+            <div class="mb-3">
+              <label for="rol" class="form-label">Rol</label>
+              <select class="form-select" name="rol" required
+                oninvalid="this.setCustomValidity('Por favor, selecciona un rol')"
+                onchange="this.setCustomValidity('')">
+                <option value="administrador" {% if request.form.get('rol', usuario.rol) == 'administrador' %}selected{% endif %}>Administrador</option>
+                <option value="cliente" {% if request.form.get('rol', usuario.rol) == 'cliente' %}selected{% endif %}>Cliente</option>
+                <option value="proveedor" {% if request.form.get('rol', usuario.rol) == 'proveedor' %}selected{% endif %}>Proveedor</option>
+                <option value="empleado" {% if request.form.get('rol', usuario.rol) == 'empleado' %}selected{% endif %}>Empleado</option>
+              </select>
+            </div>
           </div>
+
+          <!-- Columna 2 -->
           <div class="col-md-6">
-            <label for="estado" class="form-label">Estado</label>
-            <select class="form-select" name="estado" required>
-              <option value="activo" {% if usuario.estado == 'activo' %}selected{% endif %}>Activo</option>
-              <option value="inactivo" {% if usuario.estado == 'inactivo' %}selected{% endif %}>Inactivo</option>
-            </select>
+            <!-- Apellido -->
+            <div class="mb-3">
+              <label for="apellido" class="form-label">Apellido</label>
+              <input 
+                type="text" 
+                name="apellido" 
+                id="apellido"
+                class="form-control" 
+                value="{{ request.form.get('apellido', usuario.apellido) }}"
+                minlength="2" 
+                maxlength="100" 
+                required 
+                oninvalid="this.setCustomValidity('El apellido debe tener al menos 2 caracteres')"
+                oninput="this.setCustomValidity('')"
+              />
+            </div>
+
+            <!-- Documento -->
+            <div class="mb-3">
+              <label for="documento" class="form-label">Documento</label>
+              <input 
+                type="number" 
+                name="documento" 
+                id="documento"
+                class="form-control" 
+                value="{{ request.form.get('documento', usuario.documento) }}"
+                min="1" 
+                required 
+                oninvalid="this.setCustomValidity('El documento debe tener al menos 10 dígitos')"
+                oninput="this.setCustomValidity('')"
+              />
+              {% if 'documento_duplicado' in get_flashed_messages() %}
+                <div class="error-message">El documento ya está registrado</div>
+              {% endif %}
+            </div>
+
+            <!-- Teléfono -->
+            <div class="mb-3">
+              <label for="telefono" class="form-label">Teléfono</label>
+              <input 
+                type="number" 
+                name="telefono" 
+                id="telefono"
+                class="form-control" 
+                value="{{ request.form.get('telefono', usuario.telefono) }}"
+                min="1" 
+                required 
+                oninvalid="this.setCustomValidity('El teléfono debe tener al menos 7 dígitos')"
+                oninput="this.setCustomValidity('')"
+              />
+            </div>
+
+            <!-- Estado -->
+            <div class="mb-3">
+              <label for="estado" class="form-label">Estado</label>
+              <select class="form-select" name="estado" required
+                oninvalid="this.setCustomValidity('Por favor, selecciona un estado')"
+                onchange="this.setCustomValidity('')">
+                <option value="activo" {% if request.form.get('estado', usuario.estado) == 'activo' %}selected{% endif %}>Activo</option>
+                <option value="inactivo" {% if request.form.get('estado', usuario.estado) == 'inactivo' %}selected{% endif %}>Inactivo</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -132,25 +193,50 @@
       <!-- Formulario para cambiar la contraseña -->
       <hr>
       <h4 class="text-center mt-4 mb-3">Cambiar Contraseña</h4>
-      <form
-        class="form-horizontal mx-auto"
-        method="POST"
-        action="{{ url_for('cambiar_contrasena') }}"
-        autocomplete="off">
+      <form method="POST" action="{{ url_for('cambiar_contrasena') }}" autocomplete="off" id="passwordForm">
         <input type="hidden" name="user_id" value="{{ usuario.id }}">
-
+        
         <div class="row">
-          <div class="col-md-12">
-            <label for="nueva_password" class="form-label">Nueva Contraseña</label>
-            <input
-              type="password"
-              name="nueva_password"
-              class="form-control"
-              placeholder="Ingrese la nueva contraseña"
-              required />
+          <div class="col-md-6">
+            <div class="mb-3 position-relative">
+              <label for="new_pass_user" class="form-label">Nueva Contraseña</label>
+              <div class="input-group">
+                <input 
+                  type="password" 
+                  id="new_pass_user" 
+                  name="new_pass_user" 
+                  class="form-control" 
+                  minlength="8" 
+                  maxlength="20" 
+                  required
+                />
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3 position-relative">
+              <label for="repetir_pass_user" class="form-label">Repetir Contraseña</label>
+              <div class="input-group">
+                <input 
+                  type="password" 
+                  id="repetir_pass_user" 
+                  name="repetir_pass_user" 
+                  class="form-control" 
+                  minlength="8" 
+                  maxlength="20" 
+                  required
+                />
+                <button class="btn btn-outline-secondary" type="button" id="toggleRepeatPassword">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-
+        
         <div class="mb-3 mt-4 text-center">
           <button type="submit" class="btn rounded-pill btn-warning">
             Cambiar Contraseña
@@ -161,4 +247,8 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block customJS %}
+<script src="{{ url_for('static', filename='assets/js/registro_usuario.js') }}"></script>
 {% endblock %}

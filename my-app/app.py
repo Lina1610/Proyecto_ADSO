@@ -1,26 +1,26 @@
-# app.py
-from flask import Flask
+from flask import Flask, session, redirect, url_for, render_template
 from dotenv import load_dotenv
 from flask_mail import Mail
 import os
-from config import Config  # Import the config class
+from config import Config
 
+
+
+# Cargar variables de entorno
 load_dotenv()
 
+# Crear aplicación Flask
 app = Flask(__name__)
-application = app
+application = app  # Para compatibilidad con algunos servidores
 
-# Load configuration from Config class
+# Configuración
 app.config.from_object(Config)
+app.secret_key = os.getenv('SECRET_KEY')
 
-# Initialize Flask-Mail
+# Inicializar Flask-Mail
 mail = Mail(app)
 
-# Secret key and other configs
-app.secret_key = os.getenv('SECRET_KEY')
-# ... resto de configuraciones ...
-
-# Registra todos los blueprints
+# Importar y registrar blueprints
 from routers.router_carrito import carrito_bp
 from routers.router_pedido import pedido_bp
 from routers.router_soporte import soporte_bp
@@ -28,6 +28,8 @@ from routers.router_soporte import soporte_bp
 app.register_blueprint(carrito_bp, url_prefix='/carrito')
 app.register_blueprint(pedido_bp, url_prefix='/pedido')
 app.register_blueprint(soporte_bp, url_prefix='/soporte')
+
+
 
 if __name__ == '__main__':
     app.run(ssl_context='adhoc')

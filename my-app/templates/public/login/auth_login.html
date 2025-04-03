@@ -4,7 +4,7 @@
       <div class="card">
         <div class="card-body">
           <div class="app-brand justify-content-center">
-            <a href="{{ url_for('home') }}"> <!-- Enlace corregido -->
+            <a href="{{ url_for('inicio') }}"> <!-- Enlace corregido -->
               <span class="app-brand-logo">
                 <img
                   class="logo"
@@ -28,7 +28,11 @@
                 name="documento"
                 placeholder="Escribe tu número de documento"
                 autofocus
-                required />
+                required
+                pattern="[0-9]+"
+                maxlength="15"
+                oninvalid="this.setCustomValidity('Por favor, ingrese solo números.')"
+                oninput="this.setCustomValidity('')" />
             </div>
             <div class="mb-3 form-password-toggle">
               <div class="d-flex justify-content-between">
@@ -43,9 +47,12 @@
                   class="form-control"
                   name="contrasena"
                   id="contrasena"
-                  placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                  placeholder="············"
                   aria-describedby="password"
-                  required />
+                  required
+                  maxlength="50"
+                  oninvalid="this.setCustomValidity('Por favor, ingrese su contraseña.')"
+                  oninput="this.setCustomValidity('')" />
               </div>
             </div>
             <div class="mb-3">

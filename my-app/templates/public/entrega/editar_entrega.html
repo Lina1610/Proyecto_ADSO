@@ -30,17 +30,25 @@
 
   <div class="row justify-content-center mb-4">
     <div class="col-md-8">
-      <div class="card-body p-4">
-        <form action="{{ url_for('viewEditarEntrega', id=entrega.id) }}" method="POST">
-          <!-- Campo hidden para mantener direccion_id -->
-          <input type="hidden" name="direccion_id" value="{{ entrega.direccion_id }}">
-          
+      <div class="card-body p-4" style="background-color: #f8f9fa; border-radius: 10px;">
+        <!-- Mostrar mensajes de error -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="alert alert-danger" role="alert">
+              {% for category, message in messages %}
+                <p>{{ message }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('viewEditarEntrega', id=entrega_id) }}" method="POST" onsubmit="return validarFormulario()">
           <!-- Campo Tipo de Entrega -->
           <div class="mb-4">
-            <label for="tipo" class="form-label">
+            <label for="tipo" class="form-label" style="font-weight: 600; color: #2c3e50;">
               <i class="bi bi-truck me-2"></i>Tipo de Entrega
             </label>
-            <select class="form-select" id="tipo" name="tipo" required>
+            <select class="form-select" id="tipo" name="tipo" required style="border-radius: 8px; border: 1px solid #ced4da;">
               <option value="Domicilio" {% if entrega.tipo == 'Domicilio' %}selected{% endif %}>Domicilio</option>
               <option value="Presencial" {% if entrega.tipo == 'Presencial' %}selected{% endif %}>Presencial</option>
             </select>
@@ -48,25 +56,25 @@
 
           <!-- Campo Estado de Entrega -->
           <div class="mb-4">
-            <label for="estado" class="form-label">
+            <label for="estado" class="form-label" style="font-weight: 600; color: #2c3e50;">
               <i class="bi bi-info-circle me-2"></i>Estado de la Entrega
             </label>
-            <select class="form-select" id="estado" name="estado" required>
+            <select class="form-select" id="estado" name="estado" required style="border-radius: 8px; border: 1px solid #ced4da;">
               <option value="Pendiente" {% if entrega.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
               <option value="En Proceso" {% if entrega.estado == 'En Proceso' %}selected{% endif %}>En Proceso</option>
               <option value="En camino" {% if entrega.estado == 'En camino' %}selected{% endif %}>En camino</option>
               <option value="Entregado" {% if entrega.estado == 'Entregado' %}selected{% endif %}>Entregado</option>
             </select>
           </div>
+          
+          <input type="hidden" name="direccion_id" value="{{ entrega.direccion_id if entrega.direccion_id else '' }}">
 
           <!-- Campo Costo de Domicilio -->
           <div class="mb-4">
-            <label for="costo_domicilio" class="form-label">
+            <label for="costo_domicilio" class="form-label" style="font-weight: 600; color: #2c3e50;">
               <i class="bi bi-cash-coin me-2"></i>Costo de Domicilio
             </label>
-            <input type="number" class="form-control" id="costo_domicilio" name="costo_domicilio" 
-                   value="{{ entrega.costo_domicilio if entrega.costo_domicilio else '' }}" 
-                   step="0.01" style="border-radius: 8px; border: 1px solid #ced4da;">
+            <input type="text" class="form-control" id="costo_domicilio" name="costo_domicilio" value="{{ entrega.costo_domicilio | default('') }}" style="border-radius: 8px; border: 1px solid #ced4da;" oninput="validarCostoDomicilio(this)">
           </div>
 
           <!-- Campo Usuario (No editable) -->
@@ -74,30 +82,56 @@
             <label for="nombre_usuario" class="form-label" style="font-weight: 600; color: #2c3e50;">
               <i class="bi bi-person me-2"></i>Usuario
             </label>
-            <input type="text" class="form-control" id="nombre_usuario" 
-                   value="{{ entrega.nombre_usuario if entrega.nombre_usuario else 'N/A' }}" 
-                   readonly style="background-color: #f8f9fa;">
+            <input 
+              type="text" 
+              class="form-control" 
+              id="nombre_usuario" 
+              name="nombre_usuario" 
+              value="{{ entrega.nombre_usuario | default('') }}" 
+              readonly 
+              style="
+                border-radius: 8px;
+                border: 1px solid #ced4da;
+                background-color: #e9ecef;
+                color: #495057;
+                cursor: not-allowed;
+              ">
           </div>
 
-          <!-- Campo Dirección (No editable) - Versión mejorada -->
+          <!-- Campo Dirección (No editable) -->
           <div class="mb-4">
             <label for="direccion_completa" class="form-label" style="font-weight: 600; color: #2c3e50;">
               <i class="bi bi-geo-alt me-2"></i>Dirección Completa
             </label>
-            <div class="card p-3" style="background-color: #f8f9fa; border-radius: 8px;">
-              <p class="mb-1"><strong>Nombre:</strong> {{ entrega.nombre_completo if entrega.nombre_completo else 'N/A' }}</p>
-              <p class="mb-1"><strong>Dirección:</strong> {{ entrega.domicilio if entrega.domicilio else 'N/A' }}</p>
-              <p class="mb-1"><strong>Teléfono:</strong> {{ entrega.telefono if entrega.telefono else 'N/A' }}</p>
-              <p class="mb-1"><strong>Ubicación:</strong> 
-                {{ entrega.municipio if entrega.municipio else 'N/A' }}, 
-                {{ entrega.departamento if entrega.departamento else 'N/A' }}
-              </p>
-            </div>
+            <textarea 
+              class="form-control" 
+              id="direccion_completa" 
+              name="direccion_completa" 
+              readonly 
+              style="
+                border-radius: 8px;
+                border: 1px solid #ced4da;
+                background-color: #e9ecef;
+                color: #495057;
+                cursor: not-allowed;
+                resize: none;
+              ">
+              {{ entrega.nombre_completo | default('') }} - {{ entrega.domicilio | default('') }} - Teléfono: {{ entrega.telefono | default('') }} - {{ entrega.municipio | default('') }}, {{ entrega.departamento | default('') }}
+            </textarea>
           </div>
 
           <!-- Botones de Acción -->
           <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary btn-lg">
+            <button type="submit" class="btn btn-primary btn-lg" style="
+              border-radius: 10px;
+              padding: 12px 30px;
+              background: linear-gradient(135deg, #6a11cb, #2575fc);
+              border: none;
+              color: white;
+              font-weight: 600;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+              transition: all 0.3s ease;
+            ">
               <i class="bi bi-save me-2" style="font-size: 1.2rem;"></i>Guardar Cambios
             </button>
           </div>
@@ -106,5 +140,64 @@
     </div>
   </div>
 </div>
+
+<script>
+  function validarCostoDomicilio(input) {
+    let value = input.value;
+
+    // Permitir solo números y un punto decimal (formato: 1234567890.12)
+    const regex = /^\d*\.?\d*$/;
+    if (!regex.test(value)) {
+      input.value = value.replace(/[^0-9.]/g, ''); // Eliminar caracteres no permitidos
+      value = input.value;
+    }
+
+    // Asegurar que solo haya un punto decimal
+    const decimalCount = (value.match(/\./g) || []).length;
+    if (decimalCount > 1) {
+      input.value = value.substring(0, value.lastIndexOf('.'));
+      value = input.value;
+    }
+
+    // Dividir el valor en parte entera y decimal (si existe)
+    const parts = value.split('.');
+    const parteEntera = parts[0];
+    let parteDecimal = parts[1] || '';
+
+    // Limitar la parte entera a 10 dígitos
+    if (parteEntera.length > 10) {
+      input.value = parteEntera.substring(0, 10) + (parteDecimal ? '.' + parteDecimal : '');
+      value = input.value;
+      return;
+    }
+
+    // Limitar la parte decimal a 2 dígitos
+    if (parteDecimal.length > 2) {
+      input.value = parteEntera + '.' + parteDecimal.substring(0, 2);
+      value = input.value;
+      return;
+    }
+
+    // Limitar el total a 13 caracteres (10 dígitos + 1 punto + 2 decimales)
+    if (value.length > 13) {
+      input.value = value.substring(0, 13);
+      value = input.value;
+      return;
+    }
+
+    // Validar que no sea un número negativo
+    if (value && parseFloat(value) < 0) {
+      input.value = '';
+      value = input.value;
+      return;
+    }
+  }
+
+  function validarFormulario() {
+    const costoDomicilio = document.getElementById('costo_domicilio');
+    validarCostoDomicilio(costoDomicilio);
+    return true; // Permitimos el envío porque las validaciones ya están hechas en tiempo real
+  }
+</script>
 
 {% endblock %}

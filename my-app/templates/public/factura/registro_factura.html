@@ -43,15 +43,8 @@
       <form
         class="form-horizontal mx-auto"
         method="POST"
-
         action="{{ url_for('viewFormFactura') }}"
-
-        action="registrar-factura"
-
-
-        action="registrar-factura"
-        action="{{ url_for('viewFormFactura') }}"
-
+        autocomplete="off">
         <div class="card-body">
           <div class="row">
             <!-- Columna Izquierda -->
@@ -62,19 +55,28 @@
                   class="form-select"
                   name="estado"
                   id="estado"
-                  required>
-                  <option value="" selected disabled>Seleccione estado</option>
-                  <option value="Pendiente">Pendiente</option>
-                  <option value="Facturado">Facturado</option>
+                  required
+                  oninvalid="this.setCustomValidity('Por favor, selecciona un estado para la factura.')"
+                  oninput="this.setCustomValidity('')">
+                  <option value="" disabled>Seleccione estado</option>
+                  <option value="Pendiente" {% if form_data.get('estado') == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                  <option value="Facturado" {% if form_data.get('estado') == 'Facturado' %}selected{% endif %}>Facturado</option>
                 </select>
               </div>
 
               <div class="mb-3">
                 <label for="pedido_id" class="form-label">Pedido</label>
-                <select class="form-select" name="pedido_id" id="pedido_id" required>
-                  <option value="" selected disabled>Seleccione un pedido</option>
+                <select
+                  class="form-select"
+                  name="pedido_id"
+                  id="pedido_id"
+                  required
+                  oninvalid="this.setCustomValidity('Por favor, selecciona un pedido.')"
+                  oninput="this.setCustomValidity('')">
+                  <option value="" disabled>Seleccione un pedido</option>
                   {% for pedido in pedidos %}
-                    <option value="{{ pedido.pedido_id }}" data-users-id="{{ pedido.users_id }}">
+                    <option value="{{ pedido.pedido_id }}" data-users-id="{{ pedido.users_id }}"
+                            {% if form_data.get('pedido_id') == pedido.pedido_id|string %}selected{% endif %}>
                       Pedido #{{ pedido.pedido_id }} - Usuario: {{ pedido.nombre_usuario }}
                     </option>
                   {% endfor %}
@@ -102,13 +104,22 @@
 
 <!-- Custom JS -->
 {% block customJS %}
-
 <script>
   // Actualizar el campo oculto users_id cuando se selecciona un pedido
   document.getElementById('pedido_id').addEventListener('change', function() {
     const selectedOption = this.options[this.selectedIndex];
     const usersId = selectedOption.getAttribute('data-users-id');
     document.getElementById('users_id').value = usersId;
+  });
+
+  // Asegurarse de que el campo users_id tenga el valor correcto al cargar la página
+  window.addEventListener('load', function() {
+    const pedidoSelect = document.getElementById('pedido_id');
+    const selectedOption = pedidoSelect.options[pedidoSelect.selectedIndex];
+    if (selectedOption && selectedOption.value) {
+      const usersId = selectedOption.getAttribute('data-users-id');
+      document.getElementById('users_id').value = usersId;
+    }
   });
 </script>
 {% endblock %}

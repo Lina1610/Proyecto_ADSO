@@ -52,12 +52,45 @@ def validar_costo_domicilio(costo_domicilio_str):
     except ValueError:
         return None, "El campo 'costo_domicilio' debe ser un número válido."
 
-def validar_direccion_id(direccion_id_str):
-    """Valida y convierte el ID de la dirección."""
+def validar_direccion_id(direccion_id_str, tipo_entrega):
+    """
+    Valida el ID de dirección solo para entregas a domicilio
+    
+    Args:
+        direccion_id_str (str): ID en formato texto
+        tipo_entrega (str): Tipo de entrega ('Domicilio' o 'Presencial')
+    
+    Returns:
+        tuple: (id_validado, error_message)
+    """
+    # Si no es entrega a domicilio, no necesita validación de dirección
+    if tipo_entrega != 'Domicilio':
+        return None, None
+    
+    # Validación para entregas a domicilio
     try:
-        return int(direccion_id_str), None
+        if not direccion_id_str or not direccion_id_str.strip():
+            return None, "Para entregas a domicilio, se requiere una dirección válida"
+        
+        direccion_id = int(direccion_id_str)
+        
+        if direccion_id <= 0:
+            return None, "El ID de dirección debe ser un número positivo"
+        
+        # Verificar que la dirección existe y está activa
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                cursor.execute("""
+                    SELECT id FROM direccion 
+                    WHERE id = %s AND estado = 'Activo'
+                """, (direccion_id,))
+                if not cursor.fetchone():
+                    return None, "La dirección no existe o no está activa"
+        
+        return direccion_id, None
+        
     except ValueError:
-        return None, "El campo 'direccion_id' debe ser un número entero válido."
+        return None, "El ID de dirección debe ser un número entero válido"
 
 def verificar_direccion_existe(direccion_id):
     """Verifica que el ID de la dirección exista en la base de datos."""

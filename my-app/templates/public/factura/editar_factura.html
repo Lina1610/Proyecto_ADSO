@@ -34,61 +34,54 @@
   <div class="row justify-content-center mb-4">
     <div class="col-md-10">
       <div class="card-body">
-        <form action="{{ url_for('viewEditarFactura', id=factura.id) }}" method="POST">
+        <form action="{{ url_for('viewEditarFactura', id=factura.id) }}" method="POST" autocomplete="off">
           <div class="row">
             <!-- Estado de la Factura -->
             <div class="col-md-6 mb-3">
               <label for="estado" class="form-label" style="font-weight: bold;">
                 Estado de la Factura
               </label>
-              <select class="form-select" id="estado" name="estado" required>
-                <option value="Pendiente" {% if factura.estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
-                <option value="Facturado" {% if factura.estado == 'Facturado' %}selected{% endif %}>Facturado</option>
+              <select
+                class="form-select"
+                id="estado"
+                name="estado"
+                required
+                oninvalid="this.setCustomValidity('Por favor, selecciona un estado para la factura.')"
+                oninput="this.setCustomValidity('')">
+                <option value="" disabled>Seleccione estado</option>
+                <option value="Pendiente" {% if form_data.get('estado', factura.estado) == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                <option value="Facturado" {% if form_data.get('estado', factura.estado) == 'Facturado' %}selected{% endif %}>Facturado</option>
               </select>
             </div>
 
-            <!-- Fecha de la Factura (editable) -->
-            <div class="col-md-6 mb-3">
-              <label for="fecha" class="form-label" style="font-weight: bold;">
-                Fecha de la Factura
-              </label>
-              <input
-                type="datetime-local"
-                class="form-control"
-                id="fecha"
-                name="fecha"
-                value="{{ factura.fecha.strftime('%Y-%m-%dT%H:%M') if factura.fecha else '' }}"
-                required
-              >
-            </div>
-          </div>
-
-          <div class="row">
             <!-- ID del Pedido -->
             <div class="col-md-6 mb-3">
               <label for="pedido_id" class="form-label" style="font-weight: bold;">
-                ID del Pedido
+                Pedido
               </label>
-              <input
-                type="number"
-                class="form-control"
-                id="pedido_id"
+              <select
+                class="form-select"
                 name="pedido_id"
-                value="{{ factura.pedido_id }}"
+                id="pedido_id"
                 required
-              >
+                oninvalid="this.setCustomValidity('Por favor, selecciona un pedido.')"
+                oninput="this.setCustomValidity('')">
+                <option value="" disabled>Seleccione un pedido</option>
+                {% for pedido in pedidos %}
+                  <option value="{{ pedido.pedido_id }}"
+                          {% if form_data.get('pedido_id', factura.pedido_id|string) == pedido.pedido_id|string %}selected{% endif %}>
+                    Pedido #{{ pedido.pedido_id }} - Usuario: {{ pedido.nombre_usuario }}
+                  </option>
+                {% endfor %}
+              </select>
             </div>
           </div>
-       
 
           <!-- Botones de Guardar y Cancelar -->
           <div class="text-center mt-4">
             <button type="submit" class="btn btn-primary">
               <i class="bi bi-save"></i> Guardar Cambios
             </button>
-            <br>
-            <br>
-           
             <a href="/lista-de-facturas" class="btn btn-secondary">
               <i class="bi bi-x-circle"></i> Cancelar
             </a>
@@ -98,5 +91,4 @@
     </div>
   </div>
 </div>
-
 {% endblock %}

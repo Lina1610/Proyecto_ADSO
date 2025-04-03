@@ -1162,3 +1162,202 @@ span{
     }
   }
 
+/*codigo pegado*/
+/* Añade esto al CSS existente */
+
+/* Estructura del menú */
+/* Estructura del menú */
+.menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 5%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 1000;
+}
+
+.menu-checkbox {
+  display: none;
+}
+
+.menu-right-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  order: 2;
+}
+
+/* Logo */
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+/* Menú hamburguesa */
+.menu-label {
+  display: none;
+  cursor: pointer;
+  z-index: 1001;
+  padding: 15px;
+}
+
+.hamburger-line {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background: #FFF;
+  margin: 5px 0;
+  transition: all 0.3s ease;
+}
+
+/* Navbar */
+.navbar {
+  margin-left: auto;
+}
+
+.navbar ul {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-item {
+  list-style: none;
+}
+
+.nav-link {
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 10px 15px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: block;
+}
+
+.nav-link:hover {
+  color: #CE967B;
+}
+
+/* Opciones de usuario */
+.user-options {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+/* Avatar y nombre de usuario (visibles en pantalla completa) */
+.user-avatar,
+.user-name {
+  display: inline-block;
+  color: white;
+}
+
+.menu-link, 
+.user-menu a, 
+.user-menu .menu-link,
+.user-options .menu-link {
+  color: white !important; /* Color blanco para Mi Perfil */
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.menu-link:hover {
+  color: #CE967B !important;
+}
+
+.logout-btn {
+  color: #ff6b6b !important; /* Asegura que Cerrar Sesión sea rojo */
+}
+
+/* Versión móvil */
+@media (max-width: 991px) {
+  .menu-label {
+    display: block;
+  }
+  
+  /* Reposicionamiento completo del navbar */
+  .navbar {
+    position: fixed;
+    top: 0;
+    right: 0; /* Fija a la derecha */
+    left: auto; /* Elimina posición izquierda */
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background: #000000e6;
+    padding-top: 70px;
+    transform: translateX(100%); /* Mueve fuera de la pantalla a la derecha */
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    margin-left: 0; /* Elimina el auto margin */
+  }
+  
+  #menu:checked ~ .navbar {
+    transform: translateX(0); /* Mueve a posición visible */
+  }
+  
+  .navbar ul {
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+  }
+  
+  .nav-item {
+    width: 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .nav-link {
+    padding: 15px 20px;
+  }
+  
+  /* Oculta el avatar y nombre SOLO en móvil */
+  .user-avatar,
+  .user-name {
+    display: none !important;
+  }
+  
+  /* Reorganiza las opciones de usuario */
+  .user-options {
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+  }
+  
+  .user-options a,
+  .user-menu a,
+  .user-menu .menu-link {
+    padding: 15px 20px;
+    width: 100%;
+    display: block;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: white !important; /* Mi Perfil en blanco */
+  }
+  
+  .user-options .logout-btn {
+    color: #ff6b6b !important; /* Cerrar Sesión en rojo */
+  }
+  
+  /* Animación del menú hamburguesa */
+  #menu:checked ~ .menu-label .hamburger-line:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  
+  #menu:checked ~ .menu-label .hamburger-line:nth-child(2) {
+    opacity: 0;
+  }
+  
+  #menu:checked ~ .menu-label .hamburger-line:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+}

@@ -1,4 +1,3 @@
-
 from app import app
 from flask import render_template, request, flash, redirect, url_for, session, jsonify
 from mysql.connector.errors import Error
@@ -34,7 +33,7 @@ def eliminar_factura(id):
                 querySQL = "DELETE FROM factura WHERE id = %s"
                 cursor.execute(querySQL, (id,))
                 conexion_MySQLdb.commit()
-                return cursor.rowcount  # Retorna el número de filas afectadas
+                return cursor.rowcount
     except Exception as e:
         print(f"Error en eliminar_factura: {e}")
         return None
@@ -42,22 +41,23 @@ def eliminar_factura(id):
 # Ruta para registrar una factura
 @app.route('/registrar-factura', methods=['GET', 'POST'])
 def viewFormFactura():
-    if 'conectado' not in session:
-        flash('Primero debes iniciar sesión.', 'error')
-        return redirect(url_for('inicio'))
+    if 'conectado' in session:
+        # Obtener la lista de pedidos para el formulario
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                cursor.execute("""
+                    SELECT p.id AS pedido_id, u.nombre AS nombre_usuario
+                    FROM pedido p
+                    JOIN users u ON p.users_id = u.id
+                """)
+                pedidos = cursor.fetchall()
 
-    if request.method == 'POST':
-        try:
+        if request.method == 'POST':
             # Obtener los datos del formulario
             dataForm = {
-                'estado': request.form.get('estado'),
-                'pedido_id': request.form.get('pedido_id')
+                'estado': request.form.get('estado', ''),
+                'pedido_id': request.form.get('pedido_id', '')
             }
-
-            # Validar campos obligatorios
-            if not dataForm['pedido_id']:
-                flash('El ID del pedido es obligatorio', 'error')
-                return redirect(url_for('viewFormFactura'))
 
             # Procesar la factura
             resultado = procesar_factura(dataForm)
@@ -65,33 +65,25 @@ def viewFormFactura():
             # Manejar el resultado
             if isinstance(resultado, int) and resultado > 0:
                 flash('Factura registrada correctamente.', 'success')
-                return redirect(url_for('lista_facturas'))  # Redirigir a lista de facturas
-            else:
-                flash(f'Error al registrar factura: {resultado}', 'error')
                 return redirect(url_for('viewFormFactura'))
-                
-        except Exception as e:
-            flash(f'Error inesperado: {str(e)}', 'error')
-            return redirect(url_for('viewFormFactura'))
+            else:
+                flash(resultado, 'error')
+                # Volver a renderizar el formulario con los datos ingresados
+                return render_template(
+                    'public/factura/registro_factura.html',
+                    pedidos=pedidos,
+                    form_data=dataForm
+                )
 
-    # Si es GET, mostrar el formulario con los datos necesarios
-    with connectionBD() as conexion_MySQLdb:
-        with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-            # Obtener la lista de pedidos con el nombre del usuario asociado
-            cursor.execute("""
-                SELECT p.id AS pedido_id, u.nombre AS nombre_usuario, 
-                       p.fecha, p.estado AS estado_pedido
-                FROM pedido p
-                JOIN users u ON p.users_id = u.id
-                WHERE p.id NOT IN (SELECT pedido_id FROM factura)  # Solo pedidos sin factura
-                ORDER BY p.fecha DESC
-            """)
-            pedidos = cursor.fetchall()
-
-    return render_template(
-        'public/factura/registro_factura.html',
-        pedidos=pedidos
-    )
+        # Si es GET, mostrar el formulario vacío
+        return render_template(
+            'public/factura/registro_factura.html',
+            pedidos=pedidos,
+            form_data={}
+        )
+    else:
+        flash('Primero debes iniciar sesión.', 'error')
+        return redirect(url_for('inicio'))
 
 # Ruta para la lista de facturas
 @app.route('/lista-de-facturas')
@@ -107,14 +99,13 @@ def lista_facturas():
 @app.route("/buscando-factura", methods=['POST'])
 def viewBuscarFacturaBD():
     try:
-        search_query = request.json.get('busqueda')  # Obtener el término de búsqueda desde el JSON
+        search_query = request.json.get('busqueda')
         if not search_query:
             return jsonify({'error': 'No search query provided'}), 400
 
-        resultadoBusqueda = buscarFacturaBD(search_query)  # Buscar facturas en la base de datos
+        resultadoBusqueda = buscarFacturaBD(search_query)
 
         if resultadoBusqueda:
-            # Si hay resultados, generar el HTML de la tabla
             html_resultados = ""
             for factura in resultadoBusqueda:
                 html_resultados += f"""
@@ -138,7 +129,6 @@ def viewBuscarFacturaBD():
                 """
             return jsonify({'success': True, 'html': html_resultados})
         else:
-            # Si no hay resultados, devolver un mensaje en HTML
             mensaje_html = f"""
             <tr>
                 <td colspan="5" style="text-align:center;color: red;font-weight: bold;">
@@ -149,33 +139,31 @@ def viewBuscarFacturaBD():
             return jsonify({'success': False, 'html': mensaje_html})
 
     except Exception as e:
-        print(f"Error en viewBuscarFacturaBD: {e}")  # Log de depuración
-        return jsonify({'error': str(e)}), 500  # Manejo de errores
+        print(f"Error en viewBuscarFacturaBD: {e}")
+        return jsonify({'error': str(e)}), 500
 
 # Ruta para eliminar una factura
 @app.route('/eliminar-factura/<int:id>', methods=['GET'])
 def eliminar_factura_route(id):
-    if 'conectado' in session:  # Verifica si el usuario está autenticado
-        resultado = eliminar_factura(id)  # Llama a la función para eliminar la factura
-        print(f"Resultado de eliminar_factura: {resultado}, tipo: {type(resultado)}")  # Depuración
+    if 'conectado' in session:
+        resultado = eliminar_factura(id)
+        print(f"Resultado de eliminar_factura: {resultado}, tipo: {type(resultado)}")
 
-        if resultado == True:  # Comprobación explícita
+        if resultado == True:
             flash('Factura eliminada correctamente.', 'success')
         else:
             flash('Error al eliminar la factura', 'error')
 
-        # Redireccionar a la lista de facturas
-        return redirect(url_for('lista_facturas'))  # Ajusta 'lista_facturas' a tu ruta correcta
+        return redirect(url_for('lista_facturas'))
     else:
         flash('Usuario no autenticado', 'error')
-        return redirect(url_for('inicio'))  # Redirigir al inicio si no está autenticado
+        return redirect(url_for('inicio'))
 
 @app.route('/detalles-factura/<int:id>')
 def detalles_factura(id):
     if 'conectado' in session:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                # Consulta SQL para obtener detalles de la factura y el pedido asociado
                 sql = """
                     SELECT 
                         factura.id AS factura_id,
@@ -207,7 +195,6 @@ def detalles_factura(id):
                 cursor.execute(sql, (id,))
                 factura_pedido = cursor.fetchone()
 
-                # Depuración: Imprimir los datos obtenidos
                 print("Datos de la factura y pedido:", factura_pedido)
 
         if factura_pedido:
@@ -223,28 +210,43 @@ def detalles_factura(id):
 @app.route('/editar-factura/<int:id>', methods=['GET', 'POST'])
 def viewEditarFactura(id):
     if 'conectado' in session:
-        if request.method == 'GET':
-            with connectionBD() as conexion_MySQLdb:
-                with conexion_MySQLdb.cursor(dictionary=True) as cursor:
-                    cursor.execute("SELECT * FROM factura WHERE id = %s", (id,))
-                    factura = cursor.fetchone()
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True) as cursor:
+                cursor.execute("SELECT * FROM factura WHERE id = %s", (id,))
+                factura = cursor.fetchone()
 
-                    if not factura:
-                        flash('Factura no encontrada', 'error')
-                        return redirect(url_for('lista_facturas'))
+                if not factura:
+                    flash('Factura no encontrada', 'error')
+                    return redirect(url_for('lista_facturas'))
 
-            return render_template('public/factura/editar_factura.html', factura=factura)
+                cursor.execute("""
+                    SELECT p.id AS pedido_id, u.nombre AS nombre_usuario
+                    FROM pedido p
+                    JOIN users u ON p.users_id = u.id
+                """)
+                pedidos = cursor.fetchall()
 
-        elif request.method == 'POST':
-            data_form = request.form
+        if request.method == 'POST':
+            data_form = {
+                'estado': request.form.get('estado', ''),
+                'pedido_id': request.form.get('pedido_id', '')
+            }
+
             resultado = actualizar_factura(id, data_form)
 
             if resultado is True:
                 flash('Factura actualizada correctamente', 'success')
+                return redirect(url_for('lista_facturas'))
             else:
                 flash(f'Error al actualizar la factura: {resultado}', 'error')
+                return render_template(
+                    'public/factura/editar_factura.html',
+                    factura=factura,
+                    pedidos=pedidos,
+                    form_data=data_form
+                )
 
-            return redirect(url_for('lista_facturas'))
+        return render_template('public/factura/editar_factura.html', factura=factura, pedidos=pedidos, form_data={})
     else:
         flash('Primero debes iniciar sesión.', 'error')
         return redirect(url_for('inicio'))

@@ -1,101 +1,169 @@
 {% extends 'public/base_cpanel.html' %}
 
+<!-- Cambiando el title -->
 {% block title %}Crud con Python 🐍 | Detalles de Abono{% endblock %}
 
+<!-- Inicio del block -->
 {% block body %}
+{{ super() }}
 
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/detalles.css') }}" />
+
+<!---->
 {% if abono_pedido %}
-<div class="card" style="border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+<div class="card" style="border-radius: 0px !important">
   <div class="row justify-content-center mb-2">
     <div class="col-md-12">
-      <h3 class="text-center mt-5 mb-4" style="color: #2c3e50; font-weight: bold;">
-        <a href="/lista-de-abonos" style="color: #2c3e50; text-decoration: none;">
+      <h3 class="text-center mt-5 mb-3">
+        <a href="/lista-de-abonos">
           <i class="bi bi-arrow-left-circle"></i>
         </a>
-        DETALLES DEL ABONO
+        INFORMACIÓN DEL ABONO
       </h3>
-      <hr style="border-top: 2px solid #2c3e50;" />
+      <hr />
     </div>
   </div>
 
   <!-- Mensaje de contexto -->
   <div class="context-indicator d-flex align-items-center">
-    <i class="bi bi-people-fill context-icon"></i>
+    <i class="bi bi-currency-dollar context-icon"></i>
     <div>
       <h6 class="mb-1">Vista de detalles de abono</h6>
-      
     </div>
   </div>
 
-  <div class="row justify-content-center mb-4">
+  <div class="row justify-content-center mb-2">
     <div class="col-md-10">
       <div class="card-body">
-        <div class="card mb-4" style="border: none; background-color: #f8f9fa;">
-          <div class="card-header" style="background-color: #2c3e50; color: white; font-weight: bold;">
-            Detalles del Abono
+        <div class="row">
+          <div class="col-md-6">
+            <label for="abono_id" class="form-label">
+              ID del Abono
+            </label>
+            <br />
+            {{ abono_pedido.abono_id }}
           </div>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">ID del Abono</label>
-                <p>{{ abono_pedido.abono_id }}</p>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Número de Abono</label>
-                <p>{{ abono_pedido.numero_abonos }}</p>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Estado del Abono</label>
-                <p>{{ abono_pedido.estado_abono }}</p>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Monto del Abono</label>
-                <p>$ {{ '{:,.0f}'.format(abono_pedido.monto).replace(',', '.') if abono_pedido.monto is not none else 'No disponible' }}</p>
-              </div>
-            </div>
-            <!-- Nuevo campo: abono_final -->
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Abono Final</label>
-                <p>{{ abono_pedido.abono_final if abono_pedido.abono_final else 'No disponible' }}</p>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">ID del Pedido</label>
-                <p>{{ abono_pedido.pedido_id }}</p>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Fecha del Pedido</label>
-                <p>{{ abono_pedido.fecha_pedido }}</p>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Fecha de Entrega</label>
-                <p>{{ abono_pedido.fechaEntrega }}</p>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Hora de Entrega</label>
-                <p>{{ abono_pedido.horaEntrega }}</p>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Estado del Pedido</label>
-                <p>{{ abono_pedido.estado_pedido }}</p>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Total del Pedido</label>
-                <p>$ {{ '{:,.0f}'.format(abono_pedido.total).replace(',', '.') if abono_pedido.total is not none else 'No disponible' }}</p>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label" style="font-weight: bold;">Nombre del Usuario</label>
-                <p>{{ abono_pedido.nombre_usuario }}</p>
-              </div>
-            </div>
+          <div class="col-md-6">
+            <label for="numero_abonos" class="form-label">
+              Número de Abono
+            </label>
+            <br />
+            {{ abono_pedido.numero_abonos }}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="estado_abono" class="form-label">
+              Estado del Abono
+            </label>
+            <br />
+            {{ abono_pedido.estado_abono }}
+          </div>
+          <div class="col-md-6">
+            <label for="monto" class="form-label">
+              Monto del Abono
+            </label>
+            <br />
+            $ {{ '{:,.0f}'.format(abono_pedido.monto).replace(',', '.') if abono_pedido.monto is not none else 'No disponible' }}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="abono_final" class="form-label">
+              Abono Final
+            </label>
+            <br />
+            {{ abono_pedido.abono_final if abono_pedido.abono_final else 'No disponible' }}
+          </div>
+          <div class="col-md-6">
+            <label for="pedido_id" class="form-label">
+              ID del Pedido
+            </label>
+            <br />
+            {{ abono_pedido.pedido_id }}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="fecha_pedido" class="form-label">
+              Fecha del Pedido
+            </label>
+            <br />
+            {{ abono_pedido.fecha_pedido }}
+          </div>
+          <div class="col-md-6">
+            <label for="fechaEntrega" class="form-label">
+              Fecha de Entrega
+            </label>
+            <br />
+            {{ abono_pedido.fechaEntrega }}
+          </div>
+        </div>
+        
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="horaEntrega" class="form-label">
+              Hora de Entrega
+            </label>
+            <br />
+            {{ abono_pedido.horaEntrega }}
+          </div>
+          <div class="col-md-6">
+            <label for="estado_pedido" class="form-label">
+              Estado del Pedido
+            </label>
+            <br />
+            {{ abono_pedido.estado_pedido }}
+          </div>
+        </div>
+        
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="total" class="form-label">
+              Total del Pedido
+            </label>
+            <br />
+            $ {{ '{:,.0f}'.format(abono_pedido.total).replace(',', '.') if abono_pedido.total is not none else 'No disponible' }}
+          </div>
+          <div class="col-md-6">
+            <label for="nombre_usuario" class="form-label">
+              Nombre del Usuario
+            </label>
+            <br />
+            {{ abono_pedido.nombre_usuario }}
+          </div>
+        </div>
+        
+        <div class="row mt-2">
+          <div class="col-md-12 text-center mt-4">
+            <button id="btnDescargarPDF" class="btn btn-danger btn-lg" style="
+              border-radius: 10px;
+              padding: 12px 30px;
+              background: linear-gradient(135deg, #dc3545, #c82333);
+              border: none;
+              color: white;
+              font-weight: 600;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+              transition: all 0.3s ease;
+            ">
+              <i class="bi bi-file-earmark-pdf me-2" style="font-size: 1.2rem;"></i>Descargar PDF
+            </button>
+            <button id="btnDescargarImagen" class="btn btn-success btn-lg" style="
+              border-radius: 10px;
+              padding: 12px 30px;
+              background: linear-gradient(135deg, #28a745, #218838);
+              border: none;
+              color: white;
+              font-weight: 600;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+              transition: all 0.3s ease;
+              margin-left: 20px;
+            ">
+              <i class="bi bi-image me-2" style="font-size: 1.2rem;"></i>Descargar Imagen
+            </button>
           </div>
         </div>
       </div>
@@ -108,5 +176,33 @@
   <hr style="border-top: 2px solid #e74c3c;" />
 </h2>
 {% endif %}
+
+<script>
+  document.getElementById('btnDescargarPDF').addEventListener('click', function () {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("Detalles del Abono", 105, 20, null, null, "center");
+    doc.setFontSize(12);
+    doc.text("Información detallada del abono", 105, 30, null, null, "center");
+    
+    const abonoContent = document.querySelector('.card-body').innerText;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text(abonoContent, 10, 50);
+    
+    doc.setFontSize(10);
+    doc.text("Gracias por su transacción!", 105, 280, null, null, "center");
+    
+    doc.save('detalles_abono.pdf');
+  });
+
+  document.getElementById('btnDescargarImagen').addEventListener('click', function() {
+    // Código para descargar como imagen
+    alert('Funcionalidad de descarga de imagen en desarrollo');
+  });
+</script>
 
 {% endblock %}

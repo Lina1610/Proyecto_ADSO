@@ -191,7 +191,6 @@ def obtener_pedidos(user_id=None):
                     SELECT p.id, p.fecha, p.fechaEntrega, p.horaEntrega, p.estado,
                            u.nombre AS usuario_nombre, pr.nombre AS producto_nombre,
                            mp.metodo AS metodo_pago, e.tipo AS tipo_entrega,
-                           e.costo_domicilio,  # ¡Este es el campo que faltaba!
                            COALESCE((SELECT SUM(dp.total) FROM detalle_pedido dp WHERE dp.pedido_id = p.id), 0) AS total
                     FROM pedido p
                     JOIN users u ON p.users_id = u.id
@@ -199,6 +198,7 @@ def obtener_pedidos(user_id=None):
                     JOIN metodo_pago mp ON p.metodo_pago_id = mp.id
                     JOIN entrega e ON p.entrega_id = e.id
                 """
+                # Si se proporciona un user_id, filtrar por ese cliente
                 if user_id:
                     querySQL += " WHERE p.users_id = %s"
                     querySQL += " ORDER BY p.id DESC"
@@ -250,54 +250,215 @@ def eliminar_pedido(id):
         print(f"Error en eliminar_pedido: {e}")
         return None
     
-def actualizar_pedido(id, data_form):
+def procesar_pedido(dataForm):
+    """
+    Procesa y guarda un pedido en la base de datos con validaciones.
+    """
     try:
+        # Validar que los campos no estén vacíos
+        campos_requeridos = [
+            'fechaEntrega', 'horaEntrega', 'estado', 'users_id', 
+            'producto_id', 'metodo_pago', 'tipo_entrega'
+        ]
+        for campo in campos_requeridos:
+            if campo not in dataForm or not dataForm[campo].strip():
+                return f"El campo {campo} es obligatorio."
+
+        # Convertir fechaEntrega y horaEntrega a objetos válidos
+        fecha_entrega_str = dataForm['fechaEntrega']
+        hora_entrega_str = dataForm['horaEntrega']
+        
+        try:
+            fecha_entrega = datetime.strptime(fecha_entrega_str, '%Y-%m-%d').date()
+            hora_entrega = datetime.strptime(hora_entrega_str, '%H:%M').time()
+        except ValueError:
+            return "Formato de fecha u hora inválido. Usa YYYY-MM-DD para fecha y HH:MM para hora."
+
+        # Validar que la fecha no sea anterior a hoy
+        hoy = date.today()
+        if fecha_entrega < hoy:
+            return "La fecha de entrega no puede ser anterior a hoy."
+
+        # Validar que la hora no sea anterior si la fecha es hoy
+        ahora = datetime.now().time()
+        if fecha_entrega == hoy and hora_entrega < ahora:
+            return "La hora de entrega no puede ser anterior a la hora actual si es para hoy."
+
+        # Obtener el tipo de entrega
+        tipo_entrega = dataForm['tipo_entrega'].strip()
+        print(f"Tipo de entrega recibido del formulario: '{tipo_entrega}'")
+
+        # Obtener el método de pago
+        metodo_pago_id = int(dataForm['metodo_pago'])
+        print(f"Valor de metodo_pago_id: {metodo_pago_id}")
+
+        # Paso 1: Obtener el ID de la entrega basado en el tipo de entrega
         with connectionBD() as conexion_MySQLdb:
-            # Usar un cursor con buffered=True
             with conexion_MySQLdb.cursor(dictionary=True, buffered=True) as cursor:
-                # Validar que los campos no estén vacíos
-                campos_requeridos = [
-                    'fechaEntrega', 'horaEntrega', 'estado',
-                    'users_id', 'producto_id', 'metodo_pago', 'tipo_entrega'
-                ]
-                for campo in campos_requeridos:
-                    if campo not in data_form or not data_form[campo].strip():
-                        return f"El campo {campo} es obligatorio."
+                # Verificar que el método de pago exista
+                cursor.execute("SELECT id FROM metodo_pago WHERE id = %s", (metodo_pago_id,))
+                metodo_pago = cursor.fetchone()
+                if not metodo_pago:
+                    return f"El método de pago con ID {metodo_pago_id} no existe."
 
-                # Obtener el ID de la entrega basado en el tipo de entrega
-                cursor.execute("SELECT id FROM entrega WHERE tipo = %s", (data_form['tipo_entrega'],))
-                entrega = cursor.fetchone()  # Consumir el resultado
-
+                # Obtener el ID de la entrega
+                cursor.execute("SELECT id FROM entrega WHERE tipo = %s", (tipo_entrega,))
+                entrega = cursor.fetchone()
                 if not entrega:
-                    return f"Tipo de entrega no válido: {data_form['tipo_entrega']}"
-
+                    cursor.execute("SELECT id, tipo FROM entrega")
+                    todas_entregas = cursor.fetchall()
+                    for e in todas_entregas:
+                        if e['tipo'].lower() == tipo_entrega.lower():
+                            entrega = {'id': e['id']}
+                            break
+                    if not entrega:
+                        return f"Tipo de entrega no válido: {tipo_entrega}. Valores disponibles: {[e['tipo'] for e in todas_entregas]}"
+                
                 entrega_id = entrega['id']
+                print(f"ID de entrega seleccionado: {entrega_id}")
 
-                # Actualizar el pedido en la base de datos
+            # Paso 2: Insertar en la tabla pedido
+            with conexion_MySQLdb.cursor() as cursor:
+                sql = """
+                    INSERT INTO pedido (
+                        fecha, fechaEntrega, horaEntrega, estado, 
+                        users_id, producto_id, metodo_pago_id, entrega_id
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """
+                valores = (
+                    datetime.now().strftime('%Y-%m-%d'),
+                    fecha_entrega_str,
+                    hora_entrega_str,
+                    dataForm['estado'],
+                    int(dataForm['users_id']),
+                    int(dataForm['producto_id']),
+                    metodo_pago_id,
+                    entrega_id
+                )
+                cursor.execute(sql, valores)
+                conexion_MySQLdb.commit()
+                resultado_insert = cursor.rowcount
+
+            if resultado_insert > 0:
+                return resultado_insert  # Éxito
+            else:
+                return "No se pudo insertar el pedido en la base de datos."
+
+    except Exception as e:
+        print(f"Error en procesar_pedido: {e}")
+        return f"Se produjo un error al procesar el pedido: {str(e)}"
+
+import datetime
+from conexion.conexionBD import connectionBD
+
+def actualizar_pedido(id, dataForm):
+    try:
+        # Validar que los campos no estén vacíos
+        campos_requeridos = [
+            'fechaEntrega', 'horaEntrega', 'estado', 'users_id', 
+            'producto_id', 'metodo_pago', 'tipo_entrega'
+        ]
+        for campo in campos_requeridos:
+            if campo not in dataForm or not dataForm[campo].strip():
+                return f"El campo {campo} es obligatorio."
+
+        # Convertir fechaEntrega y horaEntrega
+        fecha_entrega_str = dataForm['fechaEntrega'].strip()
+        hora_entrega_str = dataForm['horaEntrega'].strip()
+        print(f"Fecha recibida: '{fecha_entrega_str}' (tipo: {type(fecha_entrega_str)})")
+        print(f"Hora recibida: '{hora_entrega_str}' (tipo: {type(hora_entrega_str)})")
+
+        # Verificar si los valores están vacíos
+        if not fecha_entrega_str or not hora_entrega_str:
+            return "Los campos fechaEntrega y horaEntrega no pueden estar vacíos."
+
+        # Intentar parsear con manejo de formatos adicionales
+        try:
+            fecha_entrega = datetime.datetime.strptime(fecha_entrega_str, '%Y-%m-%d').date()
+        except ValueError:
+            try:
+                # Manejar formatos alternativos como DD/MM/YYYY si es necesario
+                fecha_entrega = datetime.datetime.strptime(fecha_entrega_str, '%d/%m/%Y').date()
+                fecha_entrega_str = fecha_entrega.strftime('%Y-%m-%d')  # Convertir al formato esperado
+            except ValueError:
+                print(f"Error al parsear fecha: Fecha: '{fecha_entrega_str}'")
+                return "Formato de fecha inválido. Usa YYYY-MM-DD."
+
+        try:
+            hora_entrega = datetime.datetime.strptime(hora_entrega_str, '%H:%M').time()
+        except ValueError:
+            try:
+                # Manejar HH:MM:SS si viene con segundos
+                hora_entrega = datetime.datetime.strptime(hora_entrega_str, '%H:%M:%S').time()
+                hora_entrega_str = hora_entrega.strftime('%H:%M')  # Convertir al formato esperado
+            except ValueError:
+                print(f"Error al parsear hora: Hora: '{hora_entrega_str}'")
+                return "Formato de hora inválido. Usa HH:MM."
+
+        # Validar que la fecha no sea anterior a hoy
+        hoy = datetime.date.today()
+        if fecha_entrega < hoy:
+            return "La fecha de entrega no puede ser anterior a hoy."
+
+        # Validar que la hora no sea anterior si la fecha es hoy
+        ahora = datetime.datetime.now().time()
+        if fecha_entrega == hoy and hora_entrega < ahora:
+            return "La hora de entrega no puede ser anterior a la hora actual si es para hoy."
+
+        # Obtener el tipo de entrega
+        tipo_entrega = dataForm['tipo_entrega'].strip()
+        print(f"Tipo de entrega recibido del formulario: '{tipo_entrega}'")
+
+        # Obtener el método de pago
+        metodo_pago_id = int(dataForm['metodo_pago'])
+        print(f"Valor de metodo_pago_id: {metodo_pago_id}")
+
+        # Actualizar el pedido en la base de datos
+        with connectionBD() as conexion_MySQLdb:
+            with conexion_MySQLdb.cursor(dictionary=True, buffered=True) as cursor:
+                # Verificar que el método de pago exista
+                cursor.execute("SELECT id FROM metodo_pago WHERE id = %s", (metodo_pago_id,))
+                metodo_pago = cursor.fetchone()
+                if not metodo_pago:
+                    return f"El método de pago con ID {metodo_pago_id} no existe."
+
+                # Obtener el ID de la entrega
+                cursor.execute("SELECT id FROM entrega WHERE tipo = %s", (tipo_entrega,))
+                entrega = cursor.fetchone()
+                if not entrega:
+                    cursor.execute("SELECT id, tipo FROM entrega")
+                    todas_entregas = cursor.fetchall()
+                    for e in todas_entregas:
+                        if e['tipo'].lower() == tipo_entrega.lower():
+                            entrega = {'id': e['id']}
+                            break
+                    if not entrega:
+                        return f"Tipo de entrega no válido: {tipo_entrega}. Valores disponibles: {[e['tipo'] for e in todas_entregas]}"
+                
+                entrega_id = entrega['id']
+                print(f"ID de entrega seleccionado: {entrega_id}")
+
+                # Actualizar el pedido
                 sql = """
                     UPDATE pedido 
-                    SET fechaEntrega = %s, horaEntrega = %s, estado = %s,
+                    SET fechaEntrega = %s, horaEntrega = %s, estado = %s, 
                         users_id = %s, producto_id = %s, metodo_pago_id = %s, entrega_id = %s
                     WHERE id = %s
                 """
-                valores = (                   
-                    data_form['fechaEntrega'],
-                    data_form['horaEntrega'],
-                    data_form['estado'],
-                    int(data_form['users_id']),
-                    int(data_form['producto_id']),
-                    int(data_form['metodo_pago']),
+                valores = (
+                    fecha_entrega_str,
+                    hora_entrega_str,
+                    dataForm['estado'],
+                    int(dataForm['users_id']),
+                    int(dataForm['producto_id']),
+                    metodo_pago_id,
                     entrega_id,
                     id
                 )
                 cursor.execute(sql, valores)
                 conexion_MySQLdb.commit()
-
-                if cursor.rowcount > 0:
-                    return True  # Éxito
-                else:
-                    return "No se encontró el pedido o no se realizaron cambios."
+                return cursor.rowcount > 0
 
     except Exception as e:
-        print(f"Error en actualizar_pedido: {e}")  # Depuración
+        print(f"Error en actualizar_pedido: {e}")
         return f"Se produjo un error al actualizar el pedido: {str(e)}"
