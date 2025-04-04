@@ -1,0 +1,194 @@
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido de Tamales</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style_order.css') }}" />
+</head>
+
+<body>
+    <!-- Fondo llamativo -->
+    <div class="fondo-llamativo"></div>
+
+    <!-- Menú -->
+    <header class="menu-dinamico">
+        <div class="logo">
+            <img src="/static/assets/img/logo.png" alt="Logo Tamales Doña María">
+            <span class="titulo">Tamales Doña María</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('indexPrincipal') }}">Inicio</a></li>
+                <li><a href="{{ url_for('carrito') }}">Carrito</a></li>
+                <li><a href="#">Pago</a></li>
+                <li><a href="#">Mi Cuenta</a></li>
+                <li>
+                    <div class="carrito-icono" onclick="mostrarCarrito()">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="contador">0</span>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="contenido">
+        <section class="producto">
+            <img src="/static/assets/img/tamales_cantidad.jpeg" alt="Tamal">
+            <div class="detalles-producto">
+                <h2>Tamal de Pollo</h2>
+                <p>Delicioso tamal de pollo con salsa verde, hecho con ingredientes frescos y tradicionales.</p>
+                <div class="cantidad">
+                    <label for="cantidad">Cantidad:</label>
+                    <input type="number" id="cantidad" value="1" min="1" class="input-cantidad">
+                </div>
+                <button class="boton-agregar" onclick="agregarAlCarrito()">Agregar al carrito</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Botón "Volver arriba" -->
+    <button id="btn-volver-arriba" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3 class="footer-title">Tamales Doña María</h3>
+                <p class="footer-text">
+                    "El sabor de la tradición en cada bocado."
+                </p>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">Síguenos</h3>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">Contacto</h3>
+                <p class="footer-text">
+                    <strong>Teléfono:</strong> +57 312 345 6789<br>
+                    <strong>Email:</strong> info@tamalesdonamaria.com
+                </p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copy">
+                &copy; 2023 Tamales Doña María. Todos los derechos reservados.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/static/assets/js/pedido.js"></script>
+</body>
+
+=======
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido de Tamales</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style_order.css') }}" />
+</head>
+
+<body>
+    <!-- Fondo llamativo -->
+    <div class="fondo-llamativo"></div>
+
+    <!-- Menú -->
+    <header class="menu-dinamico">
+        <div class="logo">
+            <img src="/static/assets/img/logo.png" alt="Logo Tamales Doña María">
+            <span class="titulo">Tamales Doña María</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('indexPrincipal') }}">Inicio</a></li>
+                <li><a href="{{ url_for('carrito') }}">Carrito</a></li>
+                <li><a href="#">Pago</a></li>
+                <li><a href="#">Mi Cuenta</a></li>
+                <li>
+                    <div class="carrito-icono" onclick="mostrarCarrito()">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="contador">0</span>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="contenido">
+        <section class="producto">
+            <img src="/static/assets/img/tamales_cantidad.jpeg" alt="Tamal">
+            <div class="detalles-producto">
+                <h2>Tamal de Pollo</h2>
+                <p>Delicioso tamal de pollo con salsa verde, hecho con ingredientes frescos y tradicionales.</p>
+                <div class="cantidad">
+                    <label for="cantidad">Cantidad:</label>
+                    <input type="number" id="cantidad" value="1" min="1" class="input-cantidad">
+                </div>
+                <button class="boton-agregar" onclick="agregarAlCarrito()">Agregar al carrito</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Botón "Volver arriba" -->
+    <button id="btn-volver-arriba" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3 class="footer-title">Tamales Doña María</h3>
+                <p class="footer-text">
+                    "El sabor de la tradición en cada bocado."
+                </p>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">Síguenos</h3>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3 class="footer-title">Contacto</h3>
+                <p class="footer-text">
+                    <strong>Teléfono:</strong> +57 312 345 6789<br>
+                    <strong>Email:</strong> info@tamalesdonamaria.com
+                </p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="footer-copy">
+                &copy; 2023 Tamales Doña María. Todos los derechos reservados.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/static/assets/js/pedido.js"></script>
+</body>
+
+>>>>>>> d5ce205891d78ea7d44bfbd42dc788ef2379c9b3
+</html>

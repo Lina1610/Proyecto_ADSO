@@ -1,0 +1,76 @@
+/* Estilos para el botón de filtros */
+#toggleFiltros {
+    margin-bottom: -2px; /* Aumentar el margen inferior */
+}
+
+/* Estilos para el panel de filtros */
+#panelFiltros {
+    margin-bottom: 30px; /* Aumentar el margen inferior */
+}
+
+/* Estilos para la tabla */
+#tbl_pedidos {
+    margin-top: 20px; /* Aumentar el margen superior */
+}
+
+/* Estilos para el contenedor de la tabla */
+.table-responsive {
+    margin-top: 20px; /* Aumentar el margen superior */
+}
+
+/* Estilo para el contenedor del buscador */
+#search-container {
+    position: relative;
+    width: 100%;
+  }
+
+  #toggleFiltros {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 600; /* Texto más grueso */
+    border-radius: 6px;
+    background-color: #0d6efd; /* Color azul sólido */
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  /* Estilo para el campo de búsqueda */
+  #search_pedidos {
+    padding-left: 40px; /* Espacio para el icono */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23CE967B' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 15px center;
+    background-size: 16px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+  }
+  
+  /* Efecto hover y focus */
+  #search_pedidos:hover,
+  #search_pedidos:focus {
+    border-color: #CE967B;
+    box-shadow: 0 0 0 0.2rem rgba(206, 150, 123, 0.25);
+    outline: none;
+  }
+  
+  /* Versión responsive */
+  @media (max-width: 768px) {
+    #search_pedidos {
+      padding-left: 35px;
+      background-position: 12px center;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    #search_pedidos {
+      padding-left: 32px;
+      background-size: 14px;
+      background-position: 10px center;
+    }
+  }

@@ -1,0 +1,1363 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+}
+.notificacion {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 25px;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.notificacion.mostrar {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.notificacion.success {
+  background-color: #28a745;
+}
+
+.notificacion.error {
+  background-color: #dc3545;
+}
+
+.notificacion.info {
+  background-color: #17a2b8;
+}
+
+.notificacion.warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+body {
+
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+    
+  font-family: 'Poppins', sans-serif;
+
+}
+
+
+img{
+  max-width: 200%;
+}
+.container{
+    max-width: 1200px;
+    margin: 0 auto;
+  
+  }
+
+.header{
+  display: flex;
+  align-items: center;
+  background-color: #eff3f4;
+  padding: 130px 0 0 0;
+}
+/* Estilos del menú */
+.menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 5% !important; /* Reducción vertical */
+  background: rgba(0, 0, 0, 0.85) !important; /* Negro con 85% opacidad */
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+.menu-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 15px 50px; /* Padding horizontal para el contenido */
+}
+/* Logo */
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+/* MENÚ EN SCROLL - MANTENER CONTRASTE */
+.menu.scrolled {
+  background: rgba(0,0,0,0.95) !important; /* Negro con transparencia mínima */
+  backdrop-filter: blur(5px); /* Efecto vidrio */
+}
+
+
+/* --- Contenedor principal del menú --- */
+.navbar {
+  display: flex;
+  gap: 30px;
+}
+
+/* --- Lista de elementos --- */
+.navbar ul {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+/* --- Elementos individuales --- */
+.nav-item {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  position: static; /* Eliminar posicionamiento relativo */
+}
+
+/* --- Enlaces --- */
+.nav-link {
+  display: flex !important;
+  align-items: center;
+  height: 100%;
+  padding: 0 15px !important;
+  position: relative;
+  transition: all 0.3s;
+  white-space: nowrap; /* Evitar saltos de línea */
+}
+
+/* --- Alineación del ícono de usuario --- */
+.user-container {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: 10px;
+}
+
+
+
+/* --- Eliminar floats residuales --- */
+.menu .navbar ul li a {
+  font-size: 18px;
+  padding: 15px 25px; /* Padding horizontal aumentado */
+  color: #FFFDFC;
+  display: block;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+.nav-list {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+}
+
+.nav-item a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 18px;
+  padding: 10px;
+  transition: color 0.3s ease-in-out;
+}
+
+.nav-item a:hover {
+  color: #f1c40f;
+}
+
+/* Estilos del usuario y carrito */
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+
+
+
+
+/* Estado al hacer scroll */
+.menu.scrolled {
+  background: #000000eb;
+  padding: 15px 8%;
+}
+
+/* Color de los enlaces al hacer scroll */
+.menu.scrolled .navbar ul li a {
+  color: #ffffff !important;
+}
+/* Menú fijo completo */
+.menu-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #000;
+    z-index: 1000;
+    padding: 15px 0;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.3);
+}
+
+.menu-fixed .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Ajuste para el contenido debajo del menú */
+body {
+    padding-top: 80px;
+}
+
+/* Color de los elementos del menú */
+.logo {
+    color: #fff !important;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.nav-link {
+    color: #fff !important;
+    font-size: 16px;
+    padding: 10px 20px !important;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #CE967B !important;
+    transform: translateY(-2px);
+}
+
+/* Versión móvil */
+@media (max-width: 992px) {
+    .menu-fixed {
+        padding: 10px 0;
+    }
+    
+    .navbar {
+        position: fixed;
+        top: 70px;
+        left: -100%;
+        width: 100%;
+        height: calc(100vh - 70px);
+        background: #000;
+        transition: 0.3s;
+        padding: 20px;
+    }
+    
+    .navbar.active {
+        left: 0;
+    }
+    
+    .nav-item {
+        margin: 15px 0;
+    }
+    
+    .menu-toggle {
+        display: block !important;
+        color: #fff;
+        font-size: 24px;
+        cursor: pointer;
+    }
+}
+
+/* ALINEACIÓN PERFECTA DEL MENÚ */
+
+.navbar ul {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 60px; /* Altura igual a la barra de navegación */
+  padding: 0 15px;
+  transition: all 0.3s ease;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 10px !important;
+}
+
+/* Contenedor usuario y carrito */
+.user-container {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  height: 100%;
+}
+
+/* Avatar y nombre de usuario */
+.user-info-navbar {
+  display: flex;
+  align-items: center; /* Alineación vertical */
+  gap: 10px; /* Espacio entre ícono y texto */
+  height: 100%;
+}
+
+.user-avatar {
+  font-size: 1.4rem !important; /* Tamaño del ícono */
+  vertical-align: middle;
+}
+
+.user-name {
+  font-size: 1.1rem !important; /* Tamaño aumentado */
+  font-weight: 600;
+  transform: translateY(2px); /* Ajuste fino de posición */
+  color: #fff;
+  margin-top: 20px;
+}
+
+
+.user-options {
+  display: flex;
+  gap: 25px;
+  border-left: 1px solid rgba(255,255,255,0.2);
+  padding-left: 20px;
+}
+.user-options .menu-link {
+  text-decoration: none !important; /* Elimina subrayado */
+  color: #FFFDFC; /* Color normal */
+  transition: color 0.3s ease !important;
+}
+
+ .menu-link:hover {
+  color: #CE967B !important; /* Color hover */
+  transform: translateY(-1px);
+}
+
+.user-options .btn {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 20px;
+}
+/* Tablets (768px - 991px) */
+@media (max-width: 991px) {
+  .header-content {
+      flex-direction: column;
+      text-align: center;
+      padding: 30px 15px;
+      gap: 20px;
+  }
+
+  .header-txt h2 {
+      font-size: 50px;
+  }
+
+  .header-img img {
+      height: 350px;
+  }
+
+ .menu label {
+display: block;
+position: absolute;
+top: 50%; /* Centra verticalmente */
+right: 20px; /* Ubica en la derecha */
+transform: translateY(-50%); /* Ajuste fino para centrar bien */
+z-index: 1001;
+padding: 15px;
+cursor: pointer;
+}
+/* Estilos para dividir elementos del menú */
+.navbar ul li {
+width: 100%;
+border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Línea separadora */
+}
+
+/* Eliminar el borde del último elemento para que no quede una línea extra */
+.navbar ul li:last-child {
+border-bottom: none;
+}
+
+/* Sección del usuario */
+.user-container {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 15px;
+border-top: 1px solid rgba(255, 255, 255, 0.2); /* Línea arriba del usuario */
+}
+
+/* Contenedor del perfil y opciones */
+.user-options {
+display: flex;
+flex-direction: column;
+padding-left: 15px;
+border-left: 1px solid rgba(255, 255, 255, 0.2); /* Línea divisoria vertical */
+gap: 10px;
+}
+
+/* Estilos para los enlaces del perfil */
+.user-options a {
+color: white;
+text-decoration: none;
+font-weight: bold;
+}
+
+/* Estilo para "Cerrar sesión" */
+.user-options .logout {
+color: red;
+}
+
+.navbar {
+position: fixed;
+top: 0;
+left: 0;
+width: 80%;
+max-width: 300px;
+height: 100vh;
+background: #000000e6;
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+justify-content: flex-start; /* Opciones arriba */
+padding-top: 50px; /* Espaciado para que no quede pegado al borde */
+transform: translateX(-100%);
+opacity: 0;
+visibility: hidden;
+transition: all 0.3s ease;
+z-index: 1000;
+}
+
+
+ 
+/* Posiciona el carrito al pie del menú hamburguesa */
+.cart-container {
+  position: absolute;
+  bottom: 20px; /* Ajusta la distancia desde la parte inferior */
+  left: 20px; /* Ajusta la distancia desde la izquierda */
+  z-index: 1001;
+}
+
+.cart-container a {
+  color: white;
+  font-size: 22px;
+  text-decoration: none;
+  position: relative;
+}
+
+/* Ajustar el icono del carrito */
+.cart-container a i {
+  font-size: 26px;
+}
+
+/* Ajustar la burbuja de notificación */
+.cart-badge {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  background: red;
+  color: white;
+  font-size: 12px;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  text-align: center;
+  line-height: 18px;
+  font-weight: bold;
+}
+
+#menu:checked ~ .navbar {
+    transform: translateX(0);
+    left: 0;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ... (Tu CSS existente para la animación del icono hamburguesa) ... */
+
+  /* Animación del icono hamburguesa */
+.menu label[for="menu"]::before,
+.menu label[for="menu"]::after,
+.menu label[for="menu"] .hamburger-line {
+  content: '';
+  display: block;
+  width: 25px;
+  height: 3px;
+  background: #FFF;
+  margin: 5px 0;
+  transition: all 0.3s ease;
+}
+
+#menu:checked ~ label[for="menu"]::before {
+  transform: translateY(8px) rotate(45deg);
+}
+
+#menu:checked ~ label[for="menu"]::after {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+#menu:checked ~ label[for="menu"] .hamburger-line {
+  opacity: 0;
+}
+  .navbar ul {
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+  }
+
+  .navbar ul li {
+      width: 100%;
+  }
+
+  .navbar ul li a {
+      display: block;
+      padding: 12px 15px;
+      text-align: left;
+  }
+
+  #menu:checked ~ .navbar {
+      transform: translateX(0);
+  }
+
+  #menu:checked ~ .menu-label .hamburger-line:nth-child(1) {
+      transform: translateY(8px) rotate(45deg);
+  }
+
+  #menu:checked ~ .menu-label .hamburger-line:nth-child(2) {
+      opacity: 0;
+  }
+
+  #menu:checked ~ .menu-label .hamburger-line:nth-child(3) {
+      transform: translateY(-8px) rotate(-45deg);
+  }
+
+  .user-container {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+
+  .user-options {
+      border-left: none;
+      padding-left: 0;
+      flex-direction: column;
+      gap: 30px;
+  }
+
+  .producto-container {
+      padding: 3rem 1rem;
+  }
+
+  .producto-card {
+      flex: 1 1 280px;
+  }
+}
+
+
+
+
+.fa-shopping-cart {
+  font-size: 1.6rem !important;
+  transition: transform 0.3s ease;
+}
+
+.carrito-icono:hover .fa-shopping-cart {
+  transform: scale(1.1);
+}
+
+
+/* Efectos hover */
+.nav-item:hover {
+  background: rgba(206, 150, 123, 0.1);
+}
+
+/* Versión móvil */
+@media (max-width: 992px) {
+  .navbar ul {
+      flex-direction: column;
+      height: auto;
+      padding: 15px 0;
+  }
+  
+  .nav-item {
+      height: auto;
+      width: 100%;
+      padding: 12px 20px;
+  }
+  
+  .user-container {
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+      padding: 15px 0;
+  }
+  
+  .carrito-icono {
+      justify-content: center;
+      margin-left: 0;
+      padding: 15px 0;
+  }
+  
+  .user-options {
+      flex-direction: column;
+      width: 100%;
+      margin-left: 0;
+  }
+  
+  .user-options .btn {
+      width: 100%;
+      justify-content: center;
+  }
+}
+
+/* Scroll styles */
+.menu.scrolled {
+  height: 70px;
+}
+
+.menu.scrolled .nav-item {
+  height: 70px;
+}
+
+.menu.scrolled .badge {
+  top: 10px;
+}
+
+
+
+.menu.scrolled .navbar ul li a:hover {
+  color: #CE967B !important;
+}
+.logo{
+  font-size: 25px;
+  color: #CE967B;
+  text-transform: uppercase;
+  font-weight: 800;
+
+}
+.menu .navbar ul li{
+  position: relative;
+  float: left;
+
+}
+.menu .navbar ul li a{
+  font-size: 18px;
+  padding: 20px;
+  color: #111419;
+  display: block;
+}
+.menu .navbar ul li a:hover{
+  color: #CE967B
+  
+}
+#menu{
+  display: none;
+}
+.menu-icon{
+  width: 25px;
+}
+.menu label{
+  cursor: pointer;
+  display: none;
+}
+
+.header-content{
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  
+}
+.header-txt{
+  flex-basis: 50%;
+  margin-right: 25%;
+}
+span{
+  color: #9BCE21;
+  font-size: 17px;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 25px;
+}
+.header-txt h2{
+  font-size: 70px;
+  text-transform: capitalize;
+  line-height: 1;
+  color: #111419;
+  margin-bottom: 35px;
+
+}
+.header-txt p{
+  font-size: 17px;
+  color: #515557;
+  margin-bottom: 35px;
+}
+.buttons{
+  display: flex;
+
+}
+.btn-1{
+  display: inline-block;
+  padding: 13px 25px;
+  background-color: #CE967B;
+  margin-right: 20px;
+  color:#ffffff;
+  text-transform: capitalize;
+  margin-bottom: 100px;
+}
+
+
+.header-img{
+  flex-basis: 50%;
+  text-align: center;
+}
+.header-img img{
+  height: 550px;
+
+}
+
+  .avatar-name-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 15px;
+  }
+  
+  .user-avatar {
+    width: 35px;
+    height: 35px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #CE967B;
+    font-size: 18px;
+  }
+  
+
+  
+  .user-options {
+    display: flex;
+    gap: 25px;
+    border-left: 1px solid rgba(255,255,255,0.2);
+    padding-left: 20px;
+  }
+  
+  .menu-link {
+    color: #FFFDFC;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+
+/* Línea para Cerrar Sesión */
+.user-options .logout:hover::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: #CE967B;
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  transition: all 0.3s ease;
+}
+  .logout {
+    color: #ff6b6b !important; /* Rojo suave */
+}
+.logout:hover{
+  color: #ff6b6b !important; 
+
+}
+.menu-link:hover {
+  color: #CE967B;
+  transform: translateY(-1px);
+}
+
+.menu-link:hover::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: #CE967B;
+}
+.logout-link {
+  color: #e74c3c;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+    .menu label {
+        display: block;
+    }
+    
+    .navbar {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #000000e3;
+        flex-direction: column;
+        padding: 20px;
+        clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+        transition: all 0.3s;
+    }
+    
+    #menu:checked ~ .navbar {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+    
+    .user-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .user-options {
+        border-left: none !important;
+        padding-left: 0 !important;
+        flex-direction: column;
+        gap: 15px !important;
+    }
+}
+/* Estilos generales para el formulario */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    background: linear-gradient(145deg, #ffffff, #f9fafb);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid rgba(224, 224, 224, 0.5);
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.card-header:hover {
+    background-color: #f5f6f7;
+}
+
+.card-header h5 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.card-header small {
+    font-size: 0.875rem;
+    color: #7f8c8d;
+    font-weight: 500;
+}
+
+.card-body {
+    padding: 2rem;
+    background-color: #f9fafb;
+}
+
+/* Estilos para los campos del formulario */
+.form-label {
+    font-weight: 600;
+    color: #34495e;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.form-control {
+    border: 1px solid rgba(224, 224, 224, 0.8);
+    border-radius: 10px;
+    padding: 0.875rem 1.25rem;
+    font-size: 0.9rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #ffffff;
+}
+
+.form-control:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.15);
+    outline: none;
+}
+
+.form-control.bg-light {
+    background-color: #f5f6f7;
+    cursor: not-allowed;
+    color: #7f8c8d;
+}
+
+.input-group-merge .input-group-text {
+    background-color: #ffffff;
+    border: 1px solid rgba(224, 224, 224, 0.8);
+    border-left: none;
+    border-radius: 0 10px 10px 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.input-group-merge .input-group-text:hover {
+    background-color: #3498db;
+    color: #ffffff;
+}
+
+/* Estilos para el botón de guardar cambios */
+.btn-primary {
+    background-color: #3498db;
+    border: none;
+    border-radius: 10px;
+    padding: 0.875rem 2.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffffff;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.25);
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(52, 152, 219, 0.35);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.25);
+}
+
+/* Estilos para los íconos */
+.fa-user-circle, .bx-hide {
+    color: #3498db;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.fa-user-circle:hover, .bx-hide:hover {
+    color: #2980b9;
+    transform: scale(1.1);
+}
+
+/* Estilos para el texto de ayuda */
+.text-muted {
+    font-size: 0.8rem;
+    color: #7f8c8d !important;
+    font-weight: 500;
+}
+
+/* Efecto de transición al expandir/colapsar */
+.collapse {
+    transition: all 0.4s ease;
+}
+
+/* Animación de entrada para el formulario */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Efecto de hover en los campos */
+.form-control:hover {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+
+/* ESTILOS PARA FOOTER */
+.footer {
+    background: #2c3e50;
+    color: #ecf0f1;
+    padding: 4rem 0 2rem;
+    margin-top: auto;
+    position: relative;
+    border-top: 4px solid #CE967B;
+  }
+  
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 3rem;
+  }
+  
+  .footer-brand h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.8rem;
+    color: #CE967B;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .location {
+    font-size: 0.95rem;
+    color: #bdc3c7;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .location i {
+    color: #9BCE21;
+  }
+  
+  .social-icons {
+    display: flex;
+    gap: 1.2rem;
+    margin: 1.5rem 0;
+  }
+  
+  .social-icons a {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    color: #CE967B;
+  }
+  
+  .social-icons a:hover {
+    background: #CE967B;
+    color: white;
+    transform: translateY(-3px);
+  }
+  
+  .footer-contact p {
+    margin: 0.8rem 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+  }
+  
+  .footer-contact i {
+    color: #9BCE21;
+    min-width: 20px;
+    text-align: center;
+  }
+  
+  .footer-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .footer-link {
+    color: #bdc3c7;
+    text-decoration: none;
+    display: block;
+    margin: 1rem 0;
+    transition: all 0.3s ease;
+    position: relative;
+    padding-left: 15px;
+  }
+  
+  .footer-link::before {
+    content: '•';
+    color: #CE967B;
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .footer-link:hover {
+    color: #CE967B;
+    transform: translateX(10px);
+  }
+  
+  .footer-link:hover::before {
+    opacity: 1;
+  }
+  
+  .business-hours {
+    border-left: 2px solid #34495e;
+    padding-left: 2rem;
+  }
+  
+  .business-hours h4 {
+    color: #CE967B;
+    font-size: 1.2rem;
+    margin-bottom: 1.2rem;
+    text-transform: uppercase;
+  }
+  
+  .business-hours p {
+    color: #bdc3c7;
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+  }
+  
+  .footer-bottom {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #34495e;
+    color: #95a5a6;
+    font-size: 0.9rem;
+    grid-column: 1 / -1;
+  }
+  
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .business-hours {
+        border-left: none;
+        padding-left: 0;
+        padding-top: 2rem;
+        border-top: 1px solid #34495e;
+    }
+    
+    .footer-link {
+        margin: 0.8rem 0;
+    }
+    
+    .footer {
+        padding: 3rem 0 1.5rem;
+    }
+  }
+
+/*codigo pegado*/
+/* Añade esto al CSS existente */
+
+/* Estructura del menú */
+/* Estructura del menú */
+.menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 5%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 1000;
+}
+
+.menu-checkbox {
+  display: none;
+}
+
+.menu-right-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  order: 2;
+}
+
+/* Logo */
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+/* Menú hamburguesa */
+.menu-label {
+  display: none;
+  cursor: pointer;
+  z-index: 1001;
+  padding: 15px;
+}
+
+.hamburger-line {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background: #FFF;
+  margin: 5px 0;
+  transition: all 0.3s ease;
+}
+
+/* Navbar */
+.navbar {
+  margin-left: auto;
+}
+
+.navbar ul {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-item {
+  list-style: none;
+}
+
+.nav-link {
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 10px 15px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: block;
+}
+
+.nav-link:hover {
+  color: #CE967B;
+}
+
+/* Opciones de usuario */
+.user-options {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+/* Avatar y nombre de usuario (visibles en pantalla completa) */
+.user-avatar,
+.user-name {
+  display: inline-block;
+  color: white;
+}
+
+.menu-link, 
+.user-menu a, 
+.user-menu .menu-link,
+.user-options .menu-link {
+  color: white !important; /* Color blanco para Mi Perfil */
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.menu-link:hover {
+  color: #CE967B !important;
+}
+
+.logout-btn {
+  color: #ff6b6b !important; /* Asegura que Cerrar Sesión sea rojo */
+}
+
+/* Versión móvil */
+@media (max-width: 991px) {
+  .menu-label {
+    display: block;
+  }
+  
+  /* Reposicionamiento completo del navbar */
+  .navbar {
+    position: fixed;
+    top: 0;
+    right: 0; /* Fija a la derecha */
+    left: auto; /* Elimina posición izquierda */
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background: #000000e6;
+    padding-top: 70px;
+    transform: translateX(100%); /* Mueve fuera de la pantalla a la derecha */
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    margin-left: 0; /* Elimina el auto margin */
+  }
+  
+  #menu:checked ~ .navbar {
+    transform: translateX(0); /* Mueve a posición visible */
+  }
+  
+  .navbar ul {
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+  }
+  
+  .nav-item {
+    width: 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .nav-link {
+    padding: 15px 20px;
+  }
+  
+  /* Oculta el avatar y nombre SOLO en móvil */
+  .user-avatar,
+  .user-name {
+    display: none !important;
+  }
+  
+  /* Reorganiza las opciones de usuario */
+  .user-options {
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+  }
+  
+  .user-options a,
+  .user-menu a,
+  .user-menu .menu-link {
+    padding: 15px 20px;
+    width: 100%;
+    display: block;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: white !important; /* Mi Perfil en blanco */
+  }
+  
+  .user-options .logout-btn {
+    color: #ff6b6b !important; /* Cerrar Sesión en rojo */
+  }
+  
+  /* Animación del menú hamburguesa */
+  #menu:checked ~ .menu-label .hamburger-line:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  
+  #menu:checked ~ .menu-label .hamburger-line:nth-child(2) {
+    opacity: 0;
+  }
+  
+  #menu:checked ~ .menu-label .hamburger-line:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+}

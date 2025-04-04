@@ -1,0 +1,123 @@
+{% extends 'public/base_cpanel.html' %}
+
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Detalles del Usuario{% endblock %}
+
+<!-- Inicio del block -->
+{% block body %}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/detalles.css') }}" />
+
+<!---->
+{% if (usuario|length) %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">
+        <a href="/lista-de-usuarios">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        INFORMACIÓN DEL USUARIO
+      </h3>
+      <hr />
+    </div>
+  </div>
+    <!-- Mensaje de contexto -->
+    <div class="context-indicator d-flex align-items-center">
+      <i class="bi bi-people-fill context-icon"></i>
+      <div>
+        <h6 class="mb-1">Vista de detalles de usuarios</h6>
+      
+      </div>
+    </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <label for="nombre" class="form-label">
+              Nombre del usuario
+            </label>
+            <br />
+            {{ usuario.nombre }}
+          </div>
+          <div class="col-md-6">
+            <label for="apellido" class="form-label">
+              Apellido del usuario
+            </label>
+            <br />
+            {{ usuario.apellido }}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="tipo_documento" class="form-label">
+              Tipo de documento
+            </label>
+            <br />
+            {{ usuario.tipo_documento }}
+          </div>
+          <div class="col-md-6">
+            <label for="documento" class="form-label">
+              Documento del usuario
+            </label>
+            <br />
+            {{ usuario.documento }}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="correo" class="form-label">
+              Correo del usuario
+            </label>
+            <br />
+            {{ usuario.correo }}
+          </div>
+          <div class="col-md-6">
+            <label for="telefono" class="form-label">
+              Teléfono del usuario
+            </label>
+            <br />
+            {{ usuario.telefono }}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="rol" class="form-label">
+              Rol del usuario
+            </label>
+            <br />
+            {{ usuario.rol }}
+          </div>
+          <div class="col-md-6">
+            <label for="estado" class="form-label">
+              Estado del usuario
+            </label>
+            <br />
+            {{ usuario.estado }}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="created_user" class="form-label">
+              Fecha de registro
+            </label>
+            <br />
+            {{ usuario.created_user }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<h2 class="text-center">
+  No existe el Usuario 😭
+  <hr />
+</h2>
+{% endif %}
+{% endblock %}

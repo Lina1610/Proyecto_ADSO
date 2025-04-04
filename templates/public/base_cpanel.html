@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free">
+  <head>
+    {% include 'public/includes/head.html' %}
+    
+{% block customCSS %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/footer.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/position_indicator.css') }}" />
+<style>
+  /* Estilos para los íconos de ayuda y modo oscuro */
+  .navbar-icons {
+    display: flex;
+    align-items: center;
+    margin-left: 15px;
+    gap: 15px;
+  }
+  
+  .navbar-icon {
+    font-size: 1.5rem;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .navbar-icon:hover {
+    color: #0d6efd;
+    transform: scale(1.1);
+  }
+
+  /* Modal de ayuda */
+  .help-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    overflow: auto;
+  }
+
+  .help-modal-content {
+    background-color: #fefefe;
+    margin: 2% auto;
+    padding: 25px;
+    border: none;
+    width: 90%;
+    max-width: 1000px;
+    height: 85vh;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pdf-container {
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    min-height: 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .close-help {
+    position: absolute;
+    right: 25px;
+    top: 15px;
+    font-size: 32px;
+    color: #aaa;
+    cursor: pointer;
+  }
+
+  .close-help:hover {
+    color: #333;
+  }
+
+  
+</style>
+{% endblock %}  
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <nav class="navbar">
+        <div class="navbar-left">
+          <h3 class="header-title">TAMALES EL BUEN SAZÓN</h3>
+        </div>
+        <div class="navbar-right">
+          <div class="user-info">
+            <div class="user-avatar">
+              <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="user-details">
+              <span class="user-name">{{ session.nombre }}</span>
+              <span class="admin-document">Documento: {{ session.documento }}</span>
+            </div>
+          </div>
+          {% if session.conectado %}
+            <a class="nav-link logout" href="{{ url_for('cerraSesion') }}">Cerrar Sesión</a>
+            <!-- Contenedor de íconos -->
+            <div class="navbar-icons">
+              
+              <a href="#" id="helpButton" class="navbar-icon" title="Manual de Usuario">
+                <i class="fas fa-question-circle"></i>
+              </a>
+            </div>
+          {% else %}
+            <a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}">Registrarse</a>
+            <a class="nav-link" href="{{ url_for('loginCliente') }}">Iniciar sesión</a>
+          {% endif %}
+        </div>
+      </nav>
+    </header>
+    {% include 'public/includes/pre_loader.html' %}
+    <!---->
+    {% include 'public/includes/navbar.html' %}
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        {% include 'public/includes/menu_sidebar.html' %}
+        <div class="layout-page">
+          <div class="content-wrapper">
+            <div class="container-xxl flex-grow-1 container-p-y">
+              {% include 'public/includes/messages.html' %}
+              <!---->
+              {% block body %}
+              <!--fin del bloque-->
+              {% endblock %}
+            </div>
+            <div class="content-backdrop fade"></div>
+          </div>
+        </div>
+      </div>
+      <div class="layout-overlay layout-menu-toggle"></div>
+    </div>
+    {% include 'public/includes/js.html' %}
+    
+    <!-- Modal de Ayuda -->
+    <div id="helpModal" class="help-modal">
+      <div class="help-modal-content">
+        <span class="close-help">&times;</span>
+        <h2>Manual de Usuario</h2>
+        
+        <div class="pdf-container">
+          <iframe src="{{ url_for('static', filename='manuales/manual_usuario.pdf') }}" width="100%" height="100%" style="border: none;">
+            Tu navegador no soporta PDFs. 
+            <a href="{{ url_for('static', filename='manuales/manual_usuario.pdf') }}">Descargar manual</a>.
+          </iframe>
+        </div>
+        
+        <div class="text-center mt-3">
+          <a href="{{ url_for('static', filename='manuales/manual_usuario.pdf') }}" download class="btn btn-primary">
+            <i class="fas fa-download me-2"></i> Descargar Manual
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-admin">
+      <div class="footer-container">
+        <div class="footer-left">
+          <div class="footer-brand">
+            <h3>Panel Administrativo</h3>
+            <p class="location">Sistema de Gestión Interna</p>
+          </div>
+        </div>
+        <div class="footer-center">
+          <ul class="footer-list">
+            <li><a href="#" class="footer-link">Inicio</a></li>
+            <li><a href="#" class="footer-link">Configuración</a></li>
+            <li><a href="#" class="footer-link">Ayuda</a></li>
+            <li><a href="#" class="footer-link">Contacto</a></li>
+          </ul>
+        </div>
+        <div class="footer-right">
+          <p class="footer-bottom">© 2023 Sistema Administrativo<br>Todos los derechos reservados</p>
+        </div>
+      </div>
+    </footer>
+    <script src="/static/assets/js/sienna.js"></script>
+    <script src="/static/assets/js/custom.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+      // Control del modal de ayuda
+      document.addEventListener('DOMContentLoaded', function() {
+        // Modal de ayuda
+        const helpButton = document.getElementById('helpButton');
+        const helpModal = document.getElementById('helpModal');
+        const closeHelp = document.getElementsByClassName('close-help')[0];
+        
+        if (helpButton) {
+          helpButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            helpModal.style.display = "block";
+          });
+        }
+        
+        if (closeHelp) {
+          closeHelp.addEventListener('click', function() {
+            helpModal.style.display = "none";
+          });
+        }
+        
+        window.addEventListener('click', function(event) {
+          if (event.target == helpModal) {
+            helpModal.style.display = "none";
+          }
+        });
+
+        // Modo oscuro/claro
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        if (darkModeToggle) {
+          // Verificar preferencia del usuario
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const savedMode = localStorage.getItem('darkMode');
+          
+          if (savedMode === 'dark' || (prefersDark && savedMode !== 'light')) {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+          }
+
+          darkModeToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.body.classList.toggle('dark-mode');
+            
+            if (document.body.classList.contains('dark-mode')) {
+              darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+              localStorage.setItem('darkMode', 'dark');
+            } else {
+              darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+              localStorage.setItem('darkMode', 'light');
+            }
+          });
+        }
+      });
+    </script>
+    
+    <!--Custom JS-->
+    {% block customJS %} {% endblock %}
+  </body>
+</html>

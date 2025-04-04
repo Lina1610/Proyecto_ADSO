@@ -1,0 +1,251 @@
+/* Importación de la fuente Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Variables para colores y sombras */
+:root {
+    --primary-color: #1db954; /* Verde principal */
+    --primary-dark: #18a049;
+    --primary-light: #3dcf6d;
+    --secondary-color: #2c3e50; /* Azul oscuro para textos */
+    --accent-color: #3498db; /* Azul para acentos y bordes focus */
+    --text-color: #2c3e50;
+    --text-light: #7f8c8d;
+    --border-color: #e0e0e0;
+    --light-bg: #f9f9f9;
+    --white: #ffffff;
+    --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.15);
+    --transition: all 0.3s ease;
+}
+
+/* Estilos generales para el contenedor del formulario */
+.card {
+    background-color: var(--white);
+    border-radius: 20px;
+    box-shadow: var(--shadow-md);
+    padding: 40px;
+    margin: 30px auto;
+    max-width: 1500px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    border: none;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-5px);
+}
+
+/* Estilos para el título del formulario */
+.text-center {
+    text-align: center;
+    color: var(--secondary-color);
+    font-size: 32px;
+    margin-bottom: 40px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    font-family: 'Poppins', sans-serif;
+    position: relative;
+}
+
+.text-center::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+    margin: 15px auto 0;
+    border-radius: 4px;
+}
+
+/* Estilos para las filas del formulario */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+    gap: 25px;
+    position: relative;
+}
+
+/* Estilos para las columnas del formulario */
+.col-md-6 {
+    flex: 1 1 calc(50% - 25px);
+    padding: 0 10px;
+}
+
+/* Estilos para los grupos de formulario */
+.mb-3 {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+/* Estilos para las etiquetas de los campos */
+.form-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: var(--secondary-color);
+    font-size: 14px;
+    letter-spacing: 0.2px;
+    font-family: 'Poppins', sans-serif;
+    transition: var(--transition);
+    text-transform: uppercase;
+}
+
+/* Estilos para los campos de entrada */
+.form-control, .form-select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    font-size: 15px;
+    transition: var(--transition);
+    background-color: var(--light-bg);
+    color: var(--text-color);
+    font-family: 'Poppins', sans-serif;
+    box-shadow: var(--shadow-sm);
+    font-weight: 400;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.2);
+    background-color: var(--white);
+}
+
+.form-control::placeholder {
+    color: var(--text-light);
+    opacity: 0.7;
+}
+
+/* Efecto hover para campos */
+.form-control:hover, .form-select:hover {
+    border-color: var(--accent-color);
+    background-color: #fff;
+}
+
+/* Estilos para el botón de guardar */
+.btn-primary {
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+    border: none;
+    border-radius: 12px;
+    color: white;
+    padding: 16px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+    margin-top: 25px;
+    letter-spacing: 0.5px;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 6px 22px rgba(29, 185, 84, 0.45);
+    transform: translateY(-3px);
+    background: linear-gradient(90deg, var(--primary-light), var(--primary-color));
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(29, 185, 84, 0.3);
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: all 0.6s ease;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+/* Estilos para el botón de selección de archivo */
+input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    font-size: 15px;
+    background-color: var(--light-bg);
+    color: var(--text-color);
+    font-family: 'Poppins', sans-serif;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+input[type="file"]:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.2);
+    background-color: var(--white);
+}
+
+/* Estilos para el campo de selección (select) */
+.form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232c3e50'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px;
+    cursor: pointer;
+}
+
+.form-select:focus {
+    border-color: var(--primary-color);
+}
+#search_usuario{
+    min-width: 44% !important;
+    background-color: #f3efef !important;
+  }
+
+
+/* Ajustes para dispositivos móviles */
+@media (max-width: 768px) {
+    .col-md-6 {
+        flex: 1 1 100%;
+        padding: 0;
+    }
+
+    .card {
+        padding: 25px;
+        margin: 15px;
+    }
+
+    .text-center {
+        font-size: 28px;
+    }
+
+    .btn-primary {
+        padding: 14px 20px;
+    }
+    
+    .form-control, .form-select {
+        padding: 12px 14px;
+    }
+}

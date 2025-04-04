@@ -1,0 +1,174 @@
+/* Estilo para el contenedor del botón de filtros */
+#toggleFiltros {
+  margin-bottom: 15px; /* Espacio debajo del botón */
+}
+
+/* Estilo para el panel de filtros cuando está visible */
+#panelFiltros {
+  margin-bottom: 20px; /* Espacio debajo del panel de filtros */
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Estilo para el card que contiene los filtros */
+#panelFiltros .card {
+  margin-bottom: 15px;
+}
+
+/* Estilo para el buscador general */
+#search_producto {
+  margin-bottom: 15px;
+}
+
+/* Ajuste adicional para la tabla */
+#tbl_productos {
+  margin-top: 10px;
+}
+/* Estilo ultra minimalista para el buscador */
+#search_producto {
+  padding: 2px 5px 2px 25px; /* Ajuste fino de padding */
+  width: 120px; /* Ancho suficiente para "Buscar..." */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 5px center;
+  background-size: 14px 14px;
+  border: none !important; /* Elimina cualquier borde */
+  outline: none !important; /* Elimina el outline */
+  box-shadow: none !important; /* Elimina sombras */
+  font-size: 14px;
+  color: #333; /* Color de texto oscuro */
+  background-color: transparent !important; /* Fondo transparente */
+  margin: 0;
+  transition: width 0.3s ease;
+}
+
+/* Efecto al hacer hover/focus */
+#search_producto:hover,
+#search_producto:focus {
+  width: 180px; /* Se expande un poco al interactuar */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23000' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+}
+
+/* Contenedor para mejor alineación */
+.col-md-6.mt-2 {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+/* Contenedor principal responsive */
+.row.justify-content-between {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+/* Botón de filtros totalmente responsive */
+#toggleFiltros {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 600; /* Texto más grueso */
+  border-radius: 6px;
+  background-color: #0d6efd; /* Color azul sólido */
+  color: white;
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+/* Buscador ultra minimalista y responsive */
+#search_producto {
+  flex: 1 1 auto;
+  min-width: 120px;
+  max-width: 100%;
+  padding: 8px 10px 8px 35px;
+  font-size: 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 10px center;
+  background-size: 16px 16px;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  color: #333;
+  background-color: transparent;
+  transition: all 0.3s ease;
+}
+
+/* Panel de filtros responsive */
+#panelFiltros {
+  margin-bottom: 20px;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Media Queries para diferentes dispositivos */
+
+/* Tablets en horizontal y pantallas pequeñas (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  #toggleFiltros {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  
+  #search_producto {
+    padding-left: 30px;
+    background-size: 14px 14px;
+  }
+}
+
+/* Tablets en vertical y móviles grandes (576px - 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+  .row.justify-content-between {
+    gap: 10px;
+  }
+  
+  #toggleFiltros {
+    padding: 7px 10px;
+  }
+  
+  #search_producto {
+    min-width: 180px;
+  }
+}
+
+/* Móviles pequeños (0 - 575px) */
+@media (max-width: 575px) {
+  .row.justify-content-between {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  
+  #toggleFiltros {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+  }
+  
+  #search_producto {
+    width: 100%;
+    padding: 10px 10px 10px 35px;
+  }
+  
+  #panelFiltros .card-body {
+    padding: 15px;
+  }
+}
+
+/* Efectos hover y focus para interactividad */
+#toggleFiltros:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#search_producto:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23000' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+}

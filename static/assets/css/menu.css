@@ -1,0 +1,201 @@
+/* Estilos generales para el header */
+.header {
+    background-color: #2c3e50;
+    color: #ffffff;
+    padding: 1rem 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+}
+
+/* Contenedor flexible para el navbar */
+.navbar {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    justify-content: space-between; /* Separa el título y el contenido del usuario */
+    align-items: center;
+}
+
+/* Estilos para el título al costado izquierdo */
+.navbar-left {
+    display: flex;
+    align-items: center;
+    margin-left: 20px; /* Mover el título más a la izquierda */
+}
+
+.header-title {
+    font-family: 'Poppins', sans-serif; /* Usar la fuente Poppins */
+    font-size: 1.8rem; /* Tamaño del título */
+    font-weight: 700; /* Peso de la fuente (negrita) */
+    text-transform: uppercase; /* Texto en mayúsculas */
+    letter-spacing: 1.5px; /* Espaciado entre letras */
+    margin: 0; /* Eliminar margen por defecto */
+    color: #ffffff; /* Color blanco */
+}
+
+/* Estilos para el contenido al costado derecho */
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; /* Espacio entre elementos */
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.user-avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-name {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.admin-document {
+    font-size: 0.8rem;
+    color: #b0b0b0;
+}
+
+.nav-link {
+    color: #b0b0b0;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #ffffff;
+}
+
+.logout {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .navbar-left, .navbar-right {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .user-info {
+        flex-direction: column;
+    }
+}
+
+/* Estilos para el ícono de usuario */
+.user-avatar {
+    font-size: 1.4rem !important; /* Tamaño del ícono */
+    vertical-align: middle;
+}
+
+.avatar-name-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 15px;
+}
+
+.user-avatar {
+    width: 35px;
+    height: 35px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #c48d71;
+    font-size: 18px;
+}
+.avatar-name-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 15px;
+}
+
+.user-avatar {
+    width: 35px;
+    height: 35px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #c48d71;
+    font-size: 18px;
+}
+
+  .avatar-name-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 15px;
+  }
+  .user-avatar {
+    width: 35px;
+    height: 35px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #c48d71;
+    font-size: 18px;
+  }
+  /* Media query para dispositivos móviles */
+@media (max-width: 768px) {
+    /* Centrar el título */
+    .navbar-left {
+      width: 100%;
+      justify-content: center;
+    }
+  
+    .header-title {
+      font-size: 20px;
+      text-align: center;
+    }
+    
+    /* Eliminar el espacio reservado para navbar-right en móvil */
+    .navbar-right {
+      display: none;
+    }
+  }
+  
+  /* Para tablets, podemos hacer un diseño intermedio si lo necesitas */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .navbar {
+      padding: 15px 20px;
+    }
+    
+    .header-title {
+      font-size: 22px;
+    }
+    
+    .admin-document {
+      display: none; /* Si quieres ocultar solo el número de documento en tablets */
+    }
+  }
+  

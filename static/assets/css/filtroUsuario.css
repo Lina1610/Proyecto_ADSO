@@ -1,0 +1,204 @@
+/* Estilo para el panel de filtros */
+#panelFiltros {
+    position: relative; /* Cambiado de absolute a relative */
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background-color: white;
+    display: none; /* Oculto por defecto */
+    width: 100%;
+  }
+  
+  /* Cuando está visible */
+  #panelFiltros.show {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  /* Animación para suavizar la aparición */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Asegurar que no cause scroll horizontal */
+  .card {
+    overflow: hidden;
+  }
+  
+  /* Estilo para el contenedor principal */
+  .row.justify-content-between {
+    position: relative; /* Contexto para el z-index */
+  }
+/* ------------------------- */
+/* ESTILOS PARA EL BUSCADOR MINIMALISTA */
+/* ------------------------- */
+#search_usuario {
+    padding: 2px 5px 2px 25px;
+    width: 120px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 5px center;
+    background-size: 14px 14px;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    font-size: 14px;
+    color: #333;
+    background-color: transparent !important;
+    margin: 0;
+    transition: width 0.3s ease;
+    border-radius: 0;
+  }
+  
+  #search_usuario:hover,
+  #search_usuario:focus {
+    width: 180px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23000' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+  }
+  
+  /* ------------------------- */
+  /* ESTILOS PARA EL CONTENEDOR */
+  /* ------------------------- */
+  .row.justify-content-between {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+    align-items: center;
+  }
+  
+  /* ------------------------- */
+  /* ESTILOS PARA EL BOTÓN DE FILTROS */
+  /* ------------------------- */
+  #toggleFiltros {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 600; /* Texto más grueso */
+    border-radius: 6px;
+    background-color: #0d6efd; /* Color azul sólido */
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  /* ------------------------- */
+  /* ESTILOS PARA EL PANEL DE FILTROS */
+  /* ------------------------- */
+  #panelFiltros {
+    margin-bottom: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: none; /* Oculto por defecto */
+  }
+  
+  #panelFiltros .card {
+    margin-bottom: 0;
+  }
+  
+  /* ------------------------- */
+  /* MEDIA QUERIES RESPONSIVAS */
+  /* ------------------------- */
+  @media (max-width: 768px) {
+    .row.justify-content-between {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    #toggleFiltros {
+      width: 100%;
+      margin-bottom: 5px;
+    }
+    
+    #search_usuario {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    #search_usuario {
+      padding-left: 25px;
+      background-position: 5px center;
+      background-size: 12px 12px;
+    }
+    
+    #toggleFiltros {
+      padding: 5px 8px;
+      font-size: 13px;
+    }
+  }
+
+  
+
+  /* Estilo para el contenedor del buscador */
+.col-md-6.mt-2 {
+  position: relative;
+}
+
+/* Estilo para el campo de búsqueda */
+#search_factura {
+  padding-left: 40px; /* Espacio para la lupa */
+  border-radius: 25px !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  background-color: #f8f9fa;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236c757d' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-size: 18px;
+}
+
+#search_factura:focus {
+  background-color: #fff;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
+  border-color: #86b7fe;
+  outline: 0;
+}
+#search_usuario{
+  min-width: 44% !important;
+  background-color: #f3efef !important;
+}
+
+/* Versión alternativa si prefieres usar Font Awesome */
+/*
+#search_factura {
+  padding-left: 40px;
+}
+
+#search_factura::before {
+  content: "\f002";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  z-index: 10;
+}
+*/
+
+/* Ajuste para móviles */
+@media (max-width: 768px) {
+  .col-md-6.mt-2 {
+    width: 100%;
+    margin-top: 10px !important;
+  }
+  
+  #search_factura {
+    width: 100%;
+  }
+}
