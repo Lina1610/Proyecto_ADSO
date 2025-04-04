@@ -10,12 +10,10 @@ from controllers.funciones_order import *
 
 PATH_URL_LOGIN = "public/login"
 
-@app.route('/login', methods=['GET'])
-def inicio():
-    if 'conectado' in session:
-        return render_template('public/base_cpanel.html', dataLogin=dataLoginSesion())
-    else:
-        return render_template(f'{PATH_URL_LOGIN}/base_login.html')
+# En el archivo router_login.py
+@app.route('/', methods=['GET'])
+def index_redirect():
+    return redirect(url_for('indexPrincipal'))
 
 @app.route('/mi-perfil', methods=['GET'])
 def perfil():
@@ -163,7 +161,7 @@ def cpanelResgisterUserBD():
         )
         if resultData != 0:
             flash('La cuenta fue creada correctamente.', 'success')
-            return redirect(url_for('inicio'))
+            return redirect(url_for('indexPrincipal'))
         else:
             flash('Hubo un error al crear la cuenta.', 'error')
             print("Error al crear la cuenta.")  # Depuración
@@ -353,7 +351,7 @@ def cerraSesion():
             session.pop('correo', None)
             session.pop('documento', None)
             flash('Tu sesión fue cerrada correctamente.', 'success')
-            return redirect(url_for('inicio'))
+            return redirect(url_for('indexPrincipal'))
         else:
             flash('Recuerde, debe iniciar sesión.', 'error')
             return render_template(f'{PATH_URL_LOGIN}/base_login.html')
