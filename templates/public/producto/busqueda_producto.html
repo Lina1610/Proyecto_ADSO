@@ -1,0 +1,68 @@
+<<<<<<< HEAD
+{% for producto in dataBusqueda %}
+<tr id="producto_{{ producto.id }}">
+  <td>{{ loop.index }}</td>
+  <td>{{ producto.nombre }}</td>
+  <td>{{ producto.descripcion }}</td>
+  <td>$ {{ '{:,.2f}'.format(producto.precio) }}</td>
+  <td>{{ producto.cantidad }}</td>
+  <td width="10px">
+    <a
+      href="{{ url_for('detalles_producto', id=producto.id) }}"
+      class="btn btn-info btn-sm"
+      title="Ver detalles">
+      <i class="bi bi-eye"></i>
+      Ver detalles
+    </a>
+    <a
+      href="{{ url_for('viewEditarProducto', id=producto.id) }}"
+      class="btn btn-success btn-sm"
+      title="Actualizar">
+      <i class="bi bi-arrow-clockwise"></i>
+      Actualizar
+    </a>
+    <a
+      href="#"
+      onclick="eliminarProducto('{{ producto.id }}');"
+      class="btn btn-danger btn-sm"
+      title="Eliminar">
+      <i class="bi bi-trash3"></i>
+      Eliminar
+    </a>
+  </td>
+</tr>
+=======
+{% for producto in dataBusqueda %}
+<tr id="producto_{{ producto.id }}">
+  <td>{{ loop.index }}</td>
+  <td>{{ producto.nombre }}</td>
+  <td>{{ producto.descripcion }}</td>
+  <td>$ {{ '{:,.2f}'.format(producto.precio) }}</td>
+  <td>{{ producto.cantidad }}</td>
+  <td width="10px">
+    <a
+      href="{{ url_for('detalles_producto', id=producto.id) }}"
+      class="btn btn-info btn-sm"
+      title="Ver detalles">
+      <i class="bi bi-eye"></i>
+      Ver detalles
+    </a>
+    <a
+      href="{{ url_for('viewEditarProducto', id=producto.id) }}"
+      class="btn btn-success btn-sm"
+      title="Actualizar">
+      <i class="bi bi-arrow-clockwise"></i>
+      Actualizar
+    </a>
+    <a
+      href="#"
+      onclick="eliminarProducto('{{ producto.id }}');"
+      class="btn btn-danger btn-sm"
+      title="Eliminar">
+      <i class="bi bi-trash3"></i>
+      Eliminar
+    </a>
+  </td>
+</tr>
+>>>>>>> d5ce205891d78ea7d44bfbd42dc788ef2379c9b3
+{% endfor %}

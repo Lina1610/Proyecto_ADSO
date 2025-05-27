@@ -1,0 +1,196 @@
+{% extends 'public/base_cpanel.html' %}
+
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Detalles de la Entrega{% endblock %}
+
+<!-- Inicio del block -->
+{% block body %}
+{{ super() }}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/detalles.css') }}" />
+
+<!---->
+{% if entrega %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">
+        <a href="/lista-de-entregas">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        INFORMACIÓN DE LA ENTREGA
+      </h3>
+      <hr />
+    </div>
+  </div>
+
+  <!-- Mensaje de contexto -->
+  <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-people-fill context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de detalles entregas</h6>
+      
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <label for="tipo" class="form-label">
+              Tipo de Entrega
+            </label>
+            <br />
+            {{ entrega.tipo }}
+          </div>
+          <div class="col-md-6">
+            <label for="fecha_hora" class="form-label">
+              Fecha y Hora
+            </label>
+            <br />
+            {{ entrega.fecha_hora }}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="estado" class="form-label">
+              Estado de la Entrega
+            </label>
+            <br />
+            {{ entrega.estado }}
+          </div>
+          <div class="col-md-6">
+            <label for="costo_domicilio" class="form-label">
+              Costo de Domicilio
+            </label>
+            <br />
+            {% if entrega.costo_domicilio is not none %}
+              $ {{ '{:,.0f}'.format(entrega.costo_domicilio).replace(',', '.') }}
+            {% else %}
+              No disponible
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="nombre_usuario" class="form-label">
+              Usuario
+            </label>
+            <br />
+            {{ entrega.nombre_usuario }}
+          </div>
+          <div class="col-md-6">
+            <label for="nombre_completo" class="form-label">
+              Nombre Completo
+            </label>
+            <br />
+            {{ entrega.nombre_completo }}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="telefono" class="form-label">
+              Teléfono
+            </label>
+            <br />
+            {{ entrega.telefono }}
+          </div>
+          <div class="col-md-6">
+            <label for="domicilio" class="form-label">
+              Domicilio
+            </label>
+            <br />
+            {{ entrega.domicilio }}
+          </div>
+        </div>
+        
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="municipio" class="form-label">
+              Municipio
+            </label>
+            <br />
+            {{ entrega.municipio }}
+          </div>
+          <div class="col-md-6">
+            <label for="departamento" class="form-label">
+              Departamento
+            </label>
+            <br />
+            {{ entrega.departamento }}
+          </div>
+        </div>
+        
+        <div class="row mt-2">
+          <div class="col-md-12 text-center mt-4">
+            <button id="btnDescargarPDF" class="btn btn-danger btn-lg" style="
+              border-radius: 10px;
+              padding: 12px 30px;
+              background: linear-gradient(135deg, #dc3545, #c82333);
+              border: none;
+              color: white;
+              font-weight: 600;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+              transition: all 0.3s ease;
+            ">
+              <i class="bi bi-file-earmark-pdf me-2" style="font-size: 1.2rem;"></i>Descargar PDF
+            </button>
+            <button id="btnDescargarImagen" class="btn btn-success btn-lg" style="
+              border-radius: 10px;
+              padding: 12px 30px;
+              background: linear-gradient(135deg, #28a745, #218838);
+              border: none;
+              color: white;
+              font-weight: 600;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+              transition: all 0.3s ease;
+              margin-left: 20px;
+            ">
+              <i class="bi bi-image me-2" style="font-size: 1.2rem;"></i>Descargar Imagen
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<h2 class="text-center" style="color: #e74c3c; font-weight: bold;">
+  No existe la Entrega 😭
+  <hr style="border-top: 2px solid #e74c3c;" />
+</h2>
+{% endif %}
+
+<script>
+  document.getElementById('btnDescargarPDF').addEventListener('click', function () {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("Detalles de la Entrega", 105, 20, null, null, "center");
+    doc.setFontSize(12);
+    doc.text("Información detallada de la entrega", 105, 30, null, null, "center");
+    
+    const entregaContent = document.querySelector('.card-body').innerText;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text(entregaContent, 10, 50);
+    
+    doc.setFontSize(10);
+    doc.text("Gracias por usar nuestro servicio!", 105, 280, null, null, "center");
+    
+    doc.save('detalles_entrega.pdf');
+  });
+
+  document.getElementById('btnDescargarImagen').addEventListener('click', function() {
+    // Código para descargar como imagen
+    alert('Funcionalidad de descarga de imagen en desarrollo');
+  });
+</script>
+
+{% endblock %}

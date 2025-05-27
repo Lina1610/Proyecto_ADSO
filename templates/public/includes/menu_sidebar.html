@@ -1,0 +1,182 @@
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme" {% if session.rol == 'cliente' %}style="display: none;"{% endif %}>
+  <div class="app-brand demo">
+    <a href="{{ url_for('indexPrincipal') }}" class="app-brand-link">
+      <div class="logo-container">
+        <span class="app-brand-logo demo">
+            <img src="{{ url_for('static', filename='assets/img/logose.png') }}" alt="Logo" class="logo-image">
+        </span>
+    </div>
+      <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/sidebar.css') }}" />
+    </a>
+    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+      <i class="bx bx-chevron-left bx-sm align-middle"></i>
+    </a>
+  </div>
+
+  <div class="menu-inner-shadow"></div>
+
+  <ul class="menu-inner py-5">
+    <!-- Sección de Registro de Usuarios (Solo visible para administradores) -->
+    {% if session.rol in ['administrador', 'superadmin'] %}
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-usuario', '/lista-de-usuarios'] %} active open {% endif %}" data-menu="menu-usuarios">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon bi bi-person-plus"></i>
+        <div>Registro de Usuarios</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if request.path == '/registrar-usuario' %} active {% endif %}">
+          <a href="{{ url_for('viewFormUsuario') }}" class="menu-link">
+            <div>Registrar Usuario</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/lista-de-usuarios' %} active {% endif %}">
+          <a href="/lista-de-usuarios" class="menu-link">
+            <div>Lista de Usuarios</div>
+          </a>
+        </li>
+      </ul>
+    </li>
+    {% endif %}
+
+    <!-- Sección de Direcciones -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-direccion', '/lista-de-direccion'] %} active open {% endif %}" data-menu="menu-direccion">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon bi bi-geo-alt"></i>
+        <div>Direcciones</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if request.path == '/registrar-direccion' %} active {% endif %}">
+          <a href="{{ url_for('viewFormDireccion') }}" class="menu-link">
+            <div>Registrar Dirección</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/lista-de-direccion' %} active {% endif %}">
+          <a href="/lista-de-direccion" class="menu-link">
+            <div>Lista de Direcciones</div>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- Sección de Productos -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-producto', '/lista-de-productos'] %} active open {% endif %}" data-menu="menu-productos">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon bi bi-box"></i>
+        <div>Productos</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if request.path == '/registrar-producto' %} active {% endif %}">
+          <a href="{{ url_for('viewFormProducto') }}" class="menu-link">
+            <div>Registrar Producto</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/lista-de-productos' %} active {% endif %}">
+          <a href="/lista-de-productos" class="menu-link">
+            <div>Lista de Productos</div>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- Sección de Pedidos -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-pedido', '/lista-de-pedidos'] %} active open {% endif %}" data-menu="menu-pedidos">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon bi bi-cart"></i>
+        <div>Pedidos</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if request.path == '/lista-de-pedidos' %} active {% endif %}">
+          <a href="/lista-de-pedidos" class="menu-link">
+            <div>Lista de Pedidos</div>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- Sección de Entregas -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-entrega', '/lista-de-entregas'] %} active open {% endif %}" data-menu="menu-entrega">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon bi bi-truck"></i>
+        <div>Entregas</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if request.path == '/lista-de-entregas' %} active {% endif %}">
+          <a href="/lista-de-entregas" class="menu-link">
+            <div>Lista de Entregas</div>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- Sección de Facturas -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-factura', '/lista-de-facturas'] %} active open {% endif %}" data-menu="menu-facturas">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon bi bi-file-earmark-text"></i>
+        <div>Facturas</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if request.path == '/registrar-factura' %} active {% endif %}">
+          <a href="{{ url_for('viewFormFactura') }}" class="menu-link">
+            <div>Registrar Factura</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/lista-de-facturas' %} active {% endif %}">
+          <a href="/lista-de-facturas" class="menu-link">
+            <div>Lista de Facturas</div>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- Sección de Abonos -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/registrar-abono', '/lista-de-abonos'] %} active open {% endif %}" data-menu="menu-abonos">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon bi bi-cash"></i>
+        <div>Abonos</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if request.path == '/registrar-abono' %} active {% endif %}">
+          <a href="{{ url_for('viewFormAbono') }}" class="menu-link">
+            <div>Registrar Abono</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.path == '/lista-de-abonos' %} active {% endif %}">
+          <a href="/lista-de-abonos" class="menu-link">
+            <div>Lista de Abonos</div>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- Sección de Copias de Seguridad -->
+    <li class="menu-item menu-item-submenu {% if request.path in ['/hacer_backup', '/restaurar_backup'] %} active open {% endif %}" data-menu="menu-backup">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon bi bi-database"></i> 
+        <div>Copias de Seguridad</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if request.path == '/restaurar_backup' %} active {% endif %}">
+          <a href="{{ url_for('lista_backups') }}" class="menu-link">
+            <div>Restaurar Copia de Seguridad</div>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- Sección de Mi Perfil -->
+    <li class="menu-item {% if request.path == '/mi-perfil' %} active {% endif %}">
+      <a href="/mi-perfil" class="menu-link">
+        <i class="menu-icon bi bi-person-fill-gear"></i>
+        <div>Mi Perfil</div>
+      </a>
+    </li>
+
+    <!-- Sección de Cerrar Sesión -->
+    <li class="menu-item">
+      <a href="{{ url_for('cerraSesion') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
+        <div>Cerrar Sesión</div>
+      </a>
+    </li>
+  </ul>
+</aside>

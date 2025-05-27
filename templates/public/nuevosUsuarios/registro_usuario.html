@@ -1,0 +1,294 @@
+{% extends 'public/base_cpanel.html' %}
+
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Registrar Usuario{% endblock %}
+
+<!---->
+{% block customCSS %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/file.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/footer.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/editar.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/position_indicator.css') }}" />
+{% endblock %}
+
+<!-- Inicio del block -->
+{% block body %}
+{{ super() }}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">
+        <a href="/lista-de-usuarios" class="text-decoration-none me-3">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        REGISTRAR NUEVO USUARIO
+      </h3>
+      <hr />
+    </div>
+  </div>
+
+  <!-- Mensaje de contexto -->
+  <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-people-fill context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de registro de usuarios</h6>
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="/registrar-usuario"
+        autocomplete="off"
+        id="registroForm">
+        <div class="row">
+          <!-- Columna 1 -->
+          <div class="col-md-6">
+            <!-- Rol -->
+            <div class="mb-3">
+              <label for="rol" class="form-label">Rol</label>
+              <select class="form-select" name="rol" required
+                oninvalid="this.setCustomValidity('Por favor, selecciona un rol')"
+                onchange="this.setCustomValidity('')">
+                <option value="" selected disabled>Seleccione</option>
+                <option value="administrador">Administrador</option>
+                <option value="cliente">Cliente</option>
+                <option value="empleado">Empleado</option>
+              </select>
+            </div>
+    
+            <!-- Documento -->
+            <div class="mb-3">
+              <label for="documento" class="form-label">Documento</label>
+              <input 
+                type="number" 
+                name="documento" 
+                id="documento"
+                class="form-control" 
+                min="1" 
+                required 
+                oninvalid="this.setCustomValidity(this.value <= 0 ? 'El documento debe ser un número mayor a 0' : (this.value.length < 10 || this.value.length > 15 ? 'El documento debe tener entre 10 y 15 dígitos' : ''))"
+                onkeypress="if(this.value.length >= 15) return false;"
+              />
+            </div>
+    
+            <!-- Apellido -->
+            <div class="mb-3">
+              <label for="apellido" class="form-label">Apellido</label>
+              <input 
+                type="text" 
+                name="apellido" 
+                id="apellido"
+                class="form-control" 
+                minlength="2" 
+                maxlength="100" 
+                required 
+              />
+            </div>
+    
+            <!-- Correo Electrónico -->
+            <div class="mb-3">
+              <label for="correo" class="form-label">Correo Electrónico</label>
+              <input 
+                type="email" 
+                name="correo" 
+                id="correo"
+                class="form-control" 
+                maxlength="50" 
+                required 
+              />
+            </div>
+    
+            <!-- Estado -->
+            <div class="mb-3">
+              <label for="estado" class="form-label">Estado</label>
+              <select class="form-select" name="estado" required
+                oninvalid="this.setCustomValidity('Por favor, selecciona un estado')">
+                <option value="" selected disabled>Seleccione</option>
+                <option value="activo">Activo</option>
+                <option value="inactivo">Inactivo</option>
+              </select>
+            </div>
+          </div>
+    
+          <!-- Columna 2 -->
+          <div class="col-md-6">
+            <!-- Tipo de Documento -->
+            <div class="mb-3">
+              <label for="tipo_documento" class="form-label">Tipo de Documento</label>
+              <select class="form-select" name="tipo_documento" required
+                oninvalid="this.setCustomValidity('Por favor, selecciona un tipo de documento')">
+                <option value="" selected disabled>Seleccione</option>
+                <option value="Cedula ciudadania">Cédula de Ciudadanía</option>
+                <option value="Tarjeta identidad">Tarjeta de Identidad</option>
+                <option value="Cedula extranjeria">Cédula Extranjera</option>
+                <option value="NIT">NIT</option>
+              </select>
+            </div>
+    
+            <!-- Nombre -->
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input 
+                type="text" 
+                name="nombre" 
+                id="nombre"
+                class="form-control" 
+                minlength="2" 
+                maxlength="100" 
+                required 
+              />
+            </div>
+    
+            <!-- Teléfono -->
+            <div class="mb-3">
+              <label for="telefono" class="form-label">Teléfono</label>
+              <input 
+                type="number" 
+                name="telefono" 
+                id="telefono"
+                class="form-control" 
+                min="1" 
+                required 
+                oninvalid="this.setCustomValidity(this.value <= 0 ? 'El teléfono debe ser un número mayor a 0' : (this.value.length < 7 || this.value.length > 13 ? 'El teléfono debe tener entre 7 y 13 dígitos' : ''))"
+                onkeypress="if(this.value.length >= 13) return false;"
+              />
+            </div>
+    
+            <!-- Contraseña -->
+            <div class="mb-3 position-relative">
+              <label for="contrasena" class="form-label">Contraseña</label>
+              <div class="input-group">
+                <input 
+                  type="password" 
+                  id="password" 
+                  name="contrasena" 
+                  class="form-control" 
+                  minlength="8" 
+                  maxlength="20" 
+                  required 
+                  oninvalid="this.setCustomValidity('La contraseña debe tener entre 8 y 20 caracteres')"
+                />
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+    
+        <!-- Botón de guardar registro -->
+        <div class="mb-3 mt-4 text-center">
+          <button type="submit" class="btn rounded-pill btn-primary">
+            Guardar registro ahora <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block customJS %}
+<script>
+// Función para mostrar/ocultar la contraseña
+document.getElementById("togglePassword").addEventListener("click", function () {
+  const passwordInput = document.getElementById("password");
+  const icon = this.querySelector("i");
+
+  if (passwordInput.type === "password") {
+    passwordInput.type = "text";
+    icon.classList.remove("bi-eye");
+    icon.classList.add("bi-eye-slash");
+  } else {
+    passwordInput.type = "password";
+    icon.classList.remove("bi-eye-slash");
+    icon.classList.add("bi-eye");
+  }
+});
+
+// Limitar la entrada de dígitos en el campo teléfono
+document.getElementById("telefono").addEventListener("input", function () {
+  if (this.value.length > 13) {
+    this.value = this.value.slice(0, 13);
+  }
+});
+
+// Limitar la entrada de dígitos en el campo documento
+document.getElementById("documento").addEventListener("input", function () {
+  if (this.value.length > 15) {
+    this.value = this.value.slice(0, 15);
+  }
+});
+
+// Validaciones específicas para la contraseña
+document.getElementById("password").addEventListener("input", function () {
+  this.setCustomValidity("");
+});
+
+// Validar selects cuando cambian
+const selects = document.querySelectorAll("select[required]");
+selects.forEach(select => {
+  select.addEventListener("change", function() {
+    if (this.value) {
+      this.setCustomValidity("");
+    }
+  });
+});
+
+// Validación general del formulario
+document.getElementById("registroForm").addEventListener("submit", function (event) {
+  let formIsValid = true;
+  
+  // Validar selects
+  selects.forEach(select => {
+    if (!select.value) {
+      select.setCustomValidity("Por favor, selecciona una opción");
+      formIsValid = false;
+    } else {
+      select.setCustomValidity("");
+    }
+  });
+
+  // Validar contraseña
+  const password = document.getElementById("password").value;
+  if (password.length < 8 || password.length > 20) {
+    document.getElementById("password").setCustomValidity("La contraseña debe tener entre 8 y 20 caracteres");
+    formIsValid = false;
+  } else if (/^[a-zA-Z]+$/.test(password)) {
+    document.getElementById("password").setCustomValidity("La contraseña no puede contener solo letras");
+    formIsValid = false;
+  } else if (/^\d+$/.test(password)) {
+    document.getElementById("password").setCustomValidity("La contraseña no puede contener solo números");
+    formIsValid = false;
+  }
+
+  // Validar correo
+  const correo = document.getElementById("correo").value;
+  const emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+  if (!emailPattern.test(correo)) {
+    document.getElementById("correo").setCustomValidity("Ingresa un correo válido (por ejemplo, usuario@dominio.com)");
+    formIsValid = false;
+  }
+
+  if (!formIsValid) {
+    event.preventDefault();
+    // Forzar la visualización de los mensajes de validación
+    this.reportValidity();
+  }
+});
+
+// Limpiar mensajes de error al escribir
+const inputs = document.querySelectorAll("input");
+inputs.forEach(input => {
+  input.addEventListener("input", function () {
+    this.setCustomValidity("");
+  });
+});
+</script>
+{% endblock %}

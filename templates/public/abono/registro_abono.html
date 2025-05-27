@@ -1,0 +1,108 @@
+{% extends 'public/base_cpanel.html' %}
+
+{% block title %}Crud con Python 🐍 | Registrar Abono{% endblock %}
+
+{% block customCSS %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/file.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/editar.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
+{% endblock %}
+
+{% block body %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">
+        <a href="/lista-de-abonos" class="text-decoration-none me-3">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        REGISTRAR NUEVO ABONO
+      </h3>
+      <hr />
+    </div>
+  </div>
+
+  
+
+
+
+
+   <!-- Mensaje de contexto -->
+   <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-people-fill context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de registro de abono</h6>
+     
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <form class="form-horizontal mx-auto" method="POST" action="{{ url_for('viewFormAbono') }}" autocomplete="off" enctype="multipart/form-data">
+        <div class="card-body">
+          <div class="row">
+            <!-- Columna Izquierda -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="numero_abonos" class="form-label">Número de Abono</label>
+                <select class="form-select" name="numero_abonos" id="numero_abonos">
+                
+                  <option value="Pago inicial">Pago Inicial</option>
+                  <option value="Pago final">Pago Final</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="estado" class="form-label">Estado</label>
+                <select class="form-select" name="estado" id="estado">
+               
+                  <option value="Abono Pendiente">Abono Pendiente</option>
+                  <option value="Abono confirmado">Abono Confirmado</option>
+                </select>
+              </div>
+            </div>
+            <!-- Fin Columna Izquierda -->
+
+            <!-- Columna Derecha -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="monto" class="form-label">Monto</label>
+                <input type="number" class="form-control" name="monto" id="monto" required maxlength="10" min="1" oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" oninvalid="this.setCustomValidity('Por favor, ingrese un monto válido.')" onchange="this.setCustomValidity('')">
+              </div>
+
+              <div class="mb-3">
+                <label for="pedido_id" class="form-label">Pedido</label>
+                <select class="form-select" name="pedido_id" id="pedido_id">
+                
+                  {% for pedido in pedidos %}
+                    <option value="{{ pedido.pedido_id }}">
+                      Pedido #{{ pedido.pedido_id }} - Usuario: {{ pedido.nombre_usuario }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="abono_final" class="form-label">Abono Final</label>
+                <input type="number" class="form-control" name="abono_final" id="abono_final" maxlength="10" min="0" oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" oninvalid="this.setCustomValidity('Por favor, ingrese un abono final válido (puede ser 0).')" onchange="this.setCustomValidity('')">
+              </div>
+            </div>
+            <!-- Fin Columna Derecha -->
+          </div>
+
+          <!-- Botón de Guardar -->
+          <div class="mb-3 mt-4 text-center">
+            <button type="submit" class="btn rounded-pill btn-primary">
+              Guardar registro ahora
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

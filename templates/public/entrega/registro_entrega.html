@@ -1,0 +1,86 @@
+{% extends 'public/base_cpanel.html' %}
+
+{% block title %}Registrar Entrega{% endblock %}
+
+{% block body %}
+<div class="card">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">REGISTRAR NUEVA ENTREGA</h3>
+      <hr />
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <form method="POST" action="/registrar-entrega" autocomplete="off">
+        <div class="card-body">
+          <!-- Campo Tipo de Entrega -->
+          <div class="row">
+            <div class="col-md-6">
+              <label for="tipo" class="form-label">Tipo de Entrega</label>
+              <select class="form-select" name="tipo" id="tipo" required>
+                <option value="" selected disabled>Seleccione</option>
+                <option value="Domicilio">Domicilio</option>
+                <option value="Establecimiento fisico">Establecimiento físico</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Campo Estado -->
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <label for="estado" class="form-label">Estado</label>
+              <select class="form-select" name="estado" id="estado" required>
+                <option value="" selected disabled>Seleccione</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="En camino">En camino</option>
+                <option value="Entregado">Entregado</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="costo_domicilio" class="form-label">Costo de Domicilio</label>
+              <input
+                class="form-control"
+                type="number"
+                name="costo_domicilio"
+                id="costo_domicilio"
+                step="0.01"
+                min="0"
+                placeholder="Ingrese el costo del domicilio"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Campo Dirección -->
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <label for="direccion_id" class="form-label">Dirección</label>
+              <select class="form-select" name="direccion_id" id="direccion_id" required>
+                <option value="" selected disabled>Seleccione una dirección</option>
+                {% if direcciones %}
+                  {% for direccion in direcciones %}
+                    <option value="{{ direccion.id }}">
+                      {{ direccion.nombre_completo }} - {{ direccion.direccion_completa }} ({{ direccion.municipio }}, {{ direccion.departamento }})
+                    </option>
+                  {% endfor %}
+                {% else %}
+                  <option disabled>No hay direcciones registradas</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+
+          <!-- Botón de envío -->
+          <div class="mb-3 mt-4 text-center">
+            <button type="submit" class="btn btn-primary">
+              Guardar registro
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

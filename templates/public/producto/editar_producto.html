@@ -1,0 +1,225 @@
+{% extends 'public/base_cpanel.html' %}
+<!--Cambiando el title-->
+{% block title %}Crud con Python 🐍 | Editar Producto{% endblock %}
+<!---->
+{% block customCSS %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/editar.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/footer.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/position_indicator.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/file.css') }}" />
+{% endblock %}
+
+<!--Inicio del block-->
+{% block body %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">
+        <a href="{{ url_for('lista_productos') }}" class="text-decoration-none me-3">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        EDITAR PRODUCTO
+      </h3>
+      <hr />
+    </div>
+  </div>
+  
+  <!-- Mensaje de contexto -->
+  <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-box-seam context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de editar de productos</h6>
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="{{ url_for('viewEditarProducto', id=producto.id) }}"
+        autocomplete="off"
+        id="editarProducto"
+        enctype="multipart/form-data">
+        <div class="card-body">
+          <div class="row">
+            <!-- Columna 1 -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="codigo" class="form-label">Código del producto</label>
+                <input type="text" class="form-control" id="codigo" name="codigo" 
+                       value="{{ data_form.get('codigo', producto.codigo) }}" 
+                       pattern="^(?!0$)[0-9]{1,10}$" maxlength="10" 
+                       onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" 
+                       required
+                       oninvalid="this.setCustomValidity('El código es obligatorio, debe contener solo números y no puede ser solo 0.')"
+                       oninput="this.setCustomValidity(''); validarCodigo(this);">
+              </div>
+
+              <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre del producto</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" 
+                       value="{{ data_form.get('nombre', producto.nombre) }}" 
+                       maxlength="100" 
+                       required
+                       oninvalid="this.setCustomValidity('El nombre es obligatorio.')"
+                       oninput="this.setCustomValidity('')">
+              </div>
+
+              <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción del producto</label>
+                <textarea class="form-control" id="descripcion" name="descripcion" 
+                          maxlength="100" 
+                          required
+                          oninvalid="this.setCustomValidity('La descripción es obligatoria.')"
+                          oninput="this.setCustomValidity('')">{{ data_form.get('descripcion', producto.descripcion) }}</textarea>
+              </div>
+            </div>
+
+            <!-- Columna 2 -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="precio" class="form-label">Precio del producto</label>
+                <input type="number" step="0.01" min="0.01" class="form-control" id="precio" name="precio" 
+                       value="{{ data_form.get('precio', producto.precio) }}" 
+                       onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46)" 
+                       required
+                       oninvalid="this.setCustomValidity('El precio es obligatorio y debe ser mayor a 0.')"
+                       oninput="this.setCustomValidity(''); calcularTotal()">
+              </div>
+
+              <div class="mb-3">
+                <label for="cantidad" class="form-label">Cantidad del producto</label>
+                <input type="number" min="1" class="form-control" id="cantidad" name="cantidad" 
+                       value="{{ data_form.get('cantidad', producto.cantidad) }}" 
+                       onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" 
+                       required
+                       oninvalid="this.setCustomValidity('La cantidad es obligatoria y debe ser mayor a 0.')"
+                       oninput="this.setCustomValidity(''); calcularTotal()">
+              </div>
+
+              <div class="mb-3">
+                <label for="total" class="form-label">Total del producto</label>
+                <input type="number" step="0.01" min="0.01" class="form-control" id="total" name="total" 
+                       value="{{ data_form.get('total', producto.total) }}" 
+                       readonly required>
+              </div>
+
+              <div class="mb-3">
+                <label for="estado" class="form-label">Estado del producto</label>
+                <select class="form-select" id="estado" name="estado" 
+                        required
+                        oninvalid="this.setCustomValidity('Selecciona un estado.')"
+                        oninput="this.setCustomValidity('')">
+                  <option value="Disponible" {% if data_form.get('estado', producto.estado) == 'Disponible' %}selected{% endif %}>Disponible</option>
+                  <option value="No disponible" {% if data_form.get('estado', producto.estado) == 'No disponible' %}selected{% endif %}>No disponible</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección de imagen -->
+          <div class="row mt-4">
+            <div class="col-md-12">
+              <div class="mb-3">
+                <label for="imagen" class="form-label">Imagen del producto</label>
+                <div class="d-flex align-items-center">
+                  {% if producto.imagen %}
+                    <img src="{{ producto.imagen }}" 
+                         alt="Imagen actual" 
+                         class="img-thumbnail me-3" 
+                         style="max-height: 100px;"
+                         id="imagen-preview">
+                  {% else %}
+                    <div class="alert alert-secondary me-3" id="no-imagen">
+                      No hay imagen actual
+                    </div>
+                  {% endif %}
+                  <input type="file" class="form-control" id="imagen" name="imagen" 
+                         accept="image/jpeg, image/png, image/jpg">
+                </div>
+                <small class="text-muted">Formatos aceptados: JPG, PNG. Máx. 5MB</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botón de guardar cambios -->
+          <div class="mb-3 mt-4 text-center">
+            <button type="submit" class="btn rounded-pill btn-primary">
+              Guardar cambios
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block customJS %}
+<script>
+  // Función para calcular el total automáticamente
+  function calcularTotal() {
+    const cantidad = parseFloat(document.getElementById('cantidad').value);
+    const precio = parseFloat(document.getElementById('precio').value);
+
+    if (!isNaN(cantidad) && !isNaN(precio)) {
+      const total = cantidad * precio;
+      document.getElementById('total').value = total.toFixed(2);
+    } else {
+      document.getElementById('total').value = '';
+    }
+  }
+
+  // Función para validar el código
+  function validarCodigo(input) {
+    const codigo = input.value;
+    if (codigo === "0") {
+      input.setCustomValidity('El código no puede ser solo 0.');
+    } else {
+      input.setCustomValidity('');
+    }
+  }
+
+  // Vista previa de imagen
+  document.getElementById('imagen').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const preview = document.getElementById('imagen-preview');
+        const noImagen = document.getElementById('no-imagen');
+        
+        if (preview) {
+          preview.src = event.target.result;
+        } else if (noImagen) {
+          noImagen.innerHTML = `<img src="${event.target.result}" class="img-thumbnail" style="max-height: 100px;">`;
+          noImagen.id = 'imagen-preview';
+        }
+      }
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Escuchamos cambios en los campos cantidad y precio para recalcular el total
+  document.getElementById('cantidad').addEventListener('input', calcularTotal);
+  document.getElementById('precio').addEventListener('input', calcularTotal);
+
+  // Validación del formulario al enviar
+  document.getElementById('editarProducto').addEventListener('submit', function(event) {
+    const codigo = document.getElementById('codigo').value;
+    if (codigo === "0") {
+      document.getElementById('codigo').setCustomValidity('El código no puede ser solo 0.');
+      event.preventDefault();
+    }
+  });
+
+  // Inicializar el cálculo del total al cargar la página
+  document.addEventListener('DOMContentLoaded', function() {
+    calcularTotal();
+  });
+</script>
+{% endblock %}

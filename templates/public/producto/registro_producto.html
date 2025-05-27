@@ -1,0 +1,196 @@
+{% extends 'public/base_cpanel.html' %}
+{% block title %}Crud con Python 🐍 | Registrar Producto{% endblock %}
+
+{% block customCSS %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/file.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/footer.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/editar.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/position_indicator.css') }}" />
+{% endblock %}
+
+{% block body %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">
+        <a href="/lista-de-productos" class="text-decoration-none me-3">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        REGISTRAR NUEVO PRODUCTO
+      </h3>
+      <hr />
+    </div>
+  </div>
+
+  <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-people-fill context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de registro de productos</h6>
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="/registrar-producto"
+        autocomplete="off"
+        enctype="multipart/form-data"
+        id="registroProducto">
+        <div class="card-body">
+          <div class="row">
+            <!-- Columna 1 -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="codigo" class="form-label">Código</label>
+                <input type="text" class="form-control" id="codigo" name="codigo" 
+                       value="{{ data_form.get('codigo', '') }}" 
+                       pattern="^(?!0$)[0-9]{1,10}$" maxlength="10" 
+                       onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" 
+                       required
+                       oninvalid="this.setCustomValidity('El código es obligatorio, debe contener solo números y no puede ser solo 0.')"
+                       oninput="this.setCustomValidity(''); validarCodigo(this);">
+              </div>
+
+              <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre del producto</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" 
+                       value="{{ data_form.get('nombre', '') }}" 
+                       maxlength="100" 
+                       required
+                       oninvalid="this.setCustomValidity('El nombre es obligatorio.')"
+                       oninput="this.setCustomValidity('')">
+              </div>
+
+              <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción del producto</label>
+                <textarea class="form-control" id="descripcion" name="descripcion" 
+                          maxlength="100" 
+                          required
+                          oninvalid="this.setCustomValidity('La descripción es obligatoria.')"
+                          oninput="this.setCustomValidity('')">{{ data_form.get('descripcion', '') }}</textarea>
+              </div>
+
+              <div class="mb-3">
+                <label for="estado" class="form-label">Estado del producto</label>
+                <select class="form-select" id="estado" name="estado" 
+                        required
+                        oninvalid="this.setCustomValidity('Selecciona un estado.')"
+                        oninput="this.setCustomValidity('')">
+                  <option value="" selected disabled>Seleccione</option>
+                  <option value="Disponible" {% if data_form.get('estado') == 'Disponible' %}selected{% endif %}>Disponible</option>
+                  <option value="No disponible" {% if data_form.get('estado') == 'No disponible' %}selected{% endif %}>No disponible</option>
+                </select>
+              </div>
+            </div>
+          
+            <!-- Columna 2 -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="precio" class="form-label">Precio del producto</label>
+                <input type="number" step="0.01" min="0.01" class="form-control" id="precio" name="precio" 
+                       value="{{ data_form.get('precio', '') }}" 
+                       onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46)" 
+                       required
+                       oninvalid="this.setCustomValidity('El precio es obligatorio y debe ser mayor a 0.')"
+                       oninput="this.setCustomValidity(''); calcularTotal()">
+              </div>
+
+              <div class="mb-3">
+                <label for="cantidad" class="form-label">Cantidad del producto</label>
+                <input type="number" min="1" class="form-control" id="cantidad" name="cantidad" 
+                       value="{{ data_form.get('cantidad', '') }}" 
+                       onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" 
+                       required
+                       oninvalid="this.setCustomValidity('La cantidad es obligatoria y debe ser mayor a 0.')"
+                       oninput="this.setCustomValidity(''); calcularTotal()">
+              </div>
+
+              <div class="mb-3">
+                <label for="total" class="form-label">Total del producto</label>
+                <input type="number" step="0.01" min="0.01" class="form-control" id="total" name="total" 
+                       value="{{ data_form.get('total', '0.00') }}" 
+                       readonly>
+                       <!-- Quitamos required porque se calcula automáticamente -->
+              </div>
+
+              <div class="mb-3">
+                <label for="imagen" class="form-label">Imagen del producto</label>
+                <input type="file" class="form-control" id="imagen" name="imagen" accept=".jpg,.png,.jpeg" 
+                       required
+                       oninvalid="this.setCustomValidity('La imagen es obligatoria.')"
+                       oninput="this.setCustomValidity('')">
+              </div>
+            </div>
+          </div>
+
+          <!-- Botón de guardar registro -->
+          <div class="mb-3 mt-4 text-center">
+            <button type="submit" class="btn rounded-pill btn-primary">
+              Guardar registro ahora
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block customJS %}
+<script>
+  // Función mejorada para calcular el total
+  function calcularTotal() {
+    const cantidad = parseFloat(document.getElementById('cantidad').value) || 0;
+    const precio = parseFloat(document.getElementById('precio').value) || 0;
+    const totalInput = document.getElementById('total');
+    
+    const total = cantidad * precio;
+    totalInput.value = total > 0 ? total.toFixed(2) : '0.00';
+  }
+
+  // Función para validar el código
+  function validarCodigo(input) {
+    const codigo = input.value;
+    input.setCustomValidity(codigo === "0" ? 'El código no puede ser solo 0.' : '');
+  }
+
+  // Configurar eventos cuando el DOM esté completamente cargado
+  document.addEventListener('DOMContentLoaded', function() {
+    // Calcular total inicial si hay valores
+    calcularTotal();
+    
+    // Configurar event listeners para cambios
+    document.getElementById('cantidad').addEventListener('input', calcularTotal);
+    document.getElementById('precio').addEventListener('input', calcularTotal);
+    
+    // Configurar event listeners para teclas (por si acaso)
+    document.getElementById('cantidad').addEventListener('keyup', calcularTotal);
+    document.getElementById('precio').addEventListener('keyup', calcularTotal);
+    
+    // Validación adicional al enviar el formulario
+    document.getElementById('registroProducto').addEventListener('submit', function(e) {
+      // Forzar cálculo final antes de enviar
+      calcularTotal();
+      
+      // Validar imagen
+      const imagenInput = document.getElementById('imagen');
+      if (imagenInput.files.length > 0) {
+        const file = imagenInput.files[0];
+        const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+        if (!validTypes.includes(file.type)) {
+          e.preventDefault();
+          imagenInput.setCustomValidity('Solo se permiten imágenes JPG, JPEG o PNG.');
+          return;
+        }
+      }
+      imagenInput.setCustomValidity('');
+    });
+  });
+</script>
+{% endblock %}

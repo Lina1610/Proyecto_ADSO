@@ -1,0 +1,33 @@
+{% extends 'public/base_cpanel.html' %}
+
+{% block title %}Panel de Empleado{% endblock %}
+
+{% block content %}
+<h1>Panel de Empleado</h1>
+
+<!-- Lista de pedidos -->
+<h2>Pedidos</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID Pedido</th>
+            <th>Cliente</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pedido in pedidos %}
+        <tr>
+            <td>{{ pedido.id }}</td>
+            <td>{{ pedido.cliente_nombre }}</td>
+            <td>{{ pedido.estado }}</td>
+            <td>
+                <a href="/ver-pedido/{{ pedido.id }}" class="btn btn-info">Ver</a>
+                <a href="/actualizar-pedido/{{ pedido.id }}" class="btn btn-primary">Actualizar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

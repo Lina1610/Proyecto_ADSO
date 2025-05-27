@@ -1,0 +1,176 @@
+{% extends 'public/base_cpanel.html' %}
+
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Editar Abono{% endblock %}
+
+<!-- Custom CSS -->
+{% block customCSS %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/editar.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/footer.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/position_indicator.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/file.css') }}" />
+{% endblock %}
+
+<!-- Inicio del block -->
+{% block body %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">
+        <a href="/lista-de-abonos" class="text-decoration-none me-3">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        EDITAR ABONO
+      </h3>
+      <hr />
+    </div>
+  </div>
+
+  <!-- Mensaje de contexto -->
+  <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-people-fill context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de editar abonos</h6>
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <!-- Mostrar mensajes de error o éxito -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="{{ url_for('viewEditarAbono', id=abono.id) }}"
+        autocomplete="off"
+        id="formEditarAbono">
+        <input type="hidden" name="id" value="{{ abono.id }}">
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="numero_abonos" class="form-label">Número de Abono</label>
+              <select class="form-select" name="numero_abonos" required 
+                      oninvalid="this.setCustomValidity('Por favor, seleccione un número de abono.')" 
+                      onchange="this.setCustomValidity('')">
+                <option value="Pago inicial" {% if abono.numero_abonos == 'Pago inicial' %}selected{% endif %}>Pago Inicial</option>
+                <option value="Pago final" {% if abono.numero_abonos == 'Pago final' %}selected{% endif %}>Pago Final</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="estado" class="form-label">Estado</label>
+              <select class="form-select" name="estado" required 
+                      oninvalid="this.setCustomValidity('Por favor, seleccione un estado.')" 
+                      onchange="this.setCustomValidity('')">
+                <option value="Abono Pendiente" {% if abono.estado == 'Abono Pendiente' %}selected{% endif %}>Abono Pendiente</option>
+                <option value="Abono confirmado" {% if abono.estado == 'Abono confirmado' %}selected{% endif %}>Abono Confirmado</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="monto" class="form-label">Monto</label>
+              <input type="number" name="monto" class="form-control" 
+                     value="{{ abono.monto }}" required maxlength="10" min="1"
+                     oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
+                     oninvalid="this.setCustomValidity('Por favor, ingrese un monto válido mayor que 0.')"
+                     onchange="this.setCustomValidity('')">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="pedido_id" class="form-label">Pedido ID</label>
+              <input type="text" name="pedido_id" class="form-control" 
+                     value="{{ abono.pedido_id }}" required
+                     oninvalid="this.setCustomValidity('Por favor, ingrese un ID de pedido válido.')"
+                     onchange="this.setCustomValidity('')">
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="mb-3">
+              <label for="abono_final" class="form-label">Abono Final</label>
+              <input type="number" name="abono_final" class="form-control" 
+                     value="{{ abono.abono_final if abono.abono_final is not none else '' }}"
+                     maxlength="10" min="0"
+                     oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
+                     oninvalid="this.setCustomValidity('Por favor, ingrese un abono final válido (puede ser 0).')"
+                     onchange="this.setCustomValidity('')">
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3 mt-4 text-center">
+          <button type="submit" class="btn rounded-pill btn-primary">
+            Guardar cambios
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block customJS %}
+<script>
+  // Validación adicional del formulario antes de enviar
+  document.getElementById('formEditarAbono').addEventListener('submit', function(event) {
+    // Validar que el monto sea positivo
+    const monto = parseFloat(document.getElementsByName('monto')[0].value);
+    if (monto <= 0) {
+      document.getElementsByName('monto')[0].setCustomValidity('El monto debe ser mayor que 0.');
+      event.preventDefault();
+      return;
+    }
+    
+    // Validar que el abono final no sea negativo
+    const abonoFinal = parseFloat(document.getElementsByName('abono_final')[0].value);
+    if (abonoFinal < 0) {
+      document.getElementsByName('abono_final')[0].setCustomValidity('El abono final no puede ser negativo.');
+      event.preventDefault();
+      return;
+    }
+    
+    // Validar que el pedido_id no esté vacío
+    const pedidoId = document.getElementsByName('pedido_id')[0].value.trim();
+    if (pedidoId === '') {
+      document.getElementsByName('pedido_id')[0].setCustomValidity('El ID del pedido es obligatorio.');
+      event.preventDefault();
+      return;
+    }
+  });
+
+  // Limpiar mensajes de validación al corregir los campos
+  document.getElementsByName('monto')[0].addEventListener('input', function() {
+    this.setCustomValidity('');
+  });
+  
+  document.getElementsByName('abono_final')[0].addEventListener('input', function() {
+    this.setCustomValidity('');
+  });
+  
+  document.getElementsByName('pedido_id')[0].addEventListener('input', function() {
+    this.setCustomValidity('');
+  });
+</script>
+{% endblock %}

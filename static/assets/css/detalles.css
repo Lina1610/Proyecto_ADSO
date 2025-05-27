@@ -1,0 +1,235 @@
+/* Estilos generales para el contenedor del formulario */
+.card {
+    background: linear-gradient(145deg, #ffffff, #f7f9fc); /* Gradiente sutil para un fondo más dinámico */
+    border: none; /* Quitamos el borde para un look más limpio */
+    border-radius: 20px; /* Bordes más redondeados */
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); /* Sombra más suave y profesional */
+    padding: 50px; /* Más espacio interno */
+    margin: 40px auto; /* Más margen para centrar mejor */
+    max-width: 1000px; /* Aumentamos el ancho máximo para mejor legibilidad */
+    transition: all 0.4s ease; /* Transición más suave */
+    font-family: 'Inter', 'Segoe UI', sans-serif; /* Fuente más moderna */
+    position: relative; /* Para elementos decorativos */
+    overflow: hidden; /* Para evitar desbordes */
+}
+
+/* Efecto hover para el contenedor */
+.card:hover {
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px); /* Elevación más pronunciada */
+}
+
+/* Detalle decorativo en la esquina superior izquierda */
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(52, 152, 219, 0.2), transparent);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Estilos para el título del formulario */
+.text-center {
+    text-align: center;
+    color: #1a2a44; /* Color más oscuro y profesional */
+    font-size: 36px; /* Tamaño más grande para destacar */
+    margin-bottom: 50px;
+    font-weight: 800; /* Más peso para un look moderno */
+    letter-spacing: -1px;
+    position: relative;
+    text-transform: uppercase; /* Mayúsculas para un toque formal */
+}
+
+/* Línea decorativa debajo del título */
+.text-center::after {
+    content: '';
+    display: block;
+    width: 100px; /* Línea más larga */
+    height: 5px;
+    background: linear-gradient(to right, #3498db, #6ab7f5); /* Gradiente en la línea */
+    margin: 20px auto 0;
+    border-radius: 3px;
+}
+
+/* Estilos para las filas del formulario */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+    gap: 30px; /* Más espacio entre columnas */
+}
+
+/* Estilos para las columnas del formulario */
+.col-md-6 {
+    flex: 1 1 calc(50% - 30px);
+    padding: 0 15px; /* Más padding para mejor espaciado */
+}
+
+/* Estilos para los grupos de formulario */
+.form-group {
+    margin-bottom: 30px;
+    position: relative; /* Para efectos adicionales */
+}
+
+/* Estilos para las etiquetas de los campos */
+.form-label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: 700; /* Más peso para destacar */
+    color: #2c3e50;
+    font-size: 13px; /* Tamaño más pequeño para un look limpio */
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+}
+
+/* Efecto hover para las etiquetas */
+.form-label:hover {
+    color: #3498db; /* Cambio de color al pasar el mouse */
+}
+
+/* Estilos para los valores de los campos */
+.form-value {
+    display: block;
+    padding: 14px;
+    border: 1px solid #e5e7eb; /* Borde más suave */
+    border-radius: 10px;
+    background-color: #fafafa; /* Fondo más claro */
+    color: #1f2a44; /* Color de texto más oscuro */
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.03); /* Sombra interna sutil */
+}
+
+/* Efecto hover para los valores */
+.form-value:hover {
+    border-color: #3498db;
+    background-color: #ffffff;
+    box-shadow: 0 0 12px rgba(52, 152, 219, 0.15);
+    transform: translateY(-2px); /* Elevación ligera */
+}
+
+/* Efecto de enfoque para los valores */
+.form-value:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+}
+
+/* Estilos para el botón de regreso */
+.btn-back {
+    background: linear-gradient(90deg, #3498db, #2b80c4); /* Gradiente en el botón */
+    border: none;
+    border-radius: 10px;
+    color: white;
+    padding: 12px 30px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 30px;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+}
+
+/* Efecto hover para el botón */
+.btn-back:hover {
+    background: linear-gradient(90deg, #2b80c4, #256fb0);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+}
+
+/* Efecto activo para el botón */
+.btn-back:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(52, 152, 219, 0.2);
+}
+
+/* Estilos para el mensaje de "No existe el Usuario" */
+.no-user-message {
+    text-align: center;
+    color: #e74c3c;
+    font-size: 26px;
+    font-weight: 700;
+    margin-top: 50px;
+    padding: 20px;
+    background-color: rgba(231, 76, 60, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(231, 76, 60, 0.2);
+}
+
+/* Ajustes para dispositivos móviles */
+@media (max-width: 768px) {
+    .card {
+        padding: 30px;
+        margin: 20px;
+        border-radius: 15px;
+    }
+
+    .text-center {
+        font-size: 28px;
+        margin-bottom: 40px;
+    }
+
+    .text-center::after {
+        width: 80px;
+        height: 4px;
+    }
+
+    .col-md-6 {
+        flex: 1 1 100%;
+        padding: 0;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-value {
+        padding: 12px;
+        font-size: 15px;
+    }
+
+    .btn-back {
+        padding: 10px 25px;
+        font-size: 14px;
+    }
+
+    .no-user-message {
+        font-size: 22px;
+        padding: 15px;
+    }
+}
+
+/* Ajustes para pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .card {
+        padding: 20px;
+        margin: 15px;
+    }
+
+    .text-center {
+        font-size: 24px;
+        margin-bottom: 30px;
+    }
+
+    .form-label {
+        font-size: 12px;
+    }
+
+    .form-value {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .btn-back {
+        padding: 8px 20px;
+        font-size: 13px;
+    }
+}

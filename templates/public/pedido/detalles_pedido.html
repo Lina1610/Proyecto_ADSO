@@ -1,0 +1,171 @@
+{% extends 'public/base_cpanel.html' %}
+
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Detalles del Pedido{% endblock %}
+
+<!-- Inicio del block -->
+{% block body %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/detalles.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/position_indicator.css') }}" />
+
+<!---->
+{% if pedido %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">
+        <a href="/lista-de-pedidos">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        INFORMACIÓN DEL PEDIDO
+      </h3>
+      <hr />
+    </div>
+  </div>
+   <!-- Mensaje de contexto -->
+   <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-people-fill context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de detalles de pedidos </h6>
+      
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <div class="card-body">
+        <!-- Información del pedido -->
+        <div class="row">
+          <div class="col-md-6">
+            <label for="fecha" class="form-label">
+              Fecha
+            </label>
+            <br />
+            {{ pedido.fecha }}
+          </div>
+          <div class="col-md-6">
+            <label for="fechaEntrega" class="form-label">
+              Fecha de Entrega
+            </label>
+            <br />
+            {{ pedido.fechaEntrega }}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="horaEntrega" class="form-label">
+              Hora de Entrega
+            </label>
+            <br />
+            {{ pedido.horaEntrega }}
+          </div>
+          <div class="col-md-6">
+            <label for="estado" class="form-label">
+              Estado
+            </label>
+            <br />
+            {{ pedido.estado }}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="usuario" class="form-label">
+              Usuario
+            </label>
+            <br />
+            {{ pedido.usuario_nombre }}
+          </div>
+          <div class="col-md-6">
+            <label for="producto" class="form-label">
+              Producto
+            </label>
+            <br />
+            {{ pedido.producto_nombre }}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="metodo_pago" class="form-label">
+              Método de Pago
+            </label>
+            <br />
+            {{ pedido.metodo_pago }}
+          </div>
+          <div class="col-md-6">
+            <label for="tipo_entrega" class="form-label">
+              Tipo de Entrega
+            </label>
+            <br />
+            {{ pedido.tipo_entrega }}
+          </div>
+        </div>
+
+        <!-- Total del Pedido -->
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="total_pedido" class="form-label">
+              Total del Pedido
+            </label>
+            <br />
+            ${{ "{:,.2f}".format(pedido.total_pedido) }}  <!-- Formateado como moneda -->
+          </div>
+        </div>
+
+        <!-- Detalles del pedido -->
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <h4>Detalles del Pedido</h4>
+            <hr />
+            {% for detalle in detalles_pedido %}
+            <div class="row mt-2">
+              <div class="col-md-6">
+                <label for="producto" class="form-label">
+                  Producto
+                </label>
+                <br />
+                {{ detalle.producto_nombre }}
+              </div>
+              <div class="col-md-6">
+                <label for="cantidad" class="form-label">
+                  Cantidad
+                </label>
+                <br />
+                {{ detalle.cantidad }}
+              </div>
+            </div>
+
+            <div class="row mt-2">
+              <div class="col-md-6">
+                <label for="precio_unitario" class="form-label">
+                  Precio Unitario
+                </label>
+                <br />
+                ${{ "{:,.2f}".format(detalle.precio_unitario) }}  <!-- Formateado como moneda -->
+              </div>
+              <div class="col-md-6">
+                <label for="total" class="form-label">
+                  Total
+                </label>
+                <br />
+                ${{ "{:,.2f}".format(detalle.total) }}  <!-- Formateado como moneda -->
+              </div>
+            </div>
+            <hr />
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<h2 class="text-center">
+  No existe el Pedido 😭
+  <hr />
+</h2>
+{% endif %}
+{% endblock %}

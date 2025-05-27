@@ -1,0 +1,339 @@
+/* ========== VARIABLES Y ESTILOS BASE ========== */
+:root {
+  --primary-color: #CE967B;
+  --secondary-color: #9BCE21;
+  --dark-color: #2c3e50;
+  --light-color: #f8f9fa;
+  --text-color: #34495e;
+  --border-color: #e0e0e0;
+  --success-color: #27ae60;
+  --warning-color: #f39c12;
+  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 15px 50px rgba(0, 0, 0, 0.2);
+  --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --border-radius: 12px;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+
+/* ========== ESTILOS GENERALES MEJORADOS ========== */
+.card {
+  border: none !important;
+  border-radius: var(--border-radius) !important;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  margin: 3rem auto;
+  max-width: 1500px;
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  transition: var(--transition);
+  position: relative;
+  z-index: 1;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ========== ENCABEZADO MEJORADO ========== */
+h3.text-center {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  color: var(--dark-color);
+  position: relative;
+  padding: 1.5rem 0;
+  margin: 0 !important;
+  font-size: 2rem;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+h3.text-center::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(206, 150, 123, 0.3);
+}
+
+h3.text-center a {
+  color: var(--primary-color);
+  transition: var(--transition);
+  margin-right: 15px;
+  font-size: 1.8rem;
+}
+
+h3.text-center a:hover {
+  color: var(--secondary-color);
+  transform: translateX(-5px) scale(1.1);
+}
+
+h4.text-center {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  color: var(--dark-color);
+  margin: 2rem 0 1.5rem;
+  position: relative;
+  font-size: 1.5rem;
+}
+
+h4.text-center::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  border-radius: 4px;
+}
+
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);
+  margin: 2rem auto;
+  width: 80%;
+}
+
+/* ========== FORMULARIO MEJORADO ========== */
+.form-horizontal {
+  background: transparent;
+  padding: 2.5rem;
+}
+
+.form-label {
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  align-items: center;
+}
+
+.form-label::before {
+  content: '•';
+  color: var(--primary-color);
+  margin-right: 8px;
+  font-size: 1.2rem;
+}
+
+.form-control,
+.form-select {
+  border: 2px solid var(--border-color);
+  border-radius: 10px !important;
+  padding: 12px 18px;
+  font-size: 1rem;
+  transition: var(--transition);
+  background-color: rgba(255,255,255,0.8);
+  box-shadow: var(--shadow-sm);
+  font-family: 'Montserrat', sans-serif;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(206, 150, 123, 0.2) !important;
+  background-color: white;
+  transform: translateY(-2px);
+}
+
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232c3e50'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 18px;
+  padding-right: 45px;
+}
+
+/* ========== BOTONES MEJORADOS ========== */
+.btn {
+  border: none !important;
+  border-radius: 50px !important;
+  padding: 14px 35px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  transition: var(--transition);
+  box-shadow: var(--shadow-md);
+  text-transform: uppercase;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+  z-index: -1;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white !important;
+}
+
+.btn-primary:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 12px 25px rgba(206, 150, 123, 0.4);
+}
+
+.btn-primary:hover::before {
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0));
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #f39c12, #f1c40f);
+  color: white !important;
+}
+
+.btn-warning:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 12px 25px rgba(243, 156, 18, 0.4);
+}
+
+/* ========== EFECTOS ESPECIALES ========== */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+.btn:hover {
+  animation: float 1.5s ease-in-out infinite;
+}
+
+/* ========== SECCIÓN DE CAMBIO DE CONTRASEÑA ========== */
+hr + h4.text-center {
+  margin-top: 3rem;
+}
+
+/* ========== RESPONSIVE MEJORADO ========== */
+@media (max-width: 992px) {
+  .card {
+    margin: 2rem;
+  }
+  
+  .form-horizontal {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  h3.text-center {
+    font-size: 1.8rem;
+  }
+  
+  h4.text-center {
+    font-size: 1.3rem;
+  }
+  
+  .form-control,
+  .form-select {
+    padding: 10px 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .card {
+    margin: 1rem;
+    border-radius: 0 !important;
+  }
+  
+  h3.text-center {
+    font-size: 1.5rem;
+    padding: 1rem 0;
+  }
+  
+  .form-horizontal {
+    padding: 1.5rem;
+  }
+  
+  .btn {
+    width: 100%;
+    padding: 12px;
+  }
+}
+/* Estilo base para el botón de cancelar */
+.btn-secondary {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #dee2e6;
+  color: #6c757d;
+  border-radius: 50px;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none !important;
+}
+
+/* Efecto hover */
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+  color: #5a6268;
+  border-color: #ced4da;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Efecto active */
+.btn-secondary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para el icono */
+.btn-secondary .bi-x-circle {
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+/* Efecto hover para el icono */
+.btn-secondary:hover .bi-x-circle {
+  color: #dc3545;
+  transform: scale(1.1);
+}
+
+/* Versión outline alternativa (opcional) */
+.btn-secondary.outline {
+  background: transparent;
+  border: 2px solid #6c757d;
+  color: #6c757d;
+}
+
+.btn-secondary.outline:hover {
+  background: rgba(108, 117, 125, 0.1);
+  border-color: #5a6268;
+  color: #5a6268;
+}
+

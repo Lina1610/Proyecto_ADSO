@@ -1,0 +1,170 @@
+{% extends 'public/base_cpanel.html' %}
+
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Editar Dirección{% endblock %}
+
+<!-- Inicio del block -->
+{% block body %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/editar.css') }}" />
+
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">
+        <a href="/lista-de-direccion">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        EDITAR DIRECCIÓN
+      </h3>
+      <hr />
+    </div>
+  </div>
+
+  <!-- Mensaje de contexto -->
+  <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-people-fill context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de editar de direcciones</h6>
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="{{ url_for('actualizarDireccion') }}"
+        autocomplete="off">
+        <input type="hidden" name="id" value="{{ direccion.id }}">
+
+        <div class="row">
+          <div class="col-md-6">
+            <label for="nombre_completo" class="form-label">Nombre Completo</label>
+            <input
+              type="text"
+              name="nombre_completo"
+              class="form-control"
+              value="{{ direccion.nombre_completo }}"
+              maxlength="160"
+              required
+              oninvalid="this.setCustomValidity('Por favor, completa el campo Nombre Completo.')"
+              oninput="this.setCustomValidity('')" />
+          </div>
+          <div class="col-md-6">
+            <label for="barrio" class="form-label">Barrio</label>
+            <input
+              type="text"
+              name="barrio"
+              class="form-control"
+              value="{{ direccion.barrio }}"
+              maxlength="500"
+              required
+              oninvalid="this.setCustomValidity('Por favor, completa el campo Barrio.')"
+              oninput="this.setCustomValidity('')" />
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="domicilio" class="form-label">Domicilio</label>
+            <input
+              type="text"
+              name="domicilio"
+              class="form-control"
+              value="{{ direccion.domicilio }}"
+              maxlength="500"
+              required
+              oninvalid="this.setCustomValidity('Por favor, completa el campo Domicilio.')"
+              oninput="this.setCustomValidity('')" />
+          </div>
+          <div class="col-md-6">
+            <label for="referencias" class="form-label">Referencias</label>
+            <input
+              type="text"
+              name="referencias"
+              class="form-control"
+              value="{{ direccion.referencias }}"
+              maxlength="500" />
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="telefono" class="form-label">Teléfono</label>
+            <input
+              type="text"
+              name="telefono"
+              class="form-control"
+              value="{{ direccion.telefono }}"
+              maxlength="15" />
+          </div>
+          <div class="col-md-6">
+            <label for="costo_domicilio" class="form-label">Costo del Domicilio</label>
+            <input
+              type="number"
+              name="costo_domicilio"
+              class="form-control"
+              value="{{ direccion.costo_domicilio }}"
+              required
+              min="0"
+              step="1"
+              placeholder="Ingrese el costo del domicilio"
+              oninvalid="this.setCustomValidity('Por favor, completa el campo Costo Domicilio con un número válido.')"
+              oninput="this.setCustomValidity('')" />
+          </div>
+        </div>
+
+        <!-- Campos de departamento y municipio -->
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="departamento_id" class="form-label">Departamento</label>
+            <select class="form-control" id="departamento_id" name="departamento_id" required
+                    oninvalid="this.setCustomValidity('Por favor, selecciona un Departamento.')"
+                    oninput="this.setCustomValidity('')">
+              <option value="">Seleccione un departamento</option>
+              {% for departamento in departamentos %}
+                <option value="{{ departamento.id }}" {% if direccion.departamento_id == departamento.id %}selected{% endif %}>
+                  {{ departamento.nombre }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="municipio_id" class="form-label">Municipio</label>
+            <select class="form-control" id="municipio_id" name="municipio_id" required>
+              <option value="">Seleccione un municipio</option>
+              {% if direccion.municipio_id %}
+                  <option value="{{ direccion.municipio_id }}" selected>
+                      {{ direccion.municipio_nombre }}
+                  </option>
+              {% endif %}
+          </select>
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="estado" class="form-label">Estado</label>
+            <select class="form-select" name="estado" required>
+              <option value="Activo" {% if direccion.estado == 'Activo' %}selected{% endif %}>Activo</option>
+              <option value="Inactivo" {% if direccion.estado == 'Inactivo' %}selected{% endif %}>Inactivo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3 mt-4 text-center">
+          <button type="submit" class="btn rounded-pill btn-primary">
+            Guardar cambios
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Script para cargar municipios dinámicamente -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{{ url_for('static', filename='assets/js/registro_direccion.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamales El Buen Sazón</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/favicon.ico') }}">
+    <!-- Font Awesome -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css">
+    <!-- Bootstrap y Estilos Personalizados -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style_pedido.css') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/carrito.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/custom.css') }}">
+
+
+
+    <!-- Animaciones -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+</head>
+
+<body id="page-top">
+  <!-- Navigation (Menú) -->
+  <div class="menu">
+    <a href="#" class="logo"></a>
+    
+    <!-- Checkbox oculto -->
+    <input type="checkbox" id="menu" class="menu-checkbox"/>
+            
+            <!-- Contenedor para el lado derecho (hamburguesa y carrito) -->
+            <div class="menu-right-container">
+                <!-- Ícono del carrito -->
+                <div class="carrito-icono">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="badge" id="carrito-count">0</span>
+                </div>
+                
+                <!-- Botón hamburguesa -->
+                <label for="menu" class="menu-label">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </label>
+            </div>
+        
+            <nav class="navbar">
+                <ul>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('indexPrincipal') }}">Inicio</a></li>
+                    <!--<li class="nav-item"><a class="nav-link" href="#sobre_nosotros">Sobre Nosotros</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#services">Servicios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>-->
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('pedido.pedido') }}">Pedidos</a></li>
+                    <!--<li class="nav-item"><a class="nav-link" href="#">Supersad</a></li>-->
+                    
+                    {% if session.conectado %}
+                    <li class="nav-item user-menu">
+                        <div class="user-container">
+                            <div class="user-info-container">
+                                <div class="user-info-navbar">
+                                    <div class="user-avatar">
+                                        <i class="fas fa-user-circle"></i>
+                                    </div>
+                                    <span class="user-name">{{ session.nombre }}</span>
+                                </div>
+                                <!-- Opciones alineadas -->
+                                <div class="user-options">
+                                    {% if session['rol'] == 'cliente' %}
+                                    <a href="{{ url_for('perfil_cliente') }}" class="menu-link">Mi Perfil</a>
+                                    {% endif %}
+                                    {% if session['rol'] in ['administrador', 'superadmin', 'empleado'] %}
+                                    <a href="{{ url_for('perfil_aplicativo') }}" class="menu-link">Ir al Aplicativo</a>
+                                    {% endif %}
+                                    <a href="{{ url_for('cerraSesion') }}" class="menu-link logout-btn">Cerrar Sesión</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('cpanelRegisterUser') }}">Registrarse</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('loginCliente') }}">Iniciar sesión</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    
+        <div class="header-content container">
+            <div class="header-txt">
+                <span>Tamales Boyacenses</span>
+                <h2>Aprovecha esta oportunidad</h2>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur ex atque fugit 
+                    optio laborum quos nihil eum autem esse, quibusdam porro minus laboriosam sint nostrum 
+                    obcaecati necessitatibus dolorum? Fugit, numquam.</p>                    
+            </div>
+            <div class="header-img">
+                <img src="/static/assets/img/presenSinFondo.png">
+            </div>
+        </div>
+    </header>
+
+<!-- Contenedor Principal -->
+<main class="producto-container">
+
+        <!-- Contenedor del producto y carrito -->
+        <div class="producto-container container mt-5 pt-5" id="producto-container">
+            <h2 class="text-center mb-4" data-aos="fade-up">Nuestros Productos</h2>
+            
+            <div class="row">
+                {% if productos %}
+                    {% for producto in productos %}
+                        <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                            <div class="card producto-card h-100 shadow-sm">
+                                <img src="{{ producto.imagen if producto.imagen else '/static/assets/img/default-product.png' }}" 
+                                     alt="{{ producto.nombre }}" 
+                                     class="card-img-top">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">{{ producto.nombre }}</h5>
+                                    <p class="card-text">{{ producto.descripcion }}</p>
+                                    <p class="card-text mt-auto">
+                                        <strong>Precio:</strong> ${{ producto.precio|float|round(2) }}
+                                    </p>
+                                    <button class="btn-agregar-carrito mt-auto"  
+                                            onclick="agregarAlCarrito({{ producto.id }}, '{{ producto.nombre }}', {{ producto.precio|float }}, '{{ producto.imagen if producto.imagen else '/static/assets/img/default-product.png' }}')">
+                                        Agregar al carrito
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-12 text-center" data-aos="fade-up">
+                        <p class="text-muted">No hay productos disponibles.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Carrito de Compras (flotante) -->
+        <div class="carrito-container" id="carrito-container">
+            <h5>Carrito de Compras</h5>
+            <div id="carrito-items">
+                <!-- Aquí se mostrarán los productos agregados dinámicamente -->
+            </div>
+        </div>
+    </main>
+<!-- Modal para procesar pedido -->
+<div id="modalProcesarPedido" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Procesar Pedido</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="modal-body-procesar-pedido">
+                <!-- Aquí se mostrarán los métodos de pago y tipos de entrega -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para seleccionar dirección -->
+<div id="modalDirecciones" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Selecciona una Dirección</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="list-group" id="contenedor-direcciones"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal para agregar dirección -->
+<div class="modal fade" id="editarDireccionModal" tabindex="-1" aria-labelledby="editarDireccionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="modal-title" id="editarDireccionModalLabel">Agregar Nueva Dirección</h5>
+                <div id="errorMensaje" class="error-mensaje d-none"></div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formRegistrarDireccion">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="registrarNombreCompleto" class="form-label">Nombre Completo</label>
+                                <input type="text" name="nombre_completo" id="registrarNombreCompleto" class="form-control" maxlength="160" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="registrarTelefono" class="form-label">Teléfono</label>
+                                <input type="text" name="telefono" id="registrarTelefono" class="form-control" maxlength="13" pattern="[0-9]{7,13}" required onkeypress="return soloNumeros(event)">
+                            </div>
+                            <div class="mb-3">
+                                <label for="registrarDepartamentoId" class="form-label">Departamento</label>
+                                <select class="form-select" name="departamento_id" id="registrarDepartamentoId" required>
+                                    <option value="">Seleccione un departamento</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="registrarMunicipioId" class="form-label">Municipio</label>
+                                <select class="form-select" name="municipio_id" id="registrarMunicipioId" required>
+                                    <option value="">Seleccione un municipio</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="registrarDomicilio" class="form-label">Domicilio</label>
+                                <input type="text" name="domicilio" id="registrarDomicilio" class="form-control" maxlength="500" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="registrarBarrio" class="form-label">Barrio</label>
+                                <input type="text" name="barrio" id="registrarBarrio" class="form-control" maxlength="500" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registrarReferencias" class="form-label">Referencias</label>
+                        <textarea name="referencias" id="registrarReferencias" class="form-control" rows="2" maxlength="500"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar Dirección</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal para confirmar el pedido -->
+<div id="modalConfirmarPedido" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Pedido</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" id="modal-body-confirmar-pedido">
+                <!-- Aquí se mostrarán los productos del carrito -->
+                <div id="carrito-confirmacion-items"></div>
+                <div class="carrito-total-confirmacion">
+                    <h5><strong>Total:</strong> $<span id="total-confirmacion">0</span></h5>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="finalizarCompra()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-left">
+            <div class="footer-brand">
+                <h3>Tamales el buen sazón</h3>
+            </div>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="https://wa.me/573213828939" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            </div>
+            <div class="footer-contact">
+                <p><i class="fas fa-envelope"></i> lescobarhiguera@gmail.com</p>
+                <p><i class="fas fa-phone-alt"></i> 321 382 8939</p>
+            </div>
+        </div>
+        
+        <div class="footer-center">
+            <ul class="footer-list">
+                <li><a href="#" class="footer-link">Inicio</a></li>
+                <li><a href="#" class="footer-link">Menú</a></li>
+                <li><a href="#" class="footer-link">Pedidos</a></li>
+                <li><a href="#" class="footer-link">Sobre Nosotros</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-right">
+            <div class="business-hours">
+                <h4>Horario de atención</h4>
+                <p>Lunes a Sábado</p>
+                <p>7:00 AM - 7:00 PM</p>
+            </div>
+            <p class="footer-bottom">© 2023 Tamales D. María<br>Todos los derechos reservados</p>
+        </div>
+    </div>
+</footer>
+    <script src="/static/assets/js/sienna.js"></script>
+    <script src="/static/assets/js/custom.js"></script>
+
+
+
+
+    <!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='assets/js/carrito.js') }}"></script>
+  
+    <script>
+        // Inicializar animaciones AOS
+        AOS.init({
+            duration: 1000,
+            once: true,
+        });
+    // Limpiar el formulario al abrir el modal
+    document.getElementById('editarDireccionModal').addEventListener('show.bs.modal', function () {
+        document.getElementById('formRegistrarDireccion').reset();
+        const inputs = document.querySelectorAll('#formRegistrarDireccion .is-invalid');
+        inputs.forEach(input => input.classList.remove('is-invalid'));
+        document.getElementById('errorMensaje').classList.add('d-none');
+        document.getElementById('errorMensaje').innerHTML = '';
+    });
+
+    // Restaurar el mensaje predeterminado cuando el campo se corrige
+    document.querySelectorAll('input, select, textarea').forEach(input => {
+        input.addEventListener('input', function () {
+            this.setCustomValidity('');
+        });
+    });
+
+    // Solo permitir números en el campo teléfono
+    function soloNumeros(event) {
+        const charCode = event.which ? event.which : event.keyCode;
+        if (charCode < 48 || charCode > 57) {
+            return false;
+        }
+        return true;
+    }
+
+   // Limpiar el formulario al abrir el modal
+   document.getElementById('editarDireccionModal').addEventListener('show.bs.modal', function () {
+        document.getElementById('formRegistrarDireccion').reset();
+        const inputs = document.querySelectorAll('#formRegistrarDireccion .is-invalid');
+        inputs.forEach(input => input.classList.remove('is-invalid'));
+        document.getElementById('errorMensaje').classList.add('d-none');
+        document.getElementById('errorMensaje').innerHTML = '';
+    });
+
+    // Restaurar el mensaje predeterminado cuando el campo se corrige
+    document.querySelectorAll('input, select, textarea').forEach(input => {
+        input.addEventListener('input', function () {
+            this.setCustomValidity('');
+        });
+    });
+
+    // Solo permitir números en el campo teléfono
+    function soloNumeros(event) {
+        const charCode = event.which ? event.which : event.keyCode;
+        if (charCode < 48 || charCode > 57) {
+            return false;
+        }
+        return true;
+    }
+
+    // Validación del formulario al enviarlo (solo para límites de caracteres de otros campos)
+    document.getElementById('formRegistrarDireccion').addEventListener('submit', function(event) {
+        const nombreCompleto = document.getElementById('registrarNombreCompleto');
+        const domicilio = document.getElementById('registrarDomicilio');
+        const barrio = document.getElementById('registrarBarrio');
+        const referencias = document.getElementById('registrarReferencias');
+        const errorMensaje = document.getElementById('errorMensaje');
+
+        let hayErrorCaracteres = false;
+        let mensajeError = '';
+
+        // Validación de límites de caracteres (excluyendo el teléfono)
+        if (nombreCompleto.value.length > 160) {
+            hayErrorCaracteres = true;
+            mensajeError = 'El mínimo es 1 y el máximo es 160 para el nombre completo.';
+        }
+        if (domicilio.value.length > 500) {
+            hayErrorCaracteres = true;
+            mensajeError = 'El mínimo es 1 y el máximo es 500 para el domicilio.';
+        }
+        if (barrio.value.length > 500) {
+            hayErrorCaracteres = true;
+            mensajeError = 'El mínimo es 1 y el máximo es 500 para el barrio.';
+        }
+        if (referencias.value.length > 500) {
+            hayErrorCaracteres = true;
+            mensajeError = 'El mínimo es 1 y el máximo es 500 para las referencias.';
+        }
+
+        // Mostrar mensaje de error si hay problemas con los caracteres
+        if (hayErrorCaracteres) {
+            event.preventDefault(); // Prevenir el envío si hay errores de caracteres
+            errorMensaje.classList.remove('d-none');
+            errorMensaje.innerHTML = mensajeError;
+        } else {
+            errorMensaje.classList.add('d-none');
+            errorMensaje.innerHTML = '';
+            // No necesitamos llamar a guardarDireccion aquí porque el formulario se enviará automáticamente si pasa las validaciones del navegador
+        }
+    });
+    </script>
+</body>
+
+</html>

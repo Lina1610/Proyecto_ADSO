@@ -1,0 +1,125 @@
+{% extends 'public/base_cpanel.html' %}
+
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Registrar Factura{% endblock %}
+
+<!-- Custom CSS -->
+{% block customCSS %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/file.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/footer.css') }}" />
+ <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}" />
+ <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/editarFactura.css') }}" />
+ <link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
+ <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/position_indicator.css') }}" />
+
+{% endblock %}
+
+<!-- Contenido del body -->
+{% block body %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">
+        <a href="/lista-de-facturas" class="text-decoration-none me-3">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        REGISTRAR NUEVA FACTURA
+      </h3>
+      <hr />
+    </div>
+  </div>
+
+  <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-people-fill context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de registro de facturas</h6>
+      
+    </div>
+  </div>
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="{{ url_for('viewFormFactura') }}"
+        autocomplete="off">
+        <div class="card-body">
+          <div class="row">
+            <!-- Columna Izquierda -->
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="estado" class="form-label">Estado</label>
+                <select
+                  class="form-select"
+                  name="estado"
+                  id="estado"
+                  required
+                  oninvalid="this.setCustomValidity('Por favor, selecciona un estado para la factura.')"
+                  oninput="this.setCustomValidity('')">
+                  <option value="" disabled>Seleccione estado</option>
+                  <option value="Pendiente" {% if form_data.get('estado') == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                  <option value="Facturado" {% if form_data.get('estado') == 'Facturado' %}selected{% endif %}>Facturado</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="pedido_id" class="form-label">Pedido</label>
+                <select
+                  class="form-select"
+                  name="pedido_id"
+                  id="pedido_id"
+                  required
+                  oninvalid="this.setCustomValidity('Por favor, selecciona un pedido.')"
+                  oninput="this.setCustomValidity('')">
+                  <option value="" disabled>Seleccione un pedido</option>
+                  {% for pedido in pedidos %}
+                    <option value="{{ pedido.pedido_id }}" data-users-id="{{ pedido.users_id }}"
+                            {% if form_data.get('pedido_id') == pedido.pedido_id|string %}selected{% endif %}>
+                      Pedido #{{ pedido.pedido_id }} - Usuario: {{ pedido.nombre_usuario }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Campo oculto para users_id -->
+          <input type="hidden" name="users_id" id="users_id" value="">
+
+          <!-- Botón de Guardar -->
+          <div class="mb-3 mt-4 text-center">
+            <button type="submit" class="btn rounded-pill btn-primary">
+              Guardar registro ahora
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+<!-- Custom JS -->
+{% block customJS %}
+<script>
+  // Actualizar el campo oculto users_id cuando se selecciona un pedido
+  document.getElementById('pedido_id').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const usersId = selectedOption.getAttribute('data-users-id');
+    document.getElementById('users_id').value = usersId;
+  });
+
+  // Asegurarse de que el campo users_id tenga el valor correcto al cargar la página
+  window.addEventListener('load', function() {
+    const pedidoSelect = document.getElementById('pedido_id');
+    const selectedOption = pedidoSelect.options[pedidoSelect.selectedIndex];
+    if (selectedOption && selectedOption.value) {
+      const usersId = selectedOption.getAttribute('data-users-id');
+      document.getElementById('users_id').value = usersId;
+    }
+  });
+</script>
+{% endblock %}

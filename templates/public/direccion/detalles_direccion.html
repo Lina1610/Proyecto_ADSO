@@ -1,0 +1,144 @@
+{% extends 'public/base_cpanel.html' %}
+
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Detalles de la Dirección{% endblock %}
+
+<!-- Inicio del block -->
+{% block body %}
+{{ super() }}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/detalles.css') }}" />
+
+<!---->
+{% if direccion %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">
+        <a href="/lista-de-direccion">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        INFORMACIÓN DE LA DIRECCIÓN
+      </h3>
+      <hr />
+    </div>
+  </div>
+
+   <!-- Mensaje de contexto -->
+   <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-people-fill context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de detalles de direcciones</h6>
+      
+    </div>
+  </div>
+
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <label for="nombre_completo" class="form-label">
+              Nombre Completo
+            </label>
+            <br />
+            {{ direccion.nombre_completo }}
+          </div>
+          <div class="col-md-6">
+            <label for="barrio" class="form-label">
+              Barrio
+            </label>
+            <br />
+            {{ direccion.barrio }}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="domicilio" class="form-label">
+              Domicilio
+            </label>
+            <br />
+            {{ direccion.domicilio }}
+          </div>
+          <div class="col-md-6">
+            <label for="referencias" class="form-label">
+              Referencias
+            </label>
+            <br />
+            {{ direccion.referencias }}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="telefono" class="form-label">
+              Teléfono
+            </label>
+            <br />
+            {{ direccion.telefono }}
+          </div>
+          <div class="col-md-6">
+            <label for="costo_domicilio" class="form-label">
+              Costo del Domicilio
+            </label>
+            <br />
+            {{ direccion.costo_domicilio }}
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="municipio" class="form-label">
+              Municipio
+            </label>
+            <br />
+            {{ direccion.municipio_nombre }}
+          </div>
+          <div class="col-md-6">
+            <label for="departamento" class="form-label">
+              Departamento
+            </label>
+            <br />
+            {{ direccion.departamento_nombre }}
+          </div>
+        </div>
+        
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="usuario" class="form-label">
+              Usuario
+            </label>
+            <br />
+            {{ direccion.usuario_documento }}
+          </div>
+          <div class="col-md-6">
+            <label for="estado" class="form-label">
+              Estado
+            </label>
+            <br />
+            {{ direccion.estado }}
+          </div>
+        </div>
+        
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label for="fecha_registro" class="form-label">
+              Fecha de Registro
+            </label>
+            <br />
+            {{ direccion.created_at }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<h2 class="text-center">
+  No existe la Dirección 😭
+  <hr />
+</h2>
+{% endif %}
+{% endblock %}

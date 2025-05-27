@@ -1,0 +1,274 @@
+{% extends 'public/base_cpanel.html' %}
+
+<!-- Cambiando el title -->
+{% block title %}Crud con Python 🐍 | Registrar Dirección{% endblock %}
+
+<!---->
+{% block customCSS %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/file.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/footer.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/menu.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/editar.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/custom.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/position_indicator.css') }}" />
+
+<!-- Incluir Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+
+<!-- Inicio del block -->
+{% block body %}
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12">
+      <h3 class="text-center mt-5 mb-3">
+        <a href="/lista-de-direccion" class="text-decoration-none me-3">
+          <i class="bi bi-arrow-left-circle"></i>
+        </a>
+        REGISTRAR NUEVA DIRECCION
+      </h3>
+      <hr />
+    </div>
+  </div>
+
+  <!-- Mensaje de contexto -->
+  <div class="context-indicator d-flex align-items-center">
+    <i class="bi bi-people-fill context-icon"></i>
+    <div>
+      <h6 class="mb-1">Vista de registro de direcciones</h6>
+    </div>
+  </div>
+
+  <!-- Mostrar mensajes flash -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="row justify-content-center mb-2">
+        <div class="col-md-10">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-10">
+      <form
+        class="form-horizontal mx-auto"
+        method="POST"
+        action="/registrar-direccion"
+        autocomplete="off"
+        enctype="multipart/form-data">
+        <div class="card-body">
+          <!-- Primera fila: Nombre y Barrio -->
+          <div class="row">
+            <div class="col-md-6">
+              <label for="nombre_completo" class="form-label">
+                Nombre Completo
+              </label>
+              <input
+                type="text"
+                name="nombre_completo"
+                class="form-control"
+                maxlength="160"
+                required
+                oninvalid="this.setCustomValidity('Por favor, completa el campo Nombre Completo.')"
+                oninput="this.setCustomValidity('')"
+                value="{{ form_data.get('nombre_completo', '') }}" />
+            </div>
+            <div class="col-md-6">
+              <label for="barrio" class="form-label">
+                Barrio
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                name="barrio"
+                maxlength="500"
+                required
+                oninvalid="this.setCustomValidity('Por favor, completa el campo Barrio.')"
+                oninput="this.setCustomValidity('')"
+                value="{{ form_data.get('barrio', '') }}" />
+            </div>
+          </div>
+
+          <!-- Segunda fila: Domicilio y Referencia -->
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <label for="domicilio" class="form-label">
+                Domicilio
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                name="domicilio"
+                maxlength="500"
+                required
+                oninvalid="this.setCustomValidity('Por favor, completa el campo Domicilio.')"
+                oninput="this.setCustomValidity('')"
+                value="{{ form_data.get('domicilio', '') }}" />
+            </div>
+            <div class="col-md-6">
+              <label for="referencias" class="form-label">
+                Referencias
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                name="referencias"
+                maxlength="500"
+                value="{{ form_data.get('referencias', '') }}" />
+            </div>
+          </div>
+
+          <!-- Tercera fila: Teléfono y Estado -->
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <label for="telefono" class="form-label">
+                Teléfono
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                name="telefono"
+                maxlength="15"
+                value="{{ form_data.get('telefono', '') }}" />
+            </div>
+            <div class="col-md-6">
+              <label for="estado" class="form-label">
+                Estado
+              </label>
+              <select
+                class="form-select"
+                name="estado"
+                aria-label="Default select example">
+                <option value="Activo"
+                        {% if form_data.get('estado') == 'Activo' %}selected{% endif %}>Activo</option>
+                <option value="Inactivo"
+                        {% if form_data.get('estado') == 'Inactivo' %}selected{% endif %}>Inactivo</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Cuarta fila: Costo Domicilio y Departamento -->
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <label for="costo_domicilio" class="form-label">
+                Costo Domicilio
+              </label>
+              <input
+                class="form-control"
+                type="number"
+                name="costo_domicilio"
+                required
+                min="0"
+                step="1"
+                placeholder="Ingrese el costo del domicilio"
+                oninvalid="this.setCustomValidity('Por favor, completa el campo Costo Domicilio con un número válido.')"
+                oninput="this.setCustomValidity('')"
+                value="{{ form_data.get('costo_domicilio', '0') }}" />
+            </div>
+            
+            <div class="col-md-6">
+              <label for="departamento_id" class="form-label">
+                Departamento
+              </label>
+              <select class="form-select" name="departamento_id" id="departamento_id" required
+                      oninvalid="this.setCustomValidity('Por favor, selecciona un Departamento.')"
+                      oninput="this.setCustomValidity('')">
+                  <option value="">Seleccione</option>
+                  {% for departamento in departamentos %}
+                      <option value="{{ departamento.id }}"
+                              {% if form_data.get('departamento_id') == departamento.id|string %}selected{% endif %}>
+                          {{ departamento.nombre }}
+                      </option>
+                  {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <!-- Quinta fila: Municipio y Cliente -->
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <label for="users_id" class="form-label">
+                Cliente
+              </label>
+              <select class="form-select" name="users_id" id="users_id">
+                  <option value="">Seleccione</option>
+                  {% for cliente in users %}
+                      <option value="{{ cliente.id }}"
+                              {% if form_data.get('users_id') == cliente.id|string %}selected{% endif %}>
+                          {{ cliente.nombre }}
+                      </option>
+                  {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="municipio_id" class="form-label">
+                Municipio
+              </label>
+              <select class="form-select" name="municipio_id" id="municipio_id" required
+                      oninvalid="this.setCustomValidity('Por favor, selecciona un Municipio.')"
+                      oninput="this.setCustomValidity('')">
+                  <option value="">Seleccione</option>
+                  {% for municipio in municipios %}
+                      <option value="{{ municipio.id }}"
+                              {% if form_data.get('municipio_id') == municipio.id|string %}selected{% endif %}>
+                          {{ municipio.nombre }}
+                      </option>
+                  {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <!-- Botón de envío -->
+          <div class="mb-3 mt-4 text-center">
+            <button type="submit" class="btn rounded-pill btn-primary">
+              Guardar registro ahora
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Script para cargar dinámicamente los municipios -->
+<script>
+  document.getElementById('departamento_id').addEventListener('change', function () {
+    const departamentoId = this.value;
+    const municipioSelect = document.getElementById('municipio_id');
+
+    if (departamentoId) {
+      fetch(`/obtener_municipios?departamento_id=${departamentoId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error en la solicitud');
+          }
+          return response.json();
+        })
+        .then(data => {
+          municipioSelect.innerHTML = '<option value="">Seleccione</option>';
+          data.forEach(municipio => {
+            const option = document.createElement('option');
+            option.value = municipio.id;
+            option.textContent = municipio.nombre;
+            municipioSelect.appendChild(option);
+          });
+        })
+        .catch(error => {
+          console.error('Error al obtener municipios:', error);
+          municipioSelect.innerHTML = '<option value="">No se pudieron cargar los municipios</option>';
+        });
+    } else {
+      municipioSelect.innerHTML = '<option value="">Seleccione</option>';
+    }
+  });
+</script>
+{% endblock %}

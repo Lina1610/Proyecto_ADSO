@@ -1,0 +1,73 @@
+
+/* Estilos para el footer administrativo */
+.footer-admin {
+    background: #2c3e50; /* Azul oscuro profesional */
+    color: #ffffff; /* Texto blanco */
+    padding: 2rem 0; /* Más grande */
+    border-top: 2px solid #34495e; /* Borde superior más grueso */
+    font-family: 'Arial', sans-serif;
+    font-size: 1rem; /* Texto más grande */
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-left .footer-brand h3 {
+    font-size: 1.5rem; /* Título más grande */
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+}
+
+.footer-left .footer-brand p {
+    font-size: 1rem; /* Texto más grande */
+    color: #b0b0b0; /* Texto gris claro */
+}
+
+.footer-center .footer-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 2rem; /* Más espacio entre enlaces */
+}
+
+.footer-center .footer-link {
+    color: #b0b0b0;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-size: 1rem; /* Texto más grande */
+}
+
+.footer-center .footer-link:hover {
+    color: #ffffff; /* Texto blanco al hacer hover */
+}
+
+.footer-right .footer-bottom {
+    font-size: 0.9rem; /* Texto más grande */
+    color: #b0b0b0;
+    text-align: right;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem; /* Más espacio entre secciones */
+    }
+
+    .footer-right .footer-bottom {
+        text-align: center;
+    }
+
+    .footer-center .footer-list {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}

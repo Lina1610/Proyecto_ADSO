@@ -1,0 +1,1091 @@
+/* Importación de fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    padding-top: 70px; /* Espacio para el menú fijo */
+}
+
+/* Header */
+.header {
+    background-color: #eff3f4;
+    padding: 130px 0 0 0;
+    position: relative;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 40px 15px;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header-txt {
+    flex: 1;
+    max-width: 600px;
+}
+
+.header-txt span {
+    font-size: 17px;
+    color: #9BCE21;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 25px;
+}
+
+.header-txt h2 {
+    font-size: 70px;
+    text-transform: capitalize;
+    line-height: 1;
+    color: #111419;
+    margin-bottom: 35px;
+}
+
+.header-txt p {
+    font-size: 17px;
+    color: #515557;
+    margin-bottom: 35px;
+}
+
+.header-img {
+    flex: 1;
+    text-align: center;
+}
+
+.header-img img {
+    max-width: 100%;
+    height: 550px;
+    object-fit: contain;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Menú */
+.menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+}
+
+
+.logo-corner img {
+    height: 40px;
+    width: auto;
+    filter: brightness(0) invert(1);
+}
+
+.menu-checkbox {
+    display: none;
+}
+
+.menu-label {
+    display: none;
+    cursor: pointer;
+    z-index: 1002;
+}
+
+.hamburger-line {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: #FFF;
+    margin: 5px 0;
+    transition: all 0.3s ease;
+}
+
+.navbar {
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.navbar ul {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+}
+
+.nav-item a {
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 10px;
+    transition: color 0.3s ease-in-out;
+}
+
+.nav-item a:hover {
+    color:  #CE967B
+}
+
+.menu .navbar ul li a{
+    font-size: 18px;
+    padding: 20px;
+    display: block;
+    font-weight: 600;
+   
+  }
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-info-container {
+    display: flex;
+    align-items: center;
+}
+
+.user-info-navbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-avatar {
+    width: 35px;
+    height: 35px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #CE967B;
+    font-size: 18px;
+}
+
+.user-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.user-options {
+  display: flex; /* Asegura que los elementos estén en una fila */
+  gap: 25px; /* Espaciado entre opciones */
+  border: none !important; /* Remueve cualquier borde */
+  background: none !important; /* Elimina posibles fondos no deseados */
+  padding: 0 !important; /* Asegura que no haya relleno extra */
+}
+.user-options a {
+  text-decoration: none !important; /* Evita subrayados innecesarios */
+  border-bottom: none !important; /* Elimina cualquier línea bajo los enlaces */
+  display: inline-block; /* Previene que se genere un bloque con línea */
+}
+
+.user-menu {
+  border-bottom: none !important; /* Asegura que no haya línea en la parte inferior */
+}
+
+.menu-link {
+    color: #FFFDFC;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Regla para los enlaces que no están en .user-options */
+.navbar .nav-item .menu-link:hover::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #f1c40f;
+}
+
+/* Aseguramos que los enlaces dentro de .user-options no tengan línea */
+.user-options .menu-link:hover::after {
+    content: none !important;
+    display: none !important;
+}
+
+.menu-link:hover {
+    color: #CE967B;
+}
+
+.logout {
+    color: #ff6b6b;
+}
+
+.logout:hover {
+    color: #ff6b6b;
+}
+
+/* Aseguramos que el enlace de logout no tenga línea */
+.user-options .logout:hover::after {
+    content: none !important;
+    display: none !important;
+}
+
+.carrito-icono {
+    position: relative;
+}
+
+.fa-shopping-cart {
+    font-size: 1.6rem;
+    color: #fff;
+    transition: transform 0.3s ease;
+}
+
+.carrito-icono:hover .fa-shopping-cart {
+    transform: scale(1.1);
+}
+
+.badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background: #CE967B;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+}
+
+/* Contenedor Principal */
+.producto-container {
+    background: white;
+    padding: 4rem 1rem;
+    margin-top: 3rem;
+    border-radius: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.producto-container h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #2c3e50;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.producto-container h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    background: linear-gradient(90deg, #CE967B 0%, #9BCE21 100%);
+    border-radius: 2px;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.producto-card {
+    flex: 1 1 300px;
+    max-width: 350px;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.producto-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+.card-img-top {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.producto-card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.8rem;
+}
+
+.card-text {
+    color: #7f8c8d;
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+    flex-grow: 1;
+}
+
+.card-text strong {
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.btn-agregar-carrito {
+    background: linear-gradient(135deg, #CE967B 0%, #9BCE21 100%);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    padding: 12px 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    width: 100%;
+    cursor: pointer;
+}
+
+.btn-agregar-carrito:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(206, 150, 123, 0.4);
+}
+
+/* Footer */
+.footer {
+    background: #2c3e50;
+    color: #ecf0f1;
+    padding: 4rem 1rem 2rem;
+    margin-top: 5rem;
+    border-top: 4px solid #CE967B;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 3rem;
+}
+
+.footer-brand h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.8rem;
+    color: #CE967B;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+.social-icons {
+    display: flex;
+    gap: 1.2rem;
+}
+
+.social-icons a {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #CE967B;
+    transition: all 0.3s ease;
+}
+
+.social-icons a:hover {
+    background: #CE967B;
+    color: white;
+    transform: translateY(-3px);
+}
+
+.footer-contact p {
+    margin: 0.8rem 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.footer-contact i {
+    color: #9BCE21;
+}
+
+.footer-list a {
+    color: #bdc3c7;
+    margin: 1rem 0;
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.footer-list a:hover {
+    color: #CE967B;
+    transform: translateX(10px);
+}
+
+.business-hours h4 {
+    color: #CE967B;
+    font-size: 1.2rem;
+    margin-bottom: 1.2rem;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #34495e;
+    color: #95a5a6;
+}
+
+/* Media Queries para Responsive */
+
+/* Tablets (768px - 991px) */
+@media (max-width: 991px) {
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 15px;
+        gap: 20px;
+    }
+
+    .header-txt h2 {
+        font-size: 50px;
+    }
+
+    .header-img img {
+        height: 350px;
+    }
+
+   .menu label {
+  display: block;
+  position: absolute;
+  top: 50%; /* Centra verticalmente */
+  right: 20px; /* Ubica en la derecha */
+  transform: translateY(-50%); /* Ajuste fino para centrar bien */
+  z-index: 1001;
+  padding: 15px;
+  cursor: pointer;
+}
+/* Estilos para dividir elementos del menú */
+.navbar ul li {
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Línea separadora */
+}
+
+/* Eliminar el borde del último elemento para que no quede una línea extra */
+.navbar ul li:last-child {
+  border-bottom: none;
+}
+
+/* Sección del usuario */
+.user-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2); /* Línea arriba del usuario */
+}
+
+/* Contenedor del perfil y opciones */
+.user-options {
+  display: flex;
+  flex-direction: column;
+  padding-left: 15px;
+  border-left: 1px solid rgba(255, 255, 255, 0.2); /* Línea divisoria vertical */
+  gap: 10px;
+}
+
+/* Estilos para los enlaces del perfil */
+.user-options a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Estilo para "Cerrar sesión" */
+.user-options .logout {
+  color: red;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 80%;
+  max-width: 300px;
+  height: 100vh;
+  background: #000000e6;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start; /* Opciones arriba */
+  padding-top: 50px; /* Espaciado para que no quede pegado al borde */
+  transform: translateX(-100%);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+  
+   
+  /* Posiciona el carrito al pie del menú hamburguesa */
+  .cart-container {
+    position: absolute;
+    bottom: 20px; /* Ajusta la distancia desde la parte inferior */
+    left: 20px; /* Ajusta la distancia desde la izquierda */
+    z-index: 1001;
+  }
+
+  .cart-container a {
+    color: white;
+    font-size: 22px;
+    text-decoration: none;
+    position: relative;
+  }
+
+  /* Ajustar el icono del carrito */
+  .cart-container a i {
+    font-size: 26px;
+  }
+
+  /* Ajustar la burbuja de notificación */
+  .cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background: red;
+    color: white;
+    font-size: 12px;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    text-align: center;
+    line-height: 18px;
+    font-weight: bold;
+  }
+
+  #menu:checked ~ .navbar {
+      transform: translateX(0);
+      left: 0;
+      opacity: 1;
+      visibility: visible;
+  }
+
+  /* ... (Tu CSS existente para la animación del icono hamburguesa) ... */
+
+    /* Animación del icono hamburguesa */
+  .menu label[for="menu"]::before,
+  .menu label[for="menu"]::after,
+  .menu label[for="menu"] .hamburger-line {
+    content: '';
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: #FFF;
+    margin: 5px 0;
+    transition: all 0.3s ease;
+  }
+
+  #menu:checked ~ label[for="menu"]::before {
+    transform: translateY(8px) rotate(45deg);
+  }
+
+  #menu:checked ~ label[for="menu"]::after {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  #menu:checked ~ label[for="menu"] .hamburger-line {
+    opacity: 0;
+  }
+    .navbar ul {
+        flex-direction: column;
+        gap: 20px;
+        width: 100%;
+    }
+
+    .navbar ul li {
+        width: 100%;
+    }
+
+    .navbar ul li a {
+        display: block;
+        padding: 12px 15px;
+        text-align: left;
+    }
+
+    #menu:checked ~ .navbar {
+        transform: translateX(0);
+    }
+
+    #menu:checked ~ .menu-label .hamburger-line:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+
+    #menu:checked ~ .menu-label .hamburger-line:nth-child(2) {
+        opacity: 0;
+    }
+
+    #menu:checked ~ .menu-label .hamburger-line:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+
+    .user-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .user-options {
+        border-left: none;
+        padding-left: 0;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .producto-container {
+        padding: 3rem 1rem;
+    }
+
+    .producto-card {
+        flex: 1 1 280px;
+    }
+}
+
+/* Móviles grandes (576px - 767px) */
+@media (max-width: 767px) {
+    .header-txt h2 {
+        font-size: 40px;
+    }
+
+    .header-img img {
+        height: 300px;
+    }
+
+    .producto-container h2 {
+        font-size: 2rem;
+    }
+
+    .producto-card {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .card-img-top {
+        height: 200px;
+    }
+
+    .footer-container {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .user-name {
+        display: none;
+    }
+}
+
+/* Móviles pequeños (hasta 575px) */
+@media (max-width: 575px) {
+    .header {
+        padding: 80px 0 0 0;
+    }
+
+    .header-content {
+        padding: 20px 10px;
+    }
+
+    .header-txt h2 {
+        font-size: 30px;
+    }
+
+    .header-txt p {
+        font-size: 15px;
+    }
+
+    .header-img img {
+        height: 250px;
+    }
+
+    .menu {
+        padding: 10px 3%;
+    }
+
+    .logo-corner img {
+        height: 30px;
+    }
+
+    .producto-container {
+        padding: 2rem 0.5rem;
+        border-radius: 15px;
+    }
+
+    .producto-container h2 {
+        font-size: 1.6rem;
+    }
+
+    .btn-agregar-carrito {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    .footer {
+        padding: 2rem 0.5rem 1rem;
+    }
+
+    .footer-container {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-brand h3 {
+        font-size: 1.5rem;
+    }
+
+    .footer-bottom {
+        font-size: 0.8rem;
+    }
+}
+/*menu pedido*/
+/* Ensure the menu-right-container is properly styled */
+.menu-right-container {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Space between hamburger and cart */
+    order: 2; /* Ensure it stays on the right */
+}
+
+/* Style the cart icon to align nicely with the hamburger */
+.carrito-icono {
+    display: flex;
+    align-items: center;
+    position: relative;
+    
+    margin-right: 100px;
+}
+
+.fa-shopping-cart {
+    font-size: 1.6rem;
+    color: #fff;
+    transition: transform 0.3s ease;
+}
+
+.carrito-icono:hover .fa-shopping-cart {
+    transform: scale(1.1);
+}
+
+.badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #CE967B;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Adjust the menu layout for larger screens */
+@media (min-width: 992px) {
+    .menu-right-container {
+        gap: 20px;
+    }
+
+    .menu-label {
+        display: none; /* Hide hamburger on larger screens */
+    }
+
+    .carrito-icono {
+        display: flex; /* Ensure cart icon is visible */
+    }
+}
+
+/* Adjust for smaller screens */
+@media (max-width: 991px) {
+    .menu {
+        padding: 10px 3%;
+    }
+
+    .menu-right-container {
+        gap: 15px;
+    }
+
+    .menu-label {
+        display: block;
+    }
+
+    .carrito-icono {
+        display: flex;
+        align-items: center;
+    }
+
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 80%;
+        max-width: 300px;
+        height: 100vh;
+        background: #000000e6;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding-top: 80px;
+        transform: translateX(-100%);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+
+    #menu:checked ~ .navbar {
+        transform: translateX(0);
+    }
+}
+
+/* Fine-tune for very small screens */
+@media (max-width: 575px) {
+    .menu-right-container {
+        gap: 10px;
+    }
+
+    .fa-shopping-cart {
+        font-size: 1.4rem;
+    }
+
+    .badge {
+        top: -6px;
+        right: -6px;
+        padding: 2px 5px;
+        font-size: 10px;
+    }
+
+    .hamburger-line {
+        width: 20px;
+        height: 2px;
+        margin: 4px 0;
+    }
+}
+/* Añade esto a tu CSS */
+
+/* Estilos generales del menú */
+.navbar ul {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    position: relative;
+    list-style: none;
+}
+
+.nav-link {
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 10px 15px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: block;
+    white-space: nowrap;
+}
+
+.nav-link:hover {
+    color: #CE967B;
+}
+
+/* Estilo específico para el botón de Cerrar Sesión */
+.logout-btn {
+    color: #ff6b6b !important;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.logout-btn:hover {
+    color: #ff5252 !important;
+    text-decoration: none;
+}
+
+/* Estilos para el menú hamburguesa (mobile) */
+@media (max-width: 991px) {
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 100vh;
+        background: #1a1a1a;
+        padding: 80px 20px 20px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+        overflow-y: auto;
+    }
+
+    #menu:checked ~ .navbar {
+        transform: translateX(0);
+    }
+
+    .navbar ul {
+        flex-direction: column;
+        gap: 0;
+        width: 100%;
+    }
+
+    .nav-item {
+        width: 100%;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-link {
+        padding: 15px 20px;
+        font-size: 16px;
+        white-space: normal;
+    }
+
+    /* Estilo para Cerrar Sesión en móvil */
+    .logout-btn {
+        color: #ff6b6b !important;
+        text-align: left;
+        padding: 15px 20px;
+    }
+}
+
+/* Ajustes para pantallas muy pequeñas */
+@media (max-width: 575px) {
+    .navbar {
+        width: 250px;
+    }
+    
+    .nav-link {
+        padding: 12px 15px;
+        font-size: 15px;
+    }
+}
+/* Ocultar el ícono de usuario en el menú hamburguesa en modo móvil */
+@media (max-width: 991px) {
+    .navbar-nav .user-avatar,
+    .navbar-nav .fa-user-circle {
+        display: none !important;
+    }
+    
+    /* Asegurarse que las opciones queden bien alineadas */
+    .navbar-nav li a {
+        display: block;
+        width: 100%;
+        padding: 12px 15px;
+        text-align: left;
+    }
+    
+    /* Eliminar cualquier espacio adicional */
+    .user-info-navbar, 
+    .user-container,
+    .user-menu-container,
+    .user-menu {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Alinear correctamente el texto de las opciones */
+    .user-name,
+    .menu-link {
+        padding-left: 15px;
+    }
+    
+    /* Mantener el color rojo para Cerrar Sesión */
+    .logout-btn, 
+    a[href*="cerraSesion"] {
+        color: #ff6b6b !important;
+    }
+}
+
+/* Añade esto al final de tu archivo CSS */
+
+@media (max-width: 991px) {
+    /* Ocultar el ícono de usuario y nombre en el menú hamburguesa */
+    .user-info-navbar {
+        display: none !important;
+    }
+    
+    /* Mostrar las opciones de usuario como elementos normales del menú */
+    .user-options {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        background: none !important;
+    }
+    
+    /* Estilo para los enlaces de opciones de usuario */
+    .user-options .menu-link {
+        padding: 15px 20px !important;
+        color: white !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        width: 100% !important;
+        display: block !important;
+    }
+    
+    /* Estilo especial para el botón de cerrar sesión */
+    .user-options .logout-btn {
+        color: #ff6b6b !important;
+    }
+    
+    /* Eliminar cualquier efecto hover no deseado */
+    .user-options .menu-link:hover::after {
+        content: none !important;
+    }
+    
+    /* Asegurar que el contenedor de usuario no tenga estilos especiales */
+    .user-menu {
+        display: block !important;
+        width: 100% !important;
+    }
+    
+    /* Eliminar cualquier padding o margin adicional */
+    .user-container, 
+    .user-info-container {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+}
+

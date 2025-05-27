@@ -1,0 +1,149 @@
+/* Estilos generales para la tabla */
+.table-container {
+    width: 95%;
+    margin: 20px auto;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    padding: 15px;
+}
+
+/* Título de la tabla */
+h3.text-center {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+/* Estilos para la tabla */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+    background-color: #fff;
+    border-radius: 8px;
+}
+
+/* Encabezados de la tabla */
+.table thead th {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: #ffffff;
+    font-weight: 600;
+    padding: 12px;
+    text-align: center;
+    border-bottom: 2px solid #1f2a36;
+}
+
+/* Celdas del cuerpo de la tabla */
+.table tbody td {
+    padding: 8px;
+    text-align: center;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.9rem;
+}
+
+/* Reducir el ancho de las columnas específicas */
+.table tbody td:nth-child(1), /* Columna 1: # */
+.table tbody td:nth-child(2), /* Columna 2: Número de Abono */
+.table tbody td:nth-child(3), /* Columna 3: Estado */
+.table tbody td:nth-child(4), /* Columna 4: Monto */
+.table tbody td:nth-child(5) { /* Columna 5: Pedido ID */
+    max-width: 100px; /* Ancho máximo reducido */
+    width: 100px; /* Ancho fijo */
+    white-space: nowrap; /* Evitar que el texto se divida en varias líneas */
+    overflow: hidden; /* Ocultar el texto que exceda el ancho */
+    text-overflow: ellipsis; /* Mostrar puntos suspensivos (...) si el texto es muy largo */
+}
+
+/* Columna de acciones */
+.table tbody td:last-child {
+    width: 150px; /* Ancho fijo para la columna de acciones */
+    max-width: 150px; /* Limitar el ancho máximo */
+    padding: 5px;
+    text-align: center;
+}
+
+/* Contenedor de botones de acción */
+.table tbody td:last-child .acciones {
+    display: flex;
+    flex-wrap: wrap; /* Permitir que los botones se envuelvan si no caben */
+    gap: 5px; /* Espacio entre botones */
+    justify-content: center; /* Centrar los botones horizontalmente */
+    align-items: center; /* Centrar los botones verticalmente */
+}
+
+/* Botones de acción */
+.btn {
+    padding: 6px 12px; /* Reducir el padding de los botones */
+    font-size: 0.8rem; /* Reducir el tamaño de la fuente */
+    font-weight: bold;
+    border-radius: 6px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    margin: 2px; /* Reducir el margen entre botones */
+    display: inline-block;
+    text-align: center;
+    flex: 1 1 auto;
+    min-width: 80px; /* Reducir el ancho mínimo de los botones */
+}
+.table tbody td:last-child .btn {
+    flex: 1 1 auto;
+    min-width: 80px; /* Reducir el ancho mínimo de los botones */
+    text-align: center;
+    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+}
+
+/* Efecto zebra para las filas */
+.table tbody tr:nth-child(odd) {
+    background-color: #f8f9fa;
+}
+
+/* Efecto hover en filas */
+.table tbody tr:hover {
+    background-color: #e8eaf6;
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Campo de búsqueda */
+#search_abono {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 18px;
+    border: 2px solid #2c3e50;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    color: #2c3e50;
+    background-color: #f8f9fa;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    margin-bottom: 20px;
+}
+
+#search_abono:focus {
+    border-color: #17a2b8;
+    box-shadow: 0px 4px 15px rgba(23, 162, 184, 0.3);
+    background-color: #ffffff;
+    outline: none;
+}
+
+/* Placeholder del input */
+#search_abono::placeholder {
+    color: #6c757d;
+    opacity: 0.8;
+}
+
+/* Icono de búsqueda (opcional) */
+#search_abono {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%232c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>');
+    background-repeat: no-repeat;
+    background-position: 95% center;
+    background-size: 20px 20px;
+    padding-right: 50px;
+}

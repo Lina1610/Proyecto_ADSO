@@ -1,0 +1,256 @@
+{% extends 'public/base_cpanel.html' %}
+{% block title %}Perfil de Usuario{% endblock %}
+
+{% block body %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/custom.css') }}" />
+
+<link rel="stylesheet" href="{{ url_for('static', filename ='assets/css/perfilA.css') }}" />
+
+
+<div class="container my-5">
+    <!-- Encabezado del Perfil -->
+    <div class="profile-header mb-5 text-center">
+        <h1 class="display-5 fw-bold">{{ info_perfil_session['nombre'] }} {{ info_perfil_session['apellido'] }}</h1>
+        <p class="text-muted">Documento: {{ info_perfil_session['documento'] }}</p>
+    </div>
+
+    <!-- Sección Tu Información -->
+    <div class="card mb-3">
+        <div class="card-header section-header" data-bs-toggle="collapse" href="#infoPersonal">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-user-circle fa-2x me-3 text-primary"></i>
+                <div>
+                    <h5 class="mb-0">Tu Información</h5>
+                    <small class="text-muted">Datos personales y de contacto</small>
+                </div>
+            </div>
+        </div>
+        <div class="collapse " id="infoPersonal">
+            <div class="card-body">
+                <form method="POST" action="/actualizar-datos-perfil">
+                    <div class="row g-3">
+                        <!-- Campos no editables -->
+                        <div class="col-md-6">
+                            <label class="form-label">Tipo de Documento</label>
+                            <input type="text" class="form-control bg-light" 
+                                   value="{{ info_perfil_session['tipo_documento'] }}" readonly>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Documento</label>
+                            <input type="text" class="form-control bg-light" 
+                                   value="{{ info_perfil_session['documento'] }}" readonly>
+                        </div>
+
+                        <!-- Campos editables -->
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" name="nombre" class="form-control" 
+                                   value="{{ info_perfil_session['nombre'] }}" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Apellido</label>
+                            <input type="text" name="apellido" class="form-control" 
+                                   value="{{ info_perfil_session['apellido'] }}" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Teléfono</label>
+                            <input type="text" name="telefono" class="form-control" 
+                                   value="{{ info_perfil_session['telefono'] }}" required>
+                        </div>
+
+                        <!-- Campos no editables -->
+                        <div class="col-md-6">
+                            <label class="form-label">Correo</label>
+                            <input type="email" class="form-control bg-light" 
+                                   value="{{ info_perfil_session['correo'] }}" readonly>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Rol</label>
+                            <input type="text" class="form-control bg-light" 
+                                   value="{{ info_perfil_session['rol'] }}" readonly>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Estado</label>
+                            <input type="text" class="form-control bg-light" 
+                                   value="{{ info_perfil_session['estado'] }}" readonly>
+                        </div>
+
+                        <!-- Campo Contraseña para actualización -->
+                        <div class="col-md-12 mt-4">
+                            <label class="form-label">Confirmar con Contraseña Actual</label>
+                            <div class="input-group input-group-merge">
+                                <input type="password" 
+                                       class="form-control" 
+                                       name="pass_actual"
+                                       placeholder="Ingrese su contraseña para confirmar cambios"
+                                       required>
+                                <span class="input-group-text cursor-pointer">
+                                    <i class="bx bx-hide" onclick="togglePassword(this)"></i>
+                                </span>
+                            </div>
+                            <small class="text-muted">Debe ingresar su contraseña actual para guardar los cambios</small>
+                        </div>
+
+                        <div class="col-12 text-center mt-4">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fas fa-save me-2"></i>Guardar Cambios
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Direcciones 
+<div class="card mb-4">
+    <div class="card-header section-header" data-bs-toggle="collapse" href="#seccionDirecciones">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-map-marker-alt fa-2x me-3 text-primary"></i>
+            <div>
+                <h5 class="mb-0">Mis Direcciones</h5>
+                <small class="text-muted">Direcciones registradas</small>
+            </div>
+        </div>
+    </div>
+    <div class="collapse" id="seccionDirecciones">
+        <div class="card-body">
+            <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#modalAgregarDireccion">
+                <i class="fas fa-plus"></i> Agregar Dirección
+            </button>
+
+            {% if direcciones %}
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Barrio</th>
+                                <th>Domicilio</th>
+                                <th>Teléfono</th>
+                                <th>Ubicación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for direccion in direcciones %}
+                            <tr>
+                                <td>{{ direccion.nombre_completo }}</td>
+                                <td>{{ direccion.barrio }}</td>
+                                <td>{{ direccion.domicilio }}</td>
+                                <td>{{ direccion.telefono }}</td>
+                                <td>{{ direccion.municipio_nombre }}, {{ direccion.departamento_nombre }}</td>
+                                <td>
+                                    <button onclick="editarDireccion({{ direccion.id }})" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#eliminarDireccionModal" onclick="confirmarEliminar({{ direccion.id }})">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    No tienes direcciones registradas.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>-->
+    <!-- Sección Actualizar Contraseña -->
+    <div class="card">
+        <div class="card-header section-header" data-bs-toggle="collapse" href="#cambiarClave">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-lock fa-2x me-3 text-primary"></i>
+                <div>
+                    <h5 class="mb-0">Seguridad</h5>
+                    <small class="text-muted">Actualiza tu contraseña</small>
+                </div>
+            </div>
+        </div>
+        <div class="collapse" id="cambiarClave">
+            <div class="card-body">
+                <form method="POST" action="/actualizar-password">
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label">Contraseña Actual</label>
+                            <div class="input-group input-group-merge">
+                                <input type="password" 
+                                       class="form-control" 
+                                       name="pass_actual"
+                                       required>
+                                <span class="input-group-text cursor-pointer">
+                                    <i class="bx bx-hide" onclick="togglePassword(this)"></i>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Nueva Contraseña</label>
+                            <div class="input-group input-group-merge">
+                                <input type="password" 
+                                       class="form-control" 
+                                       name="new_pass_user"
+                                       id="new_pass_user"
+                                       required>
+                                <span class="input-group-text cursor-pointer">
+                                    <i class="bx bx-hide" onclick="togglePassword(this)"></i>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Confirmar Nueva Contraseña</label>
+                            <div class="input-group input-group-merge">
+                                <input type="password" 
+                                       class="form-control" 
+                                       name="repetir_pass_user"
+                                       id="repetir_pass_user"
+                                       required>
+                                <span class="input-group-text cursor-pointer">
+                                    <i class="bx bx-hide" onclick="togglePassword(this)"></i>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-key me-2"></i>Actualizar Contraseña
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/static/assets/js/sienna.js"></script>
+<script src="/static/assets/js/custom.js"></script>
+<script>
+    function togglePassword(icon) {
+        const inputGroup = icon.closest('.input-group-merge');
+        const passwordInput = inputGroup.querySelector('input');
+        const eyeIcon = icon;
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.classList.replace('bx-hide', 'bx-show');
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.classList.replace('bx-show', 'bx-hide');
+        }
+    }
+</script>
+{% endblock %}

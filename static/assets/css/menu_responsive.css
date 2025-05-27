@@ -1,0 +1,237 @@
+/* menu_responsive.css */
+/* Estilos generales del menú */
+.menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+}
+
+.logo-corner img {
+    height: 40px;
+    width: auto;
+    filter: brightness(0) invert(1);
+}
+
+/* Contenedor para elementos del lado derecho */
+.menu-right-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Botón hamburguesa */
+.menu-checkbox {
+    display: none;
+}
+
+.menu-label {
+    display: none;
+    cursor: pointer;
+    z-index: 1001;
+    padding: 10px;
+}
+
+.hamburger-line {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: #FFF;
+    margin: 5px 0;
+    transition: all 0.3s ease;
+}
+
+/* Carrito */
+.carrito-icono {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.carrito-icono a {
+    display: flex;
+}
+
+.fa-shopping-cart {
+    font-size: 1.6rem;
+    color: #fff;
+    transition: transform 0.3s ease;
+}
+
+.carrito-icono:hover .fa-shopping-cart {
+    transform: scale(1.1);
+}
+
+.badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background: #CE967B;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+}
+
+/* Navbar principal */
+.navbar {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+}
+
+.nav-item a {
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 10px;
+    transition: color 0.3s ease-in-out;
+}
+
+.nav-item a:hover {
+    color: #CE967B;
+}
+
+/* Menú de usuario */
+.user-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.user-avatar {
+    width: 35px;
+    height: 35px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #CE967B;
+    font-size: 18px;
+}
+
+.user-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.user-options {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: rgba(0, 0, 0, 0.9);
+    padding: 15px;
+    border-radius: 5px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 180px;
+}
+
+.user-container:hover .user-options {
+    display: flex;
+}
+
+.user-options a {
+    color: white;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.user-options a:last-child {
+    border-bottom: none;
+}
+
+.user-options a:hover {
+    color: #CE967B;
+}
+
+.logout {
+    color: #ff6b6b;
+}
+
+/* Media Queries para Responsive */
+@media (max-width: 991px) {
+    .menu-label {
+        display: block;
+        order: 2;
+    }
+
+    .carrito-icono {
+        order: 1;
+    }
+
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 80%;
+        max-width: 300px;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.95);
+        flex-direction: column;
+        justify-content: flex-start;
+        padding-top: 80px;
+        transition: all 0.3s ease;
+        z-index: 999;
+    }
+
+    .nav-item {
+        width: 100%;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .nav-item:last-child {
+        border-bottom: none;
+    }
+
+    .nav-item a {
+        display: block;
+        padding: 15px;
+    }
+
+    #menu:checked ~ .navbar {
+        left: 0;
+    }
+
+    /* Animación del icono hamburguesa */
+    #menu:checked ~ .menu-right-container .menu-label .hamburger-line:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+
+    #menu:checked ~ .menu-right-container .menu-label .hamburger-line:nth-child(2) {
+        opacity: 0;
+    }
+
+    #menu:checked ~ .menu-right-container .menu-label .hamburger-line:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+
+    .user-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .user-options {
+        position: static;
+        display: none !important;
+        background: transparent;
+        padding: 10px 0 0 20px;
+        min-width: auto;
+    }
+}
+
+@media (max-width: 575px) {
+    .user-name {
+        display: none;
+    }
+}

@@ -1,0 +1,100 @@
+<<<<<<< HEAD
+{% for direccion in dataBusqueda %}
+<tr id="direccion_{{ direccion.id }}">
+    <td>{{ direccion.id }}</td>
+    <td>{{ direccion.nombre_completo }}</td>
+    <td>{{ direccion.municipio_nombre }}</td>
+    <td>{{ direccion.departamento_nombre }}</td>
+    <td>{{ direccion.usuario_documento }}</td>
+    <td>
+        {% if direccion.estado == 'Activo' %}
+            <span class="badge bg-success">Activo</span>
+        {% else %}
+            <span class="badge bg-danger">Inactivo</span>
+        {% endif %}
+    </td>
+    <td>
+        {% if direccion.estado == 'Inactivo' %}
+            <a href="/activar-direccion/{{ direccion.id }}" 
+               class="btn btn-sm btn-success"
+               title="Activar dirección">
+               <i class="bi bi-check-circle"></i> Activar
+            </a>
+        {% else %}
+            <a href="/desactivar-direccion/{{ direccion.id }}" 
+               class="btn btn-sm btn-warning"
+               title="Desactivar dirección">
+               <i class="bi bi-x-circle"></i> Desactivar
+            </a>
+        {% endif %}
+    </td>
+    <td>
+        <a href="/detalles-direccion/{{ direccion.id }}"
+           class="btn btn-info btn-sm"
+           title="Ver detalles">
+           <i class="bi bi-eye"></i> Detalles
+        </a>
+        <a href="{{ url_for('viewEditarDireccion', id=direccion.id) }}"
+           class="btn btn-success btn-sm"
+           title="Actualizar">
+           <i class="bi bi-arrow-clockwise"></i> Actualizar
+        </a>
+        <a href="#"
+           onclick="eliminarDireccion('{{ direccion.id }}');"
+           class="btn btn-danger btn-sm"
+           title="Eliminar">
+           <i class="bi bi-trash3"></i> Eliminar
+        </a>
+    </td>
+</tr>
+=======
+{% for direccion in dataBusqueda %}
+<tr id="direccion_{{ direccion.id }}">
+    <td>{{ direccion.id }}</td>
+    <td>{{ direccion.nombre_completo }}</td>
+    <td>{{ direccion.municipio_nombre }}</td>
+    <td>{{ direccion.departamento_nombre }}</td>
+    <td>{{ direccion.usuario_documento }}</td>
+    <td>
+        {% if direccion.estado == 'Activo' %}
+            <span class="badge bg-success">Activo</span>
+        {% else %}
+            <span class="badge bg-danger">Inactivo</span>
+        {% endif %}
+    </td>
+    <td>
+        {% if direccion.estado == 'Inactivo' %}
+            <a href="/activar-direccion/{{ direccion.id }}" 
+               class="btn btn-sm btn-success"
+               title="Activar dirección">
+               <i class="bi bi-check-circle"></i> Activar
+            </a>
+        {% else %}
+            <a href="/desactivar-direccion/{{ direccion.id }}" 
+               class="btn btn-sm btn-warning"
+               title="Desactivar dirección">
+               <i class="bi bi-x-circle"></i> Desactivar
+            </a>
+        {% endif %}
+    </td>
+    <td>
+        <a href="/detalles-direccion/{{ direccion.id }}"
+           class="btn btn-info btn-sm"
+           title="Ver detalles">
+           <i class="bi bi-eye"></i> Detalles
+        </a>
+        <a href="{{ url_for('viewEditarDireccion', id=direccion.id) }}"
+           class="btn btn-success btn-sm"
+           title="Actualizar">
+           <i class="bi bi-arrow-clockwise"></i> Actualizar
+        </a>
+        <a href="#"
+           onclick="eliminarDireccion('{{ direccion.id }}');"
+           class="btn btn-danger btn-sm"
+           title="Eliminar">
+           <i class="bi bi-trash3"></i> Eliminar
+        </a>
+    </td>
+</tr>
+>>>>>>> d5ce205891d78ea7d44bfbd42dc788ef2379c9b3
+{% endfor %}

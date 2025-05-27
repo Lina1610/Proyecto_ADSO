@@ -1,0 +1,87 @@
+{% extends 'public/base_cpanel.html' %}
+{% block title %}Gestión de Copias de Seguridad 🛡️ | Lista de Backups{% endblock %}
+{% block body %}
+
+<div class="card" style="border-radius: 0px !important">
+  <div class="row justify-content-center mb-2">
+    <div class="col-md-12 mb-4">
+      <h3 class="text-center mt-5 mb-3">LISTA DE COPIAS DE SEGURIDAD</h3>
+      <hr />
+    </div>
+
+    <!-- Contenedor de mensajes -->
+    
+
+    <!-- Botón para crear una nueva copia de seguridad -->
+    <div class="row justify-content-end mb-3">
+      <div class="col-md-3">
+        <a href="{{ url_for('hacer_backup') }}" class="btn btn-primary btn-sm">
+          <i class="bi bi-plus-circle"></i> Crear Nueva Copia
+        </a>
+      </div>
+    </div>
+
+    <!-- Tabla de copias de seguridad -->
+    <div class="row justify-content-center mb-2">
+      <div class="table-responsive text-nowrap table-hover">
+        <table id="tbl_backups" class="table table-striped table-bordered" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nombre del Archivo</th>
+              <th>Fecha de Creación</th>
+              <th>Tamaño</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla_backups_body">
+            {% for backup in backups %}
+            <tr id="backup_{{ loop.index }}">
+              <td>{{ loop.index }}</td>
+              <td>{{ backup.nombre }}</td>
+              <td>{{ backup.fecha_creacion }}</td>
+              <td>{{ backup.tamaño }} MB</td>
+              <td>
+                <a href="#" 
+                   onclick="restaurarBackup('{{ backup.nombre }}')" 
+                   class="btn btn-warning btn-sm" 
+                   title="Restaurar esta copia">
+                  <i class="bi bi-arrow-counterclockwise"></i> Restaurar
+                </a>
+                <a href="#" 
+                   onclick="eliminarBackup('{{ backup.nombre }}')" 
+                   class="btn btn-danger btn-sm" 
+                   title="Eliminar esta copia">
+                  <i class="bi bi-trash"></i> Eliminar
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmación único, igual que en entregas -->
+<div id="confirmModalBackup" class="modal fade" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmModalBackupTitle">Confirmar acción</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="confirmModalBackupMessage">
+        <!-- Mensaje dinámico se insertará aquí -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="confirmActionBackupButton">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='assets/customJS/modal_backup.js') }}"></script>
+{% endblock %}
